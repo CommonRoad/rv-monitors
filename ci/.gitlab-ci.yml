@@ -1,0 +1,61 @@
+stages:
+  - build
+  - test
+
+image: $CI_REGISTRY/maierhofer/rv-monitors:v0.1
+
+
+build-library:
+  stage: build
+  script:
+    - mkdir build && cd build
+    - cmake -DCMAKE_BUILD_TYPE=Release ..
+    - make rvmonitors -j4
+
+#build-standalone:
+#  stage: build
+#  script:
+#    - mkdir build && cd build
+#    - cmake -DCMAKE_BUILD_TYPE=Release ..
+#    - make env_model_example_node -j4
+
+build-test:
+  stage: build
+  script:
+    - mkdir build && cd build
+    - cmake -DCMAKE_BUILD_TYPE=Debug ..
+    - make rvmonitors_test -j4
+  artifacts:
+    paths:
+      - ./rvmonitors_test
+    expire_in: 20 minutes
+
+build-run-coverage:
+  stage: build
+  script:
+    - mkdir build && cd build
+    - cmake -DCODE_COVERAGE=ON -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_BUILD_TYPE=Debug ..
+    - make rvmonitors_coverage -j4
+  artifacts:
+    paths:
+      - ./build/
+      - ./rvmonitors_coverage
+    expire_in: 20 minutes
+
+
+test:
+  stage: test
+  script:
+    - ./rvmonitors_test --gtest_output="xml:report.xml"
+  dependencies:
+    - build-test
+  artifacts:
+    reports:
+      junit: ./report.xml
+
+publish-coverage:
+  stage: test
+  script:
+    - gcovr -e 'cmake-(.+/)?/' -e tests/ -e build/ -e src/Parser/gen
+  dependencies:
+    - build-run-coverage
