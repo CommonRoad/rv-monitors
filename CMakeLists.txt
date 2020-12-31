@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(Monitors)
+project(RV-Monitors)
 
 #SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -Wno-ignored-attributes)
 set(CMAKE_CXX_STANDARD 17)
@@ -9,7 +9,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/)
 
 set(ANTLR4CPP_JAR_LOCATION ${CMAKE_SOURCE_DIR}/libs/antlr.jar)
 
-set(EXECUTABLE_NAME "Monitors")
+set(EXECUTABLE_NAME "rvmonitors")
 
 file(
         GLOB_RECURSE
@@ -19,34 +19,35 @@ file(
 )
 
 # create library of this project
-add_library(${EXECUTABLE_NAME}_lib STATIC ${SRC_GEN})
+add_library(${EXECUTABLE_NAME} STATIC ${SRC_GEN})
 
-target_include_directories(${EXECUTABLE_NAME}_lib
+target_include_directories(${EXECUTABLE_NAME}
         PUBLIC
         src
         )
 
-include(monitors_commonroad)
 include(monitors_sanitizers)
 # get antlr4 as external project
 include(monitors_antlr4cpp)
 # Doxygen
 include(doxygen)
+# Activate code coverage
+if (CODE_COVERAGE)
+    option(CodeCoverage "CodeCoverage" ON)
+endif()
 
-
-
-target_link_libraries(${EXECUTABLE_NAME}_lib
+target_link_libraries(${EXECUTABLE_NAME}
         antlr4cpp
-        ${CRCCOSY_LIBRARY}
-        ${ENV_MODEL_LIBRARY}
-        Boost::filesystem
-        Boost::program_options
-        OpenMP::OpenMP_CXX
         )
 
-# create executable by linking against the library
-add_executable(${EXECUTABLE_NAME} src/main.cpp)
-target_link_libraries(${EXECUTABLE_NAME} ${EXECUTABLE_NAME}_lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../)
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/../)
+
+
+## create executable by linking against the library
+#add_executable(${EXECUTABLE_NAME} src/main.cpp)
+#target_link_libraries(${EXECUTABLE_NAME} ${EXECUTABLE_NAME}_lib)
 
 # add unit testing
 enable_testing()
