@@ -10,7 +10,7 @@ build-library:
   script:
     - mkdir build && cd build
     - cmake -DCMAKE_BUILD_TYPE=Release ..
-    - make rvmonitors_lib -j4
+    - make rvmonitors -j4
 
 #build-standalone:
 #  stage: build
