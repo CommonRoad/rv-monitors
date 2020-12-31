@@ -2,7 +2,7 @@ stages:
   - build
   - test
 
-image: $CI_REGISTRY/maierhofer/rv-monitors:v0.1
+image: $CI_REGISTRY/maierhofer/rv-monitors:v0.2
 
 
 build-library:
@@ -10,7 +10,7 @@ build-library:
   script:
     - mkdir build && cd build
     - cmake -DCMAKE_BUILD_TYPE=Release ..
-    - make rvmonitors -j4
+    - make rvmonitors_lib -j4
 
 #build-standalone:
 #  stage: build

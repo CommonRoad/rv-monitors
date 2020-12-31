@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(Monitors)
+project(RV-Monitors)
 
 #SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -Wno-ignored-attributes)
 set(CMAKE_CXX_STANDARD 17)
