@@ -6,7 +6,7 @@ if (ENABLE_ADDRESS_SANITIZER)
             -fno-omit-frame-pointer
             -fsanitize=address
             )
-    target_link_options(${EXECUTABLE_NAME}_lib
+    target_link_options(${EXECUTABLE_NAME}
             PUBLIC
             -fno-omit-frame-pointer
             -fsanitize=address

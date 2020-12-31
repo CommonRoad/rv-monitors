@@ -14,11 +14,6 @@ Tested with
 
 ### Dependencies
 
-#### External Dependencies:
-You need the following software:
-- [CommonRoad Environment Model](https://gitlab.lrz.de/maierhofer/environment-model) (Commit c989adda)
-- [CommonRoad Curvilinear Coordinate System](https://gitlab.lrz.de/cps/commonroad-curvilinear-coordinate-system) (Commit 0f21a760)
-
 #### Bundled Dependencies:
 - [ANTLR4](https://www.antlr.org/) is used for parsing formulas. For this, the following files from [here](https://www.antlr.org/download/index.html) are used:
     - `antlr4-cpp-runtime-4.8-source.zip`
