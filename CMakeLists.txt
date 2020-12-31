@@ -19,9 +19,9 @@ file(
 )
 
 # create library of this project
-add_library(${EXECUTABLE_NAME}_lib STATIC ${SRC_GEN})
+add_library(${EXECUTABLE_NAME} STATIC ${SRC_GEN})
 
-target_include_directories(${EXECUTABLE_NAME}_lib
+target_include_directories(${EXECUTABLE_NAME}
         PUBLIC
         src
         )
@@ -36,7 +36,7 @@ if (CODE_COVERAGE)
     option(CodeCoverage "CodeCoverage" ON)
 endif()
 
-target_link_libraries(${EXECUTABLE_NAME}_lib
+target_link_libraries(${EXECUTABLE_NAME}
         antlr4cpp
         )
 
