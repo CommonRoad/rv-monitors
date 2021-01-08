@@ -2,3 +2,98 @@
 
 \section{Rewriting}
 \label{sec:rewriting}
+    
+\paragraph{And}
+    
+\begin{align}
+\varphi \land true &= \varphi\\
+\varphi \land false &= false\\
+\varphi \land \varphi &= \varphi\\
+\neg \varphi \land \varphi &= false\\
+\varphi_1 \land (\varphi_1 \lor \varphi_2) &= \varphi_1     \\ 
+\varphi_1 \land (\varphi_2 \veebar \varphi_3) &= (\varphi_1 \land \varphi_2) \veebar (\varphi_1 \land \varphi_3)
+\end{align} 
+
+\paragraph{Or}
+
+\begin{align}
+\varphi \lor true &= true\\
+\varphi \lor false &= \varphi\\
+\varphi \lor \varphi &= \varphi\\
+\neg \varphi \lor \varphi &= true\\
+\varphi_1 \lor \varphi_2 &= (\varphi_1 \land \varphi_2) \veebar \varphi_1 \veebar \varphi_2\\   
+\varphi_1 \lor (\varphi_1 \land \varphi_2) &= \varphi_1
+\end{align} 
+
+\paragraph{Xor}
+\begin{align}
+\neg \varphi \veebar \varphi &= true\\
+\varphi \veebar \varphi &= false\\
+\varphi \veebar \varphi \veebar \varphi &= \varphi\\
+\varphi \veebar false &= \varphi          
+\end{align} 
+
+
+\paragraph{Implication}
+\begin{align}
+\varphi \implies \varphi &= true \\
+true \implies false &= false \\
+\varphi \implies true &= true \\
+false \implies \varphi &= true \\
+\varphi_1 \implies \varphi_2 &= true \veebar \varphi_1 \veebar (\varphi_1 \land \varphi_2)\  
+\end{align} 
+
+\paragraph{Equivalence}
+\begin{align}
+\varphi \iff \varphi &= true \\ 
+\varphi_1 \iff \varphi_2 &= true \veebar \varphi_1 \veebar \varphi_2         
+\end{align} 
+
+\paragraph{Negation}
+\begin{align}
+\neg true &= true false\\ 
+\neg false &= true \\ 
+\neg \varphi &= true \veebar \varphi 
+\end{align} 
+
+\paragraph{Future}
+\begin{align}
+\future(false) &= false\\ 
+\future(\globally(\future(\varphi))) &= \globally(\future(\varphi)) \\
+\future(\future(\varphi)) &= \future(\varphi) 
+\end{align} 
+
+\paragraph{Globally}
+\begin{align}
+\globally(false) &= false\\ 
+\globally(true) &= true\\
+\globally(\globally(\varphi)) &= \globally(\varphi) \\    
+\globally(\future(\globally(\varphi))) &= \future(\globally(\varphi)) 
+\end{align} 
+
+\paragraph{Strong Next}
+\begin{align}
+\strongNext(false) &= false
+\end{align} 
+
+\paragraph{Once}
+\begin{align}
+\once(false) &= false \\
+\once(\once(false)) &= false
+\end{align} 
+
+\paragraph{Release}
+\begin{align}
+\varphi \release true &= true \\
+\varphi \release false &= false \\ 
+\varphi_1 \release \varphi_2 \release \varphi_2 &= \varphi_1 \release \varphi_2 \\ 
+\varphi_1 \release \varphi_1 \release \varphi_2 &= \varphi_1 \release \varphi_2 
+\end{align} 
+
+\paragraph{Until}
+\begin{align}
+\varphi \until false &= false \\ 
+\varphi_1 \until \varphi_2 \release \varphi_2 &= \varphi_1 \until \varphi_2 \\ 
+\varphi_1 \until \varphi_1 \release \varphi_2 &= \varphi_1 \until \varphi_2 
+\end{align}
+

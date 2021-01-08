@@ -5,5 +5,33 @@
 \label{sec:syntax_semantics}
 
 \subsection{Syntax}
+\begin{align*}
+\phi ::= \, & \sigma_i \,|\, \neg \phi \,|\, \phi_1 \land \phi_2 \,|\, \phi_1 \lor \phi_2 \,|\, \phi_1 \veebar  \phi_2  \\
+\phi ::= \,	& \globally_\text{I}\phi \,|\, \future_\text{I}\phi \,|\, \strongNext_\text{I}\phi \,|\, \weakNext_\text{I}\phi  \,|\, \phi_1 \until_\text{I} \phi_2 \,|\, \phi_1 \release_\text{I} \phi_2 \\
+\phi ::= \,	& \historically_\text{I}\phi \,|\, \once_\text{I}\phi  \,|\,  \strongPrevious_\text{I}\phi \,|\,  \weakPrevious_\text{I}\phi \,|\, \phi_1 \since_\text{I} \phi_2 \,|\, \phi_1 \trigger_\text{I} \phi_2 \\
+\end{align*}
+
+\subsection{Precedence and Associativity}
+We define the operator precedences of an LTL formula as follows: Unary operators have precedence over binary connectives with \until and \release binding stronger than $\rightarrow$, $\lor$, and $\land$. \strongNext has a higher precedence than \globally and \future, which both bind equally strong. The connective $\neg$ has the highest precedence. Table \ref{prec} illustrates the precedence relations including the respective associativity. By left associative we mean that the operator is evaluated from left to right, e.g., $\varphi_1\land \varphi_2 \land \varphi_3 := (\varphi_1\land \varphi_2) \land \varphi_3$. Analogously, right-associative operators such as \until are evaluated from right to left: $\varphi_1$\until$\varphi_2$\until$\varphi_3 := \varphi_1$\until$(\varphi_2$\until$\varphi_3)$.
+
+
+\begin{table}[!tpb]\centering
+	\vspace*{2mm}
+	\caption{Precedence and associativity of the LTL operators.}
+	\center
+	\begin{tabular}{@{}lcc@{}} \toprule
+		\textbf{Associativity} & \textbf{Operator} & \textbf{Precedence}\\ \midrule
+		Right & $\rightarrow$  &Lowest\\
+		Left & $\lor$ & \\  
+		Left & $\land$ &  \\  
+		Right & \until, \release & $\downarrow$\\  
+		Right & \globally, \future & \\  
+		Right & \strongNext & \\
+		Right & $\neg$ & Highest\\  
+		\bottomrule
+	\end{tabular}
+	\label{tab:monitor_parameters}
+	\label{prec}
+\end{table} 
 
 \subsection{Semantic}
