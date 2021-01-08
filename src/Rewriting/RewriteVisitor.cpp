@@ -239,7 +239,7 @@ std::shared_ptr<Expression> RewriteVisitor::visitImplication(Implication &op, Ev
     if (op.getLeft()->isConstFalse()) {
         return std::make_shared<Constant>(true);
     }
-// a -> b = true ^ a ^ a & b
+    // a -> b = true ^ a ^ a & b
     And::SetType_T andSet{op.getLeft(), op.getRight()};
     auto andExpr = std::make_shared<And>(andSet);
     Xor::SetType_T xorSet{std::make_shared<Constant>(true), op.getLeft(), andExpr};
@@ -279,7 +279,7 @@ std::shared_ptr<Expression> RewriteVisitor::visitFuture(Future &op, Event &event
     if (op.getLeft()->isConstFalse()) {
         return std::make_shared<Constant>(false);
     }
-    // Idempotence
+    // Idempotence F(F(a)) = F(a)
     if (auto future = std::dynamic_pointer_cast<Future>(op.getLeft())) {
         return future;
     }

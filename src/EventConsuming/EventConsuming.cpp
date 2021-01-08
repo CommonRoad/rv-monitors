@@ -20,8 +20,8 @@ Formula EventConsuming::eventConsumingFuture(const Formula &formula, Trace &trac
     // Rewrite
     rw.rewrite(formulaCopy);
     auto &traceRef = trace.getTraceRef();
-    for (size_t i = 0; i < traceRef.size(); ++i) {
-        ec.consumeEvent(formulaCopy, traceRef[i]);
+    for (auto & i : traceRef) {
+        ec.consumeEvent(formulaCopy, i);
         rw.rewrite(formulaCopy);
         if (formulaCopy.to_string() == "false") {
 //            std::cout << "Formula violated in event " << i << std::endl;
