@@ -30,11 +30,27 @@
 \usepackage{amsmath} % assumes amsmath package installed
 \usepackage{amssymb}  % assumes amsmath package installed
 
-% Own packages
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Own packages %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%General packages
 \usepackage{xspace} % assumes new font selection scheme installed
 \usepackage{pgf}	%needed by Paul's latex code -> delete later if not needed
 \usepackage{import} % load files relative to the \import-ed directory
 \usepackage{hyperref} % referencing hyperreferences to url
 \usepackage{balance} % to balance columns on last page
-\usepackage{tabularx}	% to create nicer and easier tables
 \usepackage{threeparttable} 	%needed by Paul's latex code -> delete later if not needed
+
+%Table packages
+\usepackage{tabularx}	% to create nicer and easier tables
+\usepackage{booktabs} % for rulers in tables
+\usepackage{multirow}	% for multi row tables
+\newcommand{\arstretch}[1]{\renewcommand{\arraystretch}{#1}} % for nicer tables	
+
+%Caption
+\usepackage[font={footnotesize}]{caption}
+\makeatletter
+\let\MYcaption\@makecaption
+\makeatother
+\usepackage[font={footnotesize}]{subcaption}
+\makeatletter
+\let\@makecaption\MYcaption
+\makeatother
