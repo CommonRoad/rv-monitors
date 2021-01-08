@@ -55,6 +55,7 @@ class ExpressionVisitor {
 public:
 
     void visitExpression(Expression &expr, Event &event);
+
     /**
      * Visits an Atomic.
      * @param expr Atomic.

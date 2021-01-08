@@ -5,7 +5,7 @@
 #include <Trace/Trace.h>
 
 /**
- * Functions for monitoring a trace using the eventconsuming algorithm.
+ * Functions for monitoring a trace using the event consuming algorithm.
  */
 namespace EventConsuming {
     /**
