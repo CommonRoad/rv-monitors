@@ -1,0 +1,24 @@
+% !TeX root = ../rvmonitor.tex
+
+\section{Event Consuming}
+\label{sec:event_consuming}
+We define the event consuming operator $E$ as an unary operator. To explain the operator, assume again a trace of length $n$ with $\pi=(e_0, e_1, ..., e_{n-1})$, where $e_{n-1}$ is the terminal event, and $e_i$ some non-terminal event at position $i$ with $0 \leq i < n-1$. The notation $\varphi\{E, e_i\}$ means that the formula $\varphi$ is bound to the event consuming operator $E$, i.e., $\varphi$ is the child of $E$. 
+
+\begin{align}
+	\sigma\{E, e_i\} &= e_i \models \sigma\\
+	\sigma\{E, e_{(n-1)}\} &= e_{n-1} \models \sigma\\
+	\text{\globally}\varphi\{E, e_i\} &= \varphi\{E, e_i\} \land \text{\globally}\varphi\\
+	\text{\globally}\varphi\{E, e_{(n-1)}\} &= \varphi\{E, e_{(n-1)}\}\\
+	\text{\weakNext}\varphi\{E, e_i\} &= \varphi\\
+	\text{\weakNext} \varphi\{E, e_{(n-1)}\} &= true\\
+	\text{\strongNext}\varphi\{E, e_i\}  &= \varphi \\
+	\text{\strongNext}\varphi\{E, e_{(n-1)}\} &= false\\
+	\text{\future}\varphi\{E, e_i\} &= \varphi\{E, e_i\} \lor \text{\future}\varphi\\
+	\text{\future}\varphi\{E, e_{(n-1)}\} &= \varphi\{E, e_{(n-1)}\}\\
+	(\varphi_1 \text{\until} \varphi_2)\{E, e_i\} &=  \varphi_2\{E, e_i\} \lor (\varphi_1\{E, e_i\} \land (\varphi_1 \text{\until} \varphi_2))\\
+	(\varphi_1 \text{\until} \varphi_2)\{E, e_{(n-1)}\} &= \varphi_2\{E, e_i\} \\
+	\text{\strongPrevious}\varphi\{E, e_i\}  &= \varphi \\
+	\text{\strongPrevious}\varphi\{E, e_{(n-1)}\} &= true \text{~weak???}\\
+	\text{\once}\varphi\{E, e_i\} &= \varphi\{E, e_i\} \lor \text{\once}\varphi\\
+	\text{\once}\varphi\{E, e_{(n-1)}\} &= \varphi\{E, e_{(n-1)}\}
+\end{align}     
