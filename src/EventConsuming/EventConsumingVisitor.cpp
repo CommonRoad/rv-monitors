@@ -196,7 +196,6 @@ EventConsumingVisitor::visitEventOperator(EventOperator &op,
         }
         else {
             ret = std::make_shared<Constant>(false);
-            //ret = std::make_shared<EventOperator>(nextStrong->getLeft(), event);
         }
     }
         // Future
