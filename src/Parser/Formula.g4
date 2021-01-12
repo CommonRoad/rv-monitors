@@ -20,23 +20,33 @@ and_expr
  ;
 
 release_until_expr
-: <assoc=right> left=unary op=RELEASE right=unary   #Release
-| <assoc=right> left=unary op=UNTIL right=unary     #Until
-| unary                                             #UnaryExpr
+: <assoc=right> left=unary op=RELEASE interval? right=unary            #Release
+| <assoc=right> left=unary op=UNTIL interval? right=unary              #Until
+| unary                                                                #UnaryExpr
 ;
 
-
 unary
-: op=GLOBALLY right=atom        #Globally
-  | op=FUTURE right=atom        #Future
-  | op=ONCE right=atom          #Once
-  | op=PREVIOUSLY right=atom    #Previously
-  | op=NEXT_WEAK right=atom     #NextWeak
-  | op=NEXT_STRONG right=atom   #NextStrong
-  | op=NOT right=atom           #Not
-  | op=NOT right=expr           #NotExpr
-  | atom                        #AtomExpr
+: op=GLOBALLY right=atom                         #Globally
+  | op=FUTURE right=atom                         #Future
+  | op=ONCE right=atom                           #Once
+  | op=PREVIOUSLY right=atom                     #Previously
+  | op=NEXT_WEAK right=atom                      #NextWeak
+  | op=NEXT_STRONG right=atom                    #NextStrong
+  | op=GLOBALLY iv=interval right=atom           #GloballyInterval
+  | op=FUTURE iv=interval right=atom             #FutureInterval
+  | op=ONCE iv=interval right=atom               #OnceInterval
+  | op=PREVIOUSLY iv=interval right=atom         #PreviouslyInterval
+  | op=NEXT_WEAK iv=interval right=atom          #NextWeakInterval
+  | op=NEXT_STRONG iv=interval right=atom        #NextStrongInterval
+  | op=NOT right=atom                            #Not
+  | op=NOT right=expr                            #NotExpr
+  | atom                                         #AtomExpr
  ;
+
+interval
+: '[' l=number ',' u=number ']'     #FiniteInterval
+| '[' l=number ',' u='inf' ']'       #InfiniteInterval
+;
 
 atom
  : BOOL                         #Boolean
@@ -44,22 +54,28 @@ atom
  | '(' content=expr+ ')'        #Brackets
  ;
 
- BOOL		    : TRUE|FALSE;
- NOT            : ('!'|'not');
- GLOBALLY	    : 'G';
- FUTURE		    : 'F';
- NEXT_WEAK	    : 'W';
- NEXT_STRONG	: 'X';
- UNTIL		    : 'U';
- RELEASE		: 'R';
- ONCE           : 'O';
- PREVIOUSLY     : 'P';
- AND        	: ('&'|'and');
- OR         	: ('|'|'or');
- XOR            : ('^'|'xor');
- IMPL       	: '->';
- EQ             : '<->';
- TRUE       	: ('True'|'true');
- FALSE      	: ('False'|'false');
- ATOMIC		    : [a-z]+([_]?[a-z]+)*;
- WS             : [ \t\n]+ -> skip;       //Skip whitespaces
+number
+    : DIGIT                 #Digit
+    ;
+
+ BOOL		                : TRUE|FALSE;
+ NOT                        : ('!'|'not');
+ GLOBALLY	                : 'G';
+ FUTURE		                : 'F';
+ NEXT_WEAK	                : 'W';
+ NEXT_STRONG	            : 'X';
+ UNTIL		                : 'U';
+ RELEASE		            : 'R';
+ ONCE                       : 'O';
+ PREVIOUSLY                 : 'P';
+ AND        	            : ('&'|'and');
+ OR         	            : ('|'|'or');
+ XOR                        : ('^'|'xor');
+ IMPL       	            : '->';
+ EQ                         : '<->';
+ TRUE       	            : ('True'|'true');
+ FALSE      	            : ('False'|'false');
+ ATOMIC		                : [a-z]+([_]?[a-z]+)*;
+ WS                         : [ \t\n]+ -> skip;       //Skip whitespaces
+ DIGIT                      : [0-9] | [1-9]+;
+
