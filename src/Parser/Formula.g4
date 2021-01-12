@@ -20,8 +20,10 @@ and_expr
  ;
 
 release_until_expr
-: <assoc=right> left=unary op=RELEASE interval? right=unary            #Release
-| <assoc=right> left=unary op=UNTIL interval? right=unary              #Until
+: <assoc=right> left=unary op=RELEASE right=unary                      #Release
+| <assoc=right> left=unary op=UNTIL right=unary                        #Until
+| <assoc=right> left=unary op=RELEASE iv=interval right=unary             #ReleaseInterval
+| <assoc=right> left=unary op=UNTIL iv=interval right=unary               #UntilInterval
 | unary                                                                #UnaryExpr
 ;
 
@@ -44,7 +46,7 @@ unary
  ;
 
 interval
-: '[' l=number ',' u=number ']'     #FiniteInterval
+: '[' l=number ',' u=number ']'      #FiniteInterval
 | '[' l=number ',' u='inf' ']'       #InfiniteInterval
 ;
 
@@ -55,8 +57,8 @@ atom
  ;
 
 number
-    : DIGIT                 #Digit
-    ;
+ : DIGIT                 #Digit
+ ;
 
  BOOL		                : TRUE|FALSE;
  NOT                        : ('!'|'not');

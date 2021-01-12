@@ -37,6 +37,10 @@ public:
 
     virtual antlrcpp::Any visitUntil(FormulaParser::UntilContext *context) = 0;
 
+    virtual antlrcpp::Any visitReleaseInterval(FormulaParser::ReleaseIntervalContext *context) = 0;
+
+    virtual antlrcpp::Any visitUntilInterval(FormulaParser::UntilIntervalContext *context) = 0;
+
     virtual antlrcpp::Any visitUnaryExpr(FormulaParser::UnaryExprContext *context) = 0;
 
     virtual antlrcpp::Any visitGlobally(FormulaParser::GloballyContext *context) = 0;
