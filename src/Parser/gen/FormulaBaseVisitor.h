@@ -51,6 +51,14 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitReleaseInterval(FormulaParser::ReleaseIntervalContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitUntilInterval(FormulaParser::UntilIntervalContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitUnaryExpr(FormulaParser::UnaryExprContext *ctx) override {
     return visitChildren(ctx);
   }

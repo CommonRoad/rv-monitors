@@ -225,6 +225,30 @@ public:
     }
 
     /**
+     * Recursively visits the children and builds an interval-based Release with them.
+     * @param ctx Context.
+     * @return Release.
+     */
+    antlrcpp::Any visitReleaseInterval(FormulaParser::ReleaseIntervalContext *ctx) override {
+        auto left = getType(visit(ctx->left));
+        auto right = getType(visit(ctx->right));
+        auto iv = visit(ctx->iv).as<std::shared_ptr<Interval>>();
+        return std::make_shared<Release>(left, right, iv);
+    }
+
+    /**
+     * Recursively visits the children and builds an interval-based Until with them.
+     * @param ctx Context.
+     * @return Until.
+     */
+    antlrcpp::Any visitUntilInterval(FormulaParser::UntilIntervalContext *ctx) override {
+        auto left = getType(visit(ctx->left));
+        auto right = getType(visit(ctx->right));
+        auto iv = visit(ctx->iv).as<std::shared_ptr<Interval>>();
+        return std::make_shared<Until>(left, right, iv);
+    }
+
+    /**
      * Visits a unary expression.
      * @param ctx Context
      * @return Result of visiting unary.
@@ -300,8 +324,8 @@ public:
  */
     antlrcpp::Any visitGloballyInterval(FormulaParser::GloballyIntervalContext *ctx) override {
         auto right = getType(visit(ctx->right));
-        auto iv = visit(ctx->iv);
-        return std::make_shared<Globally>(right);
+        auto iv = visit(ctx->iv).as<std::shared_ptr<Interval>>();
+        return std::make_shared<Globally>(right, iv);
     }
 
     /**
@@ -311,8 +335,8 @@ public:
      */
     antlrcpp::Any visitFutureInterval(FormulaParser::FutureIntervalContext *ctx) override {
         auto right = getType(visit(ctx->right));
-        auto iv = visit(ctx->iv);
-        return std::make_shared<Future>(right, iv.as<std::shared_ptr<Interval>>());
+        auto iv = visit(ctx->iv).as<std::shared_ptr<Interval>>();
+        return std::make_shared<Future>(right, iv);
     }
 
     /**
@@ -322,8 +346,8 @@ public:
      */
     antlrcpp::Any visitOnceInterval(FormulaParser::OnceIntervalContext *ctx) override {
         auto right = getType(visit(ctx->right));
-        auto iv = visit(ctx->iv);
-        return std::make_shared<Once>(right);
+        auto iv = visit(ctx->iv).as<std::shared_ptr<Interval>>();
+        return std::make_shared<Once>(right, iv);
     }
 
     /**
@@ -333,7 +357,7 @@ public:
      */
     antlrcpp::Any visitPreviouslyInterval(FormulaParser::PreviouslyIntervalContext *ctx) override {
         auto right = getType(visit(ctx->right));
-        auto iv = visit(ctx->iv);
+        auto iv = visit(ctx->iv).as<std::shared_ptr<Interval>>();
         return std::make_shared<Previously>(right);
     }
 
@@ -344,7 +368,7 @@ public:
      */
     antlrcpp::Any visitNextWeakInterval(FormulaParser::NextWeakIntervalContext *ctx) override {
         auto right = getType(visit(ctx->right));
-        auto iv = visit(ctx->iv);
+        auto iv = visit(ctx->iv).as<std::shared_ptr<Interval>>();
         return std::make_shared<NextWeak>(right);
     }
 
@@ -355,7 +379,7 @@ public:
      */
     antlrcpp::Any visitNextStrongInterval(FormulaParser::NextStrongIntervalContext *ctx) override {
         auto right = getType(visit(ctx->right));
-        auto iv = visit(ctx->iv);
+        auto iv = visit(ctx->iv).as<std::shared_ptr<Interval>>();
         return std::make_shared<NextStrong>(right);
     }
 

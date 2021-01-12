@@ -201,6 +201,36 @@ public:
    
   };
 
+  class  ReleaseIntervalContext : public Release_until_exprContext {
+  public:
+    ReleaseIntervalContext(Release_until_exprContext *ctx);
+
+    FormulaParser::UnaryContext *left = nullptr;
+    antlr4::Token *op = nullptr;
+    FormulaParser::IntervalContext *iv = nullptr;
+    FormulaParser::UnaryContext *right = nullptr;
+    std::vector<UnaryContext *> unary();
+    UnaryContext* unary(size_t i);
+    antlr4::tree::TerminalNode *RELEASE();
+    IntervalContext *interval();
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  UntilIntervalContext : public Release_until_exprContext {
+  public:
+    UntilIntervalContext(Release_until_exprContext *ctx);
+
+    FormulaParser::UnaryContext *left = nullptr;
+    antlr4::Token *op = nullptr;
+    FormulaParser::IntervalContext *iv = nullptr;
+    FormulaParser::UnaryContext *right = nullptr;
+    std::vector<UnaryContext *> unary();
+    UnaryContext* unary(size_t i);
+    antlr4::tree::TerminalNode *UNTIL();
+    IntervalContext *interval();
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
   class  UnaryExprContext : public Release_until_exprContext {
   public:
     UnaryExprContext(Release_until_exprContext *ctx);
@@ -219,7 +249,6 @@ public:
     std::vector<UnaryContext *> unary();
     UnaryContext* unary(size_t i);
     antlr4::tree::TerminalNode *RELEASE();
-    IntervalContext *interval();
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
@@ -233,7 +262,6 @@ public:
     std::vector<UnaryContext *> unary();
     UnaryContext* unary(size_t i);
     antlr4::tree::TerminalNode *UNTIL();
-    IntervalContext *interval();
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
