@@ -3,6 +3,7 @@
 #include "Parser/gen/FormulaBaseVisitor.h"
 #include "ExpressionTree/Atomic/Atomic.h"
 #include "ExpressionTree/Atomic/Constant.h"
+#include "ExpressionTree/Atomic/Interval.h"
 #include "ExpressionTree/Unary/Bool/Not.h"
 #include "ExpressionTree/Nary/Bool/And.h"
 #include "ExpressionTree/Nary/Bool/Or.h"
@@ -93,6 +94,7 @@ public:
         if (expr.is<std::shared_ptr<Once>>()) {
             return expr.as<std::shared_ptr<Once>>();
         }
+
         throw std::runtime_error("Visitor::getType() No type found. Check your formula string.");
 
     }
@@ -292,6 +294,72 @@ public:
     }
 
     /**
+ * Recursively visits the child and builds an interval-based Globally with it.
+ * @param ctx Context.
+ * @return Globally.
+ */
+    antlrcpp::Any visitGloballyInterval(FormulaParser::GloballyIntervalContext *ctx) override {
+        auto right = getType(visit(ctx->right));
+        auto iv = visit(ctx->iv);
+        return std::make_shared<Globally>(right);
+    }
+
+    /**
+     * Recursively visits the child and builds an interval-based Future with it.
+     * @param ctx Context.
+     * @return Future.
+     */
+    antlrcpp::Any visitFutureInterval(FormulaParser::FutureIntervalContext *ctx) override {
+        auto right = getType(visit(ctx->right));
+        auto iv = visit(ctx->iv);
+        return std::make_shared<Future>(right, iv.as<std::shared_ptr<Interval>>());
+    }
+
+    /**
+     * Recursively visits the child and builds an interval-based Once with it.
+     * @param ctx Context.
+     * @return Once.
+     */
+    antlrcpp::Any visitOnceInterval(FormulaParser::OnceIntervalContext *ctx) override {
+        auto right = getType(visit(ctx->right));
+        auto iv = visit(ctx->iv);
+        return std::make_shared<Once>(right);
+    }
+
+    /**
+     * Recursively visits the child and builds an interval-based Previously with it.
+     * @param ctx Context.
+     * @return Previously.
+     */
+    antlrcpp::Any visitPreviouslyInterval(FormulaParser::PreviouslyIntervalContext *ctx) override {
+        auto right = getType(visit(ctx->right));
+        auto iv = visit(ctx->iv);
+        return std::make_shared<Previously>(right);
+    }
+
+    /**
+     * Recursively visits the child and builds an interval-based NextWeak with it.
+     * @param ctx Context.
+     * @return NextWeak.
+     */
+    antlrcpp::Any visitNextWeakInterval(FormulaParser::NextWeakIntervalContext *ctx) override {
+        auto right = getType(visit(ctx->right));
+        auto iv = visit(ctx->iv);
+        return std::make_shared<NextWeak>(right);
+    }
+
+    /**
+     * Recursively visits the child and builds an interval-based NextStrong with it.
+     * @param ctx Context.
+     * @return NextStrong.
+     */
+    antlrcpp::Any visitNextStrongInterval(FormulaParser::NextStrongIntervalContext *ctx) override {
+        auto right = getType(visit(ctx->right));
+        auto iv = visit(ctx->iv);
+        return std::make_shared<NextStrong>(right);
+    }
+
+    /**
      * Recursively visits the child and builds a Not with it.
      * @param ctx Context.
      * @return Not.
@@ -346,5 +414,24 @@ public:
      */
     antlrcpp::Any visitAtomic(FormulaParser::AtomicContext *ctx) override {
         return std::make_shared<Atomic>(Atomic(ctx->getText()));
+    }
+
+    /**
+     * Builds an Atomic from a string.
+     * @param ctx Context.
+     * @return Atomic.
+     */
+    antlrcpp::Any visitFiniteInterval(FormulaParser::FiniteIntervalContext *ctx) override {
+        return std::make_shared<Interval>(Interval(visit(ctx->l), visit(ctx->u)));
+    }
+
+    /**
+     * Builds an Atomic from a string.
+     * @param ctx Context.
+     * @return Atomic.
+     */
+    antlrcpp::Any visitDigit(FormulaParser::DigitContext *ctx) override {
+        std::cout << ctx->getText();
+        return std::stoi(ctx->getText());
     }
 };

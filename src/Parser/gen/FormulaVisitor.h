@@ -1,5 +1,5 @@
 
-// Generated from /home/fine/CLionProjects/Monitors/src/Parser/Formula.g4 by ANTLR 4.8
+// Generated from Formula.g4 by ANTLR 4.7.2
 
 #pragma once
 
@@ -8,16 +8,17 @@
 #include "FormulaParser.h"
 
 
+
 /**
  * This class defines an abstract visitor for a parse tree
  * produced by FormulaParser.
  */
-class FormulaVisitor : public antlr4::tree::AbstractParseTreeVisitor {
+class  FormulaVisitor : public antlr4::tree::AbstractParseTreeVisitor {
 public:
 
-    /**
-     * Visit parse trees produced by FormulaParser.
-     */
+  /**
+   * Visit parse trees produced by FormulaParser.
+   */
     virtual antlrcpp::Any visitFormula(FormulaParser::FormulaContext *context) = 0;
 
     virtual antlrcpp::Any visitEquivalence(FormulaParser::EquivalenceContext *context) = 0;
@@ -50,17 +51,35 @@ public:
 
     virtual antlrcpp::Any visitNextStrong(FormulaParser::NextStrongContext *context) = 0;
 
+    virtual antlrcpp::Any visitGloballyInterval(FormulaParser::GloballyIntervalContext *context) = 0;
+
+    virtual antlrcpp::Any visitFutureInterval(FormulaParser::FutureIntervalContext *context) = 0;
+
+    virtual antlrcpp::Any visitOnceInterval(FormulaParser::OnceIntervalContext *context) = 0;
+
+    virtual antlrcpp::Any visitPreviouslyInterval(FormulaParser::PreviouslyIntervalContext *context) = 0;
+
+    virtual antlrcpp::Any visitNextWeakInterval(FormulaParser::NextWeakIntervalContext *context) = 0;
+
+    virtual antlrcpp::Any visitNextStrongInterval(FormulaParser::NextStrongIntervalContext *context) = 0;
+
     virtual antlrcpp::Any visitNot(FormulaParser::NotContext *context) = 0;
 
     virtual antlrcpp::Any visitNotExpr(FormulaParser::NotExprContext *context) = 0;
 
     virtual antlrcpp::Any visitAtomExpr(FormulaParser::AtomExprContext *context) = 0;
 
+    virtual antlrcpp::Any visitFiniteInterval(FormulaParser::FiniteIntervalContext *context) = 0;
+
+    virtual antlrcpp::Any visitInfiniteInterval(FormulaParser::InfiniteIntervalContext *context) = 0;
+
     virtual antlrcpp::Any visitBoolean(FormulaParser::BooleanContext *context) = 0;
 
     virtual antlrcpp::Any visitAtomic(FormulaParser::AtomicContext *context) = 0;
 
     virtual antlrcpp::Any visitBrackets(FormulaParser::BracketsContext *context) = 0;
+
+    virtual antlrcpp::Any visitDigit(FormulaParser::DigitContext *context) = 0;
 
 
 };
