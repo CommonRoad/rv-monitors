@@ -43,6 +43,8 @@ public:
 
     [[nodiscard]] std::shared_ptr<Expression> visitUntil(Until &op, Event &event) override;
 
+    [[nodiscard]] std::shared_ptr<Expression> visitSince(Since &op, Event &event) override;
+
     [[nodiscard]] std::shared_ptr<Expression> visitEventOperator(EventOperator &op, Event &event) override;
 
 };

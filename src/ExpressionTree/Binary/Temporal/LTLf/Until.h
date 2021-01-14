@@ -2,14 +2,12 @@
 
 
 #include <ExpressionTree/Binary/Binary.h>
-#include "ExpressionTree/Interval.h"
+#include "ExpressionTree/TemporalOperator.h"
 
 /**
  * Class representing an Until.
  */
-class Until : public Binary {
-private:
-    std::shared_ptr<Interval> interval;
+class Until : public Binary, public TemporalOperator {
 public:
     /**
      * Constructor.
@@ -17,12 +15,12 @@ public:
      * @param right Right expression of the until.
      */
     Until(const std::shared_ptr<Expression> &left, const std::shared_ptr<Expression> &right) :
-    Binary(untilSymbol, left, right), interval(std::make_shared<Interval>()) {}
+    Binary(untilSymbol, left, right), TemporalOperator(std::make_shared<Interval>()) {}
 
     explicit Until(const std::shared_ptr<Expression> &left, const std::shared_ptr<Expression> &right,
-                     std::shared_ptr<Interval> interval) :
+                     const std::shared_ptr<Interval>& interval) :
             Binary(untilSymbol + interval->to_string(), left, right),
-            interval(std::move(interval)) {}
+            TemporalOperator(interval) {}
 
     [[nodiscard]] std::shared_ptr<Expression> clone() override;
 

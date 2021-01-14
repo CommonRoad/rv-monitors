@@ -40,6 +40,8 @@ class Release;
 
 class Until;
 
+class Since;
+
 class Event;
 
 class EventOperator;
@@ -183,6 +185,14 @@ public:
      * @return Transformed Until as a shared_ptr.
      */
     virtual std::shared_ptr<Expression> visitUntil(Until &expr, Event &event) = 0;
+
+    /**
+     * Visits a Since.
+     * @param expr Since.
+     * @param event Event.
+     * @return Transformed Until as a shared_ptr.
+     */
+    virtual std::shared_ptr<Expression> visitSince(Since &expr, Event &event) = 0;
 
     /**
      * Visits an EventOperator.

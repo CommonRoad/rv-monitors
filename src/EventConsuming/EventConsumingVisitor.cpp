@@ -1,4 +1,3 @@
-#include <iostream>
 #include "EventConsumingVisitor.h"
 #include "ExpressionTree/Atomic/Atomic.h"
 #include "ExpressionTree/Atomic/Constant.h"
@@ -17,6 +16,7 @@
 #include "ExpressionTree/Unary/Temporal/PLTLf/Previously.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Release.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Until.h"
+#include "ExpressionTree/Binary/Temporal/PTLf/Since.h"
 #include "Trace/Event.h"
 
 void EventConsumingVisitor::consumeEvent(Formula &formula, Event &event) {
@@ -123,6 +123,12 @@ std::shared_ptr<Expression>
 EventConsumingVisitor::visitUntil(Until &op, Event &event) {
     visitExpression(op, event);
     return std::make_shared<Until>(op.getLeft(), op.getRight());
+}
+
+std::shared_ptr<Expression>
+EventConsumingVisitor::visitSince(Since &op, Event &event) {
+    visitExpression(op, event);
+    return std::make_shared<Since>(op.getLeft(), op.getRight());
 }
 
 std::shared_ptr<Expression>

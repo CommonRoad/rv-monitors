@@ -2,24 +2,22 @@
 
 
 #include "ExpressionTree/Unary/Unary.h"
-#include "ExpressionTree/Interval.h"
+#include "ExpressionTree/TemporalOperator.h"
 
 /**
  * Class representing the strong next.
  */
-class NextStrong : public Unary {
-private:
-    std::shared_ptr<Interval> interval;
+class NextStrong : public Unary, public TemporalOperator {
 public:
     /**
      * Constructor.
      * @param left Expression.
      */
     explicit NextStrong(const std::shared_ptr<Expression> &left) : Unary(
-            nextStrongSymbol, left), interval(std::make_shared<Interval>()) {}
+            nextStrongSymbol, left), TemporalOperator(std::make_shared<Interval>()) {}
 
-    explicit NextStrong(const std::shared_ptr<Expression> &left, std::shared_ptr<Interval> interval) : Unary(
-            nextStrongSymbol + interval->to_string(), left), interval(std::move(interval)) {}
+    explicit NextStrong(const std::shared_ptr<Expression> &left, const std::shared_ptr<Interval>& interval) : Unary(
+            nextStrongSymbol + interval->to_string(), left), TemporalOperator(interval) {}
 
     [[nodiscard]] std::shared_ptr<Expression> clone() override {
         return std::make_shared<NextStrong>(*this);

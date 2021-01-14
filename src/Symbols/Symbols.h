@@ -14,6 +14,7 @@ static constexpr char untilSymbol[] = "U";
 static constexpr char releaseSymbol[] = "R";
 static constexpr char previousSymbol[] = "P";
 static constexpr char onceSymbol[] = "O";
+static constexpr char sinceSymbol[] = "S";
 
 
 

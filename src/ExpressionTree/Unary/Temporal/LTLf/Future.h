@@ -9,8 +9,6 @@
  * Class representing the future operator.
  */
 class Future : public Unary, public TemporalOperator{
-private:
-    std::shared_ptr<Interval> interval;
 public:
     /**
      * Constructor.
