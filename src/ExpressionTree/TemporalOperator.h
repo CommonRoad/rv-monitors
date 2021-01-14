@@ -6,6 +6,7 @@
 #define RV_MONITORS_TEMPORALOPERATOR_H
 
 #include <utility>
+#include "memory"
 
 #include "ExpressionTree/Atomic/Interval.h"
 
