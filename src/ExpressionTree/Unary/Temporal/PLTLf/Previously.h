@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ExpressionTree/Unary/Unary.h"
-#include "ExpressionTree/Atomic/Interval.h"
+#include "ExpressionTree/Interval.h"
 
 /**
  * Class representing the previously operator.

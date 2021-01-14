@@ -8,7 +8,7 @@
 #include <utility>
 #include "memory"
 
-#include "ExpressionTree/Atomic/Interval.h"
+#include "Interval.h"
 
 class TemporalOperator {
 private:

@@ -2,7 +2,7 @@
 
 
 #include "ExpressionTree/Binary/Binary.h"
-#include "ExpressionTree/Atomic/Interval.h"
+#include "ExpressionTree/Interval.h"
 
 /**
  * Class representing a Release.
