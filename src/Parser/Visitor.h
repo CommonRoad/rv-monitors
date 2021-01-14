@@ -3,7 +3,7 @@
 #include "Parser/gen/FormulaBaseVisitor.h"
 #include "ExpressionTree/Atomic/Atomic.h"
 #include "ExpressionTree/Atomic/Constant.h"
-#include "ExpressionTree/Atomic/Interval.h"
+#include "ExpressionTree/Interval.h"
 #include "ExpressionTree/Unary/Bool/Not.h"
 #include "ExpressionTree/Nary/Bool/And.h"
 #include "ExpressionTree/Nary/Bool/Or.h"
