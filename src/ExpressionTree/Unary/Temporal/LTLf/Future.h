@@ -3,12 +3,12 @@
 #include <utility>
 
 #include "ExpressionTree/Unary/Unary.h"
-#include "ExpressionTree/Atomic/Interval.h"
+#include "ExpressionTree/TemporalOperator.h"
 
 /**
  * Class representing the future operator.
  */
-class Future : public Unary {
+class Future : public Unary, public TemporalOperator{
 private:
     std::shared_ptr<Interval> interval;
 public:
@@ -17,10 +17,10 @@ public:
      * @param left Expression.
      */
     explicit Future(const std::shared_ptr<Expression> &left) : Unary(
-            futureSymbol, left), interval(std::make_shared<Interval>()) {}
+            futureSymbol, left), TemporalOperator(std::make_shared<Interval>()) {}
 
-    explicit Future(const std::shared_ptr<Expression> &left, std::shared_ptr<Interval> interval) : Unary(
-            futureSymbol + interval->to_string(), left), interval(std::move(interval)) {}
+    explicit Future(const std::shared_ptr<Expression> &left, const std::shared_ptr<Interval>& interval) : Unary(
+            futureSymbol + interval->to_string(), left), TemporalOperator(std::make_shared<Interval>()) {}
 
     [[nodiscard]] std::shared_ptr<Expression> clone() override {
         return std::make_shared<Future>(*this);

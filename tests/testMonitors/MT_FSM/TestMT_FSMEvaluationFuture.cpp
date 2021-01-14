@@ -74,6 +74,29 @@ TEST(TestMT_FSMFuture, satisfied2) {
     EXPECT_TRUE(MT_FSMEvaluation::evaluateMT_FSM(mtFSM, trace, false));
 }
 
+TEST(TestMT_FSMFuture, satisfied3) {
+    Trace trace = Utils::createTrace({"a", "b", "c", "d", "e"}, {
+            {"a"},
+            {"b"},
+            {"a"},
+            {"b"},
+            {"a"},
+            {"c"},
+            {"a"},
+            {"a"},
+            {"b"},
+            {"e"},
+            {"d"},
+            {"e"},
+            {"c"},
+            {"b"},
+            {"c"}});
+    Formula formula = Parser::parse("G((a & b & c & F(d)) -> (!(!(e) & F(e))))");
+    auto mtFSM = MT_FSMCreation::formulaToMT_FSM(formula, false);
+
+    EXPECT_TRUE(MT_FSMEvaluation::evaluateMT_FSM(mtFSM, trace, false));
+}
+
 TEST(TestMT_FSMFuture, violated2) {
     Trace trace = Utils::createTrace({"a", "b", "c", "g", "f", "h"}, {
             {"a"},

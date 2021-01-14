@@ -455,7 +455,6 @@ public:
      * @return Atomic.
      */
     antlrcpp::Any visitDigit(FormulaParser::DigitContext *ctx) override {
-        std::cout << ctx->getText();
         return std::stoi(ctx->getText());
     }
 };
