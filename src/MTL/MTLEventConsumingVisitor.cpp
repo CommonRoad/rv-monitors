@@ -19,84 +19,84 @@
 #include "ExpressionTree/Binary/Temporal/PTLf/Since.h"
 #include "Trace/Event.h"
 
-void EventConsumingVisitor::consumeEvent(Formula &formula, Event &event) {
+void MTLEventConsumingVisitor::consumeEvent(Formula &formula, Event &event) {
     std::shared_ptr<EventOperator> eventOperator =
             std::make_shared<EventOperator>(formula.getExpr(), event);
     formula.setExpr(eventOperator->accept(*this, event));
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitAtomic(Atomic &op, Event &event) {
+MTLEventConsumingVisitor::visitAtomic(Atomic &op, Event &event) {
     return std::make_shared<Atomic>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitConstant(Constant &op, Event &event) {
+MTLEventConsumingVisitor::visitConstant(Constant &op, Event &event) {
     return std::make_shared<Constant>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitAnd(And &op, Event &event) {
+MTLEventConsumingVisitor::visitAnd(And &op, Event &event) {
     visitExpression(op, event);
     return std::make_shared<And>(op);
 }
 
-std::shared_ptr<Expression> EventConsumingVisitor::visitOr(Or &op, Event &event) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitOr(Or &op, Event &event) {
     visitExpression(op, event);
     return std::make_shared<Or>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitXor(Xor &op, Event &event) {
+MTLEventConsumingVisitor::visitXor(Xor &op, Event &event) {
     visitExpression(op, event);
     return std::make_shared<Xor>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitImplication(Implication &op, Event &event) {
+MTLEventConsumingVisitor::visitImplication(Implication &op, Event &event) {
     visitExpression(op, event);
     return std::make_shared<Implication>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitEquivalence(Equivalence &op, Event &event) {
+MTLEventConsumingVisitor::visitEquivalence(Equivalence &op, Event &event) {
     visitExpression(op, event);
     return std::make_shared<Equivalence>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitNot(Not &op, Event &event) {
+MTLEventConsumingVisitor::visitNot(Not &op, Event &event) {
     visitExpression(op, event);
     return std::make_shared<Not>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitFuture(Future &op, Event &event) {
+MTLEventConsumingVisitor::visitFuture(Future &op, Event &event) {
     visitExpression(op, event);
     return std::make_shared<Future>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitGlobally(Globally &op, Event &event) {
+MTLEventConsumingVisitor::visitGlobally(Globally &op, Event &event) {
     visitExpression(op, event);
     visitExpression(op, event);
     return std::make_shared<Globally>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitNextStrong(NextStrong &op, Event &event) {
+MTLEventConsumingVisitor::visitNextStrong(NextStrong &op, Event &event) {
     visitExpression(op, event);
     return std::make_shared<NextStrong>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitNextWeak(NextWeak &op, Event &event) {
+MTLEventConsumingVisitor::visitNextWeak(NextWeak &op, Event &event) {
     visitExpression(op, event);
     return std::make_shared<NextWeak>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitOnce(Once &op, Event &event) {
+MTLEventConsumingVisitor::visitOnce(Once &op, Event &event) {
     visitExpression(op, event);
     auto ret = std::make_shared<Once>(op);
     visitExpression(op, event);
@@ -104,7 +104,7 @@ EventConsumingVisitor::visitOnce(Once &op, Event &event) {
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitPreviously(Previously &op, Event &event) {
+MTLEventConsumingVisitor::visitPreviously(Previously &op, Event &event) {
     visitExpression(op, event);
     auto ret = std::make_shared<Previously>(op);
     visitExpression(op, event);
@@ -112,7 +112,7 @@ EventConsumingVisitor::visitPreviously(Previously &op, Event &event) {
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitRelease(Release &op, Event &event) {
+MTLEventConsumingVisitor::visitRelease(Release &op, Event &event) {
     visitExpression(op, event);
     auto ret = std::make_shared<Release>(op);
     visitExpression(op, event);
@@ -120,19 +120,19 @@ EventConsumingVisitor::visitRelease(Release &op, Event &event) {
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitUntil(Until &op, Event &event) {
+MTLEventConsumingVisitor::visitUntil(Until &op, Event &event) {
     visitExpression(op, event);
     return std::make_shared<Until>(op.getLeft(), op.getRight());
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitSince(Since &op, Event &event) {
+MTLEventConsumingVisitor::visitSince(Since &op, Event &event) {
     visitExpression(op, event);
     return std::make_shared<Since>(op.getLeft(), op.getRight());
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitEventOperator(EventOperator &op,
+MTLEventConsumingVisitor::visitEventOperator(EventOperator &op,
                                           Event &event) {
 
     std::shared_ptr<Expression> ret;

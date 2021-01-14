@@ -5,9 +5,9 @@
 #include "Formula/Formula.h"
 
 /**
- * Visitor applying the eventconsuming rules to a formula and propagating the EventOperator down the expression tree.
+ * Visitor applying the event consuming rules to a formula and propagating the EventOperator down the expression tree.
  */
-class EventConsumingVisitor : public ExpressionVisitor {
+class MTLEventConsumingVisitor : public ExpressionVisitor {
 
 public:
     /**
