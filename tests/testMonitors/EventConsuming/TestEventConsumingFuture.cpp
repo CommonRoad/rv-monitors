@@ -165,3 +165,16 @@ TEST(TestECFuture, atomic) {
 
     EXPECT_EQ(EventConsuming::eventConsumingFuture(formula, trace).to_string(), "false");
 }
+
+TEST(TestECFuture, mtl) {
+    Trace trace = Utils::createTrace({"a", "b"}, {
+            {"a"},
+            {"b"},
+            {"a"},
+            {"a"},
+            {"b"},
+            {"a"}});
+    Formula formula = Parser::parse("G[0,3](a)");
+
+    EXPECT_EQ(EventConsuming::eventConsumingFuture(formula, trace).to_string(), "false");
+}

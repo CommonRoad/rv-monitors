@@ -166,3 +166,16 @@ TEST(TestBTT_FSMEvaluation, satisfied) {
     EXPECT_TRUE(BTT_FSMEvaluation::evaluateBTT_FSM(btt, trace, false));
 }
 
+
+TEST(TestBTT_FSMEvaluation, mtl) {
+    Trace trace = Utils::createTrace({"a", "b"}, {
+            {"a"},
+            {"a"},
+            {"a"},
+            {"a"},
+            {"a"},
+            {"b"}});
+    Formula formula = Parser::parse("G[0, 3](a)");
+    auto btt = BTT_FSMCreation::formulaToBTT_FSM(formula, false);
+    EXPECT_FALSE(BTT_FSMEvaluation::evaluateBTT_FSM(btt, trace, false));
+}

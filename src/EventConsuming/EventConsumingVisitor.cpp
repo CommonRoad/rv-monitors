@@ -170,11 +170,16 @@ EventConsumingVisitor::visitEventOperator(EventOperator &op,
         // Globally
     else if (auto globally = std::dynamic_pointer_cast<Globally>(op.getLeft())) {
         if (!event.isTerminal()) {
-            And::SetType_T newSet;
-            auto eventOperatorExpr = std::make_shared<EventOperator>(globally->getLeft(), event);
-            newSet.emplace(eventOperatorExpr);
-            newSet.emplace(globally);
-            ret = std::make_shared<And>(newSet);
+            if(globally->reduceInterval()) {
+                And::SetType_T newSet;
+                auto eventOperatorExpr = std::make_shared<EventOperator>(globally->getLeft(), event);
+                newSet.emplace(eventOperatorExpr);
+                newSet.emplace(globally);
+                ret = std::make_shared<And>(newSet);
+            }
+            else{
+                ret = globally->getLeft();
+            }
         }
         else {
             ret = std::make_shared<EventOperator>(globally->getLeft(), event);
@@ -201,11 +206,16 @@ EventConsumingVisitor::visitEventOperator(EventOperator &op,
         // Future
     else if (auto future = std::dynamic_pointer_cast<Future>(op.getLeft())) {
         if (!event.isTerminal()) {
-            Or::SetType_T newSet;
-            auto eventOperatorExpr = std::make_shared<EventOperator>(future->getLeft(), event);
-            newSet.emplace(eventOperatorExpr);
-            newSet.emplace(future);
-            ret = std::make_shared<Or>(newSet);
+            if(future->reduceInterval()) {
+                Or::SetType_T newSet;
+                auto eventOperatorExpr = std::make_shared<EventOperator>(future->getLeft(), event);
+                newSet.emplace(eventOperatorExpr);
+                newSet.emplace(future);
+                ret = std::make_shared<Or>(newSet);
+            }
+            else{
+                ret = future->getLeft();
+            }
         }
         else {
             ret = std::make_shared<EventOperator>(future->getLeft(), event);

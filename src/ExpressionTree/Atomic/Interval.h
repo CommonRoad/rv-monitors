@@ -11,6 +11,14 @@ class Interval {
 public:
     explicit Interval(int start=0, int end=10000, bool finite=false); // TODO introduce infinity
     [[nodiscard]] std::string to_string() const;
+    bool reduceInterval(){
+        if (end > 0)
+            end--;
+        if (end == 0)
+            return false;
+        else
+            return true;
+    }
 private:
     int start;
     int end;
