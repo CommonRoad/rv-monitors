@@ -9,3 +9,4 @@ Interval::Interval(int start, int end, bool finite) : start(start), end(end), fi
 std::string Interval::to_string() const {
     return "[" + std::to_string(this->start) + ", " + std::to_string(this->end) + "]";
 }
+

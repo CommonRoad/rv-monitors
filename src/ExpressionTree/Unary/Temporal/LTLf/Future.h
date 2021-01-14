@@ -20,7 +20,7 @@ public:
             futureSymbol, left), TemporalOperator(std::make_shared<Interval>()) {}
 
     explicit Future(const std::shared_ptr<Expression> &left, const std::shared_ptr<Interval>& interval) : Unary(
-            futureSymbol + interval->to_string(), left), TemporalOperator(std::make_shared<Interval>()) {}
+            futureSymbol + interval->to_string(), left), TemporalOperator(interval) {}
 
     [[nodiscard]] std::shared_ptr<Expression> clone() override {
         return std::make_shared<Future>(*this);
