@@ -143,21 +143,3 @@ TEST(TestMT_FSMFuture, satisfied) {
 
     EXPECT_TRUE(MT_FSMEvaluation::evaluateMT_FSM(mtFSM, trace, false));
 }
-
-
-TEST(TestBTT_FSMEvaluation, mtl) {
-    Trace trace = Utils::createTrace({"a", "b"}, {
-            {"a"},
-            {"a"},
-            {"a"},
-            {"a"},
-            {"a"},
-            {"b"}});
-    Formula formula1 = Parser::parse("G[0, 3](a)");
-    auto btt1 = MT_FSMCreation::formulaToMT_FSM(formula1, false);
-    std::cout << btt1.to_string();
-    Formula formula2 = Parser::parse("G(a)");
-    auto btt2 = MT_FSMCreation::formulaToMT_FSM(formula2, false);
-    std::cout << btt2.to_string();
-    EXPECT_TRUE(MT_FSMEvaluation::evaluateMT_FSM(btt1, trace, false));
-}

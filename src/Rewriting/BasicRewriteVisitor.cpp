@@ -19,6 +19,7 @@
 #include "ExpressionTree/Unary/Temporal/PLTLf/Previously.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Release.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Until.h"
+#include "ExpressionTree/Binary/Temporal/PTLf/Since.h"
 #include "RewriteVisitorUtils.h"
 
 void BasicRewriteVisitor::rewrite(Formula &formula) {
@@ -332,6 +333,29 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitUntil(Until &op, Event &ev
     return std::make_shared<Until>(op);
 
 }
+
+std::shared_ptr<Expression> BasicRewriteVisitor::visitSince(Since &op, Event &event) {
+    visitExpression(op, event);
+    // a S false = false
+    if (op.getRight()->isConstFalse()) {
+        return std::make_shared<Constant>(false);
+    }
+
+    // Idempotence
+    if (auto since = std::dynamic_pointer_cast<Since>(op.getLeft())) {
+        if (since->getRight() == op.getRight()) {
+            return since;
+        }
+    }
+    if (auto since = std::dynamic_pointer_cast<Since>(op.getRight())) {
+        if (since->getLeft() == op.getLeft()) {
+            return since;
+        }
+    }
+    return std::make_shared<Since>(op);
+
+}
+
 
 std::shared_ptr<Expression> BasicRewriteVisitor::visitEventOperator(EventOperator &op, Event &event) {
     return std::make_shared<EventOperator>(op);

@@ -153,6 +153,14 @@ public:
     std::shared_ptr<Expression> visitUntil(Until &op, Event &event) override;
 
     /**
+     * Converts op to a shared_ptr.
+     * @param op Since.
+     * @param event Event.
+     * @return op as a shared_ptr.
+     */
+    std::shared_ptr<Expression> visitSince(Since &op, Event &event) override;
+
+    /**
      * Applies event to its child and applies rewriting rules from eventconsuming algorithm.
      * @param op EventOperator.
      * @param event Event.

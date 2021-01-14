@@ -7,7 +7,7 @@
 /**
  * Class representing the Globally operator.
  */
-class Globally : public Unary, public TemporalOperator{
+class Globally : public Unary, public TemporalOperator {
 public:
     /**
      * Constructor.
