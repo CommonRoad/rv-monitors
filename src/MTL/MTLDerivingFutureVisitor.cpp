@@ -19,11 +19,10 @@
 #include "ExpressionTree/Binary/Temporal/LTLf/Release.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Until.h"
 #include "ExpressionTree/Binary/Temporal/PTLf/Since.h"
-#include "Trace/Event.h"
 
 void MTLDerivingFutureVisitor::consumeEvent(Formula &formula, Trace &trace) {
     std::shared_ptr<ResolvingOperator> resolvingOperator =
-            std::make_shared<ResolvingOperator>(formula.getExpr(), trace.getLastEvent());
+            std::make_shared<ResolvingOperator>(formula.getExpr(), trace);
     formula.setExpr(resolvingOperator->accept(*this, trace));
 }
 
@@ -148,7 +147,7 @@ MTLDerivingFutureVisitor::visitDerivingOperator(DerivingOperator &op, Trace &tra
     else if (auto andExpr = std::dynamic_pointer_cast<And>(op.getLeft())) {
         And::SetType_T newExprSet;
         for (const auto &itr : *andExpr) {
-            auto derivingFutureExpr = std::make_shared<DerivingOperator>(itr, trace.getLastEvent());
+            auto derivingFutureExpr = std::make_shared<DerivingOperator>(itr, trace);
             newExprSet.emplace(derivingFutureExpr);
         }
         ret = std::make_shared<And>(newExprSet);
@@ -158,7 +157,7 @@ MTLDerivingFutureVisitor::visitDerivingOperator(DerivingOperator &op, Trace &tra
     else if (auto orExpr = std::dynamic_pointer_cast<Or>(op.getLeft())) {
         Or::SetType_T newExprSet;
         for (const auto &itr : *orExpr) {
-            auto derivingExpr = std::make_shared<DerivingOperator>(itr, trace.getLastEvent());
+            auto derivingExpr = std::make_shared<DerivingOperator>(itr, trace);
             newExprSet.emplace(derivingExpr);
         }
         ret = std::make_shared<Or>(newExprSet);
@@ -167,7 +166,7 @@ MTLDerivingFutureVisitor::visitDerivingOperator(DerivingOperator &op, Trace &tra
     else if (auto xorExpr = std::dynamic_pointer_cast<Xor>(op.getLeft())) {
         Xor::SetType_T newExprSet;
         for (const auto &itr : *xorExpr) {
-            auto derivingExpr = std::make_shared<DerivingOperator>(itr, trace.getLastEvent());
+            auto derivingExpr = std::make_shared<DerivingOperator>(itr, trace);
             newExprSet.emplace(derivingExpr);
         }
         ret = std::make_shared<Xor>(newExprSet);
@@ -187,18 +186,18 @@ MTLDerivingFutureVisitor::visitDerivingOperator(DerivingOperator &op, Trace &tra
     }
         // Previously
     else if (auto previously = std::dynamic_pointer_cast<Previously>(op.getLeft())) {
-        if (trace.getLastEvent().getTimeStep() == 1)
+        if (trace.getLastEvent().getTimeStep() == 1) // TODO check if within interval
             ret = std::make_shared<Constant>(false);
         else{
-            auto resolvingExpr = std::make_shared<ResolvingOperator>(previously->getLeft(), trace.getLastEvent());
-            ret = std::make_shared<DerivingOperator>(resolvingExpr, trace.getLastEvent());
+            auto resolvingExpr = std::make_shared<ResolvingOperator>(previously->getLeft(), trace);
+            ret = std::make_shared<DerivingOperator>(resolvingExpr, trace);
         }
     }
         // Since
     else if (auto since = std::dynamic_pointer_cast<Since>(op.getLeft())) {
         Or::SetType_T orSet{};
         if (since->getInterval()->containsZero()) {
-            auto derivingExpr = std::make_shared<DerivingOperator>(since->getRight(), trace.getLastEvent());
+            auto derivingExpr = std::make_shared<DerivingOperator>(since->getRight(), trace);
             orSet.emplace(derivingExpr);
         }
         else

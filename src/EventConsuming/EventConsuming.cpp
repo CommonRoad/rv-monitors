@@ -69,7 +69,6 @@ Formula EventConsuming::eventConsumingPast(const Formula &formula, Trace &trace)
             //std::cout << "Formula became true in event " << i << std::endl;
             break;
         }
-
     }
     return formulaCopy;
 }
