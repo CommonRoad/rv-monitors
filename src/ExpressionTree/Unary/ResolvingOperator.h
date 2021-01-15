@@ -6,7 +6,7 @@
 #define RV_MONITORS_RESOLVINGOPERATOR_H
 
 #include "Unary.h"
-#include "Trace/Event.h"
+#include "Trace/Trace.h"
 
 /**
  * Class for the ResolvingOperator that applies an event to a formula.
@@ -31,7 +31,7 @@ public:
 
     [[nodiscard]] std::shared_ptr<Expression> clone() override;
 
-    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Event &eventVis) override;
+    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace) override;
 
     [[nodiscard]] std::string to_string() const override;
 };
