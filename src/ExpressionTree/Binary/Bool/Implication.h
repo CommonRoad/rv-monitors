@@ -18,7 +18,7 @@ public:
 
     [[nodiscard]] std::shared_ptr<Expression> clone() override;
 
-    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Event &event) override;
+    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace) override;
 
 };
 

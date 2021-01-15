@@ -23,8 +23,8 @@ public:
         return std::make_shared<NextStrong>(*this);
     }
 
-    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Event &event) override {
-        return visitor.visitNextStrong(*this, event);
+    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace) override {
+        return visitor.visitNextStrong(*this, trace);
     }
 };
 

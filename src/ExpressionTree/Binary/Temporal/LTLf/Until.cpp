@@ -4,6 +4,6 @@ std::shared_ptr<Expression> Until::clone() {
     return std::make_shared<Until>(*this);
 }
 
-std::shared_ptr<Expression> Until::accept(ExpressionVisitor &visitor, Event &event) {
-    return visitor.visitUntil(*this, event);
+std::shared_ptr<Expression> Until::accept(ExpressionVisitor &visitor, Trace &trace) {
+    return visitor.visitUntil(*this, trace);
 }

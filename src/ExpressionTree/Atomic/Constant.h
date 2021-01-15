@@ -26,6 +26,6 @@ public:
 
     std::shared_ptr<Expression> clone() override;
 
-    std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Event &event) override;
+    std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace) override;
 
 };

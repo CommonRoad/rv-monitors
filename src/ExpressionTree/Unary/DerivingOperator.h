@@ -32,7 +32,7 @@ public:
 
     [[nodiscard]] std::shared_ptr<Expression> clone() override;
 
-    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Event &eventVis) override;
+    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &traceVis) override;
 
     [[nodiscard]] std::string to_string() const override;
 };

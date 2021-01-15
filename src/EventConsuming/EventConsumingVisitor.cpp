@@ -19,137 +19,136 @@
 #include "ExpressionTree/Binary/Temporal/LTLf/Release.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Until.h"
 #include "ExpressionTree/Binary/Temporal/PTLf/Since.h"
-#include "Trace/Event.h"
 
-void EventConsumingVisitor::consumeEvent(Formula &formula, Event &event) {
+void EventConsumingVisitor::consumeEvent(Formula &formula, Trace &trace) {
     std::shared_ptr<EventOperator> eventOperator =
-            std::make_shared<EventOperator>(formula.getExpr(), event);
-    formula.setExpr(eventOperator->accept(*this, event));
+            std::make_shared<EventOperator>(formula.getExpr(), trace.getLastEvent());
+    formula.setExpr(eventOperator->accept(*this, trace));
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitAtomic(Atomic &op, Event &event) {
+EventConsumingVisitor::visitAtomic(Atomic &op, Trace &trace) {
     return std::make_shared<Atomic>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitConstant(Constant &op, Event &event) {
+EventConsumingVisitor::visitConstant(Constant &op, Trace &trace) {
     return std::make_shared<Constant>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitAnd(And &op, Event &event) {
-    visitExpression(op, event);
+EventConsumingVisitor::visitAnd(And &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<And>(op);
 }
 
-std::shared_ptr<Expression> EventConsumingVisitor::visitOr(Or &op, Event &event) {
-    visitExpression(op, event);
+std::shared_ptr<Expression> EventConsumingVisitor::visitOr(Or &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<Or>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitXor(Xor &op, Event &event) {
-    visitExpression(op, event);
+EventConsumingVisitor::visitXor(Xor &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<Xor>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitImplication(Implication &op, Event &event) {
-    visitExpression(op, event);
+EventConsumingVisitor::visitImplication(Implication &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<Implication>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitEquivalence(Equivalence &op, Event &event) {
-    visitExpression(op, event);
+EventConsumingVisitor::visitEquivalence(Equivalence &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<Equivalence>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitNot(Not &op, Event &event) {
-    visitExpression(op, event);
+EventConsumingVisitor::visitNot(Not &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<Not>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitFuture(Future &op, Event &event) {
-    visitExpression(op, event);
+EventConsumingVisitor::visitFuture(Future &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<Future>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitGlobally(Globally &op, Event &event) {
-    visitExpression(op, event);
-    visitExpression(op, event);
+EventConsumingVisitor::visitGlobally(Globally &op, Trace &trace) {
+    visitExpression(op, trace);
+    visitExpression(op, trace);
     return std::make_shared<Globally>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitNextStrong(NextStrong &op, Event &event) {
-    visitExpression(op, event);
+EventConsumingVisitor::visitNextStrong(NextStrong &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<NextStrong>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitNextWeak(NextWeak &op, Event &event) {
-    visitExpression(op, event);
+EventConsumingVisitor::visitNextWeak(NextWeak &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<NextWeak>(op);
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitOnce(Once &op, Event &event) {
-    visitExpression(op, event);
+EventConsumingVisitor::visitOnce(Once &op, Trace &trace) {
+    visitExpression(op, trace);
     auto ret = std::make_shared<Once>(op);
-    visitExpression(op, event);
+    visitExpression(op, trace);
     return ret;
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitPreviously(Previously &op, Event &event) {
-    visitExpression(op, event);
+EventConsumingVisitor::visitPreviously(Previously &op, Trace &trace) {
+    visitExpression(op, trace);
     auto ret = std::make_shared<Previously>(op);
-    visitExpression(op, event);
+    visitExpression(op, trace);
     return ret;
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitRelease(Release &op, Event &event) {
-    visitExpression(op, event);
+EventConsumingVisitor::visitRelease(Release &op, Trace &trace) {
+    visitExpression(op, trace);
     auto ret = std::make_shared<Release>(op);
-    visitExpression(op, event);
+    visitExpression(op, trace);
     return ret;
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitUntil(Until &op, Event &event) {
-    visitExpression(op, event);
+EventConsumingVisitor::visitUntil(Until &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<Until>(op.getLeft(), op.getRight());
 }
 
 std::shared_ptr<Expression>
-EventConsumingVisitor::visitSince(Since &op, Event &event) {
-    visitExpression(op, event);
+EventConsumingVisitor::visitSince(Since &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<Since>(op.getLeft(), op.getRight());
 }
 
-std::shared_ptr<Expression> EventConsumingVisitor::visitResolvingOperator(ResolvingOperator &op, Event &event) {
+std::shared_ptr<Expression> EventConsumingVisitor::visitResolvingOperator(ResolvingOperator &op, Trace &trace) {
     return std::make_shared<ResolvingOperator>(op);
 }
 
-std::shared_ptr<Expression> EventConsumingVisitor::visitDerivingOperator(DerivingOperator &op, Event &event) {
+std::shared_ptr<Expression> EventConsumingVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace) {
     return std::make_shared<DerivingOperator>(op);
 }
 
 std::shared_ptr<Expression>
 EventConsumingVisitor::visitEventOperator(EventOperator &op,
-                                          Event &event) {
+                                          Trace &trace) {
 
     std::shared_ptr<Expression> ret;
 
     // Apply eventMap to atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(op.getLeft())) {
-        ret = std::make_shared<Constant>(event.getValue(*atomic));
+        ret = std::make_shared<Constant>(trace.getLastEvent().getValue(*atomic));
     }
     else if (auto constant = std::dynamic_pointer_cast<Constant>(op.getLeft())) {
         ret = std::make_shared<Constant>(constant->getValue());
@@ -158,7 +157,7 @@ EventConsumingVisitor::visitEventOperator(EventOperator &op,
     else if (auto andExpr = std::dynamic_pointer_cast<And>(op.getLeft())) {
         And::SetType_T newExprSet;
         for (const auto &itr : *andExpr) {
-            auto eventConsumingExpr = std::make_shared<EventOperator>(itr, event);
+            auto eventConsumingExpr = std::make_shared<EventOperator>(itr, trace.getLastEvent());
             newExprSet.emplace(eventConsumingExpr);
         }
         ret = std::make_shared<And>(newExprSet);
@@ -168,7 +167,7 @@ EventConsumingVisitor::visitEventOperator(EventOperator &op,
     else if (auto orExpr = std::dynamic_pointer_cast<Or>(op.getLeft())) {
         Or::SetType_T newExprSet;
         for (const auto &itr : *orExpr) {
-            auto eventConsumingExpr = std::make_shared<EventOperator>(itr, event);
+            auto eventConsumingExpr = std::make_shared<EventOperator>(itr, trace.getLastEvent());
             newExprSet.emplace(eventConsumingExpr);
         }
         ret = std::make_shared<Or>(newExprSet);
@@ -177,7 +176,7 @@ EventConsumingVisitor::visitEventOperator(EventOperator &op,
     else if (auto xorExpr = std::dynamic_pointer_cast<Xor>(op.getLeft())) {
         Xor::SetType_T newExprSet;
         for (const auto &itr : *xorExpr) {
-            auto eventConsumingExpr = std::make_shared<EventOperator>(itr, event);
+            auto eventConsumingExpr = std::make_shared<EventOperator>(itr, trace.getLastEvent());
             newExprSet.emplace(eventConsumingExpr);
         }
         ret = std::make_shared<Xor>(newExprSet);
@@ -185,20 +184,20 @@ EventConsumingVisitor::visitEventOperator(EventOperator &op,
     }
         // Globally
     else if (auto globally = std::dynamic_pointer_cast<Globally>(op.getLeft())) {
-        if (!event.isTerminal()) {
+        if (!trace.getLastEvent().isTerminal()) {
             And::SetType_T newSet;
-            auto eventOperatorExpr = std::make_shared<EventOperator>(globally->getLeft(), event);
+            auto eventOperatorExpr = std::make_shared<EventOperator>(globally->getLeft(), trace.getLastEvent());
             newSet.emplace(eventOperatorExpr);
             newSet.emplace(globally);
             ret = std::make_shared<And>(newSet);
         }
         else {
-            ret = std::make_shared<EventOperator>(globally->getLeft(), event);
+            ret = std::make_shared<EventOperator>(globally->getLeft(), trace.getLastEvent());
         }
     }
         // Weak Next
     else if (auto nextWeak = std::dynamic_pointer_cast<NextWeak>(op.getLeft())) {
-        if (!event.isTerminal()) {
+        if (!trace.getLastEvent().isTerminal()) {
             ret = nextWeak->getLeft();
         }
         else {
@@ -207,7 +206,7 @@ EventConsumingVisitor::visitEventOperator(EventOperator &op,
     }
         // Strong Next
     else if (auto nextStrong = std::dynamic_pointer_cast<NextStrong>(op.getLeft())) {
-        if (!event.isTerminal()) {
+        if (!trace.getLastEvent().isTerminal()) {
             ret = nextStrong->getLeft();
         }
         else {
@@ -216,24 +215,24 @@ EventConsumingVisitor::visitEventOperator(EventOperator &op,
     }
         // Future
     else if (auto future = std::dynamic_pointer_cast<Future>(op.getLeft())) {
-        if (!event.isTerminal()) {
+        if (!trace.getLastEvent().isTerminal()) {
             Or::SetType_T newSet;
-            auto eventOperatorExpr = std::make_shared<EventOperator>(future->getLeft(), event);
+            auto eventOperatorExpr = std::make_shared<EventOperator>(future->getLeft(), trace.getLastEvent());
             newSet.emplace(eventOperatorExpr);
             newSet.emplace(future);
             ret = std::make_shared<Or>(newSet);
         }
         else {
-            ret = std::make_shared<EventOperator>(future->getLeft(), event);
+            ret = std::make_shared<EventOperator>(future->getLeft(), trace.getLastEvent());
         }
     }
         // Until
     else if (auto until = std::dynamic_pointer_cast<Until>(op.getLeft())) {
-        if (!event.isTerminal()) {
+        if (!trace.getLastEvent().isTerminal()) {
             Or::SetType_T newSetOr;
             And::SetType_T newSetAnd;
-            auto orElement = std::make_shared<EventOperator>(until->getRight(), event);
-            auto andElement = std::make_shared<EventOperator>(until->getLeft(), event);
+            auto orElement = std::make_shared<EventOperator>(until->getRight(), trace.getLastEvent());
+            auto andElement = std::make_shared<EventOperator>(until->getLeft(), trace.getLastEvent());
             newSetOr.emplace(orElement);
             newSetAnd.emplace(andElement);
             newSetAnd.emplace(until);
@@ -242,12 +241,12 @@ EventConsumingVisitor::visitEventOperator(EventOperator &op,
             ret = std::make_shared<Or>(newSetOr);
         }
         else {
-            ret = std::make_shared<EventOperator>(until->getRight(), event);
+            ret = std::make_shared<EventOperator>(until->getRight(), trace.getLastEvent());
         }
     }
         // Previously
     else if (auto previously = std::dynamic_pointer_cast<Previously>(op.getLeft())) {
-        if (!event.isTerminal()) {
+        if (!trace.getLastEvent().isTerminal()) {
             ret = previously->getLeft();
         }
         else {
@@ -256,16 +255,16 @@ EventConsumingVisitor::visitEventOperator(EventOperator &op,
     }
         // Once
     else if (auto once = std::dynamic_pointer_cast<Once>(op.getLeft())) {
-        if (!event.isTerminal()) {
+        if (!trace.getLastEvent().isTerminal()) {
             Or::SetType_T newSet;
-            auto eventOperatorExpr = std::make_shared<EventOperator>(once->getLeft(), event);
+            auto eventOperatorExpr = std::make_shared<EventOperator>(once->getLeft(), trace.getLastEvent());
             newSet.emplace(eventOperatorExpr);
             newSet.emplace(once);
             ret = std::make_shared<Or>(newSet);
         }
         else {
-            ret = std::make_shared<EventOperator>(once->getLeft(), event);
+            ret = std::make_shared<EventOperator>(once->getLeft(), trace.getLastEvent());
         }
     }
-    return ret->accept(*this, event);
+    return ret->accept(*this, trace);
 }

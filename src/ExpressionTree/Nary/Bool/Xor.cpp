@@ -1,7 +1,7 @@
 #include "Xor.h"
 
-std::shared_ptr<Expression> Xor::accept(ExpressionVisitor &visitor, Event &event) {
-    return visitor.visitXor(*this, event);
+std::shared_ptr<Expression> Xor::accept(ExpressionVisitor &visitor, Trace &trace) {
+    return visitor.visitXor(*this, trace);
 }
 
 std::shared_ptr<Expression> Xor::clone() {

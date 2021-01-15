@@ -18,8 +18,12 @@ bool MTLEventConsuming::eventConsuming(const Formula &formula, Trace &trace) {
     // Rewrite
     rw.rewrite(formulaCopy);
     auto &traceRef = trace.getTraceRef();
-    for (auto & i : traceRef) {
-        ec.consumeEvent(formulaCopy, i);
+    for (int i = 0; i < trace.getLength(); ++i) {
+        auto first = trace.getTrace().begin();
+        auto last = trace.getTrace().begin() + i;
+        std::vector<Event> newVec(first, last);
+        Trace newTrace = Trace(newVec);
+        ec.consumeEvent(formulaCopy, newTrace);
         rw.rewrite(formulaCopy);
         if (formulaCopy.to_string() == "false") {
 //            std::cout << "Formula violated in event " << i << std::endl;

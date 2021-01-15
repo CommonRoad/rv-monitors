@@ -42,7 +42,7 @@ class Until;
 
 class Since;
 
-class Event;
+class Trace;
 
 class EventOperator;
 
@@ -60,167 +60,167 @@ class Equivalence;
 class ExpressionVisitor {
 public:
 
-    void visitExpression(Expression &expr, Event &event);
+    void visitExpression(Expression &expr, Trace &trace);
 
     /**
      * Visits an Atomic.
      * @param expr Atomic.
-     * @param event Event.
+     * @param trace Trace.
      * @return Transformed Atomic as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitAtomic(Atomic &expr, Event &event) = 0;
+    virtual std::shared_ptr<Expression> visitAtomic(Atomic &expr, Trace &trace) = 0;
 
     /**
      * Visits an Constant.
      * @param expr Constant.
-     * @param event Event.
+     * @param trace Trace.
      * @return Transformed Constant as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitConstant(Constant &expr, Event &event) = 0;
+    virtual std::shared_ptr<Expression> visitConstant(Constant &expr, Trace &trace) = 0;
 
     /**
      * Visits an And.
      * @param expr And.
-     * @param event Event.
+     * @param trace Trace.
      * @return Transformed And as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitAnd(And &expr, Event &event) = 0;
+    virtual std::shared_ptr<Expression> visitAnd(And &expr, Trace &trace) = 0;
 
     /**
      * Visits an Or.
      * @param expr Or.
-     * @param event Event.
+     * @param trace Trace.
      * @return Transformed Or as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitOr(Or &expr, Event &event) = 0;
+    virtual std::shared_ptr<Expression> visitOr(Or &expr, Trace &trace) = 0;
 
     /**
      * Visits an Xor.
      * @param expr Xor.
-     * @param event Event.
+     * @param trace Trace.
      * @return Transformed Xor as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitXor(Xor &expr, Event &event) = 0;
+    virtual std::shared_ptr<Expression> visitXor(Xor &expr, Trace &trace) = 0;
 
     /**
      * Visits an Implication.
      * @param expr Implication.
-     * @param event Event.
+     * @param trace Trace.
      * @return Transformed Implication as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitImplication(Implication &expr, Event &event) = 0;
+    virtual std::shared_ptr<Expression> visitImplication(Implication &expr, Trace &trace) = 0;
 
     /**
      * Visits an Equivalence.
      * @param expr Equivalence.
-     * @param event Event.
+     * @param trace Trace.
      * @return Transformed Equivalence as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitEquivalence(Equivalence &expr, Event &event) = 0;
+    virtual std::shared_ptr<Expression> visitEquivalence(Equivalence &expr, Trace &trace) = 0;
 
     /**
      * Visits an Not.
      * @param expr Not.
-     * @param event Event.
+     * @param trace Trace.
      * @return Transformed Not as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitNot(Not &expr, Event &event) = 0;
+    virtual std::shared_ptr<Expression> visitNot(Not &expr, Trace &trace) = 0;
 
     /**
      * Visits an Future.
      * @param expr Future.
-     * @param event Event.
+     * @param trace Trace.
      * @return Transformed Future as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitFuture(Future &expr, Event &event) = 0;
+    virtual std::shared_ptr<Expression> visitFuture(Future &expr, Trace &trace) = 0;
 
     /**
      * Visits an Globally.
      * @param expr Globally.
-     * @param event Event.
+     * @param trace Trace.
      * @return Transformed Globally as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitGlobally(Globally &expr, Event &event) = 0;
+    virtual std::shared_ptr<Expression> visitGlobally(Globally &expr, Trace &trace) = 0;
 
     /**
      * Visits an NextStrong.
      * @param expr NextStrong.
-     * @param event Event.
+     * @param trace Trace.
      * @return Transformed NextStrong as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitNextStrong(NextStrong &expr, Event &event) = 0;
+    virtual std::shared_ptr<Expression> visitNextStrong(NextStrong &expr, Trace &trace) = 0;
 
     /**
      * Visits an NextWeak.
      * @param expr NextWeak.
-     * @param event Event.
+     * @param trace Trace.
      * @return Transformed NextWeak as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitNextWeak(NextWeak &expr, Event &event) = 0;
+    virtual std::shared_ptr<Expression> visitNextWeak(NextWeak &expr, Trace &trace) = 0;
 
     /**
      * Visits an Once.
      * @param expr Once.
-     * @param event Event.
+     * @param trace Trace.
      * @return Transformed Once as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitOnce(Once &expr, Event &event) = 0;
+    virtual std::shared_ptr<Expression> visitOnce(Once &expr, Trace &trace) = 0;
 
     /**
      * Visits an Previously.
      * @param expr Previously.
-     * @param event Event.
+     * @param trace Trace.
      * @return Transformed Previously as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitPreviously(Previously &expr, Event &event) = 0;
+    virtual std::shared_ptr<Expression> visitPreviously(Previously &expr, Trace &trace) = 0;
 
     /**
      * Visits an Release.
      * @param expr Release.
-     * @param event Event.
+     * @param trace Trace.
      * @return Transformed Release as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitRelease(Release &expr, Event &event) = 0;
+    virtual std::shared_ptr<Expression> visitRelease(Release &expr, Trace &trace) = 0;
 
     /**
      * Visits an Until.
      * @param expr Until.
-     * @param event Event.
+     * @param trace Trace.
      * @return Transformed Until as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitUntil(Until &expr, Event &event) = 0;
+    virtual std::shared_ptr<Expression> visitUntil(Until &expr, Trace &trace) = 0;
 
     /**
      * Visits a Since.
      * @param expr Since.
-     * @param event Event.
+     * @param trace Trace.
      * @return Transformed Until as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitSince(Since &expr, Event &event) = 0;
+    virtual std::shared_ptr<Expression> visitSince(Since &expr, Trace &trace) = 0;
 
     /**
      * Visits an EventOperator.
      * @param expr EventOperator.
-     * @param event Event.
+     * @param trace Trace.
      * @return Transformed EventOperator as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitEventOperator(EventOperator &expr, Event &event) = 0;
+    virtual std::shared_ptr<Expression> visitEventOperator(EventOperator &expr, Trace &trace) = 0;
 
     /**
      * Visits an ResolvingOperator.
      * @param expr ResolvingOperator.
-     * @param event Event.
+     * @param trace Trace.
      * @return Transformed EventOperator as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitResolvingOperator(ResolvingOperator &expr, Event &event) = 0;
+    virtual std::shared_ptr<Expression> visitResolvingOperator(ResolvingOperator &expr, Trace &trace) = 0;
 
     /**
      * Visits an DerivingOperator.
      * @param expr DerivingOperator.
-     * @param event Event.
+     * @param trace Trace.
      * @return Transformed EventOperator as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &expr, Event &event) = 0;
+    virtual std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &expr, Trace &trace) = 0;
 
 };
 

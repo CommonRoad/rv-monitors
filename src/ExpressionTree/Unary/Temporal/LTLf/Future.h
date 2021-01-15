@@ -24,8 +24,8 @@ public:
         return std::make_shared<Future>(*this);
     }
 
-    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Event &event) override {
-        return visitor.visitFuture(*this, event);
+    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace) override {
+        return visitor.visitFuture(*this, trace);
     }
 };
 

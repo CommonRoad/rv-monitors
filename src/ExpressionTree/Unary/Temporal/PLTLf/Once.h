@@ -22,8 +22,8 @@ public:
         return std::make_shared<Once>(*this);
     }
 
-    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Event &event) override {
-        return visitor.visitOnce(*this, event);
+    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace) override {
+        return visitor.visitOnce(*this, trace);
     }
 };
 
