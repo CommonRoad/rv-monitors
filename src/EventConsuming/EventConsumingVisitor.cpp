@@ -22,7 +22,7 @@
 
 void EventConsumingVisitor::consumeEvent(Formula &formula, Trace &trace) {
     std::shared_ptr<EventOperator> eventOperator =
-            std::make_shared<EventOperator>(formula.getExpr(), trace.getLastEvent());
+            std::make_shared<EventOperator>(formula.getExpr(), trace);
     formula.setExpr(eventOperator->accept(*this, trace));
 }
 
@@ -157,7 +157,7 @@ EventConsumingVisitor::visitEventOperator(EventOperator &op,
     else if (auto andExpr = std::dynamic_pointer_cast<And>(op.getLeft())) {
         And::SetType_T newExprSet;
         for (const auto &itr : *andExpr) {
-            auto eventConsumingExpr = std::make_shared<EventOperator>(itr, trace.getLastEvent());
+            auto eventConsumingExpr = std::make_shared<EventOperator>(itr, trace);
             newExprSet.emplace(eventConsumingExpr);
         }
         ret = std::make_shared<And>(newExprSet);
@@ -167,7 +167,7 @@ EventConsumingVisitor::visitEventOperator(EventOperator &op,
     else if (auto orExpr = std::dynamic_pointer_cast<Or>(op.getLeft())) {
         Or::SetType_T newExprSet;
         for (const auto &itr : *orExpr) {
-            auto eventConsumingExpr = std::make_shared<EventOperator>(itr, trace.getLastEvent());
+            auto eventConsumingExpr = std::make_shared<EventOperator>(itr, trace);
             newExprSet.emplace(eventConsumingExpr);
         }
         ret = std::make_shared<Or>(newExprSet);
@@ -176,7 +176,7 @@ EventConsumingVisitor::visitEventOperator(EventOperator &op,
     else if (auto xorExpr = std::dynamic_pointer_cast<Xor>(op.getLeft())) {
         Xor::SetType_T newExprSet;
         for (const auto &itr : *xorExpr) {
-            auto eventConsumingExpr = std::make_shared<EventOperator>(itr, trace.getLastEvent());
+            auto eventConsumingExpr = std::make_shared<EventOperator>(itr, trace);
             newExprSet.emplace(eventConsumingExpr);
         }
         ret = std::make_shared<Xor>(newExprSet);
@@ -186,13 +186,13 @@ EventConsumingVisitor::visitEventOperator(EventOperator &op,
     else if (auto globally = std::dynamic_pointer_cast<Globally>(op.getLeft())) {
         if (!trace.getLastEvent().isTerminal()) {
             And::SetType_T newSet;
-            auto eventOperatorExpr = std::make_shared<EventOperator>(globally->getLeft(), trace.getLastEvent());
+            auto eventOperatorExpr = std::make_shared<EventOperator>(globally->getLeft(), trace);
             newSet.emplace(eventOperatorExpr);
             newSet.emplace(globally);
             ret = std::make_shared<And>(newSet);
         }
         else {
-            ret = std::make_shared<EventOperator>(globally->getLeft(), trace.getLastEvent());
+            ret = std::make_shared<EventOperator>(globally->getLeft(), trace);
         }
     }
         // Weak Next
@@ -217,13 +217,13 @@ EventConsumingVisitor::visitEventOperator(EventOperator &op,
     else if (auto future = std::dynamic_pointer_cast<Future>(op.getLeft())) {
         if (!trace.getLastEvent().isTerminal()) {
             Or::SetType_T newSet;
-            auto eventOperatorExpr = std::make_shared<EventOperator>(future->getLeft(), trace.getLastEvent());
+            auto eventOperatorExpr = std::make_shared<EventOperator>(future->getLeft(), trace);
             newSet.emplace(eventOperatorExpr);
             newSet.emplace(future);
             ret = std::make_shared<Or>(newSet);
         }
         else {
-            ret = std::make_shared<EventOperator>(future->getLeft(), trace.getLastEvent());
+            ret = std::make_shared<EventOperator>(future->getLeft(), trace);
         }
     }
         // Until
@@ -231,8 +231,8 @@ EventConsumingVisitor::visitEventOperator(EventOperator &op,
         if (!trace.getLastEvent().isTerminal()) {
             Or::SetType_T newSetOr;
             And::SetType_T newSetAnd;
-            auto orElement = std::make_shared<EventOperator>(until->getRight(), trace.getLastEvent());
-            auto andElement = std::make_shared<EventOperator>(until->getLeft(), trace.getLastEvent());
+            auto orElement = std::make_shared<EventOperator>(until->getRight(), trace);
+            auto andElement = std::make_shared<EventOperator>(until->getLeft(), trace);
             newSetOr.emplace(orElement);
             newSetAnd.emplace(andElement);
             newSetAnd.emplace(until);
@@ -241,7 +241,7 @@ EventConsumingVisitor::visitEventOperator(EventOperator &op,
             ret = std::make_shared<Or>(newSetOr);
         }
         else {
-            ret = std::make_shared<EventOperator>(until->getRight(), trace.getLastEvent());
+            ret = std::make_shared<EventOperator>(until->getRight(), trace);
         }
     }
         // Previously
@@ -257,13 +257,13 @@ EventConsumingVisitor::visitEventOperator(EventOperator &op,
     else if (auto once = std::dynamic_pointer_cast<Once>(op.getLeft())) {
         if (!trace.getLastEvent().isTerminal()) {
             Or::SetType_T newSet;
-            auto eventOperatorExpr = std::make_shared<EventOperator>(once->getLeft(), trace.getLastEvent());
+            auto eventOperatorExpr = std::make_shared<EventOperator>(once->getLeft(), trace);
             newSet.emplace(eventOperatorExpr);
             newSet.emplace(once);
             ret = std::make_shared<Or>(newSet);
         }
         else {
-            ret = std::make_shared<EventOperator>(once->getLeft(), trace.getLastEvent());
+            ret = std::make_shared<EventOperator>(once->getLeft(), trace);
         }
     }
     return ret->accept(*this, trace);

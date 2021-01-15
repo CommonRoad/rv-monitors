@@ -8,14 +8,14 @@ std::shared_ptr<Expression> DerivingOperator::clone() {
     return std::make_shared<DerivingOperator>(*this);
 }
 
-std::shared_ptr<Expression> DerivingOperator::accept(ExpressionVisitor &visitor, Trace &trace) {
-    return visitor.visitDerivingOperator(*this, trace);
+std::shared_ptr<Expression> DerivingOperator::accept(ExpressionVisitor &visitor, Trace &tr) {
+    return visitor.visitDerivingOperator(*this, tr);
 }
 
 Event DerivingOperator::getEvent() {
-    return event;
+    return trace.getLastEvent();
 }
 
 std::string DerivingOperator::to_string() const {
-    return "D(" + getLeft()->to_string() + event.to_string() + ")";
+    return "D(" + getLeft()->to_string() + trace.getLastEvent().to_string() + ")";
 }

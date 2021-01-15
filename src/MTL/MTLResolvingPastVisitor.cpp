@@ -23,7 +23,7 @@
 
 void MTLResolvingPastVisitor::consumeEvent(Formula &formula, Trace &trace) {
     std::shared_ptr<ResolvingOperator> resolvingOperator =
-            std::make_shared<ResolvingOperator>(formula.getExpr(), trace.getLastEvent());
+            std::make_shared<ResolvingOperator>(formula.getExpr(), trace);
     formula.setExpr(resolvingOperator->accept(*this, trace));
 }
 
@@ -150,7 +150,7 @@ MTLResolvingPastVisitor::visitResolvingOperator(ResolvingOperator &op,
     else if (auto andExpr = std::dynamic_pointer_cast<And>(op.getLeft())) {
         And::SetType_T newExprSet;
         for (const auto &itr : *andExpr) {
-            auto resolvingPastExpr = std::make_shared<ResolvingOperator>(itr, trace.getLastEvent());
+            auto resolvingPastExpr = std::make_shared<ResolvingOperator>(itr, trace);
             newExprSet.emplace(resolvingPastExpr);
         }
         ret = std::make_shared<And>(newExprSet);
@@ -160,7 +160,7 @@ MTLResolvingPastVisitor::visitResolvingOperator(ResolvingOperator &op,
     else if (auto orExpr = std::dynamic_pointer_cast<Or>(op.getLeft())) {
         Or::SetType_T newExprSet;
         for (const auto &itr : *orExpr) {
-            auto resolvingExpr = std::make_shared<ResolvingOperator>(itr, trace.getLastEvent());
+            auto resolvingExpr = std::make_shared<ResolvingOperator>(itr, trace);
             newExprSet.emplace(resolvingExpr);
         }
         ret = std::make_shared<Or>(newExprSet);
@@ -169,7 +169,7 @@ MTLResolvingPastVisitor::visitResolvingOperator(ResolvingOperator &op,
     else if (auto xorExpr = std::dynamic_pointer_cast<Xor>(op.getLeft())) {
         Xor::SetType_T newExprSet;
         for (const auto &itr : *xorExpr) {
-            auto resolvingExpr = std::make_shared<ResolvingOperator>(itr, trace.getLastEvent());
+            auto resolvingExpr = std::make_shared<ResolvingOperator>(itr, trace);
             newExprSet.emplace(resolvingExpr);
         }
         ret = std::make_shared<Xor>(newExprSet);
@@ -189,18 +189,20 @@ MTLResolvingPastVisitor::visitResolvingOperator(ResolvingOperator &op,
     }
         // Previously
     else if (auto previously = std::dynamic_pointer_cast<Previously>(op.getLeft())) {
-        if (trace.getLastEvent().getTimeStep() == 1)
+        if (trace.getLastEvent().getTimeStep() == 1)  // TODO check if within interval
             ret = std::make_shared<Constant>(false);
         else{
-            auto derivingExpr = std::make_shared<DerivingOperator>(previously->getLeft(), trace.getLastEvent());
-            ret = std::make_shared<ResolvingOperator>(derivingExpr, trace.getEvent(trace.getLength() - 1));
+            std::vector<Event> newEventVector(&trace.getTrace()[0], &trace.getTrace()[trace.getLength()]);
+            Trace newTrace = Trace(newEventVector);
+            auto derivingExpr = std::make_shared<DerivingOperator>(previously->getLeft(), newTrace);
+            ret = std::make_shared<ResolvingOperator>(derivingExpr, trace);
         }
     }
         // Since
     else if (auto since = std::dynamic_pointer_cast<Since>(op.getLeft())) {
         Or::SetType_T orSet{};
         if (since->getInterval()->containsZero()) {
-            auto resolving = std::make_shared<ResolvingOperator>(since->getRight(), trace.getLastEvent());
+            auto resolving = std::make_shared<ResolvingOperator>(since->getRight(), trace);
             orSet.emplace(resolving);
         }
         else
@@ -209,8 +211,8 @@ MTLResolvingPastVisitor::visitResolvingOperator(ResolvingOperator &op,
             orSet.emplace(std::make_shared<Constant>(false));
         else{
             since->reduceInterval();
-            auto derivingExpr = std::make_shared<DerivingOperator>(since->getLeft(), trace.getLastEvent());
-            ret = std::make_shared<ResolvingOperator>(derivingExpr, trace.getEvent(trace.getLength() - 1));
+            auto derivingExpr = std::make_shared<DerivingOperator>(since->getLeft(), trace);
+            ret = std::make_shared<ResolvingOperator>(derivingExpr, trace);
         }
         ret = std::make_shared<Or>(orSet);
     }

@@ -13,15 +13,15 @@
  */
 class ResolvingOperator : public Unary{
 private:
-    Event event;
+    Trace trace;
 public:
     /**
      * Constructor.
      * @param left Expression event should be applied to.
      * @param event Event.
      */
-    explicit ResolvingOperator(const std::shared_ptr<Expression> &left, Event event) : Unary(
-            event.to_string(), left), event(std::move(event)) {}
+    explicit ResolvingOperator(const std::shared_ptr<Expression> &left, Trace trace) : Unary(
+            trace.getLastEvent().to_string(), left), trace(std::move(trace)) {}
 
     /**
      * Getter for event.
@@ -31,7 +31,7 @@ public:
 
     [[nodiscard]] std::shared_ptr<Expression> clone() override;
 
-    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace) override;
+    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &tr) override;
 
     [[nodiscard]] std::string to_string() const override;
 };
