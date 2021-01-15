@@ -3,6 +3,8 @@
 #include "Trace/Event.h"
 #include "RewriteVisitor.h"
 #include "ExpressionTree/Unary/EventOperator.h"
+#include "ExpressionTree/Unary/ResolvingOperator.h"
+#include "ExpressionTree/Unary/DerivingOperator.h"
 #include "ExpressionTree/Atomic/Atomic.h"
 #include "ExpressionTree/Atomic/Constant.h"
 #include "ExpressionTree/Unary/Bool/Not.h"
@@ -25,7 +27,7 @@
 void BasicRewriteVisitor::rewrite(Formula &formula) {
     std::map<std::string, LazyBool> map;
     // Dummy eventMap
-    Event event(map, false);
+    Event event(map, 0, false);
 
     auto before = Formula::deepCopy(formula.getExpr());
     formula.setExpr(formula.getExpr()->accept(*this, event));
@@ -356,9 +358,16 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitSince(Since &op, Event &ev
 
 }
 
-
 std::shared_ptr<Expression> BasicRewriteVisitor::visitEventOperator(EventOperator &op, Event &event) {
     return std::make_shared<EventOperator>(op);
+}
+
+std::shared_ptr<Expression> BasicRewriteVisitor::visitResolvingOperator(ResolvingOperator &op, Event &event) {
+    return std::make_shared<ResolvingOperator>(op);
+}
+
+std::shared_ptr<Expression> BasicRewriteVisitor::visitDerivingOperator(DerivingOperator &op, Event &event) {
+    return std::make_shared<DerivingOperator>(op);
 }
 
 std::shared_ptr<Expression> BasicRewriteVisitor::visitEquivalence(Equivalence &op, Event &event) {

@@ -10,17 +10,25 @@
 class Interval {
 public:
     explicit Interval(int start=0, int end=10000, bool finite=false); // TODO introduce infinity
+
     [[nodiscard]] std::string to_string() const;
-    bool reduceInterval(){
-        if (!finite)
-            return true;
-        if (end > 0)
-            end--;
-        if (end == 0)
-            return false;
-        else
-            return true;
-    }
+
+    bool reduceInterval();
+
+    [[nodiscard]] int getStart() const;
+
+    void setStart(int start);
+
+    [[nodiscard]] int getAnEnd() const;
+
+    void setAnEnd(int anEnd);
+
+    [[nodiscard]] bool isFinite() const;
+
+    void setFinite(bool finite);
+
+    bool containsZero() const;
+
 private:
     int start;
     int end;

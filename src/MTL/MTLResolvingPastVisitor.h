@@ -7,7 +7,7 @@
 /**
  * Visitor applying the event consuming rules to a formula and propagating the EventOperator down the expression tree.
  */
-class MTLEventConsumingVisitor : public ExpressionVisitor {
+class MTLResolvingPastVisitor : public ExpressionVisitor {
 
 public:
     /**
@@ -161,13 +161,16 @@ public:
     std::shared_ptr<Expression> visitSince(Since &op, Event &event) override;
 
     /**
-     * Applies event to its child and applies rewriting rules from event consuming algorithm.
-     * @param op EventOperator.
+     * Applies event to its child and applies rewriting rules from resolving past algorithm.
+     * @param op ResolvingOperator.
      * @param event Event.
      * @return Expression transformed according to rewriting rules.
      */
-    std::shared_ptr<Expression> visitEventOperator(EventOperator &op, Event &event) override;
+    std::shared_ptr<Expression> visitResolvingOperator(ResolvingOperator &op, Event &event) override;
 
+    std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &op, Event &event) override;
+
+    std::shared_ptr<Expression> visitEventOperator(EventOperator &op, Event &event) override;
 };
 
 

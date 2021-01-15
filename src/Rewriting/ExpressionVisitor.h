@@ -46,6 +46,10 @@ class Event;
 
 class EventOperator;
 
+class ResolvingOperator;
+
+class DerivingOperator;
+
 class Equivalence;
 
 
@@ -201,6 +205,22 @@ public:
      * @return Transformed EventOperator as a shared_ptr.
      */
     virtual std::shared_ptr<Expression> visitEventOperator(EventOperator &expr, Event &event) = 0;
+
+    /**
+     * Visits an ResolvingOperator.
+     * @param expr ResolvingOperator.
+     * @param event Event.
+     * @return Transformed EventOperator as a shared_ptr.
+     */
+    virtual std::shared_ptr<Expression> visitResolvingOperator(ResolvingOperator &expr, Event &event) = 0;
+
+    /**
+     * Visits an DerivingOperator.
+     * @param expr DerivingOperator.
+     * @param event Event.
+     * @return Transformed EventOperator as a shared_ptr.
+     */
+    virtual std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &expr, Event &event) = 0;
 
 };
 

@@ -2,6 +2,8 @@
 #include "MTLRewriteVisitor.h"
 #include "Trace/Event.h"
 #include "ExpressionTree/Unary/EventOperator.h"
+#include "ExpressionTree/Unary/ResolvingOperator.h"
+#include "ExpressionTree/Unary/DerivingOperator.h"
 #include "ExpressionTree/Atomic/Atomic.h"
 #include "ExpressionTree/Atomic/Constant.h"
 #include "ExpressionTree/Unary/Bool/Not.h"
@@ -28,7 +30,7 @@
 void MTLRewriteVisitor::rewrite(Formula &formula) {
     std::map<std::string, LazyBool> map;
     // Dummy eventMap
-    Event event(map, false);
+    Event event(map, 0, false);
 
     auto before = Formula::deepCopy(formula.getExpr());
     formula.setExpr(formula.getExpr()->accept(*this, event));
@@ -293,7 +295,7 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitFuture(Future &op, Event &ev
     }
 
     // F(a) = true U a
-    Until until {std::make_shared<Constant>(true), op.getLeft()};
+    Until until {std::make_shared<Constant>(true), op.getLeft(), op.getInterval()};
 
     return std::make_shared<Until>(until);
 }
@@ -318,7 +320,13 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitGlobally(Globally &op, Event
             return future;
         }
     }
-    return std::make_shared<Globally>(op);
+
+    // G(a) = not F(not a) = true ^ F(true ^ a)
+    Xor::SetType_T xorSetOne{std::make_shared<Constant>(true), op.getLeft()};
+    auto future {std::make_shared<Future>(std::make_shared<Xor>(xorSetOne), op.getInterval())};
+    Xor::SetType_T xorSetTwo{std::make_shared<Constant>(true), future};
+
+    return std::make_shared<Xor>(xorSetTwo);
 }
 
 std::shared_ptr<Expression> MTLRewriteVisitor::visitNextStrong(NextStrong &op, Event &event) {
@@ -346,7 +354,11 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitOnce(Once &op, Event &event)
     if (auto once = std::dynamic_pointer_cast<Once>(op.getLeft())) {
         return once;
     }
-    return std::make_shared<Once>(op);
+
+    // O(a) = true S a
+    Since since {std::make_shared<Constant>(true), op.getLeft(), op.getInterval()};
+
+    return std::make_shared<Since>(since);
 }
 
 std::shared_ptr<Expression> MTLRewriteVisitor::visitPreviously(Previously &op, Event &event) {
@@ -423,5 +435,13 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitSince(Since &op, Event &even
 
 std::shared_ptr<Expression> MTLRewriteVisitor::visitEventOperator(EventOperator &op, Event &event) {
     return std::make_shared<EventOperator>(op);
+}
+
+std::shared_ptr<Expression> MTLRewriteVisitor::visitResolvingOperator(ResolvingOperator &op, Event &event) {
+    return std::make_shared<ResolvingOperator>(op);
+}
+
+std::shared_ptr<Expression> MTLRewriteVisitor::visitDerivingOperator(DerivingOperator &op, Event &event) {
+    return std::make_shared<DerivingOperator>(op);
 }
 

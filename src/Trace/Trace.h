@@ -56,7 +56,7 @@ public:
      */
     [[nodiscard]] std::string to_string() {
         std::stringstream ret;
-        for (Event event: trace) {
+        for (const Event& event: trace) {
             ret << event.to_string() << std::endl;
         }
         return ret.str();

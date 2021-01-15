@@ -74,14 +74,16 @@ Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr, std::m
 Trace Utils::createTrace(const std::set<std::string> &atomics, std::vector<std::vector<std::string>> trueAtomics) {
     std::vector<Event> finalTrace;
     std::map<std::string, LazyBool> event;
+    int timeStep {0};
     for (auto const &trueAtomic: trueAtomics) {
         for (auto const &atomic : atomics) {
             // Check if atomic exists in vector at current position
             bool atomicValue = trueAtomic.end() != std::find(trueAtomic.begin(), trueAtomic.end(), atomic);
             event[atomic] = LazyBool(atomicValue);
         }
-        finalTrace.emplace_back(Event(event, &trueAtomic == &trueAtomics.back()));
+        finalTrace.emplace_back(Event(event, timeStep, &trueAtomic == &trueAtomics.back()));
         event.clear();
+        ++timeStep;
     }
     return Trace{finalTrace};
 }
@@ -152,7 +154,7 @@ Event Utils::boolVectorToEvent(const std::set<std::string> &atomics, const std::
         eventMap.emplace(atomic, LazyBool(vector[i]));
         ++i;
     }
-    return Event(eventMap, terminal);
+    return Event(eventMap, 0, terminal);   //TODO check whether other/correct time step should be used
 
 }
 
@@ -242,7 +244,7 @@ Trace Utils::createLazyTrace(const std::map<std::string, std::function<bool(int)
             auto valueFetcherBound = std::bind(valueFetcher, i);
             event[atomic] = LazyBool(valueFetcherBound);
         }
-        finalTrace.emplace_back(Event(event, i == length - 1));
+        finalTrace.emplace_back(Event(event, i, i == length - 1));
         event.clear();
     }
     return Trace{finalTrace};

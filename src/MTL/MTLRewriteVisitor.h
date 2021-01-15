@@ -47,6 +47,10 @@ public:
 
     [[nodiscard]] std::shared_ptr<Expression> visitEventOperator(EventOperator &op, Event &event) override;
 
+    [[nodiscard]] std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &op, Event &event) override;
+
+    [[nodiscard]] std::shared_ptr<Expression> visitResolvingOperator(ResolvingOperator &op, Event &event) override;
+
 };
 
 
