@@ -2,7 +2,7 @@
 #include <memory>
 #include "MTLRewriteVisitor.h"
 #include "MTLEventConsuming.h"
-#include "MTLEventConsumingVisitor.h"
+#include "MTLResolvingPastVisitor.h"
 
 bool MTLEventConsuming::eventConsuming(const Formula &formula, Trace &trace) {
     // Empty trace
@@ -13,7 +13,7 @@ bool MTLEventConsuming::eventConsuming(const Formula &formula, Trace &trace) {
     // Copy formula before working on it
     auto formulaCopy = formula.deepCopy();
     MTLRewriteVisitor rw;
-    MTLEventConsumingVisitor ec;
+    MTLResolvingPastVisitor ec;
 
     // Rewrite
     rw.rewrite(formulaCopy);

@@ -37,3 +37,11 @@ std::string Event::to_string() const {
     res << terminal << "}";
     return res.str();
 }
+
+int Event::getTimeStep() const {
+    return timeStep;
+}
+
+void Event::setTimeStep(int timeStep) {
+    Event::timeStep = timeStep;
+}

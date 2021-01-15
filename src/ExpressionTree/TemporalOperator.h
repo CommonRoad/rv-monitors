@@ -13,12 +13,15 @@
 class TemporalOperator {
 private:
     std::shared_ptr<Interval> interval;
-
 public:
     explicit TemporalOperator(std::shared_ptr<Interval> interval) : interval(std::move(interval)) {}
 
     bool reduceInterval(){
         return interval->reduceInterval();
+    }
+
+    [[nodiscard]] const std::shared_ptr<Interval> &getInterval() const {
+        return interval;
     }
 };
 

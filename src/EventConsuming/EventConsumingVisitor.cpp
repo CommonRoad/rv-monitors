@@ -8,6 +8,8 @@
 #include "ExpressionTree/Binary/Bool/Implication.h"
 #include "ExpressionTree/Binary/Bool/Equivalence.h"
 #include "ExpressionTree/Unary/EventOperator.h"
+#include "ExpressionTree/Unary/DerivingOperator.h"
+#include "ExpressionTree/Unary/ResolvingOperator.h"
 #include "ExpressionTree/Unary/Temporal/LTLf/Globally.h"
 #include "ExpressionTree/Unary/Temporal/LTLf/Future.h"
 #include "ExpressionTree/Unary/Temporal/LTLf/NextStrong.h"
@@ -129,6 +131,14 @@ std::shared_ptr<Expression>
 EventConsumingVisitor::visitSince(Since &op, Event &event) {
     visitExpression(op, event);
     return std::make_shared<Since>(op.getLeft(), op.getRight());
+}
+
+std::shared_ptr<Expression> EventConsumingVisitor::visitResolvingOperator(ResolvingOperator &op, Event &event) {
+    return std::make_shared<ResolvingOperator>(op);
+}
+
+std::shared_ptr<Expression> EventConsumingVisitor::visitDerivingOperator(DerivingOperator &op, Event &event) {
+    return std::make_shared<DerivingOperator>(op);
 }
 
 std::shared_ptr<Expression>
