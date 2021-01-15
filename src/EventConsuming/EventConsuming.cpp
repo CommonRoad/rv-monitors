@@ -20,8 +20,10 @@ Formula EventConsuming::eventConsumingFuture(const Formula &formula, Trace &trac
     // Rewrite
     rw.rewrite(formulaCopy);
     auto &traceRef = trace.getTraceRef();
-    for (auto & i : traceRef) {
-        ec.consumeEvent(formulaCopy, i);
+    for (int i = 0; i < trace.getLength(); ++i) {
+        std::vector<Event> newEventVector(&trace.getTrace()[0], &trace.getTrace()[i + 1]);
+        Trace newTrace = Trace(newEventVector);
+        ec.consumeEvent(formulaCopy, newTrace);
         rw.rewrite(formulaCopy);
         if (formulaCopy.to_string() == "false") {
 //            std::cout << "Formula violated in event " << i << std::endl;
@@ -54,7 +56,10 @@ Formula EventConsuming::eventConsumingPast(const Formula &formula, Trace &trace)
     auto &traceRef = trace.getTraceRef();
     // Traverse trace backwards
     for (size_t i = traceRef.size() - 1; i >= 0 && i < traceRef.size(); --i) {
-        ec.consumeEvent(formulaCopy, traceRef[i]);
+        std::vector<Event> newEventVector(&trace.getTrace()[i], &trace.getTrace()[trace.getLength()]);
+        std::reverse(newEventVector.begin(), newEventVector.end());
+        Trace newTrace = Trace(newEventVector);
+        ec.consumeEvent(formulaCopy, newTrace);
         rw.rewrite(formulaCopy);
         if (formulaCopy.to_string() == "false") {
             //std::cout << "Formula violated in event " << i << std::endl;

@@ -4,6 +4,6 @@ std::shared_ptr<Expression> Equivalence::clone() {
     return std::make_shared<Equivalence>(*this);
 }
 
-std::shared_ptr<Expression> Equivalence::accept(ExpressionVisitor &visitor, Event &event) {
-    return visitor.visitEquivalence(*this, event);
+std::shared_ptr<Expression> Equivalence::accept(ExpressionVisitor &visitor, Trace &trace) {
+    return visitor.visitEquivalence(*this, trace);
 }

@@ -5,6 +5,6 @@ std::shared_ptr<Expression> Not::clone() {
     return std::make_shared<Not>(*this);
 }
 
-std::shared_ptr<Expression> Not::accept(ExpressionVisitor &visitor, Event &event) {
-    return visitor.visitNot(*this, event);
+std::shared_ptr<Expression> Not::accept(ExpressionVisitor &visitor, Trace &trace) {
+    return visitor.visitNot(*this, trace);
 }

@@ -6,15 +6,15 @@
 #include "ExpressionTree/Nary/Bool/Xor.h"
 
 
-void ExpressionVisitor::visitExpression(Expression &expr, Event &event) {
+void ExpressionVisitor::visitExpression(Expression &expr, Trace &trace) {
     // Unary
     if (auto unary = dynamic_cast<Unary *>(&expr)) {
-        unary->setLeft(unary->getLeft()->accept(*this, event));
+        unary->setLeft(unary->getLeft()->accept(*this, trace));
     }
         // Binary
     else if (auto binary = dynamic_cast<Binary *>(&expr)) {
-        binary->setLeft(binary->getLeft()->accept(*this, event));
-        binary->setRight(binary->getRight()->accept(*this, event));
+        binary->setLeft(binary->getLeft()->accept(*this, trace));
+        binary->setRight(binary->getRight()->accept(*this, trace));
     }
         // Nary
     else if (auto nary = dynamic_cast<NaryInterface *>(&expr)) {
@@ -22,7 +22,7 @@ void ExpressionVisitor::visitExpression(Expression &expr, Event &event) {
         if (dynamic_cast<Xor *>(nary)) {
             Xor::SetType_T newSet;
             for (const auto &itr : *nary) {
-                newSet.emplace(itr->accept(*this, event));
+                newSet.emplace(itr->accept(*this, trace));
             }
             // Avoid Narys with only one child
             if (nary->size() == 1) {
@@ -36,7 +36,7 @@ void ExpressionVisitor::visitExpression(Expression &expr, Event &event) {
         else {
             And::SetType_T newSet;
             for (const auto &itr : *nary) {
-                newSet.emplace(itr->accept(*this, event));
+                newSet.emplace(itr->accept(*this, trace));
             }
 
             // Avoid Narys with only one child

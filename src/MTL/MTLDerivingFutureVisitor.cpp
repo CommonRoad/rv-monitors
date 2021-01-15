@@ -21,125 +21,125 @@
 #include "ExpressionTree/Binary/Temporal/PTLf/Since.h"
 #include "Trace/Event.h"
 
-void MTLDerivingFutureVisitor::consumeEvent(Formula &formula, Event &event) {
+void MTLDerivingFutureVisitor::consumeEvent(Formula &formula, Trace &trace) {
     std::shared_ptr<ResolvingOperator> resolvingOperator =
-            std::make_shared<ResolvingOperator>(formula.getExpr(), event);
-    formula.setExpr(resolvingOperator->accept(*this, event));
+            std::make_shared<ResolvingOperator>(formula.getExpr(), trace.getLastEvent());
+    formula.setExpr(resolvingOperator->accept(*this, trace));
 }
 
 std::shared_ptr<Expression>
-MTLDerivingFutureVisitor::visitAtomic(Atomic &op, Event &event) {
+MTLDerivingFutureVisitor::visitAtomic(Atomic &op, Trace &trace) {
     return std::make_shared<Atomic>(op);
 }
 
 std::shared_ptr<Expression>
-MTLDerivingFutureVisitor::visitConstant(Constant &op, Event &event) {
+MTLDerivingFutureVisitor::visitConstant(Constant &op, Trace &trace) {
     return std::make_shared<Constant>(op);
 }
 
 std::shared_ptr<Expression>
-MTLDerivingFutureVisitor::visitAnd(And &op, Event &event) {
-    visitExpression(op, event);
+MTLDerivingFutureVisitor::visitAnd(And &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<And>(op);
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitOr(Or &op, Event &event) {
-    visitExpression(op, event);
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitOr(Or &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<Or>(op);
 }
 
 std::shared_ptr<Expression>
-MTLDerivingFutureVisitor::visitXor(Xor &op, Event &event) {
-    visitExpression(op, event);
+MTLDerivingFutureVisitor::visitXor(Xor &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<Xor>(op);
 }
 
 std::shared_ptr<Expression>
-MTLDerivingFutureVisitor::visitImplication(Implication &op, Event &event) {
-    visitExpression(op, event);
+MTLDerivingFutureVisitor::visitImplication(Implication &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<Implication>(op);
 }
 
 std::shared_ptr<Expression>
-MTLDerivingFutureVisitor::visitEquivalence(Equivalence &op, Event &event) {
-    visitExpression(op, event);
+MTLDerivingFutureVisitor::visitEquivalence(Equivalence &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<Equivalence>(op);
 }
 
 std::shared_ptr<Expression>
-MTLDerivingFutureVisitor::visitNot(Not &op, Event &event) {
-    visitExpression(op, event);
+MTLDerivingFutureVisitor::visitNot(Not &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<Not>(op);
 }
 
 std::shared_ptr<Expression>
-MTLDerivingFutureVisitor::visitFuture(Future &op, Event &event) {
-    visitExpression(op, event);
+MTLDerivingFutureVisitor::visitFuture(Future &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<Future>(op);
 }
 
 std::shared_ptr<Expression>
-MTLDerivingFutureVisitor::visitGlobally(Globally &op, Event &event) {
-    visitExpression(op, event);
-    visitExpression(op, event);
+MTLDerivingFutureVisitor::visitGlobally(Globally &op, Trace &trace) {
+    visitExpression(op, trace);
+    visitExpression(op, trace);
     return std::make_shared<Globally>(op);
 }
 
 std::shared_ptr<Expression>
-MTLDerivingFutureVisitor::visitNextStrong(NextStrong &op, Event &event) {
-    visitExpression(op, event);
+MTLDerivingFutureVisitor::visitNextStrong(NextStrong &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<NextStrong>(op);
 }
 
 std::shared_ptr<Expression>
-MTLDerivingFutureVisitor::visitNextWeak(NextWeak &op, Event &event) {
-    visitExpression(op, event);
+MTLDerivingFutureVisitor::visitNextWeak(NextWeak &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<NextWeak>(op);
 }
 
 std::shared_ptr<Expression>
-MTLDerivingFutureVisitor::visitOnce(Once &op, Event &event) {
-    visitExpression(op, event);
+MTLDerivingFutureVisitor::visitOnce(Once &op, Trace &trace) {
+    visitExpression(op, trace);
     auto ret = std::make_shared<Once>(op);
-    visitExpression(op, event);
+    visitExpression(op, trace);
     return ret;
 }
 
 std::shared_ptr<Expression>
-MTLDerivingFutureVisitor::visitPreviously(Previously &op, Event &event) {
-    visitExpression(op, event);
+MTLDerivingFutureVisitor::visitPreviously(Previously &op, Trace &trace) {
+    visitExpression(op, trace);
     auto ret = std::make_shared<Previously>(op);
-    visitExpression(op, event);
+    visitExpression(op, trace);
     return ret;
 }
 
 std::shared_ptr<Expression>
-MTLDerivingFutureVisitor::visitRelease(Release &op, Event &event) {
-    visitExpression(op, event);
+MTLDerivingFutureVisitor::visitRelease(Release &op, Trace &trace) {
+    visitExpression(op, trace);
     auto ret = std::make_shared<Release>(op);
-    visitExpression(op, event);
+    visitExpression(op, trace);
     return ret;
 }
 
 std::shared_ptr<Expression>
-MTLDerivingFutureVisitor::visitUntil(Until &op, Event &event) {
-    visitExpression(op, event);
+MTLDerivingFutureVisitor::visitUntil(Until &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<Until>(op.getLeft(), op.getRight());
 }
 
 std::shared_ptr<Expression>
-MTLDerivingFutureVisitor::visitSince(Since &op, Event &event) {
-    visitExpression(op, event);
+MTLDerivingFutureVisitor::visitSince(Since &op, Trace &trace) {
+    visitExpression(op, trace);
     return std::make_shared<Since>(op.getLeft(), op.getRight());
 }
 
 std::shared_ptr<Expression>
-MTLDerivingFutureVisitor::visitDerivingOperator(DerivingOperator &op, Event &event) {
+MTLDerivingFutureVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace) {
     std::shared_ptr<Expression> ret;
 
     // Apply eventMap to atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(op.getLeft())) {
-        ret = std::make_shared<Constant>(event.getValue(*atomic));
+        ret = std::make_shared<Constant>(trace.getLastEvent().getValue(*atomic));
     }
     else if (auto constant = std::dynamic_pointer_cast<Constant>(op.getLeft())) {
         ret = std::make_shared<Constant>(constant->getValue());
@@ -148,7 +148,7 @@ MTLDerivingFutureVisitor::visitDerivingOperator(DerivingOperator &op, Event &eve
     else if (auto andExpr = std::dynamic_pointer_cast<And>(op.getLeft())) {
         And::SetType_T newExprSet;
         for (const auto &itr : *andExpr) {
-            auto derivingFutureExpr = std::make_shared<DerivingOperator>(itr, event);
+            auto derivingFutureExpr = std::make_shared<DerivingOperator>(itr, trace.getLastEvent());
             newExprSet.emplace(derivingFutureExpr);
         }
         ret = std::make_shared<And>(newExprSet);
@@ -158,7 +158,7 @@ MTLDerivingFutureVisitor::visitDerivingOperator(DerivingOperator &op, Event &eve
     else if (auto orExpr = std::dynamic_pointer_cast<Or>(op.getLeft())) {
         Or::SetType_T newExprSet;
         for (const auto &itr : *orExpr) {
-            auto derivingExpr = std::make_shared<DerivingOperator>(itr, event);
+            auto derivingExpr = std::make_shared<DerivingOperator>(itr, trace.getLastEvent());
             newExprSet.emplace(derivingExpr);
         }
         ret = std::make_shared<Or>(newExprSet);
@@ -167,7 +167,7 @@ MTLDerivingFutureVisitor::visitDerivingOperator(DerivingOperator &op, Event &eve
     else if (auto xorExpr = std::dynamic_pointer_cast<Xor>(op.getLeft())) {
         Xor::SetType_T newExprSet;
         for (const auto &itr : *xorExpr) {
-            auto derivingExpr = std::make_shared<DerivingOperator>(itr, event);
+            auto derivingExpr = std::make_shared<DerivingOperator>(itr, trace.getLastEvent());
             newExprSet.emplace(derivingExpr);
         }
         ret = std::make_shared<Xor>(newExprSet);
@@ -187,36 +187,36 @@ MTLDerivingFutureVisitor::visitDerivingOperator(DerivingOperator &op, Event &eve
     }
         // Previously
     else if (auto previously = std::dynamic_pointer_cast<Previously>(op.getLeft())) {
-        if (event.getTimeStep() == 1)
+        if (trace.getLastEvent().getTimeStep() == 1)
             ret = std::make_shared<Constant>(false);
         else{
-            auto resolvingExpr = std::make_shared<ResolvingOperator>(previously->getLeft(), event);
-            ret = std::make_shared<DerivingOperator>(resolvingExpr, event);
+            auto resolvingExpr = std::make_shared<ResolvingOperator>(previously->getLeft(), trace.getLastEvent());
+            ret = std::make_shared<DerivingOperator>(resolvingExpr, trace.getLastEvent());
         }
     }
         // Since
     else if (auto since = std::dynamic_pointer_cast<Since>(op.getLeft())) {
         Or::SetType_T orSet{};
         if (since->getInterval()->containsZero()) {
-            auto derivingExpr = std::make_shared<DerivingOperator>(since->getRight(), event);
+            auto derivingExpr = std::make_shared<DerivingOperator>(since->getRight(), trace.getLastEvent());
             orSet.emplace(derivingExpr);
         }
         else
             orSet.emplace(std::make_shared<Constant>(false));
-        if (event.getTimeStep() == 1)
+        if (trace.getLastEvent().getTimeStep() == 1)
             orSet.emplace(std::make_shared<Constant>(false));
         else{
 
         }
         ret = std::make_shared<Or>(orSet);
     }
-    return ret->accept(*this, event);
+    return ret->accept(*this, trace);
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitResolvingOperator(ResolvingOperator &op, Event &event) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitResolvingOperator(ResolvingOperator &op, Trace &trace) {
     return std::make_shared<ResolvingOperator>(op);
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitEventOperator(EventOperator &op, Event &event) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitEventOperator(EventOperator &op, Trace &trace) {
     return std::make_shared<EventOperator>(op);
 }
