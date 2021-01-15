@@ -8,7 +8,7 @@
 #include "Symbols/Symbols.h"
 #include "Rewriting/ExpressionVisitor.h"
 
-class Event;
+class Trace;
 
 /**
  * Parent class for all expressions.
@@ -62,7 +62,7 @@ public:
      * @param event Event.
      * @return Result of visit function of respective expression.
      */
-    virtual std::shared_ptr<Expression> accept(ExpressionVisitor &, Event &) = 0;
+    virtual std::shared_ptr<Expression> accept(ExpressionVisitor &, Trace &) = 0;
 
     /**
      * Checks if expression is a specific Constant.

@@ -21,29 +21,17 @@ bool Interval::reduceInterval(){
         return true;
 }
 
-int Interval::getStart() const {
-    return start;
-}
+int Interval::getStart() const { return start; }
 
-void Interval::setStart(int start) {
-    Interval::start = start;
-}
+void Interval::setStart(int st) { start = st; }
 
-int Interval::getAnEnd() const {
-    return end;
-}
+int Interval::getAnEnd() const { return end; }
 
-void Interval::setAnEnd(int anEnd) {
-    end = anEnd;
-}
+void Interval::setAnEnd(int anEnd) { end = anEnd; }
 
-bool Interval::isFinite() const {
-    return finite;
-}
+bool Interval::isFinite() const { return finite; }
 
-void Interval::setFinite(bool finite) {
-    Interval::finite = finite;
-}
+void Interval::setFinite(bool fin) { finite = fin; }
 
 bool Interval::containsZero() const {
     if (start == 0 or end == 0)

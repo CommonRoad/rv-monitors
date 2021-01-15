@@ -193,7 +193,7 @@ MTLResolvingPastVisitor::visitResolvingOperator(ResolvingOperator &op,
             ret = std::make_shared<Constant>(false);
         else{
             auto derivingExpr = std::make_shared<DerivingOperator>(previously->getLeft(), event);
-            ret = std::make_shared<ResolvingOperator>(derivingExpr, event);
+            ret = std::make_shared<ResolvingOperator>(derivingExpr, prevEvent);
         }
     }
         // Since
@@ -208,7 +208,9 @@ MTLResolvingPastVisitor::visitResolvingOperator(ResolvingOperator &op,
         if (event.getTimeStep() == 1)
             orSet.emplace(std::make_shared<Constant>(false));
         else{
-
+            since->reduceInterval();
+            auto derivingExpr = std::make_shared<DerivingOperator>(since->getLeft(), event);
+            ret = std::make_shared<ResolvingOperator>(derivingExpr, prevEvent);
         }
         ret = std::make_shared<Or>(orSet);
     }
