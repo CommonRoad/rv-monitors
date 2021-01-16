@@ -76,15 +76,6 @@ public:
             trace.back().setTerminal(false);
         }
     }
-
-    /**
-     * Getter for last event in trace.
-     * @return Last event in trace.
-     */
-    [[nodiscard]] Event getLastEvent() const {
-        return trace.at(trace.size() - 1);
-    }
-
 };
 
 

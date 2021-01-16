@@ -35,23 +35,23 @@ void MTLRewriteVisitor::rewrite(Formula &formula) {
     auto trace = Trace(std::vector<Event>{event});
 
     auto before = Formula::deepCopy(formula.getExpr());
-    formula.setExpr(formula.getExpr()->accept(*this, trace));
+    formula.setExpr(formula.getExpr()->accept(*this, trace, 0));
     while (!Formula::sameTree(before, formula.getExpr())) {
         before = Formula::deepCopy(formula.getExpr());
-        formula.setExpr(formula.getExpr()->accept(*this, trace));
+        formula.setExpr(formula.getExpr()->accept(*this, trace, 0));
     }
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitAtomic(Atomic &op, Trace &trace) {
+std::shared_ptr<Expression> MTLRewriteVisitor::visitAtomic(Atomic &op, Trace &trace, int index) {
     return std::make_shared<Atomic>(op);
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitConstant(Constant &op, Trace &trace) {
+std::shared_ptr<Expression> MTLRewriteVisitor::visitConstant(Constant &op, Trace &trace, int index) {
     return std::make_shared<Constant>(op);
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitAnd(And &op, Trace &trace) {
-    visitExpression(op, trace);
+std::shared_ptr<Expression> MTLRewriteVisitor::visitAnd(And &op, Trace &trace, int index) {
+    visitExpression(op, trace, index);
 
     // I'm a copy!
     auto expressions = op.getExpressions();
@@ -119,8 +119,8 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitAnd(And &op, Trace &trace) {
 
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitOr(Or &op, Trace &trace) {
-    visitExpression(op, trace);
+std::shared_ptr<Expression> MTLRewriteVisitor::visitOr(Or &op, Trace &trace, int index) {
+    visitExpression(op, trace, index);
     auto expressions = op.getExpressions();
 
     // Check for true
@@ -184,8 +184,8 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitOr(Or &op, Trace &trace) {
     return xorExpr;
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitXor(Xor &op, Trace &trace) {
-    visitExpression(op, trace);
+std::shared_ptr<Expression> MTLRewriteVisitor::visitXor(Xor &op, Trace &trace, int index) {
+    visitExpression(op, trace, index);
 
     auto expressions = op.getExpressions();
 
@@ -226,8 +226,8 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitXor(Xor &op, Trace &trace) {
 
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitImplication(Implication &op, Trace &trace) {
-    visitExpression(op, trace);
+std::shared_ptr<Expression> MTLRewriteVisitor::visitImplication(Implication &op, Trace &trace, int index) {
+    visitExpression(op, trace, index);
     // a -> a = true
     if (*op.getLeft() == *op.getRight()) {
         return std::make_shared<Constant>(true);
@@ -251,7 +251,7 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitImplication(Implication &op,
     return std::make_shared<Xor>(xorSet);
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitEquivalence(Equivalence &op, Trace &trace) {
+std::shared_ptr<Expression> MTLRewriteVisitor::visitEquivalence(Equivalence &op, Trace &trace, int index) {
     // TODO check if same/different formula left and right
     if (op.getLeft() == op.getRight()) {
         return std::make_shared<Constant>(true);
@@ -263,8 +263,8 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitEquivalence(Equivalence &op,
     return std::make_shared<Xor>(xorSet);
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitNot(Not &op, Trace &trace) {
-    visitExpression(op, trace);
+std::shared_ptr<Expression> MTLRewriteVisitor::visitNot(Not &op, Trace &trace, int index) {
+    visitExpression(op, trace, index);
     // !true = false
     if (op.getLeft()->isConstTrue()) {
         return std::make_shared<Constant>(false);
@@ -278,8 +278,8 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitNot(Not &op, Trace &trace) {
     return std::make_shared<Xor>(xorSet);
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitFuture(Future &op, Trace &trace) {
-    visitExpression(op, trace);
+std::shared_ptr<Expression> MTLRewriteVisitor::visitFuture(Future &op, Trace &trace, int index) {
+    visitExpression(op, trace, index);
     // F(false) = false
     if (op.getLeft()->isConstFalse()) {
         return std::make_shared<Constant>(false);
@@ -302,8 +302,8 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitFuture(Future &op, Trace &tr
     return std::make_shared<Until>(until);
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitGlobally(Globally &op, Trace &trace) {
-    visitExpression(op, trace);
+std::shared_ptr<Expression> MTLRewriteVisitor::visitGlobally(Globally &op, Trace &trace, int index) {
+    visitExpression(op, trace, index);
     // G(false) = false
     if (op.getLeft()->isConstFalse()) {
         return std::make_shared<Constant>(false);
@@ -331,8 +331,8 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitGlobally(Globally &op, Trace
     return std::make_shared<Xor>(xorSetTwo);
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitHistorically(Historically &op, Trace &trace) {
-    visitExpression(op, trace);
+std::shared_ptr<Expression> MTLRewriteVisitor::visitHistorically(Historically &op, Trace &trace, int index) {
+    visitExpression(op, trace, index);
     // H(false) = false
     if (op.getLeft()->isConstFalse()) {
         return std::make_shared<Constant>(false);
@@ -360,8 +360,8 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitHistorically(Historically &o
     return std::make_shared<Xor>(xorSetTwo);
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitNextStrong(NextStrong &op, Trace &trace) {
-    visitExpression(op, trace);
+std::shared_ptr<Expression> MTLRewriteVisitor::visitNextStrong(NextStrong &op, Trace &trace, int index) {
+    visitExpression(op, trace, index);
     // X(false) = false
     if (op.getLeft()->isConstFalse()) {
         return std::make_shared<Constant>(false);
@@ -369,13 +369,13 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitNextStrong(NextStrong &op, T
     return std::make_shared<NextStrong>(op);
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitNextWeak(NextWeak &op, Trace &trace) {
-    visitExpression(op, trace);
+std::shared_ptr<Expression> MTLRewriteVisitor::visitNextWeak(NextWeak &op, Trace &trace, int index) {
+    visitExpression(op, trace, index);
     return std::make_shared<NextWeak>(op);
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitOnce(Once &op, Trace &trace) {
-    visitExpression(op, trace);
+std::shared_ptr<Expression> MTLRewriteVisitor::visitOnce(Once &op, Trace &trace, int index) {
+    visitExpression(op, trace, index);
     // O(false) = false
     if (op.getLeft()->isConstFalse()) {
         return std::make_shared<Constant>(false);
@@ -392,13 +392,13 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitOnce(Once &op, Trace &trace)
     return std::make_shared<Since>(since);
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitPreviously(Previously &op, Trace &trace) {
-    visitExpression(op, trace);
+std::shared_ptr<Expression> MTLRewriteVisitor::visitPreviously(Previously &op, Trace &trace, int index) {
+    visitExpression(op, trace, index);
     return std::make_shared<Previously>(op);
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitRelease(Release &op, Trace &trace) {
-    visitExpression(op, trace);
+std::shared_ptr<Expression> MTLRewriteVisitor::visitRelease(Release &op, Trace &trace, int index) {
+    visitExpression(op, trace, index);
     // a R true = true
     if (op.getRight()->isConstTrue()) {
         return std::make_shared<Constant>(true);
@@ -422,8 +422,8 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitRelease(Release &op, Trace &
     return std::make_shared<Release>(op);
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitUntil(Until &op, Trace &trace) {
-    visitExpression(op, trace);
+std::shared_ptr<Expression> MTLRewriteVisitor::visitUntil(Until &op, Trace &trace, int index) {
+    visitExpression(op, trace, index);
     // a U false = false
     if (op.getRight()->isConstFalse()) {
         return std::make_shared<Constant>(false);
@@ -443,20 +443,20 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitUntil(Until &op, Trace &trac
     return std::make_shared<Until>(op);
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitSince(Since &op, Trace &trace) {
-    visitExpression(op, trace);
+std::shared_ptr<Expression> MTLRewriteVisitor::visitSince(Since &op, Trace &trace, int index) {
+    visitExpression(op, trace, index);
     // a U false = false
     if (op.getRight()->isConstFalse()) {
         return std::make_shared<Constant>(false);
     }
 
     // Idempotence
-    if (auto since = std::dynamic_pointer_cast<Until>(op.getLeft())) {
+    if (auto since = std::dynamic_pointer_cast<Since>(op.getLeft())) {
         if (since->getRight() == op.getRight()) {
             return since;
         }
     }
-    if (auto since = std::dynamic_pointer_cast<Until>(op.getRight())) {
+    if (auto since = std::dynamic_pointer_cast<Since>(op.getRight())) {
         if (since->getLeft() == op.getLeft()) {
             return since;
         }
@@ -464,15 +464,15 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitSince(Since &op, Trace &trac
     return std::make_shared<Since>(op);
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitEventOperator(EventOperator &op, Trace &trace) {
+std::shared_ptr<Expression> MTLRewriteVisitor::visitEventOperator(EventOperator &op, Trace &trace, int index) {
     return std::make_shared<EventOperator>(op);
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitResolvingOperator(ResolvingOperator &op, Trace &trace) {
+std::shared_ptr<Expression> MTLRewriteVisitor::visitResolvingOperator(ResolvingOperator &op, Trace &trace, int index) {
     return std::make_shared<ResolvingOperator>(op);
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace) {
+std::shared_ptr<Expression> MTLRewriteVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace, int index) {
     return std::make_shared<DerivingOperator>(op);
 }
 

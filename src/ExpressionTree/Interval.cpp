@@ -13,8 +13,10 @@ std::string Interval::to_string() const {
 void Interval::reduceInterval(){
     if (!finite)
         start--;
-    end--;
-    start--;
+    else{
+        end--;
+        start--;
+    }
 }
 
 int Interval::getStart() const { return start; }

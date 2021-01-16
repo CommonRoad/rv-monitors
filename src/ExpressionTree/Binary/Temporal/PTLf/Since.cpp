@@ -8,6 +8,6 @@ std::shared_ptr<Expression> Since::clone() {
     return std::make_shared<Since>(*this);
 }
 
-std::shared_ptr<Expression> Since::accept(ExpressionVisitor &visitor, Trace &trace) {
-    return visitor.visitSince(*this, trace);
+std::shared_ptr<Expression> Since::accept(ExpressionVisitor &visitor, Trace &trace, int index) {
+    return visitor.visitSince(*this, trace, index);
 }
