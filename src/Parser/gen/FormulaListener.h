@@ -41,6 +41,18 @@ public:
   virtual void enterUntil(FormulaParser::UntilContext *ctx) = 0;
   virtual void exitUntil(FormulaParser::UntilContext *ctx) = 0;
 
+  virtual void enterReleaseInterval(FormulaParser::ReleaseIntervalContext *ctx) = 0;
+  virtual void exitReleaseInterval(FormulaParser::ReleaseIntervalContext *ctx) = 0;
+
+  virtual void enterUntilInterval(FormulaParser::UntilIntervalContext *ctx) = 0;
+  virtual void exitUntilInterval(FormulaParser::UntilIntervalContext *ctx) = 0;
+
+  virtual void enterSince(FormulaParser::SinceContext *ctx) = 0;
+  virtual void exitSince(FormulaParser::SinceContext *ctx) = 0;
+
+  virtual void enterSinceInterval(FormulaParser::SinceIntervalContext *ctx) = 0;
+  virtual void exitSinceInterval(FormulaParser::SinceIntervalContext *ctx) = 0;
+
   virtual void enterUnaryExpr(FormulaParser::UnaryExprContext *ctx) = 0;
   virtual void exitUnaryExpr(FormulaParser::UnaryExprContext *ctx) = 0;
 
@@ -80,6 +92,12 @@ public:
   virtual void enterNextStrongInterval(FormulaParser::NextStrongIntervalContext *ctx) = 0;
   virtual void exitNextStrongInterval(FormulaParser::NextStrongIntervalContext *ctx) = 0;
 
+  virtual void enterHistorically(FormulaParser::HistoricallyContext *ctx) = 0;
+  virtual void exitHistorically(FormulaParser::HistoricallyContext *ctx) = 0;
+
+  virtual void enterHistoricallyInterval(FormulaParser::HistoricallyIntervalContext *ctx) = 0;
+  virtual void exitHistoricallyInterval(FormulaParser::HistoricallyIntervalContext *ctx) = 0;
+
   virtual void enterNot(FormulaParser::NotContext *ctx) = 0;
   virtual void exitNot(FormulaParser::NotContext *ctx) = 0;
 
@@ -103,6 +121,9 @@ public:
 
   virtual void enterBrackets(FormulaParser::BracketsContext *ctx) = 0;
   virtual void exitBrackets(FormulaParser::BracketsContext *ctx) = 0;
+
+  virtual void enterDigit(FormulaParser::DigitContext *ctx) = 0;
+  virtual void exitDigit(FormulaParser::DigitContext *ctx) = 0;
 
 
 };

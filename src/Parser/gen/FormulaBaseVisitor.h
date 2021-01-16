@@ -59,6 +59,14 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitSince(FormulaParser::SinceContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitSinceInterval(FormulaParser::SinceIntervalContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitUnaryExpr(FormulaParser::UnaryExprContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -108,6 +116,14 @@ public:
   }
 
   virtual antlrcpp::Any visitNextStrongInterval(FormulaParser::NextStrongIntervalContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitHistorically(FormulaParser::HistoricallyContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitHistoricallyInterval(FormulaParser::HistoricallyIntervalContext *ctx) override {
     return visitChildren(ctx);
   }
 

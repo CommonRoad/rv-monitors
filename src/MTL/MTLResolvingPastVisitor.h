@@ -106,6 +106,14 @@ public:
 
     /**
      * Converts op to a shared_ptr.
+     * @param op Historically.
+     * @param event Event.
+     * @return op as a shared_ptr.
+     */
+    std::shared_ptr<Expression> visitHistorically(Historically &op, Trace &trace) override;
+
+    /**
+     * Converts op to a shared_ptr.
      * @param op NextStrong.
      * @param event Event.
      * @return op as a shared_ptr.

@@ -19,6 +19,7 @@
 #include "ExpressionTree/Unary/Temporal/LTLf/NextWeak.h"
 #include "ExpressionTree/Unary/Temporal/PLTLf/Once.h"
 #include "ExpressionTree/Unary/Temporal/PLTLf/Previously.h"
+#include "ExpressionTree/Unary/Temporal/PLTLf/Historically.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Release.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Until.h"
 #include "ExpressionTree/Binary/Temporal/PTLf/Since.h"
@@ -251,6 +252,30 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitGlobally(Globally &op, Tra
         }
     }
     return std::make_shared<Globally>(op);
+}
+
+std::shared_ptr<Expression> BasicRewriteVisitor::visitHistorically(Historically &op, Trace &trace) {
+    visitExpression(op, trace);
+    // H(false) = false
+    if (op.getLeft()->isConstFalse()) {
+        return std::make_shared<Constant>(false);
+    }
+    // H(true) = true
+    if (op.getLeft()->isConstTrue()) {
+        return std::make_shared<Constant>(true);
+    }
+    // Idempotence
+    if (auto historically = std::dynamic_pointer_cast<Historically>(op.getLeft())) {
+        return historically;
+    }
+
+    // Absorption H(O(H(a))) = O(H(a))
+    if (auto once = std::dynamic_pointer_cast<Once>(op.getLeft())) {
+        if (std::dynamic_pointer_cast<Historically>(once->getLeft())) {
+            return once;
+        }
+    }
+    return std::make_shared<Historically>(op);
 }
 
 std::shared_ptr<Expression> BasicRewriteVisitor::visitNextStrong(NextStrong &op, Trace &trace) {

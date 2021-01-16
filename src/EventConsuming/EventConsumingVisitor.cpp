@@ -16,6 +16,7 @@
 #include "ExpressionTree/Unary/Temporal/LTLf/NextWeak.h"
 #include "ExpressionTree/Unary/Temporal/PLTLf/Once.h"
 #include "ExpressionTree/Unary/Temporal/PLTLf/Previously.h"
+#include "ExpressionTree/Unary/Temporal/PLTLf/Historically.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Release.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Until.h"
 #include "ExpressionTree/Binary/Temporal/PTLf/Since.h"
@@ -80,7 +81,7 @@ EventConsumingVisitor::visitFuture(Future &op, Trace &trace) {
 std::shared_ptr<Expression>
 EventConsumingVisitor::visitGlobally(Globally &op, Trace &trace) {
     visitExpression(op, trace);
-    visitExpression(op, trace);
+    visitExpression(op, trace); // TODO why two times
     return std::make_shared<Globally>(op);
 }
 
@@ -130,6 +131,13 @@ std::shared_ptr<Expression>
 EventConsumingVisitor::visitSince(Since &op, Trace &trace) {
     visitExpression(op, trace);
     return std::make_shared<Since>(op.getLeft(), op.getRight());
+}
+
+std::shared_ptr<Expression>
+EventConsumingVisitor::visitHistorically(Historically &op, Trace &trace) {
+    visitExpression(op, trace);
+    visitExpression(op, trace);
+    return std::make_shared<Historically>(op);
 }
 
 std::shared_ptr<Expression> EventConsumingVisitor::visitResolvingOperator(ResolvingOperator &op, Trace &trace) {

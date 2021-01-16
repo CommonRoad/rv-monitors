@@ -41,6 +41,10 @@ public:
 
     virtual antlrcpp::Any visitUntilInterval(FormulaParser::UntilIntervalContext *context) = 0;
 
+    virtual antlrcpp::Any visitSince(FormulaParser::SinceContext *context) = 0;
+
+    virtual antlrcpp::Any visitSinceInterval(FormulaParser::SinceIntervalContext *context) = 0;
+
     virtual antlrcpp::Any visitUnaryExpr(FormulaParser::UnaryExprContext *context) = 0;
 
     virtual antlrcpp::Any visitGlobally(FormulaParser::GloballyContext *context) = 0;
@@ -66,6 +70,10 @@ public:
     virtual antlrcpp::Any visitNextWeakInterval(FormulaParser::NextWeakIntervalContext *context) = 0;
 
     virtual antlrcpp::Any visitNextStrongInterval(FormulaParser::NextStrongIntervalContext *context) = 0;
+
+    virtual antlrcpp::Any visitHistorically(FormulaParser::HistoricallyContext *context) = 0;
+
+    virtual antlrcpp::Any visitHistoricallyInterval(FormulaParser::HistoricallyIntervalContext *context) = 0;
 
     virtual antlrcpp::Any visitNot(FormulaParser::NotContext *context) = 0;
 

@@ -13,7 +13,7 @@ public:
 
     [[nodiscard]] std::string to_string() const;
 
-    bool reduceInterval();
+    void reduceInterval();
 
     [[nodiscard]] int getStart() const;
 
@@ -27,7 +27,7 @@ public:
 
     void setFinite(bool finite);
 
-    bool containsZero() const;
+    [[nodiscard]] bool containsZero() const;
 
 private:
     int start;
