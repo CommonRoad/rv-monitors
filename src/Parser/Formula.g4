@@ -22,8 +22,10 @@ and_expr
 release_until_expr
 : <assoc=right> left=unary op=RELEASE right=unary                      #Release
 | <assoc=right> left=unary op=UNTIL right=unary                        #Until
-| <assoc=right> left=unary op=RELEASE iv=interval right=unary             #ReleaseInterval
-| <assoc=right> left=unary op=UNTIL iv=interval right=unary               #UntilInterval
+| <assoc=right> left=unary op=RELEASE iv=interval right=unary          #ReleaseInterval
+| <assoc=right> left=unary op=UNTIL iv=interval right=unary            #UntilInterval
+| <assoc=right> left=unary op=SINCE right=unary                        #Since
+| <assoc=right> left=unary op=SINCE iv=interval right=unary            #SinceInterval
 | unary                                                                #UnaryExpr
 ;
 
@@ -40,6 +42,8 @@ unary
   | op=PREVIOUSLY iv=interval right=atom         #PreviouslyInterval
   | op=NEXT_WEAK iv=interval right=atom          #NextWeakInterval
   | op=NEXT_STRONG iv=interval right=atom        #NextStrongInterval
+  | op=HISTORICALLY right=atom                   #Historically
+  | op=HISTORICALLY iv=interval right=atom       #HistoricallyInterval
   | op=NOT right=atom                            #Not
   | op=NOT right=expr                            #NotExpr
   | atom                                         #AtomExpr
@@ -70,6 +74,8 @@ number
  RELEASE		            : 'R';
  ONCE                       : 'O';
  PREVIOUSLY                 : 'P';
+ SINCE                      : 'S';
+ HISTORICALLY               : 'H';
  AND        	            : ('&'|'and');
  OR         	            : ('|'|'or');
  XOR                        : ('^'|'xor');

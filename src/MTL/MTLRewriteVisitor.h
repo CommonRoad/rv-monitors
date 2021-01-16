@@ -39,6 +39,8 @@ public:
 
     [[nodiscard]] std::shared_ptr<Expression> visitPreviously(Previously &op, Trace &trace) override;
 
+    [[nodiscard]] std::shared_ptr<Expression> visitHistorically(Historically &op, Trace &trace) override;
+
     [[nodiscard]] std::shared_ptr<Expression> visitRelease(Release &op, Trace &trace) override;
 
     [[nodiscard]] std::shared_ptr<Expression> visitUntil(Until &op, Trace &trace) override;

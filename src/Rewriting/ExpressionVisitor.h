@@ -42,6 +42,8 @@ class Until;
 
 class Since;
 
+class Historically;
+
 class Trace;
 
 class EventOperator;
@@ -194,9 +196,17 @@ public:
      * Visits a Since.
      * @param expr Since.
      * @param trace Trace.
-     * @return Transformed Until as a shared_ptr.
+     * @return Transformed Since as a shared_ptr.
      */
     virtual std::shared_ptr<Expression> visitSince(Since &expr, Trace &trace) = 0;
+
+    /**
+     * Visits a Historically.
+     * @param expr Historically.
+     * @param trace Trace.
+     * @return Transformed Historically as a shared_ptr.
+     */
+    virtual std::shared_ptr<Expression> visitHistorically(Historically &expr, Trace &trace) = 0;
 
     /**
      * Visits an EventOperator.

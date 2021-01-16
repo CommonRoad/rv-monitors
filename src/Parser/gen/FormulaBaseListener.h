@@ -43,6 +43,18 @@ public:
   virtual void enterUntil(FormulaParser::UntilContext * /*ctx*/) override { }
   virtual void exitUntil(FormulaParser::UntilContext * /*ctx*/) override { }
 
+  virtual void enterReleaseInterval(FormulaParser::ReleaseIntervalContext * /*ctx*/) override { }
+  virtual void exitReleaseInterval(FormulaParser::ReleaseIntervalContext * /*ctx*/) override { }
+
+  virtual void enterUntilInterval(FormulaParser::UntilIntervalContext * /*ctx*/) override { }
+  virtual void exitUntilInterval(FormulaParser::UntilIntervalContext * /*ctx*/) override { }
+
+  virtual void enterSince(FormulaParser::SinceContext * /*ctx*/) override { }
+  virtual void exitSince(FormulaParser::SinceContext * /*ctx*/) override { }
+
+  virtual void enterSinceInterval(FormulaParser::SinceIntervalContext * /*ctx*/) override { }
+  virtual void exitSinceInterval(FormulaParser::SinceIntervalContext * /*ctx*/) override { }
+
   virtual void enterUnaryExpr(FormulaParser::UnaryExprContext * /*ctx*/) override { }
   virtual void exitUnaryExpr(FormulaParser::UnaryExprContext * /*ctx*/) override { }
 
@@ -82,6 +94,12 @@ public:
   virtual void enterNextStrongInterval(FormulaParser::NextStrongIntervalContext * /*ctx*/) override { }
   virtual void exitNextStrongInterval(FormulaParser::NextStrongIntervalContext * /*ctx*/) override { }
 
+  virtual void enterHistorically(FormulaParser::HistoricallyContext * /*ctx*/) override { }
+  virtual void exitHistorically(FormulaParser::HistoricallyContext * /*ctx*/) override { }
+
+  virtual void enterHistoricallyInterval(FormulaParser::HistoricallyIntervalContext * /*ctx*/) override { }
+  virtual void exitHistoricallyInterval(FormulaParser::HistoricallyIntervalContext * /*ctx*/) override { }
+
   virtual void enterNot(FormulaParser::NotContext * /*ctx*/) override { }
   virtual void exitNot(FormulaParser::NotContext * /*ctx*/) override { }
 
@@ -105,6 +123,9 @@ public:
 
   virtual void enterBrackets(FormulaParser::BracketsContext * /*ctx*/) override { }
   virtual void exitBrackets(FormulaParser::BracketsContext * /*ctx*/) override { }
+
+  virtual void enterDigit(FormulaParser::DigitContext * /*ctx*/) override { }
+  virtual void exitDigit(FormulaParser::DigitContext * /*ctx*/) override { }
 
 
   virtual void enterEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { }

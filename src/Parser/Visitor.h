@@ -16,8 +16,10 @@
 #include "ExpressionTree/Unary/Temporal/LTLf/NextWeak.h"
 #include "ExpressionTree/Unary/Temporal/PLTLf/Once.h"
 #include "ExpressionTree/Unary/Temporal/PLTLf/Previously.h"
+#include "ExpressionTree/Unary/Temporal/PLTLf/Historically.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Release.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Until.h"
+#include "ExpressionTree/Binary/Temporal/PTLf/Since.h"
 
 /**
  * Visitor for parsing.
@@ -93,6 +95,14 @@ public:
         //Once
         if (expr.is<std::shared_ptr<Once>>()) {
             return expr.as<std::shared_ptr<Once>>();
+        }
+        //Since
+        if (expr.is<std::shared_ptr<Since>>()) {
+            return expr.as<std::shared_ptr<Since>>();
+        }
+        //Historically
+        if (expr.is<std::shared_ptr<Historically>>()) {
+            return expr.as<std::shared_ptr<Historically>>();
         }
 
         throw std::runtime_error("Visitor::getType() No type found. Check your formula string.");
@@ -249,6 +259,29 @@ public:
     }
 
     /**
+     * Recursively visits the children and builds a Since with them.
+     * @param ctx Context.
+     * @return Until.
+     */
+    antlrcpp::Any visitSince(FormulaParser::SinceContext *ctx) override {
+        auto left = getType(visit(ctx->left));
+        auto right = getType(visit(ctx->right));
+        return std::make_shared<Since>(left, right);
+    }
+
+    /**
+     * Recursively visits the children and builds an interval-based Since with them.
+     * @param ctx Context.
+     * @return Until.
+     */
+    antlrcpp::Any visitSinceInterval(FormulaParser::SinceIntervalContext *ctx) override {
+        auto left = getType(visit(ctx->left));
+        auto right = getType(visit(ctx->right));
+        auto iv = visit(ctx->iv).as<std::shared_ptr<Interval>>();
+        return std::make_shared<Since>(left, right, iv);
+    }
+
+    /**
      * Visits a unary expression.
      * @param ctx Context
      * @return Result of visiting unary.
@@ -265,6 +298,16 @@ public:
     antlrcpp::Any visitGlobally(FormulaParser::GloballyContext *ctx) override {
         auto right = getType(visit(ctx->right));
         return std::make_shared<Globally>(right);
+    }
+
+    /**
+     * Recursively visits the child and builds a Historically with it.
+     * @param ctx Context.
+     * @return Historically.
+     */
+    antlrcpp::Any visitHistorically(FormulaParser::HistoricallyContext *ctx) override {
+        auto right = getType(visit(ctx->right));
+        return std::make_shared<Historically>(right);
     }
 
     /**
@@ -318,14 +361,25 @@ public:
     }
 
     /**
- * Recursively visits the child and builds an interval-based Globally with it.
- * @param ctx Context.
- * @return Globally.
- */
+     * Recursively visits the child and builds an interval-based Globally with it.
+     * @param ctx Context.
+     * @return Globally.
+     */
     antlrcpp::Any visitGloballyInterval(FormulaParser::GloballyIntervalContext *ctx) override {
         auto right = getType(visit(ctx->right));
         auto iv = visit(ctx->iv).as<std::shared_ptr<Interval>>();
         return std::make_shared<Globally>(right, iv);
+    }
+
+    /**
+     * Recursively visits the child and builds an interval-based Historically with it.
+     * @param ctx Context.
+     * @return Historically.
+     */
+    antlrcpp::Any visitHistoricallyInterval(FormulaParser::HistoricallyIntervalContext *ctx) override {
+        auto right = getType(visit(ctx->right));
+        auto iv = visit(ctx->iv).as<std::shared_ptr<Interval>>();
+        return std::make_shared<Historically>(right, iv);
     }
 
     /**

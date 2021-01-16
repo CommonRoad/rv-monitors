@@ -161,6 +161,14 @@ public:
     std::shared_ptr<Expression> visitSince(Since &op, Trace &trace) override;
 
     /**
+     * Converts op to a shared_ptr.
+     * @param op Historically.
+     * @param event Event.
+     * @return op as a shared_ptr.
+     */
+    std::shared_ptr<Expression> visitHistorically(Historically &op, Trace &trace) override;
+
+    /**
      * Applies event to its child and applies rewriting rules from event consuming algorithm.
      * @param op EventOperator.
      * @param event Event.

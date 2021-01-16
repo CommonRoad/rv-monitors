@@ -14,9 +14,9 @@ public:
   enum {
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, BOOL = 7, 
     NOT = 8, GLOBALLY = 9, FUTURE = 10, NEXT_WEAK = 11, NEXT_STRONG = 12, 
-    UNTIL = 13, RELEASE = 14, ONCE = 15, PREVIOUSLY = 16, AND = 17, OR = 18, 
-    XOR = 19, IMPL = 20, EQ = 21, TRUE = 22, FALSE = 23, ATOMIC = 24, WS = 25, 
-    DIGIT = 26
+    UNTIL = 13, RELEASE = 14, ONCE = 15, PREVIOUSLY = 16, SINCE = 17, HISTORICALLY = 18, 
+    AND = 19, OR = 20, XOR = 21, IMPL = 22, EQ = 23, TRUE = 24, FALSE = 25, 
+    ATOMIC = 26, WS = 27, DIGIT = 28
   };
 
   FormulaLexer(antlr4::CharStream *input);

@@ -14,9 +14,9 @@ public:
   enum {
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, BOOL = 7, 
     NOT = 8, GLOBALLY = 9, FUTURE = 10, NEXT_WEAK = 11, NEXT_STRONG = 12, 
-    UNTIL = 13, RELEASE = 14, ONCE = 15, PREVIOUSLY = 16, AND = 17, OR = 18, 
-    XOR = 19, IMPL = 20, EQ = 21, TRUE = 22, FALSE = 23, ATOMIC = 24, WS = 25, 
-    DIGIT = 26
+    UNTIL = 13, RELEASE = 14, ONCE = 15, PREVIOUSLY = 16, SINCE = 17, HISTORICALLY = 18, 
+    AND = 19, OR = 20, XOR = 21, IMPL = 22, EQ = 23, TRUE = 24, FALSE = 25, 
+    ATOMIC = 26, WS = 27, DIGIT = 28
   };
 
   enum {
@@ -201,6 +201,21 @@ public:
    
   };
 
+  class  SinceIntervalContext : public Release_until_exprContext {
+  public:
+    SinceIntervalContext(Release_until_exprContext *ctx);
+
+    FormulaParser::UnaryContext *left = nullptr;
+    antlr4::Token *op = nullptr;
+    FormulaParser::IntervalContext *iv = nullptr;
+    FormulaParser::UnaryContext *right = nullptr;
+    std::vector<UnaryContext *> unary();
+    UnaryContext* unary(size_t i);
+    antlr4::tree::TerminalNode *SINCE();
+    IntervalContext *interval();
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
   class  ReleaseIntervalContext : public Release_until_exprContext {
   public:
     ReleaseIntervalContext(Release_until_exprContext *ctx);
@@ -213,6 +228,19 @@ public:
     UnaryContext* unary(size_t i);
     antlr4::tree::TerminalNode *RELEASE();
     IntervalContext *interval();
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  SinceContext : public Release_until_exprContext {
+  public:
+    SinceContext(Release_until_exprContext *ctx);
+
+    FormulaParser::UnaryContext *left = nullptr;
+    antlr4::Token *op = nullptr;
+    FormulaParser::UnaryContext *right = nullptr;
+    std::vector<UnaryContext *> unary();
+    UnaryContext* unary(size_t i);
+    antlr4::tree::TerminalNode *SINCE();
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
@@ -328,6 +356,19 @@ public:
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
+  class  HistoricallyIntervalContext : public UnaryContext {
+  public:
+    HistoricallyIntervalContext(UnaryContext *ctx);
+
+    antlr4::Token *op = nullptr;
+    FormulaParser::IntervalContext *iv = nullptr;
+    FormulaParser::AtomContext *right = nullptr;
+    antlr4::tree::TerminalNode *HISTORICALLY();
+    IntervalContext *interval();
+    AtomContext *atom();
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
   class  PreviouslyContext : public UnaryContext {
   public:
     PreviouslyContext(UnaryContext *ctx);
@@ -367,6 +408,17 @@ public:
   public:
     AtomExprContext(UnaryContext *ctx);
 
+    AtomContext *atom();
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  HistoricallyContext : public UnaryContext {
+  public:
+    HistoricallyContext(UnaryContext *ctx);
+
+    antlr4::Token *op = nullptr;
+    FormulaParser::AtomContext *right = nullptr;
+    antlr4::tree::TerminalNode *HISTORICALLY();
     AtomContext *atom();
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
