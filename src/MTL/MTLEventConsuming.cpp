@@ -12,22 +12,20 @@ bool MTLEventConsuming::eventConsuming(const Formula &formula, Trace &trace) {
         return false;
     }
     // Copy formula before working on it
+    std::cout << "Initial formula: " << formula.to_string() << '\n';
     auto formulaCopy = formula.deepCopy();
     MTLRewriteVisitor rw;
     MTLResolvingPastVisitor rp;
     MTLDerivingFutureVisitor df;
-
     // Rewrite
     rw.rewrite(formulaCopy);
-    std::cout << formulaCopy.to_string() << '\n';
-    auto &traceRef = trace.getTraceRef();
+    std::cout << "Rewritten formula: " << formulaCopy.to_string() << '\n';
     for (int i = 0; i < trace.getLength(); ++i) {
-        std::vector<Event> newEventVector(&trace.getTrace()[0], &trace.getTrace()[i + 1]);
-        Trace newTrace = Trace(newEventVector);
-        rp.consumeEvent(formulaCopy, newTrace);
-        std::cout << formulaCopy.to_string() << '\n';
+        std::cout << '\n' << "Time step:" << i << '\n';
+        rp.consumeEvent(formulaCopy, trace, i);
+        std::cout << "Resolving past: " << formulaCopy.to_string() << '\n';
         rw.rewrite(formulaCopy);
-        std::cout << formulaCopy.to_string() << '\n';
+        std::cout << "Rewriting: " << formulaCopy.to_string() << '\n';
         if (formulaCopy.to_string() == "false") {
 //            std::cout << "Formula violated in event " << i << std::endl;
             break;
@@ -36,10 +34,10 @@ bool MTLEventConsuming::eventConsuming(const Formula &formula, Trace &trace) {
             //std::cout << "Formula became true in event " << i << std::endl;
             break;
         }
-        df.consumeEvent(formulaCopy, newTrace);
-        std::cout << formulaCopy.to_string() << '\n';
+        df.consumeEvent(formulaCopy, trace, i);
+        std::cout << "Deriving future: " << formulaCopy.to_string() << '\n';
         rw.rewrite(formulaCopy);
-        std::cout << formulaCopy.to_string() << '\n';
+        std::cout << "Rewriting: " << formulaCopy.to_string() << '\n';
         if (formulaCopy.to_string() == "false") {
 //            std::cout << "Formula violated in event " << i << std::endl;
             break;

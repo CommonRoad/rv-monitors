@@ -23,8 +23,8 @@ public:
         return std::make_shared<Globally>(*this);
     }
 
-    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace) override {
-        return visitor.visitGlobally(*this, trace);
+    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, int index) override {
+        return visitor.visitGlobally(*this, trace, index);
     }
 };
 
