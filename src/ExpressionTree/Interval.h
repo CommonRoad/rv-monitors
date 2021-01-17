@@ -6,6 +6,8 @@
 #define RV_MONITORS_INTERVAL_H
 
 #include <string>
+#include <memory>
+#include <iostream>
 
 class Interval {
 public:
@@ -19,9 +21,9 @@ public:
 
     void setStart(int start);
 
-    [[nodiscard]] int getAnEnd() const;
+    [[nodiscard]] int getEnd() const;
 
-    void setAnEnd(int anEnd);
+    void setEnd(int en);
 
     [[nodiscard]] bool isFinite() const;
 
@@ -29,11 +31,16 @@ public:
 
     [[nodiscard]] bool containsZero() const;
 
+    [[nodiscard]] std::shared_ptr<Interval> clone() {
+        return std::make_shared<Interval>(*this);
+    }
+
 private:
     int start;
     int end;
     bool finite;
 };
+
 
 
 #endif //RV_MONITORS_INTERVAL_H

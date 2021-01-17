@@ -23,9 +23,9 @@ int Interval::getStart() const { return start; }
 
 void Interval::setStart(int st) { start = st; }
 
-int Interval::getAnEnd() const { return end; }
+int Interval::getEnd() const { return end; }
 
-void Interval::setAnEnd(int anEnd) { end = anEnd; }
+void Interval::setEnd(int en) { end = en; }
 
 bool Interval::isFinite() const { return finite; }
 

@@ -297,9 +297,10 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitFuture(Future &op, Trace &tr
     }
 
     // F(a) = true U a
-    Until until {std::make_shared<Constant>(true), op.getLeft(), op.getInterval()};
-
-    return std::make_shared<Until>(until);
+//    Until until {std::make_shared<Constant>(true), op.getLeft(), op.getInterval()};
+//
+//    return std::make_shared<Until>(until);
+    return std::make_shared<Future>(op);
 }
 
 std::shared_ptr<Expression> MTLRewriteVisitor::visitGlobally(Globally &op, Trace &trace, int index) {
@@ -324,11 +325,13 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitGlobally(Globally &op, Trace
     }
 
     // G(a) = not F(not a) = true ^ F(true ^ a)
-    Xor::SetType_T xorSetOne{std::make_shared<Constant>(true), op.getLeft()};
-    auto future {std::make_shared<Future>(std::make_shared<Xor>(xorSetOne), op.getInterval())};
-    Xor::SetType_T xorSetTwo{std::make_shared<Constant>(true), future};
+//    Xor::SetType_T xorSetOne{std::make_shared<Constant>(true), op.getLeft()};
+//    auto future {std::make_shared<Future>(std::make_shared<Xor>(xorSetOne), op.getInterval())};
+//    Xor::SetType_T xorSetTwo{std::make_shared<Constant>(true), future};
+//
+//    return std::make_shared<Xor>(xorSetTwo);
 
-    return std::make_shared<Xor>(xorSetTwo);
+    return std::make_shared<Globally>(op.getLeft(), op.getInterval());
 }
 
 std::shared_ptr<Expression> MTLRewriteVisitor::visitHistorically(Historically &op, Trace &trace, int index) {
@@ -353,11 +356,12 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitHistorically(Historically &o
     }
 
     // H(a) = not O(not a) = true ^ O(true ^ a)
-    Xor::SetType_T xorSetOne{std::make_shared<Constant>(true), op.getLeft()};
-    auto once {std::make_shared<Once>(std::make_shared<Xor>(xorSetOne), op.getInterval())};
-    Xor::SetType_T xorSetTwo{std::make_shared<Constant>(true), once};
-
-    return std::make_shared<Xor>(xorSetTwo);
+//    Xor::SetType_T xorSetOne{std::make_shared<Constant>(true), op.getLeft()};
+//    auto once {std::make_shared<Once>(std::make_shared<Xor>(xorSetOne), op.getInterval())};
+//    Xor::SetType_T xorSetTwo{std::make_shared<Constant>(true), once};
+//
+//    return std::make_shared<Xor>(xorSetTwo);
+    return std::make_shared<Historically>(op);
 }
 
 std::shared_ptr<Expression> MTLRewriteVisitor::visitNextStrong(NextStrong &op, Trace &trace, int index) {
@@ -387,9 +391,10 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitOnce(Once &op, Trace &trace,
     }
 
     // O(a) = true S a
-    Since since {std::make_shared<Constant>(true), op.getLeft(), op.getInterval()};
-
-    return std::make_shared<Since>(since);
+//    Since since {std::make_shared<Constant>(true), op.getLeft(), op.getInterval()};
+//
+//    return std::make_shared<Since>(since);
+    return std::make_shared<Once>(op.getLeft(), op.getInterval());
 }
 
 std::shared_ptr<Expression> MTLRewriteVisitor::visitPreviously(Previously &op, Trace &trace, int index) {

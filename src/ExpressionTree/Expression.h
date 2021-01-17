@@ -83,7 +83,6 @@ public:
      */
     [[nodiscard]] bool isConstFalse() const;
 
-
 };
 
 bool operator==(const Expression &e1, const Expression &e2);
