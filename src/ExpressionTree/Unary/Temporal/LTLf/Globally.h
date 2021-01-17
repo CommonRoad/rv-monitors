@@ -1,8 +1,6 @@
 #pragma once
 
 
-#include <utility>
-
 #include "ExpressionTree/Unary/Unary.h"
 #include "ExpressionTree/TemporalOperator.h"
 
@@ -22,7 +20,7 @@ public:
             globallySymbol + interval->to_string(), left), TemporalOperator(interval) {}
 
     [[nodiscard]] std::shared_ptr<Expression> clone() override {
-        return std::make_shared<Globally>(this->getLeft()->clone(), this->getInterval()->clone());
+        return std::make_shared<Globally>(*this);
     }
 
     [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, int index) override {
