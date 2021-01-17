@@ -145,7 +145,10 @@ std::shared_ptr<Expression>
 MTLResolvingPastVisitor::visitResolvingOperator(ResolvingOperator &op, Trace &trace, int index) {
 
     std::shared_ptr<Expression> ret;
-
+    // Deriving
+    if (auto deriving = std::dynamic_pointer_cast<DerivingOperator>(op.getLeft())) {
+        ret = std::make_shared<ResolvingOperator>(op.getLeft()->accept(*this, trace, index), trace, index);
+    }
     // Apply eventMap to atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(op.getLeft())) {
         ret = std::make_shared<Constant>(trace.getEvent(index).getValue(*atomic));
@@ -162,7 +165,6 @@ MTLResolvingPastVisitor::visitResolvingOperator(ResolvingOperator &op, Trace &tr
         }
         ret = std::make_shared<And>(newExprSet);
     }
-
         // Or
     else if (auto orExpr = std::dynamic_pointer_cast<Or>(op.getLeft())) {
         Or::SetType_T newExprSet;
@@ -207,23 +209,22 @@ MTLResolvingPastVisitor::visitResolvingOperator(ResolvingOperator &op, Trace &tr
     else if (auto since = std::dynamic_pointer_cast<Since>(op.getLeft())) {
         Or::SetType_T orSet {};
         if (since->getInterval()->containsZero()) {
-            auto resolving = std::make_shared<DerivingOperator>(since->getRight(), trace, index);
+            auto resolving = std::make_shared<ResolvingOperator>(since->getRight(), trace, index);
             orSet.emplace(resolving);
         }
         else
             orSet.emplace(std::make_shared<Constant>(false));
         if (trace.getEvent(index).getTimeStep() == 0)
             orSet.emplace(std::make_shared<Constant>(false));
-        else{
-            And::SetType_T andSet {};
+        else {
+            And::SetType_T andSet{};
             since->reduceInterval();
-            auto derivingExpr = std::make_shared<DerivingOperator>(since, trace, index - 1);
-            andSet.emplace(derivingExpr);
+            auto derivingExpr = DerivingOperator(since, trace, index - 1);
+            andSet.emplace(derivingExpr.accept(*this, trace, index - 1));
             andSet.emplace(since->getLeft());
             auto resolvingExpr = std::make_shared<ResolvingOperator>(std::make_shared<And>(andSet), trace, index);
             orSet.emplace(resolvingExpr);
         }
-        ret = std::make_shared<Or>(orSet);
     }
 
     return ret->accept(*this, trace, index);
@@ -232,6 +233,10 @@ MTLResolvingPastVisitor::visitResolvingOperator(ResolvingOperator &op, Trace &tr
 std::shared_ptr<Expression> MTLResolvingPastVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace, int index) {
     std::shared_ptr<Expression> ret;
 
+    // resolving
+    if (auto resolving = std::dynamic_pointer_cast<ResolvingOperator>(op.getLeft())) {
+        ret = std::make_shared<DerivingOperator>(op.getLeft()->accept(*this, trace, index), trace, index);
+    }
     // Apply eventMap to atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(op.getLeft())) {
         ret = std::make_shared<Constant>(trace.getEvent(index).getValue(*atomic));
@@ -290,7 +295,7 @@ std::shared_ptr<Expression> MTLResolvingPastVisitor::visitDerivingOperator(Deriv
     else if (auto until = std::dynamic_pointer_cast<Until>(op.getLeft())) {
         Or::SetType_T orSet {};
         if (until->getInterval()->containsZero()) {
-            auto deriving = std::make_shared<ResolvingOperator>(until->getRight(), trace, index);
+            auto deriving = std::make_shared<DerivingOperator>(until->getRight(), trace, index);
             orSet.emplace(deriving);
         }
         else
@@ -314,8 +319,8 @@ std::shared_ptr<Expression> MTLResolvingPastVisitor::visitDerivingOperator(Deriv
     }
         // Since
     else if (auto since = std::dynamic_pointer_cast<Since>(op.getLeft())) {
-        auto resolvingExpr = std::make_shared<ResolvingOperator>(since, trace, index);
-        ret = std::make_shared<DerivingOperator>(resolvingExpr, trace, index);
+        auto resolvingExpr = ResolvingOperator(since, trace, index);
+        ret = std::make_shared<DerivingOperator>(DerivingOperator(resolvingExpr.accept(*this, trace, index), trace, index));
     }
     return ret->accept(*this, trace, index);
 }
