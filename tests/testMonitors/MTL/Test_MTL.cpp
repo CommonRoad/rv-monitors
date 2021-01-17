@@ -92,19 +92,17 @@ TEST(TestMTL, violated3) {
     EXPECT_FALSE(MTLEventConsuming::eventConsuming(formula, trace));
 }
 
-//TEST(TestMTL, violated4) {
-//    Trace trace = Utils::createTrace({"a", "b", "c"}, {
-//            {"c"},
-//            {"c"},
-//            {"a"},
-//            {"b"},
-//            {"a"},
-//            {"a"},
-//            {"a"}});
-//    Formula formula = Parser::parse("G[0, 6](a -> O[0, 6](b))");
-//
-//    EXPECT_FALSE(MTLEventConsuming::eventConsuming(formula, trace));
-//}
+TEST(TestMTL, violated4) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {
+            {"c"},
+            {"a"},
+            {"b"},
+            {"a"},
+            {"a"}});
+    Formula formula = Parser::parse("G[0, 4](a -> O[0, 4](b))");
+
+    EXPECT_FALSE(MTLEventConsuming::eventConsuming(formula, trace));
+}
 
 TEST(TestMTL, satisfied4) {
     Trace trace = Utils::createTrace({"a", "b", "c"}, {

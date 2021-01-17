@@ -147,9 +147,9 @@ MTLDerivingFutureVisitor::visitDerivingOperator(DerivingOperator &op, Trace &tra
     std::shared_ptr<Expression> ret;
 
     // resolving
-//    if (auto resolving = std::dynamic_pointer_cast<ResolvingOperator>(op.getLeft())) {
-//        ret = std::make_shared<DerivingOperator>(op.getLeft()->accept(*this, trace, index), trace, index);
-//    }
+    if (auto resolving = std::dynamic_pointer_cast<ResolvingOperator>(op.getLeft())) {
+        ret = std::make_shared<DerivingOperator>(op.getLeft()->accept(*this, trace, index), trace, index);
+    }
     // Apply eventMap to atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(op.getLeft())) {
         ret = std::make_shared<Constant>(trace.getEvent(index).getValue(*atomic));
@@ -208,7 +208,7 @@ MTLDerivingFutureVisitor::visitDerivingOperator(DerivingOperator &op, Trace &tra
     else if (auto until = std::dynamic_pointer_cast<Until>(op.getLeft())) {
         Or::SetType_T orSet {};
         if (until->getInterval()->containsZero()) {
-            auto deriving = std::make_shared<ResolvingOperator>(until->getRight(), trace, index);
+            auto deriving = std::make_shared<DerivingOperator>(until->getRight(), trace, index);
             orSet.emplace(deriving);
         }
         else
@@ -243,9 +243,9 @@ std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitResolvingOperator(Res
     std::shared_ptr<Expression> ret;
 
     // Deriving
-//    if (auto deriving = std::dynamic_pointer_cast<DerivingOperator>(op.getLeft())) {
-//        ret = std::make_shared<ResolvingOperator>(op.getLeft()->accept(*this, trace, index), trace, index);
-//    }
+    if (auto deriving = std::dynamic_pointer_cast<DerivingOperator>(op.getLeft())) {
+        ret = std::make_shared<ResolvingOperator>(op.getLeft()->accept(*this, trace, index), trace, index);
+    }
     // Apply eventMap to atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(op.getLeft())) {
         ret = std::make_shared<Constant>(trace.getEvent(index).getValue(*atomic));

@@ -207,7 +207,7 @@ MTLResolvingPastVisitor::visitResolvingOperator(ResolvingOperator &op, Trace &tr
     else if (auto since = std::dynamic_pointer_cast<Since>(op.getLeft())) {
         Or::SetType_T orSet {};
         if (since->getInterval()->containsZero()) {
-            auto resolving = std::make_shared<ResolvingOperator>(since->getRight(), trace, index);
+            auto resolving = std::make_shared<DerivingOperator>(since->getRight(), trace, index);
             orSet.emplace(resolving);
         }
         else
