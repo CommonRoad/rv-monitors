@@ -29,6 +29,7 @@ public:
     void setLeft(const std::shared_ptr<Expression> &leftExpr);
 
     [[nodiscard]] std::string to_string() const override;
+
 };
 
 

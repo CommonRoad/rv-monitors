@@ -6,6 +6,7 @@
 #define RV_MONITORS_TEMPORALOPERATOR_H
 
 #include <utility>
+#include <iostream>
 #include "memory"
 
 #include "Interval.h"
@@ -23,6 +24,12 @@ public:
     [[nodiscard]] const std::shared_ptr<Interval> &getInterval() const {
         return interval;
     }
+
+    TemporalOperator(const TemporalOperator& old)
+    {
+        interval = std::make_shared<Interval>(old.interval->getStart(), old.interval->getEnd(), old.interval->isFinite());
+    }
+
 };
 
 
