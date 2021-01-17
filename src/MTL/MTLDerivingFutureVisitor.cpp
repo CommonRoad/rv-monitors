@@ -1,3 +1,4 @@
+#include <iostream>
 #include "MTLDerivingFutureVisitor.h"
 #include "ExpressionTree/Atomic/Atomic.h"
 #include "ExpressionTree/Atomic/Constant.h"
@@ -146,9 +147,9 @@ MTLDerivingFutureVisitor::visitDerivingOperator(DerivingOperator &op, Trace &tra
     std::shared_ptr<Expression> ret;
 
     // resolving
-    if (auto resolving = std::dynamic_pointer_cast<ResolvingOperator>(op.getLeft())) {
-        visitExpression(op, trace, index);
-    }
+//    if (auto resolving = std::dynamic_pointer_cast<ResolvingOperator>(op.getLeft())) {
+//        ret = std::make_shared<DerivingOperator>(op.getLeft()->accept(*this, trace, index), trace, index);
+//    }
     // Apply eventMap to atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(op.getLeft())) {
         ret = std::make_shared<Constant>(trace.getEvent(index).getValue(*atomic));
@@ -231,10 +232,9 @@ MTLDerivingFutureVisitor::visitDerivingOperator(DerivingOperator &op, Trace &tra
     }
         // Since
     else if (auto since = std::dynamic_pointer_cast<Since>(op.getLeft())) {
-        auto resolvingExpr = std::make_shared<ResolvingOperator>(since, trace, index);
-        ret = std::make_shared<DerivingOperator>(resolvingExpr, trace, index);
+        auto resolvingExpr = ResolvingOperator(since, trace, index);
+        ret = std::make_shared<DerivingOperator>(DerivingOperator(resolvingExpr.accept(*this, trace, index), trace, index));
     }
-
     return ret->accept(*this, trace, index);
 }
 
@@ -243,9 +243,9 @@ std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitResolvingOperator(Res
     std::shared_ptr<Expression> ret;
 
     // Deriving
-    if (auto deriving = std::dynamic_pointer_cast<DerivingOperator>(op.getLeft())) {
-        visitExpression(op, trace, index);
-    }
+//    if (auto deriving = std::dynamic_pointer_cast<DerivingOperator>(op.getLeft())) {
+//        ret = std::make_shared<ResolvingOperator>(op.getLeft()->accept(*this, trace, index), trace, index);
+//    }
     // Apply eventMap to atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(op.getLeft())) {
         ret = std::make_shared<Constant>(trace.getEvent(index).getValue(*atomic));
@@ -317,8 +317,8 @@ std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitResolvingOperator(Res
         else{
             And::SetType_T andSet {};
             since->reduceInterval();
-            auto derivingExpr = std::make_shared<DerivingOperator>(since, trace, index - 1);
-            andSet.emplace(derivingExpr);
+            auto derivingExpr = DerivingOperator(since, trace, index - 1);
+            andSet.emplace(derivingExpr.accept(*this, trace, index - 1));
             andSet.emplace(since->getLeft());
             auto resolvingExpr = std::make_shared<ResolvingOperator>(std::make_shared<And>(andSet), trace, index);
             orSet.emplace(resolvingExpr);
