@@ -17,5 +17,5 @@ Event DerivingOperator::getEvent() {
 }
 
 std::string DerivingOperator::to_string() const {
-    return "D(" + getLeft()->to_string() + trace.getTrace().at(index).to_string() + ")";
+    return "D(" + getLeft()->to_string(); //+ trace.getTrace().at(index).to_string() + ")";
 }
