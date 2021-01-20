@@ -9,7 +9,7 @@
 #include <vector>
 
 
-namespace RVAlgorithms{
+namespace RVAlgorithms {
     enum AlgorithmTypes {
         dynamic,
         eventconsuming_ltl,
@@ -33,6 +33,7 @@ namespace RVAlgorithms{
      */
     AlgorithmTypes stringToAlgorithm(const std::string &algorithmString);
 
+}
 class RVMonitors {
 private:
     bool past{false};
