@@ -1,5 +1,5 @@
-#include <MT-FSM/MT_FSMCreation.h>
-#include "MT-FSM/MT_FSMEvaluation.h"
+#include <RV-Algorithms/MT-FSM/MT_FSMCreation.h>
+#include "RV-Algorithms/MT-FSM/MT_FSMEvaluation.h"
 #include "TestMT_FSMEvaluationFuture.h"
 #include "Utils/Utils.h"
 #include "Parser/Parser.h"

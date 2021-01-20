@@ -3,8 +3,8 @@
 #include <vector>
 #include "Formula/Formula.h"
 #include "Trace/Trace.h"
-#include "MT-FSM/MultiTransition.h"
-#include "MT-FSM/MT_FSM.h"
+#include "RV-Algorithms/MT-FSM/MultiTransition.h"
+#include "RV-Algorithms/MT-FSM/MT_FSM.h"
 
 /**
  * Utils Several functions for working with formulas, traces, and events.

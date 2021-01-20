@@ -2,7 +2,7 @@
 #include <iostream>
 #include "QMC/QMC.h"
 #include "Trace/EventGenerator.h"
-#include "EventConsuming/EventConsuming.h"
+#include "RV-Algorithms/EventConsuming/EventConsuming.h"
 #include "MT_FSMCreation.h"
 #include "Rewriting/BasicRewriteVisitor.h"
 #include "Utils/Utils.h"

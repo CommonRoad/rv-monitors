@@ -42,7 +42,6 @@ target_link_libraries(${EXECUTABLE_NAME}
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../)
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/../)
 
 
 ## create executable by linking against the library

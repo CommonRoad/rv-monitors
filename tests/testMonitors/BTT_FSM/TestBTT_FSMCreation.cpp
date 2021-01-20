@@ -1,6 +1,6 @@
 #include "Formula/Formula.h"
 #include "Parser/Parser.h"
-#include "BTT-FSM/BTT_FSMCreation.h"
+#include "RV-Algorithms/BTT-FSM/BTT_FSMCreation.h"
 #include "TestBTT_FSMCreation.h"
 
 //TODO Set ordering is not deterministic due to pointers
