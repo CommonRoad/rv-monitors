@@ -1,7 +1,7 @@
 #include "Parser/Parser.h"
 #include "Trace/Trace.h"
 #include "Utils/Utils.h"
-#include "DynamicProgramming/DynamicPast.h"
+#include "RV-Algorithms/DynamicProgramming/DynamicPast.h"
 #include "TestDynamicPast.h"
 
 TEST(TestDynamicPast, violatedEnd) {

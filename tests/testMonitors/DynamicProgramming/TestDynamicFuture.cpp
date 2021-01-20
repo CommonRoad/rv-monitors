@@ -2,7 +2,7 @@
 #include "Parser/Parser.h"
 #include "Trace/Trace.h"
 #include "Utils/Utils.h"
-#include "DynamicProgramming/DynamicFuture.h"
+#include "RV-Algorithms/DynamicProgramming/DynamicFuture.h"
 
 TEST(TestDynamicFuture, violated1) {
     Trace trace1 = Utils::createTrace({"a", "b", "c", "g", "f"}, {

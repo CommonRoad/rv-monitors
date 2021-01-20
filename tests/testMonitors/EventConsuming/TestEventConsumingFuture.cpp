@@ -2,7 +2,7 @@
 #include "Utils/Utils.h"
 #include "Parser/Parser.h"
 #include "Trace/Trace.h"
-#include "EventConsuming/EventConsuming.h"
+#include "RV-Algorithms/EventConsuming/EventConsuming.h"
 
 TEST(TestECFuture, violated1) {
     Trace trace = Utils::createTrace({"a", "b", "c", "g", "f"}, {

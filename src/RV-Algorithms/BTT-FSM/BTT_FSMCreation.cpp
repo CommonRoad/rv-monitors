@@ -2,7 +2,7 @@
 #include "Utils/Utils.h"
 #include "Rewriting/BasicRewriteVisitor.h"
 #include "BTT_FSMCreation.h"
-#include "MT-FSM/MT_FSMCreation.h"
+#include "RV-Algorithms/MT-FSM/MT_FSMCreation.h"
 #include "ExpressionTree/Atomic/Constant.h"
 #include "ExpressionTree/Nary/NaryInterface.h"
 #include "ExpressionTree/Unary/Bool/Not.h"

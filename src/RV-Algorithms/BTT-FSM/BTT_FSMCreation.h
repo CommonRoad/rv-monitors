@@ -1,7 +1,7 @@
 #pragma once
 
 #include <algorithm>
-#include "MT-FSM/StateMT_FSM.h"
+#include "RV-Algorithms/MT-FSM/StateMT_FSM.h"
 #include "Formula/Formula.h"
 #include "BTT_FSM.h"
 

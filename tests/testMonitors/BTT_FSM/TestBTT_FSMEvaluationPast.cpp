@@ -1,6 +1,6 @@
 #include "TestBTT_FSMEvaluationPast.h"
-#include "BTT-FSM/BTT_FSMEvaluation.h"
-#include "BTT-FSM/BTT_FSMCreation.h"
+#include "RV-Algorithms/BTT-FSM/BTT_FSMEvaluation.h"
+#include "RV-Algorithms/BTT-FSM/BTT_FSMCreation.h"
 #include "Utils/Utils.h"
 #include "Parser/Parser.h"
 #include "Trace/Trace.h"
