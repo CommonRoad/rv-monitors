@@ -34,6 +34,7 @@ namespace RVAlgorithms {
     AlgorithmTypes stringToAlgorithm(const std::string &algorithmString);
 
 }
+
 class RVMonitors {
 private:
     bool past{false};
