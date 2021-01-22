@@ -33,13 +33,13 @@ namespace Utils {
 
     /**
      * Creates a Trace with lazy evaluation of the predicates.
-     * @param atomicsAndFunctions
-     * @param length
+     * @param atomicsAndFunctions map containing lazy predicates
+     * @param timeSteps time steps for which predicates should be evaluated
      * @return
      */
     [[nodiscard]] Trace
-    createLazyTrace(const std::map<std::string, std::function<bool(int)>> &atomicsAndFunctions,
-                    size_t length);
+    createLazyTrace(const std::map<std::string, std::function<bool(int)>>& atomicsAndFunctions,
+                    const std::vector<int>& timeSteps);
 
     /**
      * Creates a string set of all predicates in a formula. Wrapper for getAtomics().
