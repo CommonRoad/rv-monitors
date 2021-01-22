@@ -232,12 +232,14 @@ std::vector<std::string> Utils::splitString(const std::string &stringOriginal, c
     return exprVector;
 }
 
-Trace Utils::createLazyTrace(const std::map<std::string, std::function<bool(int)>> &atomicsAndFunctions,
-                             size_t length) {
+Trace Utils::createLazyTrace(const std::map<std::string, std::function<bool(int)>>& atomicsAndFunctions,
+                             const std::vector<int>& timeSteps) {
     std::vector<Event> finalTrace;
+    int length = timeSteps.size();
     finalTrace.reserve(length);
 
-    for (size_t i = 0; i < length; ++i) {
+
+    for (auto const & i : timeSteps) {
         std::map<std::string, LazyBool> event;
 
         for (auto const &[atomic, valueFetcher] : atomicsAndFunctions) {
