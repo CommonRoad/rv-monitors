@@ -247,22 +247,23 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
     }
         // Previously
     else if (auto previously = std::dynamic_pointer_cast<Previously>(op.getLeft())) {
-        if (!trace.getEvent(index).isTerminal()) {
-            ret = previously->getLeft()->accept(*this, trace, index - 1);
+        if (index > 0) {
+            auto eventOperatorExpr = std::make_shared<EventOperator>(previously->getLeft(), trace, index - 1);
+            ret = eventOperatorExpr->accept(*this, trace, index - 1);
         }
         else {
-            ret = std::make_shared<Constant>(true);
+            ret = std::make_shared<Constant>(false);
         }
     }
         // Once
     else if (auto once = std::dynamic_pointer_cast<Once>(op.getLeft())) {
-        if (!trace.getEvent(index).isTerminal() and once->getInterval()->getEnd() != 0 and index > 0) {
+        if (once->getInterval()->getEnd() != 0 and index > 0) {
             Or::SetType_T newSet;
             auto eventOperatorExpr = std::make_shared<EventOperator>(once->getLeft(), trace, index);
             newSet.emplace(eventOperatorExpr);
             Once newOnce = *once;
             newOnce.reduceInterval();
-            auto his = std::make_shared<EventOperator>(std::make_shared<Once>(newOnce), trace, index - 1);
+            auto his = std::make_shared<EventOperator>(std::make_shared<Once>(newOnce), trace, index - 1);  //evtl. once or newOnce ???
             auto his_resolved = his->accept(*this, trace, index - 1);
             newSet.emplace(his_resolved);
             ret = std::make_shared<Or>(newSet);
