@@ -17,7 +17,7 @@ TEST(TestMTL, violated1) {
             {"b"},
             {"b"},
             {"b"}});
-    Formula formula = Parser::parse("G[0, 6](a -> F[0, 6](b & O[0, 6](c)))");
+    Formula formula = Parser::parse("G(a -> F[0, 6](b & O[0, 6](c)))");
 
     EXPECT_FALSE(MTLEventConsuming::eventConsuming(formula, trace));
 }
@@ -31,7 +31,7 @@ TEST(TestMTL, satisfied1) {
             {"b"},
             {"c"},
             {"b"}});
-    Formula formula = Parser::parse("G[0, 6](a -> F[0, 6](b & O[0, 6](c)))");
+    Formula formula = Parser::parse("G(a -> F[0, 6](b & O[0, 6](c)))");
 
     EXPECT_TRUE(MTLEventConsuming::eventConsuming(formula, trace));
 }
@@ -45,7 +45,7 @@ TEST(TestMTL, satisfied2) {
             {"a"},
             {"a"},
             {"b"}});
-    Formula formula = Parser::parse("G[0, 6](a -> F[0, 6](b))");
+    Formula formula = Parser::parse("G(a -> F[0, 6](b))");
 
     EXPECT_TRUE(MTLEventConsuming::eventConsuming(formula, trace));
 }
@@ -59,7 +59,7 @@ TEST(TestMTL, violated2) {
             {"a"},
             {"a"},
             {"a"}});
-    Formula formula = Parser::parse("G[0, 6](a -> F[0, 6](b))");
+    Formula formula = Parser::parse("G(a -> F[0, 6](b))");
 
     EXPECT_FALSE(MTLEventConsuming::eventConsuming(formula, trace));
 }
@@ -73,7 +73,7 @@ TEST(TestMTL, satisfied3) {
             {"a"},
             {"a"},
             {"a"}});
-    Formula formula = Parser::parse("G[0, 6](a)");
+    Formula formula = Parser::parse("G(a)");
 
     EXPECT_TRUE(MTLEventConsuming::eventConsuming(formula, trace));
 }
@@ -87,7 +87,7 @@ TEST(TestMTL, violated3) {
             {"a"},
             {"a"},
             {"a"}});
-    Formula formula = Parser::parse("G[0, 6](a)");
+    Formula formula = Parser::parse("G(a)");
 
     EXPECT_FALSE(MTLEventConsuming::eventConsuming(formula, trace));
 }
@@ -99,7 +99,7 @@ TEST(TestMTL, violated4) {
             {"b"},
             {"a"},
             {"a"}});
-    Formula formula = Parser::parse("G[0, 4](a -> O[0, 4](b))");
+    Formula formula = Parser::parse("G(a -> O[0, 4](b))");
 
     EXPECT_FALSE(MTLEventConsuming::eventConsuming(formula, trace));
 }
@@ -113,7 +113,7 @@ TEST(TestMTL, satisfied4) {
             {"b"},
             {"a"},
             {"b"}});
-    Formula formula = Parser::parse("G[0, 6](a -> O[0, 6](b))");
+    Formula formula = Parser::parse("G(a -> O[0, 6](b))");
 
     EXPECT_TRUE(MTLEventConsuming::eventConsuming(formula, trace));
 }
@@ -146,3 +146,89 @@ TEST(TestMTL, violated5) {
     EXPECT_FALSE(MTLEventConsuming::eventConsuming(formula, trace));
 }
 
+TEST(TestMTL, violated6) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {
+            {"c"},
+            {"a"},
+            {"b"},
+            {"a"},
+            {"a"}});
+    Formula formula = Parser::parse("G(a -> P(b))");
+
+    EXPECT_FALSE(MTLEventConsuming::eventConsuming(formula, trace));
+}
+
+TEST(TestMTL, satisfied6) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {
+            {"c"},
+            {"b"},
+            {"a"},
+            {"b"},
+            {"b"},
+            {"a"},
+            {"b"}});
+    Formula formula = Parser::parse("G(a -> P(b))");
+
+    EXPECT_TRUE(MTLEventConsuming::eventConsuming(formula, trace));
+}
+
+TEST(TestMTL, violated7) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {
+            {"b"},
+            {"b"},
+            {"b"},
+            {"c"},
+            {"a"}});
+    Formula formula = Parser::parse("G(a -> O(b & P(!b)))");
+
+    EXPECT_FALSE(MTLEventConsuming::eventConsuming(formula, trace));
+}
+
+TEST(TestMTL, satisfied7) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {
+            {"c"},
+            {"b"},
+            {"a", "b"},
+            {"c"},
+            {"a"},
+            {"b"},
+            {"a"},
+            {"a"}});
+    Formula formula = Parser::parse("G(a -> O(b & P(!b)))");
+
+    EXPECT_TRUE(MTLEventConsuming::eventConsuming(formula, trace));
+}
+
+TEST(TestMTL, violated8) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {
+            {"c"},
+            {"b"},
+            {"b"},
+            {"a"},
+            {"c"}});
+    Formula formula = Parser::parse("G((a & O(b & P(!b))) -> c)");
+
+    EXPECT_FALSE(MTLEventConsuming::eventConsuming(formula, trace));
+}
+
+TEST(TestMTL, satisfied8) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {
+            {"c"},
+            {"b"},
+            {"b"},
+            {"c", "a"},
+            {"c"}});
+    Formula formula = Parser::parse("G((a & O(b & P(!b))) -> c)");
+
+    EXPECT_TRUE(MTLEventConsuming::eventConsuming(formula, trace));
+}
+
+TEST(TestMTL, satisfied9) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {
+            {"a"},
+            {"a"},
+            {"a"}});
+    Formula formula = Parser::parse("G((a & O(b & P(!b))) -> c)");
+
+    EXPECT_TRUE(MTLEventConsuming::eventConsuming(formula, trace));
+}

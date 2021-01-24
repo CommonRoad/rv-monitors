@@ -26,9 +26,9 @@
  */
 bool RVMonitor::verify(Trace trace) {
 
-    if (algorithm > btt_fsm) {
+    if (algorithm > eventconsuming_mtl) {
         throw std::runtime_error(
-                "main::verify() No valid argument for algorithm given. Try MT_FSM, BTT_FSM, DYNAMIC, or EVENTCONSUMING.)");
+                "main::verify() No valid argument for algorithm given. Try MT_FSM, BTT_FSM, DYNAMIC, or EVENTCONSUMING-LTL, EVENTCONSUMING-MTL.)");
     }
     auto predicates = Utils::getAtomics(formula);
 
@@ -75,84 +75,7 @@ bool RVMonitor::verify(Trace trace) {
             break;
     }
     return verdict;
-//
-//    csv.back().traceLength = trace.getLength();
-//    csv.back().verdict = verdict;
-//    csv.back().creation = creationTimer.getTotalTime();
-//    csv.back().evaluation = evaluationTimer.getTotalTime();
-//    if (consoleOutput) {
-//        std::cout << std::setw(textwidth) << std::left << "Trace length" << ": " << trace.getLength() << std::endl;
-//        std::cout << std::setw(textwidth) << std::left << "Verdict" << ": " << std::boolalpha << verdict << std::endl;
-//        std::cout << std::setw(textwidth) << std::left << "Creation took" << ": " << creationTimer.getTotalTime() / 1e6l
-//                  << " ms" << std::endl;
-//        std::cout << std::setw(textwidth) << std::left << "Evaluation took" << ": "
-//                  << evaluationTimer.getTotalTime() / 1e6l
-//                  << " ms"
-//                  << std::endl;
-//    }
 }
-
-
-
-
-
-//
-///**
-// * Lines for .csv.
-// */
-//struct lineInfo {
-//    Algorithm algorithm;
-//    size_t vehicleA{};
-//    size_t vehicleB{};
-//    size_t traceLength{};
-//    bool verdict{};
-//    long creation{};
-//    long evaluation{};
-//    bool past{};
-//    bool lazy{};
-//    size_t run{};
-//    size_t delay{};
-//    std::map<std::string, size_t> predEvaluations;
-//    long traceCreation{};
-//
-//    /**
-//     * Header for a .csv.
-//     * @return
-//     */
-//    [[nodiscard]] std::string getHeader() const {
-//        std::stringstream header;
-//        header << "algorithm,ego,other,traceLength,verdict,creation,evaluation,past,lazy,run,delay,traceCreation,";
-//        header << Utils::iterableToString(predEvaluations,
-//                                          [](auto &pair) {
-//                                              return pair.first;
-//                                          }, {"", ""}, ",");
-//        return header.str();
-//    }
-//
-//    friend std::ostream &operator<<(std::ostream &os, const lineInfo &info) {
-//        os << std::boolalpha
-//           << info.algorithm << ","
-//           << static_cast<char>(info.vehicleA - 1000 + 'A') << ","
-//           << static_cast<char>(info.vehicleB - 1000 + 'A') << ","
-//           << info.traceLength << ","
-//           << info.verdict << ","
-//           << info.creation << ","
-//           << info.evaluation << ","
-//           << info.past << ","
-//           << info.lazy << ","
-//           << info.run << ","
-//           << info.delay << ","
-//           << info.traceCreation << ","
-//           << Utils::iterableToString(info.predEvaluations,
-//                                      [](auto &pair) {
-//                                          return std::to_string(pair.second);
-//                                      }, {"", ""}, ",")
-//           << "\n";
-//        return os;
-//    }
-//};
-//
-
 /**
  * Easier output for algorithms.
  * @param os

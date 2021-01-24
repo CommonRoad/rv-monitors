@@ -85,5 +85,5 @@ number
  FALSE      	            : ('False'|'false');
  ATOMIC		                : [a-z]+([_]?[a-z]+)*;
  WS                         : [ \t\n]+ -> skip;       //Skip whitespaces
- DIGIT                      : [0-9] | [1-9]+;
+ DIGIT                      : [0-9] | [1-9][0-9]+;
 
