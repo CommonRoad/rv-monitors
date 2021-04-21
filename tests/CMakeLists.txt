@@ -56,8 +56,8 @@ gtest_discover_tests(
 # Code coverage
 if (CMAKE_BUILD_TYPE MATCHES Debug)
     if (CodeCoverage MATCHES ON)
-        add_executable(rvmonitors_test_coverage ${MY_SRC} ${SRC_GEN})
-        target_include_directories(rvmonitors_test_coverage PUBLIC "./../../src/")
+        add_executable(rvmonitors_test_coverage ${RV_MONITOR_TEST_SRC_FILES} ${RV_MONITOR_SRC_FILES})
+        target_include_directories(rvmonitors_test_coverage PUBLIC "./../src/")
         target_link_libraries(rvmonitors_test_coverage PUBLIC
                 antlr4cpp
                 gtest
