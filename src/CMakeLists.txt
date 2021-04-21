@@ -1,0 +1,83 @@
+set(RV_MONITOR_SRC_FILES
+        ExpressionTree/Expression.cpp
+        ExpressionTree/Interval.cpp
+        ExpressionTree/TemporalOperator.cpp
+        ExpressionTree/Interval.cpp
+        ExpressionTree/Atomic/Atomic.cpp
+        ExpressionTree/Atomic/Constant.cpp
+        ExpressionTree/Binary/Binary.cpp
+        ExpressionTree/Binary/Bool/Equivalence.cpp
+        ExpressionTree/Binary/Bool/Implication.cpp
+        ExpressionTree/Binary/Temporal/LTLf/Until.cpp
+        ExpressionTree/Binary/Temporal/LTLf/Release.cpp
+        ExpressionTree/Binary/Temporal/PTLf/Since.cpp
+        ExpressionTree/Nary/Bool/And.cpp
+        ExpressionTree/Nary/Bool/Or.cpp
+        ExpressionTree/Nary/Bool/Xor.cpp
+        ExpressionTree/Unary/DerivingOperator.cpp
+        ExpressionTree/Unary/EventOperator.cpp
+        ExpressionTree/Unary/ResolvingOperator.cpp
+        ExpressionTree/Unary/Unary.cpp
+        ExpressionTree/Unary/Bool/Not.cpp
+        ExpressionTree/Unary/Temporal/LTLf/Future.cpp
+        ExpressionTree/Unary/Temporal/LTLf/Globally.cpp
+        ExpressionTree/Unary/Temporal/LTLf/NextStrong.cpp
+        ExpressionTree/Unary/Temporal/LTLf/NextWeak.cpp
+        ExpressionTree/Unary/Temporal/PLTLf/Historically.cpp
+        ExpressionTree/Unary/Temporal/PLTLf/Once.cpp
+        ExpressionTree/Unary/Temporal/PLTLf/Previously.cpp
+        Formula/Formula.cpp
+        Formula/NNF.cpp
+        Parser/Parser.cpp
+        Parser/gen/FormulaBaseListener.cpp
+        Parser/gen/FormulaBaseVisitor.cpp
+        Parser/gen/FormulaLexer.cpp
+        Parser/gen/FormulaListener.cpp
+        Parser/gen/FormulaParser.cpp
+        Parser/gen/FormulaVisitor.cpp
+        QMC/PrimeTerm.cpp
+        QMC/QMC.cpp
+        QMC/QMCTable.cpp
+        Rewriting/BasicRewriteVisitor.cpp
+        Rewriting/ExpressionVisitor.cpp
+        Rewriting/RewriteVisitor.cpp
+        RV-Algorithms/RVMonitor.cpp
+        RV-Algorithms/BTT-FSM/BTT_FSM.cpp
+        RV-Algorithms/BTT-FSM/BTT_FSMCreation.cpp
+        RV-Algorithms/BTT-FSM/BTT_FSMEvaluation.cpp
+        RV-Algorithms/BTT-FSM/Decision.cpp
+        RV-Algorithms/BTT-FSM/StateBTT_FSM.cpp
+        RV-Algorithms/DynamicProgramming/Dynamic.cpp
+        RV-Algorithms/DynamicProgramming/DynamicFuture.cpp
+        RV-Algorithms/DynamicProgramming/DynamicPast.cpp
+        RV-Algorithms/EventConsuming/EventConsuming.cpp
+        RV-Algorithms/EventConsuming/EventConsumingVisitor.cpp
+        RV-Algorithms/MT-FSM/MT_FSM.cpp
+        RV-Algorithms/MT-FSM/MT_FSMEvaluation.cpp
+        RV-Algorithms/MT-FSM/MT_FSMCreation.cpp
+        RV-Algorithms/MT-FSM/MultiTransition.cpp
+        RV-Algorithms/MT-FSM/StateMT_FSM.cpp
+        RV-Algorithms/MTL/MTLEventConsuming.cpp
+        RV-Algorithms/MTL/MTLDerivingFutureVisitor.cpp
+        RV-Algorithms/MTL/MTLEventConsumingVisitor.cpp
+        RV-Algorithms/MTL/MTLResolvingPastVisitor.cpp
+        RV-Algorithms/MTL/MTLRewriteVisitor.cpp
+        Trace/Event.cpp
+        Trace/EventGenerator.cpp
+        Utils/LazyBool.cpp
+        Utils/Timer.cpp
+        Utils/Utils.cpp
+        )
+
+
+# create library of this project
+add_library(${EXECUTABLE_NAME} STATIC ${RV_MONITOR_SRC_FILES})
+
+target_include_directories(${EXECUTABLE_NAME}
+        PUBLIC
+        "."
+        )
+
+target_link_libraries(${EXECUTABLE_NAME}
+        antlr4cpp
+        )

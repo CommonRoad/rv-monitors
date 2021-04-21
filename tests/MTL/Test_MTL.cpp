@@ -242,9 +242,10 @@ TEST(TestMTL, satisfied10) {
             {"a", "b"},
             {"a", "b"},
             {"a"},
+            {"a"},
             {"c"},
             {"c"}});
-    Formula formula = Parser::parse("G((!a & P(a)) -> (O[1,3](H[0,2](a & b))))");
+    Formula formula = Parser::parse("G((!a & P(a)) -> (O[1,5](H[0,2](a & b))))");
 
     EXPECT_TRUE(MTLEventConsuming::eventConsuming(formula, trace));
 }
@@ -256,9 +257,10 @@ TEST(TestMTL, violated10) {
             {"a", "b"},
             {"a", "b"},
             {"a"},
+            {"a"},
             {"c"},
             {"c"}});
-    Formula formula = Parser::parse("G((!a & P(a)) -> (O[1,3](H[0,2](a & b))))");
+    Formula formula = Parser::parse("G((!a & P(a)) -> (O[1,5](H[0,2](a & b))))");
 
     EXPECT_FALSE(MTLEventConsuming::eventConsuming(formula, trace));
 }
