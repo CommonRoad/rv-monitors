@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version=0.2
+version=0.3
 gitlab_img=gitlab.lrz.de:5005/maierhofer/rv-monitors/ci:$version
 
 docker login gitlab.lrz.de:5005 \
