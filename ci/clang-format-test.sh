@@ -18,9 +18,9 @@ echo
 
 # preference list
 clang_format_tool_candiates=(clang-format-10 clang-format)
-command -v clang-format
+
 for candidate in ${clang_format_tool_candiates[@]}; do
-    echo "$candidate"
+
     if command -v "$candidate" >/dev/null; then
         echo "Formatting check with $candidate --version:"
         $candidate --version
