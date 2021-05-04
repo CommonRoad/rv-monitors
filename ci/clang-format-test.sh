@@ -7,7 +7,7 @@
 # set exit on error
 set -e
 
-# check that we are in a clean state in order to prevent accidential changes
+# check that we are in a clean state in order to prevent accidental changes
 git status --untracked-files=no
 if [ ! -z "$(git status --untracked-files=no --porcelain)" ]; then
     echo "Script must be applied on a clean git state"
