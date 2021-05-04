@@ -24,6 +24,11 @@ RUN apt-get install -y uuid-dev > /dev/null
 ARG CLANG_FORMAT_VERSION=10
 RUN apt install git clang-format-${CLANG_FORMAT_VERSION} -y \
   && rm -rf /var/lib/apt/lists/* > /dev/null
-
 # Append llvm directory to path, that we can use clang-format instead of clang-format-<some-version>
 ENV PATH="$PATH:/usr/lib/llvm-${CLANG_FORMAT_VERSION}/bin/"
+
+ARG CLANG_TIDY_VERSION=10
+RUN set -eux && apt update && apt upgrade -qqy && apt-get install -y clang-tidy \
+  && rm -rf /var/lib/apt/lists/* > /dev/null
+# Append llvm directory to path, that we can use clang-tidyinstead of clang-tidy-<some-version>
+ENV PATH="$PATH:/usr/lib/llvm-${CLANG_TIDY_VERSION}/bin/"
