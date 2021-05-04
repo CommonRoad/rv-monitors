@@ -1,23 +1,24 @@
 #pragma once
 
-#include "Unary.h"
 #include "Trace/Trace.h"
+#include "Unary.h"
 
 /**
  * Class for the EventOperator that applies an event to a formula.
  */
 class EventOperator : public Unary {
-private:
+  private:
     Trace trace;
     int index;
-public:
+
+  public:
     /**
      * Constructor.
      * @param left Expression event should be applied to.
      * @param event Event.
      */
-    explicit EventOperator(const std::shared_ptr<Expression> &left, Trace trace, int idx) : Unary(
-            trace.getEvent(idx).to_string(), left), trace(std::move(trace)), index(idx) {}
+    explicit EventOperator(const std::shared_ptr<Expression> &left, Trace trace, int idx)
+        : Unary(trace.getEvent(idx).to_string(), left), trace(std::move(trace)), index(idx) {}
 
     /**
      * Getter for event.
@@ -30,9 +31,4 @@ public:
     [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, int index) override;
 
     [[nodiscard]] std::string to_string() const override;
-
 };
-
-
-
-

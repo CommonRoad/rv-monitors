@@ -1,12 +1,12 @@
 #pragma once
 
-#include <string>
 #include <memory>
 #include <set>
+#include <string>
 #include <utility>
 
-#include "Symbols/Symbols.h"
 #include "Rewriting/ExpressionVisitor.h"
+#include "Symbols/Symbols.h"
 
 class Trace;
 
@@ -14,17 +14,15 @@ class Trace;
  * Parent class for all expressions.
  */
 class Expression {
-private:
+  private:
     std::string symbol;
 
-public:
+  public:
     /**
      * Constructor.
      * @param symbol Symbol of the expression.
      */
-    explicit Expression(std::string symbol)
-            : symbol(std::move(symbol)) {
-    }
+    explicit Expression(std::string symbol) : symbol(std::move(symbol)) {}
 
     /**
      * Default constructor.
@@ -51,9 +49,9 @@ public:
     [[nodiscard]] virtual std::string to_string() const;
 
     /**
-    * Clones this expression.
-    * @return New shared_ptr of this expression.
-    */
+     * Clones this expression.
+     * @return New shared_ptr of this expression.
+     */
     virtual std::shared_ptr<Expression> clone() = 0;
 
     /**
@@ -82,13 +80,8 @@ public:
      * @return True if value is false, false otherwise.
      */
     [[nodiscard]] bool isConstFalse() const;
-
 };
 
 bool operator==(const Expression &e1, const Expression &e2);
 
 bool operator<(const Expression &e1, const Expression &e2);
-
-
-
-

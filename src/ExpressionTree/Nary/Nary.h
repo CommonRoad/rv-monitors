@@ -1,8 +1,8 @@
 #pragma once
 
-#include <utility>
 #include <algorithm>
 #include <sstream>
+#include <utility>
 
 #include "ExpressionTree/Nary/NaryInterface.h"
 
@@ -11,12 +11,11 @@
  * @tparam SetType Type of the set used respective expression.
  * @tparam Actual Actual type of expression.
  */
-template<class SetType, class Actual>
-class Nary : public NaryInterface {
-protected:
+template <class SetType, class Actual> class Nary : public NaryInterface {
+  protected:
     SetType expressions;
 
-public:
+  public:
     /**
      * Type alias of the internally used set.
      */
@@ -27,8 +26,7 @@ public:
      * @param symbol Symbol of the respective expression.
      * @param expressions Set of expressions connected by this expression.
      */
-    explicit Nary(const std::string &symbol, const SetType &expressions)
-            : NaryInterface(symbol) {
+    explicit Nary(const std::string &symbol, const SetType &expressions) : NaryInterface(symbol) {
         Nary<SetType, Actual>::setExpressions(expressions.begin(), expressions.end());
     }
 
@@ -36,25 +34,19 @@ public:
      * Getter for expressions set.
      * @return Set of expressions.
      */
-    [[nodiscard]] const SetType &getExpressions() const {
-        return expressions;
-    }
+    [[nodiscard]] const SetType &getExpressions() const { return expressions; }
 
     /**
      * Iterator to beginning of a set.
      * @return Iterator to beginning of set.
      */
-    [[nodiscard]] std::set<std::shared_ptr<Expression>>::iterator begin() override {
-        return expressions.begin();
-    }
+    [[nodiscard]] std::set<std::shared_ptr<Expression>>::iterator begin() override { return expressions.begin(); }
 
     /**
      * Iterator to end of a set.
      * @return Iterator to end of set.
      */
-    [[nodiscard]] std::set<std::shared_ptr<Expression>>::iterator end() override {
-        return expressions.end();
-    }
+    [[nodiscard]] std::set<std::shared_ptr<Expression>>::iterator end() override { return expressions.end(); }
 
     /**
      * Adds an expresion to a set.
@@ -67,8 +59,7 @@ public:
             for (auto &itr : *nary) {
                 addExpression(itr);
             }
-        }
-        else {
+        } else {
             expressions.emplace(expr);
         }
     }
@@ -84,10 +75,10 @@ public:
     }
 
     /**
-    * Erases an element from expressions at position of iter, which is a set iterator.
-    * @param iter Iterator pointing to expression to be erased.
-    * @return Iterator pointing to element after the erased one.
-    */
+     * Erases an element from expressions at position of iter, which is a set iterator.
+     * @param iter Iterator pointing to expression to be erased.
+     * @return Iterator pointing to element after the erased one.
+     */
     iterator eraseExpression(std::shared_ptr<Expression> expr) override {
         auto itr = findExpression(expr);
         return eraseExpression(itr);
@@ -110,9 +101,7 @@ public:
      * @param expr
      * @return Iterator to searched expression.
      */
-    iterator findExpression(std::shared_ptr<Expression> expr) override {
-        return expressions.find(expr);
-    }
+    iterator findExpression(std::shared_ptr<Expression> expr) override { return expressions.find(expr); }
 
     /**
      * Check if expression exists in a set.
@@ -139,17 +128,13 @@ public:
      * Size of an expressions set.
      * @return size of expressions.
      */
-    [[nodiscard]] size_t size() override {
-        return expressions.size();
-    }
+    [[nodiscard]] size_t size() override { return expressions.size(); }
 
     /**
      * Checks if set is empty.
      * @return True if empty, false otherwise.
      */
-    [[nodiscard]] bool empty() override {
-        return expressions.size() == 0;
-    }
+    [[nodiscard]] bool empty() override { return expressions.size() == 0; }
 
     /**
      * To_string().
@@ -164,9 +149,4 @@ public:
         ret << (*--getExpressions().cend())->to_string() << ")";
         return ret.str();
     }
-
 };
-
-
-
-

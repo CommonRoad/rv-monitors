@@ -1,14 +1,13 @@
 #pragma once
 
-
-#include <string>
 #include "Formula/Formula.h"
+#include <string>
 
 /**
  * Parser class to parse and directly build the formula.
  */
 class Parser {
-public:
+  public:
     /**
      * Transforms a formula string into a formula object.
      * @param formula Formula string to be parsed.
@@ -16,6 +15,3 @@ public:
      */
     [[nodiscard]] static Formula parse(const std::string &formula);
 };
-
-
-

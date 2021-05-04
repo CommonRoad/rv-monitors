@@ -1,12 +1,12 @@
-#include <iostream>
-#include "Utils/Utils.h"
-#include "Rewriting/BasicRewriteVisitor.h"
 #include "BTT_FSMCreation.h"
-#include "RV-Algorithms/MT-FSM/MT_FSMCreation.h"
+#include "Decision.h"
 #include "ExpressionTree/Atomic/Constant.h"
 #include "ExpressionTree/Nary/NaryInterface.h"
 #include "ExpressionTree/Unary/Bool/Not.h"
-#include "Decision.h"
+#include "RV-Algorithms/MT-FSM/MT_FSMCreation.h"
+#include "Rewriting/BasicRewriteVisitor.h"
+#include "Utils/Utils.h"
+#include <iostream>
 
 BTT_FSM BTT_FSMCreation::formulaToBTT_FSM(const Formula &formula, bool past) {
     // Only a constant
@@ -16,7 +16,7 @@ BTT_FSM BTT_FSMCreation::formulaToBTT_FSM(const Formula &formula, bool past) {
     }
     // Get corresponding MT-FSM
     auto mtFsm = MT_FSMCreation::formulaToMT_FSM(formula, past);
-    //std::cout << mtFsm.to_string();
+    // std::cout << mtFsm.to_string();
     const auto &mtFsmStates = mtFsm.getStates();
 
     // States of BTT-FSM
@@ -44,15 +44,15 @@ BTT_FSM BTT_FSMCreation::formulaToBTT_FSM(const Formula &formula, bool past) {
         bttStates.push_back(newState);
     }
 
-//    auto btt = BTT_FSM(mtFsm.getFormula(), bttStates);
-//    std::cout << btt.to_string() << std::endl;
+    //    auto btt = BTT_FSM(mtFsm.getFormula(), bttStates);
+    //    std::cout << btt.to_string() << std::endl;
     return BTT_FSM(mtFsm.getFormula(), bttStates);
 }
 
 std::map<std::string, size_t> BTT_FSMCreation::getAtomicFrequencies(const MultiTransition &multiTransition) {
     std::map<std::string, size_t> frequencies;
     auto &transitions = multiTransition.getTransitions();
-    for (const auto&[formula, state] : transitions) {
+    for (const auto &[formula, state] : transitions) {
         // Formula of transition
         auto atomics = Utils::getAtomics(formula);
         for (const auto &atomic : atomics) {
@@ -69,9 +69,9 @@ BTT_FSMCreation::getAtomicWeight(const MultiTransition &multiTransition) {
     std::map<std::shared_ptr<Atomic>, double> precedences;
     auto numberOfTransitions = multiTransition.getTransitions().size();
     auto frequencies = getAtomicFrequencies(multiTransition);
-    for (const auto&[atomicString, freq] : frequencies) {
+    for (const auto &[atomicString, freq] : frequencies) {
         auto atomic = std::make_shared<Atomic>(atomicString);
-        precedences[atomic] = 1/(double(freq) / numberOfTransitions);
+        precedences[atomic] = 1 / (double(freq) / numberOfTransitions);
     }
     return createWeightMultimap(precedences);
 }
@@ -84,14 +84,13 @@ BTT_FSMCreation::replaceAtomicByConstant(const Formula &formula, const std::shar
     if (auto atomicExpr = std::dynamic_pointer_cast<Atomic>(expression)) {
         if (*atomicExpr == *atomic) {
             return std::make_shared<Constant>(constant);
-        }
-        else {
+        } else {
             throw std::runtime_error(
-                    "BTT_FSMCreation::replaceAtomicByConstantTrue Single atomic that is not the searched one.");
+                "BTT_FSMCreation::replaceAtomicByConstantTrue Single atomic that is not the searched one.");
         }
     }
 
-        // Not atomic
+    // Not atomic
     else if (auto notExpr = std::dynamic_pointer_cast<Not>(expression)) {
         if (*notExpr->getLeft() == *atomic) {
             return std::make_shared<Constant>(!constant);
@@ -110,22 +109,22 @@ BTT_FSMCreation::replaceAtomicByConstant(const Formula &formula, const std::shar
     if (itr != nary->end()) {
         nary->eraseExpression(itr);
         nary->addExpression(std::make_shared<Constant>(constant));
-        //std::cout << "Found " << atomic->to_string() << std::endl;
+        // std::cout << "Found " << atomic->to_string() << std::endl;
     }
-        // Atomic could be negated
+    // Atomic could be negated
     else if (auto itrNot = nary->findExpression(std::make_shared<Not>(atomic)); itrNot != nary->end()) {
         nary->eraseExpression(itrNot);
         nary->addExpression(std::make_shared<Constant>(!constant));
-        //std::cout << "Found !" << atomic->to_string() << std::endl;
-
+        // std::cout << "Found !" << atomic->to_string() << std::endl;
     }
 
     // Rewrite to reduce if possible
     Formula newFormula(nary);
     BasicRewriteVisitor br;
     br.rewrite(newFormula);
-//    std::cout << "Result of " << atomic->to_string() << " replaced with " << constant << " in " << formula.to_string()
-//              << ": " << newFormula.to_string() << std::endl;
+    //    std::cout << "Result of " << atomic->to_string() << " replaced with " << constant << " in " <<
+    //    formula.to_string()
+    //              << ": " << newFormula.to_string() << std::endl;
     return newFormula.getExpr();
 }
 
@@ -136,15 +135,14 @@ BTT_FSMCreation::createWeightMultimap(const std::map<std::shared_ptr<Atomic>, do
     return flip_map(weights);
 }
 
-
-MultiTransition
-BTT_FSMCreation::eraseAtomicFromFormula(const MultiTransition &multiTransition, const std::shared_ptr<Atomic> &atomic) {
+MultiTransition BTT_FSMCreation::eraseAtomicFromFormula(const MultiTransition &multiTransition,
+                                                        const std::shared_ptr<Atomic> &atomic) {
 
     std::map<Formula, size_t> newTransitions;
     // To search for negated atomic
     auto notAtomic = std::make_shared<Not>(atomic);
     BasicRewriteVisitor br;
-    for (const auto&[formula, state] : multiTransition.getTransitions()) {
+    for (const auto &[formula, state] : multiTransition.getTransitions()) {
         auto formulaCopy = formula.deepCopy();
         // Erase atomic from formulas
         // Check if only atomic
@@ -155,35 +153,33 @@ BTT_FSMCreation::eraseAtomicFromFormula(const MultiTransition &multiTransition, 
                 newTransitions.emplace(newFormula, state);
             }
         }
-            // Atomic could be negated
+        // Atomic could be negated
         else if (auto notExpr = std::dynamic_pointer_cast<Not>(formulaCopy.getExpr())) {
             if (not(*notAtomic == *notExpr)) {
                 Formula newFormula(notExpr);
                 newTransitions.emplace(newFormula, state);
             }
         }
-            // Otherwise we have an n-ary
+        // Otherwise we have an n-ary
         else if (auto nary = std::dynamic_pointer_cast<NaryInterface>(formulaCopy.getExpr())) {
             nary->eraseExpression(atomic);
             nary->eraseExpression(notAtomic);
             Formula newFormula(nary);
             br.rewrite(newFormula);
             newTransitions.emplace(newFormula, state);
-        }
-        else {
+        } else {
             throw std::runtime_error(
-                    "BTT_FSMCreation::eraseAtomicFromFormula() Formula is neither Atomic, Not, or Nary.");
+                "BTT_FSMCreation::eraseAtomicFromFormula() Formula is neither Atomic, Not, or Nary.");
         }
     }
     return MultiTransition(newTransitions);
 }
 
-MultiTransition
-BTT_FSMCreation::replaceAtomicInMultiTransition(const MultiTransition &multiTransition,
-                                                const std::shared_ptr<Atomic> &atomic, bool constant) {
+MultiTransition BTT_FSMCreation::replaceAtomicInMultiTransition(const MultiTransition &multiTransition,
+                                                                const std::shared_ptr<Atomic> &atomic, bool constant) {
 
     std::map<Formula, size_t> newTransitions;
-    for (const auto&[formula, state] : multiTransition.getTransitions()) {
+    for (const auto &[formula, state] : multiTransition.getTransitions()) {
         auto newFormula = formula.deepCopy();
         replaceAtomicByConstant(newFormula, atomic, constant);
         newTransitions.emplace(newFormula, state);
@@ -195,8 +191,8 @@ std::shared_ptr<Node> BTT_FSMCreation::findNextNode(const MultiTransition &multi
                                                     std::multimap<double, std::shared_ptr<Atomic>> &weights) {
     // Constant
     if (multiTransition.getTransitions().size() == 1) {
-        if (auto constantExpr = std::dynamic_pointer_cast<Constant>(
-                (multiTransition.getTransitions().begin()->first.getExpr()))) {
+        if (auto constantExpr =
+                std::dynamic_pointer_cast<Constant>((multiTransition.getTransitions().begin()->first.getExpr()))) {
             size_t id = multiTransition.getTransitions().at(multiTransition.getTransitions().begin()->first);
             auto state = std::make_shared<StateBTT_FSM>(id);
             return std::make_shared<Decision>(state, state, constantExpr);
@@ -208,22 +204,23 @@ std::shared_ptr<Node> BTT_FSMCreation::findNextNode(const MultiTransition &multi
     for (auto itrPrecedences = weights.begin(); itrPrecedences != weights.end(); ++itrPrecedences) {
         const auto &[precedence, atomic] = *itrPrecedences;
         // In all formulas in multiTransition
-        for (const auto&[formula, nextState] : multiTransition.getTransitions()) {
+        for (const auto &[formula, nextState] : multiTransition.getTransitions()) {
             if (formula.containsAtomic(atomic)) {
                 for (bool constant : {true, false}) {
-                    //std::cout << "Current atomic: " << atomic->to_string() << " evaluated as " << constant << " on "
+                    // std::cout << "Current atomic: " << atomic->to_string() << " evaluated as " << constant << " on "
                     // << formula.to_string() << std::endl;
                     auto formulaCopy = formula.deepCopy();
                     auto resExpr = replaceAtomicByConstant(formulaCopy, atomic, constant);
-//                    std::cout << "Replacing " << atomic->to_string() << " with " << constant << " in " << formulaCopy.to_string() << " is "
-//                              << resExpr->to_string() << std::endl;
+                    //                    std::cout << "Replacing " << atomic->to_string() << " with " << constant << "
+                    //                    in " << formulaCopy.to_string() << " is "
+                    //                              << resExpr->to_string() << std::endl;
                     // Check if replacing this atomic resolves the formula to true
                     if (resExpr->isConstTrue()) {
                         // Last atomic = base case
                         if (weights.size() == 1) {
                             auto left = std::make_shared<StateBTT_FSM>(nextState);
 
-                            std::map<std::string,LazyBool> eventMap;
+                            std::map<std::string, LazyBool> eventMap;
 
                             eventMap.emplace(atomic->to_string(), LazyBool(not constant));
                             auto right = std::make_shared<StateBTT_FSM>(multiTransition.evaluate(eventMap));
@@ -232,11 +229,11 @@ std::shared_ptr<Node> BTT_FSMCreation::findNextNode(const MultiTransition &multi
                                 return std::make_shared<Decision>(left, right, atomic);
                             }
                             return std::make_shared<Decision>(right, left, atomic);
-                        }
-                        else {
+                        } else {
                             // Replace atomic with constant in all formulas by building new multiTransition
                             auto newMultitransition = eraseAtomicFromFormula(multiTransition, atomic);
-                            //std::cout << "MT after removing " << atomic->to_string() << "\n" << newMultitransition.to_string() << std::endl;
+                            // std::cout << "MT after removing " << atomic->to_string() << "\n" <<
+                            // newMultitransition.to_string() << std::endl;
                             // Copy atomic since we erase it in the next step
                             auto atomicCopy = std::make_shared<Atomic>(atomic->to_string());
                             // Erase atomic from weights
@@ -245,8 +242,7 @@ std::shared_ptr<Node> BTT_FSMCreation::findNextNode(const MultiTransition &multi
                                 return std::make_shared<Decision>(std::make_shared<StateBTT_FSM>(nextState),
                                                                   findNextNode(newMultitransition, weights),
                                                                   atomicCopy);
-                            }
-                            else {
+                            } else {
                                 return std::make_shared<Decision>(findNextNode(newMultitransition, weights),
                                                                   std::make_shared<StateBTT_FSM>(nextState),
                                                                   atomicCopy);
@@ -269,9 +265,8 @@ std::shared_ptr<Node> BTT_FSMCreation::findNextNode(const MultiTransition &multi
     weights.erase(weights.begin());
 
     return std::make_shared<Decision>(findNextNode(newMultitransitionTrue, weights),
-                                      findNextNode(newMultitransitionFalse, weights),
-                                      atomicCopy);
+                                      findNextNode(newMultitransitionFalse, weights), atomicCopy);
 
-    throw std::runtime_error(
-            "BTT_FSMCreation::findNextNode() Atomics are not in multiTransition or no transition was found that is satisfied by only one atomic.");
+    throw std::runtime_error("BTT_FSMCreation::findNextNode() Atomics are not in multiTransition or no transition was "
+                             "found that is satisfied by only one atomic.");
 }

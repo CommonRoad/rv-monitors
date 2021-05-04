@@ -2,9 +2,4 @@
 
 #include <gtest/gtest.h>
 
-class TestDynamicPast : public testing::Test {
-
-};
-
-
-
+class TestDynamicPast : public testing::Test {};

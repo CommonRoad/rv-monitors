@@ -2,20 +2,19 @@
 
 #include "ExpressionTree/Atomic/Atomic.h"
 #include "ExpressionTree/Atomic/Constant.h"
-#include "ExpressionTree/Unary/Bool/Not.h"
+#include "ExpressionTree/Binary/Bool/Implication.h"
+#include "ExpressionTree/Binary/Temporal/LTLf/Release.h"
+#include "ExpressionTree/Binary/Temporal/LTLf/Until.h"
 #include "ExpressionTree/Nary/Bool/And.h"
 #include "ExpressionTree/Nary/Bool/Or.h"
 #include "ExpressionTree/Nary/Bool/Xor.h"
-#include "ExpressionTree/Binary/Bool/Implication.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/Globally.h"
+#include "ExpressionTree/Unary/Bool/Not.h"
 #include "ExpressionTree/Unary/Temporal/LTLf/Future.h"
+#include "ExpressionTree/Unary/Temporal/LTLf/Globally.h"
 #include "ExpressionTree/Unary/Temporal/LTLf/NextStrong.h"
 #include "ExpressionTree/Unary/Temporal/LTLf/NextWeak.h"
 #include "ExpressionTree/Unary/Temporal/PLTLf/Once.h"
 #include "ExpressionTree/Unary/Temporal/PLTLf/Previously.h"
-#include "ExpressionTree/Binary/Temporal/LTLf/Release.h"
-#include "ExpressionTree/Binary/Temporal/LTLf/Until.h"
-
 
 std::shared_ptr<Expression> NNF::removeDoubleNot(const std::shared_ptr<Not> &expr) {
     // Remove two Nots
@@ -43,15 +42,15 @@ std::shared_ptr<Expression> NNF::applyDeMorgan(const std::shared_ptr<Not> &expr)
         return std::make_shared<And>(newAndExpressions);
     }
 
-//    // Xor
-//    if (auto xorExpr = std::dynamic_pointer_cast<Xor>(expr->getLeft())) {
-//        std::set<std::shared_ptr<Expression>> newExpressions;
-//        for (const auto &itr : *xorExpr){
-//            newExpressions.emplace(std::make_shared<Not>(itr));
-//            newExpressions.emplace(itr);
-//        }
-//        return std::make_shared<And>(newExpressions);
-//    }
+    //    // Xor
+    //    if (auto xorExpr = std::dynamic_pointer_cast<Xor>(expr->getLeft())) {
+    //        std::set<std::shared_ptr<Expression>> newExpressions;
+    //        for (const auto &itr : *xorExpr){
+    //            newExpressions.emplace(std::make_shared<Not>(itr));
+    //            newExpressions.emplace(itr);
+    //        }
+    //        return std::make_shared<And>(newExpressions);
+    //    }
     return expr;
 }
 
@@ -89,13 +88,12 @@ std::shared_ptr<Expression> NNF::moveNotTemporal(const std::shared_ptr<Not> &exp
     }
     // Until
     if (auto node = dynamic_cast<Until *>(expr->getLeft().get())) {
-        return std::make_shared<Release>(
-                std::make_shared<Not>(node->getLeft()), std::make_shared<Not>(node->getRight()));
+        return std::make_shared<Release>(std::make_shared<Not>(node->getLeft()),
+                                         std::make_shared<Not>(node->getRight()));
     }
     // Release
     if (auto node = dynamic_cast<Release *>(expr->getLeft().get())) {
-        return std::make_shared<Until>(
-                std::make_shared<Not>(node->getLeft()), std::make_shared<Not>(node->getRight()));
+        return std::make_shared<Until>(std::make_shared<Not>(node->getLeft()), std::make_shared<Not>(node->getRight()));
     }
 
     return expr;
@@ -122,7 +120,7 @@ std::shared_ptr<Expression> NNF::evaluate(const std::shared_ptr<Expression> &exp
     if (auto node = std::dynamic_pointer_cast<Implication>(expr)) {
         auto ret = removeImplication(node);
 
-        //Result is Or (n-ary), evaluate all expressions in it
+        // Result is Or (n-ary), evaluate all expressions in it
         auto orExpr = std::dynamic_pointer_cast<Or>(ret);
         std::set<std::shared_ptr<Expression>> newSet;
         for (const auto &itr : *orExpr) {
@@ -148,8 +146,7 @@ std::shared_ptr<Expression> NNF::evaluate(const std::shared_ptr<Expression> &exp
             }
             nary->setExpressions(newSet.begin(), newSet.end());
             return nary;
-        }
-        else {
+        } else {
             std::set<std::shared_ptr<Expression>> newSet;
             for (const auto &itr : *nary) {
                 newSet.emplace(evaluate(itr));
@@ -157,7 +154,6 @@ std::shared_ptr<Expression> NNF::evaluate(const std::shared_ptr<Expression> &exp
             nary->setExpressions(newSet.begin(), newSet.end());
             return nary;
         }
-
     }
 
     {
@@ -194,7 +190,6 @@ std::shared_ptr<Expression> NNF::evaluate(const std::shared_ptr<Expression> &exp
         // Nary
         if (auto nary = std::dynamic_pointer_cast<NaryInterface>(ret)) {
             for (const auto &itr : *nary) {
-
             }
             return nary;
         }
@@ -214,4 +209,3 @@ std::shared_ptr<Expression> NNF::moveNegationInwards(const std::shared_ptr<Not> 
 
     return expr;
 }
-

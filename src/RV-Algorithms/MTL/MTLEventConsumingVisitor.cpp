@@ -1,45 +1,41 @@
-#include <iostream>
 #include "MTLEventConsumingVisitor.h"
 #include "ExpressionTree/Atomic/Atomic.h"
 #include "ExpressionTree/Atomic/Constant.h"
-#include "ExpressionTree/Unary/Bool/Not.h"
-#include "ExpressionTree/Nary/Bool/And.h"
-#include "ExpressionTree/Nary/Bool/Or.h"
-#include "ExpressionTree/Nary/Bool/Xor.h"
-#include "ExpressionTree/Binary/Bool/Implication.h"
 #include "ExpressionTree/Binary/Bool/Equivalence.h"
-#include "ExpressionTree/Unary/ResolvingOperator.h"
-#include "ExpressionTree/Unary/DerivingOperator.h"
-#include "ExpressionTree/Unary/EventOperator.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/Globally.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/Future.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/NextStrong.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/NextWeak.h"
-#include "ExpressionTree/Unary/Temporal/PLTLf/Once.h"
-#include "ExpressionTree/Unary/Temporal/PLTLf/Previously.h"
-#include "ExpressionTree/Unary/Temporal/PLTLf/Historically.h"
+#include "ExpressionTree/Binary/Bool/Implication.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Release.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Until.h"
 #include "ExpressionTree/Binary/Temporal/PTLf/Since.h"
+#include "ExpressionTree/Nary/Bool/And.h"
+#include "ExpressionTree/Nary/Bool/Or.h"
+#include "ExpressionTree/Nary/Bool/Xor.h"
+#include "ExpressionTree/Unary/Bool/Not.h"
+#include "ExpressionTree/Unary/DerivingOperator.h"
+#include "ExpressionTree/Unary/EventOperator.h"
+#include "ExpressionTree/Unary/ResolvingOperator.h"
+#include "ExpressionTree/Unary/Temporal/LTLf/Future.h"
+#include "ExpressionTree/Unary/Temporal/LTLf/Globally.h"
+#include "ExpressionTree/Unary/Temporal/LTLf/NextStrong.h"
+#include "ExpressionTree/Unary/Temporal/LTLf/NextWeak.h"
+#include "ExpressionTree/Unary/Temporal/PLTLf/Historically.h"
+#include "ExpressionTree/Unary/Temporal/PLTLf/Once.h"
+#include "ExpressionTree/Unary/Temporal/PLTLf/Previously.h"
+#include <iostream>
 
 void MTLEventConsumingVisitor::consumeEvent(Formula &formula, Trace &trace, int index) {
-    std::shared_ptr<EventOperator> eventOperator =
-            std::make_shared<EventOperator>(formula.getExpr(), trace, index);
+    std::shared_ptr<EventOperator> eventOperator = std::make_shared<EventOperator>(formula.getExpr(), trace, index);
     formula.setExpr(eventOperator->accept(*this, trace, index));
 }
 
-std::shared_ptr<Expression>
-MTLEventConsumingVisitor::visitAtomic(Atomic &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitAtomic(Atomic &op, Trace &trace, int index) {
     return std::make_shared<Atomic>(op);
 }
 
-std::shared_ptr<Expression>
-MTLEventConsumingVisitor::visitConstant(Constant &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitConstant(Constant &op, Trace &trace, int index) {
     return std::make_shared<Constant>(op);
 }
 
-std::shared_ptr<Expression>
-MTLEventConsumingVisitor::visitAnd(And &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitAnd(And &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     return std::make_shared<And>(op);
 }
@@ -49,105 +45,91 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitOr(Or &op, Trace &tra
     return std::make_shared<Or>(op);
 }
 
-std::shared_ptr<Expression>
-MTLEventConsumingVisitor::visitXor(Xor &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitXor(Xor &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     return std::make_shared<Xor>(op);
 }
 
-std::shared_ptr<Expression>
-MTLEventConsumingVisitor::visitImplication(Implication &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitImplication(Implication &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     return std::make_shared<Implication>(op);
 }
 
-std::shared_ptr<Expression>
-MTLEventConsumingVisitor::visitEquivalence(Equivalence &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEquivalence(Equivalence &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     return std::make_shared<Equivalence>(op);
 }
 
-std::shared_ptr<Expression>
-MTLEventConsumingVisitor::visitNot(Not &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitNot(Not &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     return std::make_shared<Not>(op);
 }
 
-std::shared_ptr<Expression>
-MTLEventConsumingVisitor::visitFuture(Future &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitFuture(Future &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     return std::make_shared<Future>(op);
 }
 
-std::shared_ptr<Expression>
-MTLEventConsumingVisitor::visitGlobally(Globally &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitGlobally(Globally &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     visitExpression(op, trace, index);
     return std::make_shared<Globally>(op);
 }
 
-std::shared_ptr<Expression>
-MTLEventConsumingVisitor::visitHistorically(Historically &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitHistorically(Historically &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     visitExpression(op, trace, index);
     return std::make_shared<Historically>(op);
 }
 
-
-std::shared_ptr<Expression>
-MTLEventConsumingVisitor::visitNextStrong(NextStrong &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitNextStrong(NextStrong &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     return std::make_shared<NextStrong>(op);
 }
 
-std::shared_ptr<Expression>
-MTLEventConsumingVisitor::visitNextWeak(NextWeak &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitNextWeak(NextWeak &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     return std::make_shared<NextWeak>(op);
 }
 
-std::shared_ptr<Expression>
-MTLEventConsumingVisitor::visitOnce(Once &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitOnce(Once &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     auto ret = std::make_shared<Once>(op);
     visitExpression(op, trace, index);
     return ret;
 }
 
-std::shared_ptr<Expression>
-MTLEventConsumingVisitor::visitPreviously(Previously &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitPreviously(Previously &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     auto ret = std::make_shared<Previously>(op);
     visitExpression(op, trace, index);
     return ret;
 }
 
-std::shared_ptr<Expression>
-MTLEventConsumingVisitor::visitRelease(Release &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitRelease(Release &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     auto ret = std::make_shared<Release>(op);
     visitExpression(op, trace, index);
     return ret;
 }
 
-std::shared_ptr<Expression>
-MTLEventConsumingVisitor::visitUntil(Until &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitUntil(Until &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     return std::make_shared<Until>(op.getLeft(), op.getRight(), op.getInterval());
 }
 
-std::shared_ptr<Expression>
-MTLEventConsumingVisitor::visitSince(Since &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitSince(Since &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     return std::make_shared<Since>(op.getLeft(), op.getRight(), op.getInterval());
 }
 
-std::shared_ptr<Expression>
-MTLEventConsumingVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace,
+                                                                            int index) {
     return std::make_shared<DerivingOperator>(op);
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitResolvingOperator(ResolvingOperator &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitResolvingOperator(ResolvingOperator &op, Trace &trace,
+                                                                             int index) {
     return std::make_shared<ResolvingOperator>(op);
 }
 
@@ -156,11 +138,10 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
     // Apply eventMap to atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(op.getLeft())) {
         ret = std::make_shared<Constant>(trace.getEvent(index).getValue(*atomic));
-    }
-    else if (auto constant = std::dynamic_pointer_cast<Constant>(op.getLeft())) {
+    } else if (auto constant = std::dynamic_pointer_cast<Constant>(op.getLeft())) {
         ret = std::make_shared<Constant>(constant->getValue());
     }
-        // And
+    // And
     else if (auto andExpr = std::dynamic_pointer_cast<And>(op.getLeft())) {
         And::SetType_T newExprSet;
         for (const auto &itr : *andExpr) {
@@ -170,7 +151,7 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
         ret = std::make_shared<And>(newExprSet);
     }
 
-        // Or
+    // Or
     else if (auto orExpr = std::dynamic_pointer_cast<Or>(op.getLeft())) {
         Or::SetType_T newExprSet;
         for (const auto &itr : *orExpr) {
@@ -179,7 +160,7 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
         }
         ret = std::make_shared<Or>(newExprSet);
     }
-        // Xor
+    // Xor
     else if (auto xorExpr = std::dynamic_pointer_cast<Xor>(op.getLeft())) {
         Xor::SetType_T newExprSet;
         for (const auto &itr : *xorExpr) {
@@ -189,33 +170,31 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
         ret = std::make_shared<Xor>(newExprSet);
 
     }
-        // Weak Next
+    // Weak Next
     else if (auto nextWeak = std::dynamic_pointer_cast<NextWeak>(op.getLeft())) {
         if (!trace.getEvent(index).isTerminal()) { // TODO check if within interval
             ret = nextWeak->getLeft();
-        }
-        else {
+        } else {
             ret = std::make_shared<Constant>(true);
         }
     }
-        // Strong Next
+    // Strong Next
     else if (auto nextStrong = std::dynamic_pointer_cast<NextStrong>(op.getLeft())) {
-        if (!trace.getEvent(index).isTerminal()) {   // TODO check if within interval
+        if (!trace.getEvent(index).isTerminal()) { // TODO check if within interval
             ret = nextStrong->getLeft();
-        }
-        else {
+        } else {
             ret = std::make_shared<Constant>(false);
         }
     }
-        // Until
+    // Until
     else if (auto until = std::dynamic_pointer_cast<Until>(op.getLeft())) {
         std::cout << "TODO \n"; // TODO
     }
-        // Since
+    // Since
     else if (auto since = std::dynamic_pointer_cast<Since>(op.getLeft())) {
         std::cout << "TODO \n"; // TODO
     }
-        // Globally
+    // Globally
     else if (auto globally = std::dynamic_pointer_cast<Globally>(op.getLeft())) {
         if (!trace.getEvent(index).isTerminal() and globally->getInterval()->getEnd() != 0) {
             And::SetType_T newSet;
@@ -224,12 +203,11 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
             newSet.emplace(eventOperatorExpr);
             newSet.emplace(globally);
             ret = std::make_shared<And>(newSet);
-        }
-        else {
+        } else {
             ret = std::make_shared<EventOperator>(globally->getLeft(), trace, index);
         }
     }
-        // Future
+    // Future
     else if (auto future = std::dynamic_pointer_cast<Future>(op.getLeft())) {
         if (!trace.getEvent(index).isTerminal() and future->getInterval()->getEnd() != 0) {
             Or::SetType_T newSet;
@@ -238,27 +216,25 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
             future->reduceInterval();
             newSet.emplace(future);
             ret = std::make_shared<Or>(newSet);
-        }
-        else {
+        } else {
             ret = std::make_shared<EventOperator>(future->getLeft(), trace, index);
         }
     }
-        // Previously
+    // Previously
     else if (auto previously = std::dynamic_pointer_cast<Previously>(op.getLeft())) {
         if (index > 0) {
             auto eventOperatorExpr = std::make_shared<EventOperator>(previously->getLeft(), trace, index - 1);
             ret = eventOperatorExpr->accept(*this, trace, index - 1);
-        }
-        else {
+        } else {
             ret = std::make_shared<Constant>(false);
         }
     }
-        // Once
+    // Once
     else if (auto once = std::dynamic_pointer_cast<Once>(op.getLeft())) {
         if (once->getInterval()->getEnd() != 0 and index > 0) {
             if (once->getInterval()->getStart() > 0) {
                 once->reduceInterval();
-                auto his = std::make_shared<EventOperator>(once, trace, index - 1);  //evtl. once or newOnce ???
+                auto his = std::make_shared<EventOperator>(once, trace, index - 1); // evtl. once or newOnce ???
                 ret = his->accept(*this, trace, index - 1);
             } else {
                 Or::SetType_T newSet;
@@ -266,7 +242,8 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
                 newSet.emplace(eventOperatorExpr);
                 Once newOnce = *once;
                 newOnce.reduceInterval();
-                auto his = std::make_shared<EventOperator>(std::make_shared<Once>(newOnce), trace, index - 1);  //evtl. once or newOnce ???
+                auto his = std::make_shared<EventOperator>(std::make_shared<Once>(newOnce), trace,
+                                                           index - 1); // evtl. once or newOnce ???
                 auto his_resolved = his->accept(*this, trace, index - 1);
                 newSet.emplace(his_resolved);
                 ret = std::make_shared<Or>(newSet);
@@ -278,19 +255,21 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
                 ret = std::make_shared<EventOperator>(once->getLeft(), trace, index);
         }
     }
-        // Historically
+    // Historically
     else if (auto historically = std::dynamic_pointer_cast<Historically>(op.getLeft())) {
         if (historically->getInterval()->getEnd() != 0 and index > 0) {
             if (historically->getInterval()->getStart() > 0) {
                 historically->reduceInterval();
-                auto eventOperatorExpr = std::make_shared<EventOperator>(std::make_shared<Historically>(historically), trace, index-1);
-                ret = eventOperatorExpr->accept(*this, trace, index-1);
+                auto eventOperatorExpr =
+                    std::make_shared<EventOperator>(std::make_shared<Historically>(historically), trace, index - 1);
+                ret = eventOperatorExpr->accept(*this, trace, index - 1);
             } else {
                 And::SetType_T newSet;
                 Historically newHistorically = *historically;
                 newHistorically.reduceInterval();
-                auto eventOperatorExpr = std::make_shared<EventOperator>(std::make_shared<Historically>(newHistorically), trace, index-1);
-                auto sol = eventOperatorExpr->accept(*this, trace, index-1);
+                auto eventOperatorExpr =
+                    std::make_shared<EventOperator>(std::make_shared<Historically>(newHistorically), trace, index - 1);
+                auto sol = eventOperatorExpr->accept(*this, trace, index - 1);
                 newSet.emplace(sol);
                 newSet.emplace(std::make_shared<EventOperator>(historically->getLeft(), trace, index));
                 ret = std::make_shared<And>(newSet);

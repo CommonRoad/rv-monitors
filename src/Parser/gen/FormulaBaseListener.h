@@ -3,135 +3,129 @@
 
 #pragma once
 
-
-#include "antlr4-runtime.h"
 #include "FormulaListener.h"
-
+#include "antlr4-runtime.h"
 
 /**
  * This class provides an empty implementation of FormulaListener,
  * which can be extended to create a listener which only needs to handle a subset
  * of the available methods.
  */
-class  FormulaBaseListener : public FormulaListener {
-public:
+class FormulaBaseListener : public FormulaListener {
+  public:
+    virtual void enterFormula(FormulaParser::FormulaContext * /*ctx*/) override {}
+    virtual void exitFormula(FormulaParser::FormulaContext * /*ctx*/) override {}
 
-  virtual void enterFormula(FormulaParser::FormulaContext * /*ctx*/) override { }
-  virtual void exitFormula(FormulaParser::FormulaContext * /*ctx*/) override { }
+    virtual void enterEquivalence(FormulaParser::EquivalenceContext * /*ctx*/) override {}
+    virtual void exitEquivalence(FormulaParser::EquivalenceContext * /*ctx*/) override {}
 
-  virtual void enterEquivalence(FormulaParser::EquivalenceContext * /*ctx*/) override { }
-  virtual void exitEquivalence(FormulaParser::EquivalenceContext * /*ctx*/) override { }
+    virtual void enterXorExpr(FormulaParser::XorExprContext * /*ctx*/) override {}
+    virtual void exitXorExpr(FormulaParser::XorExprContext * /*ctx*/) override {}
 
-  virtual void enterXorExpr(FormulaParser::XorExprContext * /*ctx*/) override { }
-  virtual void exitXorExpr(FormulaParser::XorExprContext * /*ctx*/) override { }
+    virtual void enterImplication(FormulaParser::ImplicationContext * /*ctx*/) override {}
+    virtual void exitImplication(FormulaParser::ImplicationContext * /*ctx*/) override {}
 
-  virtual void enterImplication(FormulaParser::ImplicationContext * /*ctx*/) override { }
-  virtual void exitImplication(FormulaParser::ImplicationContext * /*ctx*/) override { }
+    virtual void enterXor(FormulaParser::XorContext * /*ctx*/) override {}
+    virtual void exitXor(FormulaParser::XorContext * /*ctx*/) override {}
 
-  virtual void enterXor(FormulaParser::XorContext * /*ctx*/) override { }
-  virtual void exitXor(FormulaParser::XorContext * /*ctx*/) override { }
+    virtual void enterOr(FormulaParser::OrContext * /*ctx*/) override {}
+    virtual void exitOr(FormulaParser::OrContext * /*ctx*/) override {}
 
-  virtual void enterOr(FormulaParser::OrContext * /*ctx*/) override { }
-  virtual void exitOr(FormulaParser::OrContext * /*ctx*/) override { }
+    virtual void enterAnd(FormulaParser::AndContext * /*ctx*/) override {}
+    virtual void exitAnd(FormulaParser::AndContext * /*ctx*/) override {}
 
-  virtual void enterAnd(FormulaParser::AndContext * /*ctx*/) override { }
-  virtual void exitAnd(FormulaParser::AndContext * /*ctx*/) override { }
+    virtual void enterRelease(FormulaParser::ReleaseContext * /*ctx*/) override {}
+    virtual void exitRelease(FormulaParser::ReleaseContext * /*ctx*/) override {}
 
-  virtual void enterRelease(FormulaParser::ReleaseContext * /*ctx*/) override { }
-  virtual void exitRelease(FormulaParser::ReleaseContext * /*ctx*/) override { }
+    virtual void enterUntil(FormulaParser::UntilContext * /*ctx*/) override {}
+    virtual void exitUntil(FormulaParser::UntilContext * /*ctx*/) override {}
 
-  virtual void enterUntil(FormulaParser::UntilContext * /*ctx*/) override { }
-  virtual void exitUntil(FormulaParser::UntilContext * /*ctx*/) override { }
+    virtual void enterReleaseInterval(FormulaParser::ReleaseIntervalContext * /*ctx*/) override {}
+    virtual void exitReleaseInterval(FormulaParser::ReleaseIntervalContext * /*ctx*/) override {}
 
-  virtual void enterReleaseInterval(FormulaParser::ReleaseIntervalContext * /*ctx*/) override { }
-  virtual void exitReleaseInterval(FormulaParser::ReleaseIntervalContext * /*ctx*/) override { }
+    virtual void enterUntilInterval(FormulaParser::UntilIntervalContext * /*ctx*/) override {}
+    virtual void exitUntilInterval(FormulaParser::UntilIntervalContext * /*ctx*/) override {}
 
-  virtual void enterUntilInterval(FormulaParser::UntilIntervalContext * /*ctx*/) override { }
-  virtual void exitUntilInterval(FormulaParser::UntilIntervalContext * /*ctx*/) override { }
+    virtual void enterSince(FormulaParser::SinceContext * /*ctx*/) override {}
+    virtual void exitSince(FormulaParser::SinceContext * /*ctx*/) override {}
 
-  virtual void enterSince(FormulaParser::SinceContext * /*ctx*/) override { }
-  virtual void exitSince(FormulaParser::SinceContext * /*ctx*/) override { }
+    virtual void enterSinceInterval(FormulaParser::SinceIntervalContext * /*ctx*/) override {}
+    virtual void exitSinceInterval(FormulaParser::SinceIntervalContext * /*ctx*/) override {}
 
-  virtual void enterSinceInterval(FormulaParser::SinceIntervalContext * /*ctx*/) override { }
-  virtual void exitSinceInterval(FormulaParser::SinceIntervalContext * /*ctx*/) override { }
+    virtual void enterUnaryExpr(FormulaParser::UnaryExprContext * /*ctx*/) override {}
+    virtual void exitUnaryExpr(FormulaParser::UnaryExprContext * /*ctx*/) override {}
 
-  virtual void enterUnaryExpr(FormulaParser::UnaryExprContext * /*ctx*/) override { }
-  virtual void exitUnaryExpr(FormulaParser::UnaryExprContext * /*ctx*/) override { }
+    virtual void enterGlobally(FormulaParser::GloballyContext * /*ctx*/) override {}
+    virtual void exitGlobally(FormulaParser::GloballyContext * /*ctx*/) override {}
 
-  virtual void enterGlobally(FormulaParser::GloballyContext * /*ctx*/) override { }
-  virtual void exitGlobally(FormulaParser::GloballyContext * /*ctx*/) override { }
+    virtual void enterFuture(FormulaParser::FutureContext * /*ctx*/) override {}
+    virtual void exitFuture(FormulaParser::FutureContext * /*ctx*/) override {}
 
-  virtual void enterFuture(FormulaParser::FutureContext * /*ctx*/) override { }
-  virtual void exitFuture(FormulaParser::FutureContext * /*ctx*/) override { }
+    virtual void enterOnce(FormulaParser::OnceContext * /*ctx*/) override {}
+    virtual void exitOnce(FormulaParser::OnceContext * /*ctx*/) override {}
 
-  virtual void enterOnce(FormulaParser::OnceContext * /*ctx*/) override { }
-  virtual void exitOnce(FormulaParser::OnceContext * /*ctx*/) override { }
+    virtual void enterPreviously(FormulaParser::PreviouslyContext * /*ctx*/) override {}
+    virtual void exitPreviously(FormulaParser::PreviouslyContext * /*ctx*/) override {}
 
-  virtual void enterPreviously(FormulaParser::PreviouslyContext * /*ctx*/) override { }
-  virtual void exitPreviously(FormulaParser::PreviouslyContext * /*ctx*/) override { }
+    virtual void enterNextWeak(FormulaParser::NextWeakContext * /*ctx*/) override {}
+    virtual void exitNextWeak(FormulaParser::NextWeakContext * /*ctx*/) override {}
 
-  virtual void enterNextWeak(FormulaParser::NextWeakContext * /*ctx*/) override { }
-  virtual void exitNextWeak(FormulaParser::NextWeakContext * /*ctx*/) override { }
+    virtual void enterNextStrong(FormulaParser::NextStrongContext * /*ctx*/) override {}
+    virtual void exitNextStrong(FormulaParser::NextStrongContext * /*ctx*/) override {}
 
-  virtual void enterNextStrong(FormulaParser::NextStrongContext * /*ctx*/) override { }
-  virtual void exitNextStrong(FormulaParser::NextStrongContext * /*ctx*/) override { }
+    virtual void enterGloballyInterval(FormulaParser::GloballyIntervalContext * /*ctx*/) override {}
+    virtual void exitGloballyInterval(FormulaParser::GloballyIntervalContext * /*ctx*/) override {}
 
-  virtual void enterGloballyInterval(FormulaParser::GloballyIntervalContext * /*ctx*/) override { }
-  virtual void exitGloballyInterval(FormulaParser::GloballyIntervalContext * /*ctx*/) override { }
+    virtual void enterFutureInterval(FormulaParser::FutureIntervalContext * /*ctx*/) override {}
+    virtual void exitFutureInterval(FormulaParser::FutureIntervalContext * /*ctx*/) override {}
 
-  virtual void enterFutureInterval(FormulaParser::FutureIntervalContext * /*ctx*/) override { }
-  virtual void exitFutureInterval(FormulaParser::FutureIntervalContext * /*ctx*/) override { }
+    virtual void enterOnceInterval(FormulaParser::OnceIntervalContext * /*ctx*/) override {}
+    virtual void exitOnceInterval(FormulaParser::OnceIntervalContext * /*ctx*/) override {}
 
-  virtual void enterOnceInterval(FormulaParser::OnceIntervalContext * /*ctx*/) override { }
-  virtual void exitOnceInterval(FormulaParser::OnceIntervalContext * /*ctx*/) override { }
+    virtual void enterPreviouslyInterval(FormulaParser::PreviouslyIntervalContext * /*ctx*/) override {}
+    virtual void exitPreviouslyInterval(FormulaParser::PreviouslyIntervalContext * /*ctx*/) override {}
 
-  virtual void enterPreviouslyInterval(FormulaParser::PreviouslyIntervalContext * /*ctx*/) override { }
-  virtual void exitPreviouslyInterval(FormulaParser::PreviouslyIntervalContext * /*ctx*/) override { }
+    virtual void enterNextWeakInterval(FormulaParser::NextWeakIntervalContext * /*ctx*/) override {}
+    virtual void exitNextWeakInterval(FormulaParser::NextWeakIntervalContext * /*ctx*/) override {}
 
-  virtual void enterNextWeakInterval(FormulaParser::NextWeakIntervalContext * /*ctx*/) override { }
-  virtual void exitNextWeakInterval(FormulaParser::NextWeakIntervalContext * /*ctx*/) override { }
+    virtual void enterNextStrongInterval(FormulaParser::NextStrongIntervalContext * /*ctx*/) override {}
+    virtual void exitNextStrongInterval(FormulaParser::NextStrongIntervalContext * /*ctx*/) override {}
 
-  virtual void enterNextStrongInterval(FormulaParser::NextStrongIntervalContext * /*ctx*/) override { }
-  virtual void exitNextStrongInterval(FormulaParser::NextStrongIntervalContext * /*ctx*/) override { }
+    virtual void enterHistorically(FormulaParser::HistoricallyContext * /*ctx*/) override {}
+    virtual void exitHistorically(FormulaParser::HistoricallyContext * /*ctx*/) override {}
 
-  virtual void enterHistorically(FormulaParser::HistoricallyContext * /*ctx*/) override { }
-  virtual void exitHistorically(FormulaParser::HistoricallyContext * /*ctx*/) override { }
+    virtual void enterHistoricallyInterval(FormulaParser::HistoricallyIntervalContext * /*ctx*/) override {}
+    virtual void exitHistoricallyInterval(FormulaParser::HistoricallyIntervalContext * /*ctx*/) override {}
 
-  virtual void enterHistoricallyInterval(FormulaParser::HistoricallyIntervalContext * /*ctx*/) override { }
-  virtual void exitHistoricallyInterval(FormulaParser::HistoricallyIntervalContext * /*ctx*/) override { }
+    virtual void enterNot(FormulaParser::NotContext * /*ctx*/) override {}
+    virtual void exitNot(FormulaParser::NotContext * /*ctx*/) override {}
 
-  virtual void enterNot(FormulaParser::NotContext * /*ctx*/) override { }
-  virtual void exitNot(FormulaParser::NotContext * /*ctx*/) override { }
+    virtual void enterNotExpr(FormulaParser::NotExprContext * /*ctx*/) override {}
+    virtual void exitNotExpr(FormulaParser::NotExprContext * /*ctx*/) override {}
 
-  virtual void enterNotExpr(FormulaParser::NotExprContext * /*ctx*/) override { }
-  virtual void exitNotExpr(FormulaParser::NotExprContext * /*ctx*/) override { }
+    virtual void enterAtomExpr(FormulaParser::AtomExprContext * /*ctx*/) override {}
+    virtual void exitAtomExpr(FormulaParser::AtomExprContext * /*ctx*/) override {}
 
-  virtual void enterAtomExpr(FormulaParser::AtomExprContext * /*ctx*/) override { }
-  virtual void exitAtomExpr(FormulaParser::AtomExprContext * /*ctx*/) override { }
+    virtual void enterFiniteInterval(FormulaParser::FiniteIntervalContext * /*ctx*/) override {}
+    virtual void exitFiniteInterval(FormulaParser::FiniteIntervalContext * /*ctx*/) override {}
 
-  virtual void enterFiniteInterval(FormulaParser::FiniteIntervalContext * /*ctx*/) override { }
-  virtual void exitFiniteInterval(FormulaParser::FiniteIntervalContext * /*ctx*/) override { }
+    virtual void enterInfiniteInterval(FormulaParser::InfiniteIntervalContext * /*ctx*/) override {}
+    virtual void exitInfiniteInterval(FormulaParser::InfiniteIntervalContext * /*ctx*/) override {}
 
-  virtual void enterInfiniteInterval(FormulaParser::InfiniteIntervalContext * /*ctx*/) override { }
-  virtual void exitInfiniteInterval(FormulaParser::InfiniteIntervalContext * /*ctx*/) override { }
+    virtual void enterBoolean(FormulaParser::BooleanContext * /*ctx*/) override {}
+    virtual void exitBoolean(FormulaParser::BooleanContext * /*ctx*/) override {}
 
-  virtual void enterBoolean(FormulaParser::BooleanContext * /*ctx*/) override { }
-  virtual void exitBoolean(FormulaParser::BooleanContext * /*ctx*/) override { }
+    virtual void enterAtomic(FormulaParser::AtomicContext * /*ctx*/) override {}
+    virtual void exitAtomic(FormulaParser::AtomicContext * /*ctx*/) override {}
 
-  virtual void enterAtomic(FormulaParser::AtomicContext * /*ctx*/) override { }
-  virtual void exitAtomic(FormulaParser::AtomicContext * /*ctx*/) override { }
+    virtual void enterBrackets(FormulaParser::BracketsContext * /*ctx*/) override {}
+    virtual void exitBrackets(FormulaParser::BracketsContext * /*ctx*/) override {}
 
-  virtual void enterBrackets(FormulaParser::BracketsContext * /*ctx*/) override { }
-  virtual void exitBrackets(FormulaParser::BracketsContext * /*ctx*/) override { }
+    virtual void enterDigit(FormulaParser::DigitContext * /*ctx*/) override {}
+    virtual void exitDigit(FormulaParser::DigitContext * /*ctx*/) override {}
 
-  virtual void enterDigit(FormulaParser::DigitContext * /*ctx*/) override { }
-  virtual void exitDigit(FormulaParser::DigitContext * /*ctx*/) override { }
-
-
-  virtual void enterEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { }
-  virtual void exitEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { }
-  virtual void visitTerminal(antlr4::tree::TerminalNode * /*node*/) override { }
-  virtual void visitErrorNode(antlr4::tree::ErrorNode * /*node*/) override { }
-
+    virtual void enterEveryRule(antlr4::ParserRuleContext * /*ctx*/) override {}
+    virtual void exitEveryRule(antlr4::ParserRuleContext * /*ctx*/) override {}
+    virtual void visitTerminal(antlr4::tree::TerminalNode * /*node*/) override {}
+    virtual void visitErrorNode(antlr4::tree::ErrorNode * /*node*/) override {}
 };
-

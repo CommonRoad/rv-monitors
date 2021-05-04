@@ -1,29 +1,29 @@
-#include <iostream>
 #include "BasicRewriteVisitor.h"
-#include "Trace/Event.h"
-#include "RewriteVisitor.h"
-#include "ExpressionTree/Unary/EventOperator.h"
-#include "ExpressionTree/Unary/ResolvingOperator.h"
-#include "ExpressionTree/Unary/DerivingOperator.h"
 #include "ExpressionTree/Atomic/Atomic.h"
 #include "ExpressionTree/Atomic/Constant.h"
-#include "ExpressionTree/Unary/Bool/Not.h"
-#include "ExpressionTree/Nary/Bool/And.h"
-#include "ExpressionTree/Nary/Bool/Or.h"
-#include "ExpressionTree/Nary/Bool/Xor.h"
 #include "ExpressionTree/Binary/Bool/Equivalence.h"
 #include "ExpressionTree/Binary/Bool/Implication.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/Globally.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/Future.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/NextStrong.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/NextWeak.h"
-#include "ExpressionTree/Unary/Temporal/PLTLf/Once.h"
-#include "ExpressionTree/Unary/Temporal/PLTLf/Previously.h"
-#include "ExpressionTree/Unary/Temporal/PLTLf/Historically.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Release.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Until.h"
 #include "ExpressionTree/Binary/Temporal/PTLf/Since.h"
+#include "ExpressionTree/Nary/Bool/And.h"
+#include "ExpressionTree/Nary/Bool/Or.h"
+#include "ExpressionTree/Nary/Bool/Xor.h"
+#include "ExpressionTree/Unary/Bool/Not.h"
+#include "ExpressionTree/Unary/DerivingOperator.h"
+#include "ExpressionTree/Unary/EventOperator.h"
+#include "ExpressionTree/Unary/ResolvingOperator.h"
+#include "ExpressionTree/Unary/Temporal/LTLf/Future.h"
+#include "ExpressionTree/Unary/Temporal/LTLf/Globally.h"
+#include "ExpressionTree/Unary/Temporal/LTLf/NextStrong.h"
+#include "ExpressionTree/Unary/Temporal/LTLf/NextWeak.h"
+#include "ExpressionTree/Unary/Temporal/PLTLf/Historically.h"
+#include "ExpressionTree/Unary/Temporal/PLTLf/Once.h"
+#include "ExpressionTree/Unary/Temporal/PLTLf/Previously.h"
+#include "RewriteVisitor.h"
 #include "RewriteVisitorUtils.h"
+#include "Trace/Event.h"
+#include <iostream>
 
 void BasicRewriteVisitor::rewrite(Formula &formula) {
     std::map<std::string, LazyBool> map;
@@ -70,7 +70,6 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitAnd(And &op, Trace &trace,
         return *expressions.begin();
     }
 
-
     // Absorption a & (a | b) = a
     RewriteVisitorUtils::absorption<Or>(expressions);
 
@@ -88,7 +87,6 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitAnd(And &op, Trace &trace,
     }
 
     return std::make_shared<And>(expressions);
-
 }
 
 std::shared_ptr<Expression> BasicRewriteVisitor::visitOr(Or &op, Trace &trace, int index) {
@@ -147,7 +145,7 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitXor(Xor &op, Trace &trace,
         if (expressions.count(*itr) % 2 == 0) {
             newXorSet.emplace(std::make_shared<Constant>(false));
         }
-            // a ^ a ^ a = a
+        // a ^ a ^ a = a
         else {
             newXorSet.emplace(*itr);
         }
@@ -170,7 +168,6 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitXor(Xor &op, Trace &trace,
         return *newXorSet.begin();
     }
     return std::make_shared<Xor>(newXorSet);
-
 }
 
 std::shared_ptr<Expression> BasicRewriteVisitor::visitImplication(Implication &op, Trace &trace, int index) {
@@ -359,7 +356,6 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitUntil(Until &op, Trace &tr
         }
     }
     return std::make_shared<Until>(op);
-
 }
 
 std::shared_ptr<Expression> BasicRewriteVisitor::visitSince(Since &op, Trace &trace, int index) {
@@ -381,14 +377,14 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitSince(Since &op, Trace &tr
         }
     }
     return std::make_shared<Since>(op);
-
 }
 
 std::shared_ptr<Expression> BasicRewriteVisitor::visitEventOperator(EventOperator &op, Trace &trace, int index) {
     return std::make_shared<EventOperator>(op);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitResolvingOperator(ResolvingOperator &op, Trace &trace, int index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitResolvingOperator(ResolvingOperator &op, Trace &trace,
+                                                                        int index) {
     return std::make_shared<ResolvingOperator>(op);
 }
 
@@ -401,10 +397,9 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitEquivalence(Equivalence &o
     if (op.getLeft() == op.getRight()) {
         return std::make_shared<Constant>(true);
     }
-    //a -> b & b -> a
+    // a -> b & b -> a
     auto newLeft = std::make_shared<Implication>(op.getLeft(), op.getRight());
     auto newRight = std::make_shared<Implication>(op.getRight(), op.getLeft());
     And::SetType_T andSet{newLeft, newRight};
     return std::make_shared<And>(andSet);
 }
-

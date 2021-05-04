@@ -1,11 +1,5 @@
 #pragma once
 
-
 #include <gtest/gtest.h>
 
-class TestDynamicFuture : public testing::Test {
-
-};
-
-
-
+class TestDynamicFuture : public testing::Test {};

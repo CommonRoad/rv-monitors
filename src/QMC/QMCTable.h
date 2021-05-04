@@ -1,17 +1,17 @@
 #pragma once
 
-#include <vector>
-#include <Formula/Formula.h>
 #include "PrimeTerm.h"
+#include <Formula/Formula.h>
+#include <vector>
 
 /**
  * Class representing the table for the QMC.
  */
 class QMCTable {
-private:
+  private:
     std::vector<PrimeTerm> primeTerms;
 
-public:
+  public:
     /**
      * Constructor.
      * @param primeTerms
@@ -93,6 +93,3 @@ public:
      */
     PrimeTerm findPrimeTerm(const std::string &alias);
 };
-
-
-

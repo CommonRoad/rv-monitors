@@ -7,9 +7,6 @@
 
 #include <gtest/gtest.h>
 
-class TestMTL : public testing::Test {
+class TestMTL : public testing::Test {};
 
-};
-
-
-#endif //RV_MONITORS_TEST_MTL_H
+#endif // RV_MONITORS_TEST_MTL_H

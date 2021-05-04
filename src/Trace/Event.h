@@ -1,27 +1,27 @@
 #pragma once
 
-
+#include "ExpressionTree/Atomic/Atomic.h"
+#include "Utils/LazyBool.h"
 #include <map>
 #include <sstream>
-#include "Utils/LazyBool.h"
-#include "ExpressionTree/Atomic/Atomic.h"
 
 /**
  * Event of a trace.
  */
 class Event {
-private:
+  private:
     std::map<std::string, LazyBool> eventMap;
     int timeStep;
     bool terminal;
 
-public:
+  public:
     /**
      * Constructor.
      * @param event Map from predicates to LazyBool.
      * @param terminal True if event is terminal, false other wise.
      */
-    explicit Event(std::map<std::string, LazyBool> &event, int time, bool terminal) : eventMap(event), timeStep(time), terminal(terminal) {}
+    explicit Event(std::map<std::string, LazyBool> &event, int time, bool terminal)
+        : eventMap(event), timeStep(time), terminal(terminal) {}
 
     /**
      * Getter for the truth value of an atomic.
@@ -75,13 +75,9 @@ public:
      */
     [[nodiscard]] int getTimeStep() const;
 
-
     /**
      * Setter for time step.
      * @param timeStep time step to be set
      */
     void setTimeStep(int timeStep);
 };
-
-
-

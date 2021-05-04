@@ -1,8 +1,8 @@
-#include <iostream>
-#include <memory>
-#include "MTLRewriteVisitor.h"
 #include "MTLEventConsuming.h"
 #include "MTLEventConsumingVisitor.h"
+#include "MTLRewriteVisitor.h"
+#include <iostream>
+#include <memory>
 
 bool MTLEventConsuming::eventConsuming(const Formula &formula, Trace &trace) {
     // Empty trace

@@ -1,22 +1,23 @@
 #pragma once
 
-#include <cstdlib>
-#include <string>
-#include <memory>
-#include "Trace/Event.h"
-#include "Node.h"
 #include "Decision.h"
+#include "Node.h"
+#include "Trace/Event.h"
+#include <cstdlib>
+#include <memory>
+#include <string>
 
 /**
- * Models a Node in a BTT which is a state, i.e. there is no left or right as in Decision. It contains an Id and the (non-)terminal BTT for this state.
+ * Models a Node in a BTT which is a state, i.e. there is no left or right as in Decision. It contains an Id and the
+ * (non-)terminal BTT for this state.
  */
 class StateBTT_FSM : public Node {
-private:
+  private:
     size_t id;
     std::shared_ptr<Node> nonTerminal;
     std::shared_ptr<Node> terminal;
 
-public:
+  public:
     /**
      * Constructor.
      * @param id Id.
@@ -87,6 +88,3 @@ public:
      */
     [[nodiscard]] std::string to_string() const override;
 };
-
-
-

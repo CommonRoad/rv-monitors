@@ -1,43 +1,27 @@
-#include <utility>
-#include "Utils/Utils.h"
 #include "StateMT_FSM.h"
+#include "Utils/Utils.h"
+#include <utility>
 
 StateMT_FSM::StateMT_FSM(size_t id, MultiTransition nonTerminal, MultiTransition terminal, const Formula &formula)
-        : id(id), nonTerminal(std::move(nonTerminal)), terminal(std::move(terminal)), formula(formula) {}
+    : id(id), nonTerminal(std::move(nonTerminal)), terminal(std::move(terminal)), formula(formula) {}
 
 StateMT_FSM::StateMT_FSM(size_t id, const Formula &formula) : id(id), formula(formula) {}
 
-size_t StateMT_FSM::getId() const {
-    return id;
-}
+size_t StateMT_FSM::getId() const { return id; }
 
-void StateMT_FSM::setId(size_t id) {
-    StateMT_FSM::id = id;
-}
+void StateMT_FSM::setId(size_t id) { StateMT_FSM::id = id; }
 
-const MultiTransition StateMT_FSM::getNonTerminal() const {
-    return nonTerminal;
-}
+const MultiTransition StateMT_FSM::getNonTerminal() const { return nonTerminal; }
 
-void StateMT_FSM::setNonTerminal(const MultiTransition &nonTerminal) {
-    StateMT_FSM::nonTerminal = nonTerminal;
-}
+void StateMT_FSM::setNonTerminal(const MultiTransition &nonTerminal) { StateMT_FSM::nonTerminal = nonTerminal; }
 
-const MultiTransition &StateMT_FSM::getTerminal() const {
-    return terminal;
-}
+const MultiTransition &StateMT_FSM::getTerminal() const { return terminal; }
 
-void StateMT_FSM::setTerminal(const MultiTransition &terminal) {
-    StateMT_FSM::terminal = terminal;
-}
+void StateMT_FSM::setTerminal(const MultiTransition &terminal) { StateMT_FSM::terminal = terminal; }
 
-const Formula &StateMT_FSM::getFormula() const {
-    return formula;
-}
+const Formula &StateMT_FSM::getFormula() const { return formula; }
 
-void StateMT_FSM::setFormula(const Formula &formula) {
-    StateMT_FSM::formula = formula;
-}
+void StateMT_FSM::setFormula(const Formula &formula) { StateMT_FSM::formula = formula; }
 
 std::string StateMT_FSM::to_string() const {
     std::stringstream ret;
@@ -54,7 +38,7 @@ size_t StateMT_FSM::nextState(Event &event) {
         transitions = terminal.getTransitions();
     }
 
-        // Non-terminal
+    // Non-terminal
     else {
         transitions = nonTerminal.getTransitions();
     }
@@ -66,5 +50,3 @@ size_t StateMT_FSM::nextState(Event &event) {
     }
     throw std::runtime_error("StateMT_FSM::nextState() No next state could be found.");
 }
-
-

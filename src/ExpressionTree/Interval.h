@@ -5,13 +5,13 @@
 #ifndef RV_MONITORS_INTERVAL_H
 #define RV_MONITORS_INTERVAL_H
 
-#include <string>
-#include <memory>
 #include <iostream>
+#include <memory>
+#include <string>
 
 class Interval {
-public:
-    explicit Interval(int start=0, int end=10000, bool finite=false); // TODO introduce infinity
+  public:
+    explicit Interval(int start = 0, int end = 10000, bool finite = false); // TODO introduce infinity
 
     [[nodiscard]] std::string to_string() const;
 
@@ -31,16 +31,12 @@ public:
 
     [[nodiscard]] bool containsZero() const;
 
-    [[nodiscard]] std::shared_ptr<Interval> clone() {
-        return std::make_shared<Interval>(*this);
-    }
+    [[nodiscard]] std::shared_ptr<Interval> clone() { return std::make_shared<Interval>(*this); }
 
-private:
+  private:
     int start;
     int end;
     bool finite;
 };
 
-
-
-#endif //RV_MONITORS_INTERVAL_H
+#endif // RV_MONITORS_INTERVAL_H

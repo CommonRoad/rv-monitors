@@ -7,9 +7,6 @@
 
 #include <gtest/gtest.h>
 
-class TestParser : public testing::Test {
+class TestParser : public testing::Test {};
 
-};
-
-
-#endif //RV_MONITORS_TESTPARSER_H
+#endif // RV_MONITORS_TESTPARSER_H

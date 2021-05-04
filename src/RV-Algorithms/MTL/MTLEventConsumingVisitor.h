@@ -1,15 +1,14 @@
 #pragma once
 
-
-#include "Rewriting/ExpressionVisitor.h"
 #include "Formula/Formula.h"
+#include "Rewriting/ExpressionVisitor.h"
 
 /**
  * Visitor applying the event consuming rules to a formula and propagating the EventOperator down the expression tree.
  */
 class MTLEventConsumingVisitor : public ExpressionVisitor {
 
-public:
+  public:
     /**
      * Binds a formula and an event to an EventOperator.
      * @param formula Formula.
@@ -22,7 +21,7 @@ public:
      * @param expr Expression.
      * @param event Event.
      */
-    //void visitExpression(Expression &expr, Trace &trace, int index);
+    // void visitExpression(Expression &expr, Trace &trace, int index);
 
     /**
      * Converts op to a shared_ptr.
@@ -180,7 +179,3 @@ public:
 
     std::shared_ptr<Expression> visitEventOperator(EventOperator &op, Trace &trace, int index) override;
 };
-
-
-
-

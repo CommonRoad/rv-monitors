@@ -2,9 +2,4 @@
 
 #include <gtest/gtest.h>
 
-class TestQMC : public testing::Test {
-
-};
-
-
-
+class TestQMC : public testing::Test {};

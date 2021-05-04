@@ -1,21 +1,20 @@
-#include <algorithm>
-#include <iostream>
-#include <cmath>
-#include "Rewriting/BasicRewriteVisitor.h"
 #include "QMC.h"
-#include "Parser/Parser.h"
-#include "Utils/Utils.h"
-#include "Trace/EventGenerator.h"
 #include "ExpressionTree/Atomic/Constant.h"
-#include "ExpressionTree/Unary/Bool/Not.h"
 #include "ExpressionTree/Nary/Bool/And.h"
 #include "ExpressionTree/Nary/Bool/Or.h"
 #include "ExpressionTree/Nary/Bool/Xor.h"
+#include "ExpressionTree/Unary/Bool/Not.h"
+#include "Parser/Parser.h"
 #include "QMCTable.h"
+#include "Rewriting/BasicRewriteVisitor.h"
+#include "Trace/EventGenerator.h"
+#include "Utils/Utils.h"
+#include <algorithm>
+#include <cmath>
+#include <iostream>
 
-
-std::vector<std::string>
-QMC::combineStringVectors(const std::vector<std::string> &v1, const std::vector<std::string> &v2, size_t index) {
+std::vector<std::string> QMC::combineStringVectors(const std::vector<std::string> &v1,
+                                                   const std::vector<std::string> &v2, size_t index) {
 
     // Combine vectors
     std::vector<std::string> ret(v1.size());
@@ -24,7 +23,6 @@ QMC::combineStringVectors(const std::vector<std::string> &v1, const std::vector<
     }
 
     return ret;
-
 }
 
 std::vector<std::string> QMC::booltoStringVector(const std::vector<bool> &boolVec) {
@@ -57,8 +55,7 @@ Formula QMC::minimize(Formula &formula) {
     if (std::dynamic_pointer_cast<NaryInterface>(formula.getExpr())) {
         if (std::dynamic_pointer_cast<And>(formula.getExpr())) {
             formula.setExpr(distributivityExpand<And, Or>(formula.getExpr()));
-        }
-        else if (std::dynamic_pointer_cast<Or>(formula.getExpr())) {
+        } else if (std::dynamic_pointer_cast<Or>(formula.getExpr())) {
             formula.setExpr(distributivityExpand<Or, And>(formula.getExpr()));
         }
     }
@@ -68,9 +65,9 @@ Formula QMC::minimize(Formula &formula) {
     return formula;
 }
 
-std::string
-QMC::nameToAtomics(const std::string &name, const std::map<std::string, std::vector<std::string>> &primeTermsRelevant,
-                   const std::set<std::string> &atomics) {
+std::string QMC::nameToAtomics(const std::string &name,
+                               const std::map<std::string, std::vector<std::string>> &primeTermsRelevant,
+                               const std::set<std::string> &atomics) {
     std::stringstream ret;
     const auto &assignment = primeTermsRelevant.at(name);
     size_t i = 0;
@@ -80,8 +77,7 @@ QMC::nameToAtomics(const std::string &name, const std::map<std::string, std::vec
                 ret << "&";
             }
             ret << atomic;
-        }
-        else if (assignment[i] == "0") {
+        } else if (assignment[i] == "0") {
             if (ret.tellp() != 0) {
                 ret << "&";
             }
@@ -131,6 +127,3 @@ Formula QMC::reduceBoolFormula(const Formula &formula) {
     auto reducedFormula = qmcTable.petrick(atomicsVector);
     return reducedFormula;
 }
-
-
-

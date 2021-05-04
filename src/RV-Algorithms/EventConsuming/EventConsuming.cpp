@@ -1,10 +1,10 @@
-#include <iostream>
-#include <memory>
-#include "Rewriting/RewriteVisitor.h"
 #include "EventConsuming.h"
 #include "EventConsumingVisitor.h"
 #include "ExpressionTree/Atomic/Constant.h"
 #include "ExpressionTree/Unary/EventOperator.h"
+#include "Rewriting/RewriteVisitor.h"
+#include <iostream>
+#include <memory>
 
 Formula EventConsuming::eventConsumingFuture(const Formula &formula, Trace &trace) {
     // Empty trace
@@ -23,14 +23,13 @@ Formula EventConsuming::eventConsumingFuture(const Formula &formula, Trace &trac
         ec.consumeEvent(formulaCopy, trace, i);
         rw.rewrite(formulaCopy);
         if (formulaCopy.to_string() == "false") {
-//            std::cout << "Formula violated in event " << i << std::endl;
+            //            std::cout << "Formula violated in event " << i << std::endl;
             break;
         }
         if (formulaCopy.to_string() == "true") {
-            //std::cout << "Formula became true in event " << i << std::endl;
+            // std::cout << "Formula became true in event " << i << std::endl;
             break;
         }
-
     }
     return formulaCopy;
 }
@@ -56,21 +55,20 @@ Formula EventConsuming::eventConsumingPast(const Formula &formula, Trace &trace)
         ec.consumeEvent(formulaCopy, trace, i);
         rw.rewrite(formulaCopy);
         if (formulaCopy.to_string() == "false") {
-            //std::cout << "Formula violated in event " << i << std::endl;
+            // std::cout << "Formula violated in event " << i << std::endl;
             break;
         }
         if (formulaCopy.to_string() == "true") {
-            //std::cout << "Formula became true in event " << i << std::endl;
+            // std::cout << "Formula became true in event " << i << std::endl;
             break;
         }
     }
     return formulaCopy;
 }
 
-bool EventConsuming::eventConsuming(const Formula &formula, Trace &trace, bool past){
-    if(!past){
+bool EventConsuming::eventConsuming(const Formula &formula, Trace &trace, bool past) {
+    if (!past) {
         return eventConsumingFuture(formula, trace).to_string() == "true";
     }
     return eventConsumingPast(formula, trace).to_string() == "true";
-
 }

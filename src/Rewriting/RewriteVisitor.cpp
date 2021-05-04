@@ -1,32 +1,31 @@
-#include <iostream>
 #include "RewriteVisitor.h"
-#include "Trace/Event.h"
-#include "ExpressionTree/Unary/EventOperator.h"
-#include "ExpressionTree/Unary/ResolvingOperator.h"
-#include "ExpressionTree/Unary/DerivingOperator.h"
 #include "ExpressionTree/Atomic/Atomic.h"
 #include "ExpressionTree/Atomic/Constant.h"
-#include "ExpressionTree/Unary/Bool/Not.h"
-#include "ExpressionTree/Nary/NaryInterface.h"
-#include "ExpressionTree/Nary/Bool/And.h"
-#include "ExpressionTree/Nary/Bool/Or.h"
-#include "ExpressionTree/Nary/Bool/Xor.h"
 #include "ExpressionTree/Binary/Binary.h"
 #include "ExpressionTree/Binary/Bool/Equivalence.h"
 #include "ExpressionTree/Binary/Bool/Implication.h"
-#include "ExpressionTree/Unary/Unary.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/Globally.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/Future.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/NextStrong.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/NextWeak.h"
-#include "ExpressionTree/Unary/Temporal/PLTLf/Once.h"
-#include "ExpressionTree/Unary/Temporal/PLTLf/Previously.h"
-#include "ExpressionTree/Unary/Temporal/PLTLf/Historically.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Release.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Until.h"
 #include "ExpressionTree/Binary/Temporal/PTLf/Since.h"
+#include "ExpressionTree/Nary/Bool/And.h"
+#include "ExpressionTree/Nary/Bool/Or.h"
+#include "ExpressionTree/Nary/Bool/Xor.h"
+#include "ExpressionTree/Nary/NaryInterface.h"
+#include "ExpressionTree/Unary/Bool/Not.h"
+#include "ExpressionTree/Unary/DerivingOperator.h"
+#include "ExpressionTree/Unary/EventOperator.h"
+#include "ExpressionTree/Unary/ResolvingOperator.h"
+#include "ExpressionTree/Unary/Temporal/LTLf/Future.h"
+#include "ExpressionTree/Unary/Temporal/LTLf/Globally.h"
+#include "ExpressionTree/Unary/Temporal/LTLf/NextStrong.h"
+#include "ExpressionTree/Unary/Temporal/LTLf/NextWeak.h"
+#include "ExpressionTree/Unary/Temporal/PLTLf/Historically.h"
+#include "ExpressionTree/Unary/Temporal/PLTLf/Once.h"
+#include "ExpressionTree/Unary/Temporal/PLTLf/Previously.h"
+#include "ExpressionTree/Unary/Unary.h"
 #include "RewriteVisitorUtils.h"
-
+#include "Trace/Event.h"
+#include <iostream>
 
 void RewriteVisitor::rewrite(Formula &formula) {
     std::map<std::string, LazyBool> map;
@@ -116,7 +115,6 @@ std::shared_ptr<Expression> RewriteVisitor::visitAnd(And &op, Trace &trace, int 
     }
 
     return std::make_shared<And>(expressions);
-
 }
 
 std::shared_ptr<Expression> RewriteVisitor::visitOr(Or &op, Trace &trace, int index) {
@@ -157,7 +155,7 @@ std::shared_ptr<Expression> RewriteVisitor::visitOr(Or &op, Trace &trace, int in
         return *expressions.begin();
     }
 
-    //a | b = a & b ^ a ^ b
+    // a | b = a & b ^ a ^ b
     And::SetType_T andSet;
     Xor::SetType_T xorSet;
 
@@ -200,7 +198,7 @@ std::shared_ptr<Expression> RewriteVisitor::visitXor(Xor &op, Trace &trace, int 
         if (expressions.count(*itr) % 2 == 0) {
             newXorSet.emplace(std::make_shared<Constant>(false));
         }
-            // a ^ a ^ a = a
+        // a ^ a ^ a = a
         else {
             newXorSet.emplace(*itr);
         }
@@ -223,7 +221,6 @@ std::shared_ptr<Expression> RewriteVisitor::visitXor(Xor &op, Trace &trace, int 
         return *newXorSet.begin();
     }
     return std::make_shared<Xor>(newXorSet);
-
 }
 
 std::shared_ptr<Expression> RewriteVisitor::visitImplication(Implication &op, Trace &trace, int index) {
@@ -421,7 +418,6 @@ std::shared_ptr<Expression> RewriteVisitor::visitUntil(Until &op, Trace &trace, 
         }
     }
     return std::make_shared<Until>(op);
-
 }
 
 std::shared_ptr<Expression> RewriteVisitor::visitSince(Since &op, Trace &trace, int index) {
@@ -443,7 +439,6 @@ std::shared_ptr<Expression> RewriteVisitor::visitSince(Since &op, Trace &trace, 
         }
     }
     return std::make_shared<Since>(op);
-
 }
 
 std::shared_ptr<Expression> RewriteVisitor::visitEventOperator(EventOperator &op, Trace &trace, int index) {
@@ -457,4 +452,3 @@ std::shared_ptr<Expression> RewriteVisitor::visitResolvingOperator(ResolvingOper
 std::shared_ptr<Expression> RewriteVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace, int index) {
     return std::make_shared<DerivingOperator>(op);
 }
-

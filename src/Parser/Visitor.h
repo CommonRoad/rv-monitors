@@ -1,31 +1,31 @@
 #pragma once
 
-#include "Parser/gen/FormulaBaseVisitor.h"
 #include "ExpressionTree/Atomic/Atomic.h"
 #include "ExpressionTree/Atomic/Constant.h"
-#include "ExpressionTree/Interval.h"
-#include "ExpressionTree/Unary/Bool/Not.h"
-#include "ExpressionTree/Nary/Bool/And.h"
-#include "ExpressionTree/Nary/Bool/Or.h"
-#include "ExpressionTree/Nary/Bool/Xor.h"
-#include "ExpressionTree/Binary/Bool/Implication.h"
 #include "ExpressionTree/Binary/Bool/Equivalence.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/Globally.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/Future.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/NextStrong.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/NextWeak.h"
-#include "ExpressionTree/Unary/Temporal/PLTLf/Once.h"
-#include "ExpressionTree/Unary/Temporal/PLTLf/Previously.h"
-#include "ExpressionTree/Unary/Temporal/PLTLf/Historically.h"
+#include "ExpressionTree/Binary/Bool/Implication.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Release.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Until.h"
 #include "ExpressionTree/Binary/Temporal/PTLf/Since.h"
+#include "ExpressionTree/Interval.h"
+#include "ExpressionTree/Nary/Bool/And.h"
+#include "ExpressionTree/Nary/Bool/Or.h"
+#include "ExpressionTree/Nary/Bool/Xor.h"
+#include "ExpressionTree/Unary/Bool/Not.h"
+#include "ExpressionTree/Unary/Temporal/LTLf/Future.h"
+#include "ExpressionTree/Unary/Temporal/LTLf/Globally.h"
+#include "ExpressionTree/Unary/Temporal/LTLf/NextStrong.h"
+#include "ExpressionTree/Unary/Temporal/LTLf/NextWeak.h"
+#include "ExpressionTree/Unary/Temporal/PLTLf/Historically.h"
+#include "ExpressionTree/Unary/Temporal/PLTLf/Once.h"
+#include "ExpressionTree/Unary/Temporal/PLTLf/Previously.h"
+#include "Parser/gen/FormulaBaseVisitor.h"
 
 /**
  * Visitor for parsing.
  */
 class Visitor : public FormulaBaseVisitor {
-public:
+  public:
     /**
      * Returns type of an expression.
      * @param expr Parsed expression.
@@ -60,7 +60,7 @@ public:
         if (expr.is<std::shared_ptr<Implication>>()) {
             return expr.as<std::shared_ptr<Implication>>();
         }
-        //Equivalence
+        // Equivalence
         if (expr.is<std::shared_ptr<Equivalence>>()) {
             return expr.as<std::shared_ptr<Equivalence>>();
         }
@@ -88,25 +88,24 @@ public:
         if (expr.is<std::shared_ptr<Until>>()) {
             return expr.as<std::shared_ptr<Until>>();
         }
-        //Previously
+        // Previously
         if (expr.is<std::shared_ptr<Previously>>()) {
             return expr.as<std::shared_ptr<Previously>>();
         }
-        //Once
+        // Once
         if (expr.is<std::shared_ptr<Once>>()) {
             return expr.as<std::shared_ptr<Once>>();
         }
-        //Since
+        // Since
         if (expr.is<std::shared_ptr<Since>>()) {
             return expr.as<std::shared_ptr<Since>>();
         }
-        //Historically
+        // Historically
         if (expr.is<std::shared_ptr<Historically>>()) {
             return expr.as<std::shared_ptr<Historically>>();
         }
 
         throw std::runtime_error("Visitor::getType() No type found. Check your formula string.");
-
     }
 
     /**
@@ -146,12 +145,11 @@ public:
      * @param ctx Context.
      * @return Result of visiting expression behind xorExpr.
      */
-    antlrcpp::Any visitXorExpr(FormulaParser::XorExprContext *ctx) override {
-        return visit(ctx->xor_expr());
-    }
+    antlrcpp::Any visitXorExpr(FormulaParser::XorExprContext *ctx) override { return visit(ctx->xor_expr()); }
 
     /**
-     * Builds an Xor by recursively visiting its children or goes deeper into the expression tree if expression is not an Xor.
+     * Builds an Xor by recursively visiting its children or goes deeper into the expression tree if expression is not
+     * an Xor.
      * @param ctx Context.
      * @return Xor if actual xorExpr visited, result of visitChildren() otherwise.
      */
@@ -162,7 +160,7 @@ public:
         }
         Xor::SetType_T xorSet;
         // Create multiset
-        for (auto &child: ctx->children) {
+        for (auto &child : ctx->children) {
             // Operators are children, ignore them
             if (child->getText() != "xor" && child->getText() != "^") {
                 std::shared_ptr<Expression> newExpr = getType(visit(child));
@@ -173,17 +171,18 @@ public:
     }
 
     /**
-    * Builds an Or by recursively visiting its children or goes deeper into the expression tree if expression is not an Or.
-    * @param ctx Context.
-    * @return Or if actual orExpr visited, result of visitChildren() otherwise.
-    */
+     * Builds an Or by recursively visiting its children or goes deeper into the expression tree if expression is not an
+     * Or.
+     * @param ctx Context.
+     * @return Or if actual orExpr visited, result of visitChildren() otherwise.
+     */
     antlrcpp::Any visitOr(FormulaParser::OrContext *ctx) override {
         if (!ctx->op || ctx->op->getText() != "or" && ctx->op->getText() != "|") {
             return visitChildren(ctx);
         }
         Or::SetType_T orSet;
         // Create multiset
-        for (auto &child: ctx->children) {
+        for (auto &child : ctx->children) {
             if (child->getText() != "or" && child->getText() != "|") {
                 std::shared_ptr<Expression> newExpr = getType(visit(child));
                 orSet.merge(std::multiset<std::shared_ptr<Expression>>{newExpr});
@@ -193,17 +192,18 @@ public:
     }
 
     /**
-    * Builds an And by recursively visiting its children or goes deeper into the expression tree if expression is not an And.
-    * @param ctx Context.
-    * @return And if actual orExpr visited, result of visitChildren() otherwise.
-    */
+     * Builds an And by recursively visiting its children or goes deeper into the expression tree if expression is not
+     * an And.
+     * @param ctx Context.
+     * @return And if actual orExpr visited, result of visitChildren() otherwise.
+     */
     antlrcpp::Any visitAnd(FormulaParser::AndContext *ctx) override {
         if (!ctx->op || ctx->op->getText() != "and" && ctx->op->getText() != "&") {
             return visitChildren(ctx);
         }
         And::SetType_T andSet;
         // Create multiset
-        for (auto &child: ctx->children) {
+        for (auto &child : ctx->children) {
             if (child->getText() != "and" && child->getText() != "&") {
                 std::shared_ptr<Expression> newExpr = getType(visit(child));
                 andSet.merge(std::multiset<std::shared_ptr<Expression>>{newExpr});
@@ -286,9 +286,7 @@ public:
      * @param ctx Context
      * @return Result of visiting unary.
      */
-    antlrcpp::Any visitUnaryExpr(FormulaParser::UnaryExprContext *ctx) override {
-        return visit(ctx->unary());
-    }
+    antlrcpp::Any visitUnaryExpr(FormulaParser::UnaryExprContext *ctx) override { return visit(ctx->unary()); }
 
     /**
      * Recursively visits the child and builds a Globally with it.
@@ -462,9 +460,7 @@ public:
      * @param ctx Context.
      * @return Result if visiting the atom in atomExpr.
      */
-    antlrcpp::Any visitAtomExpr(FormulaParser::AtomExprContext *ctx) override {
-        return visit(ctx->atom());
-    }
+    antlrcpp::Any visitAtomExpr(FormulaParser::AtomExprContext *ctx) override { return visit(ctx->atom()); }
 
     /**
      * Visits a constant and builds a Constant with it.
@@ -472,8 +468,7 @@ public:
      * @return Constant according to given value.
      */
     antlrcpp::Any visitBoolean(FormulaParser::BooleanContext *ctx) override {
-        return std::make_shared<Constant>(
-                Constant(ctx->getText() == "True" || ctx->getText() == "true"));
+        return std::make_shared<Constant>(Constant(ctx->getText() == "True" || ctx->getText() == "true"));
     }
 
     /**
@@ -481,9 +476,7 @@ public:
      * @param ctx Context.
      * @return Result of visiting content inside the bracktes.
      */
-    antlrcpp::Any visitBrackets(FormulaParser::BracketsContext *ctx) override {
-        return visit(ctx->content);
-    }
+    antlrcpp::Any visitBrackets(FormulaParser::BracketsContext *ctx) override { return visit(ctx->content); }
 
     /**
      * Builds an Atomic from a string.
@@ -500,8 +493,8 @@ public:
      * @return Atomic.
      */
     antlrcpp::Any visitFiniteInterval(FormulaParser::FiniteIntervalContext *ctx) override {
-        bool finite { false };
-        if ((int) visit(ctx->u) > 0)
+        bool finite{false};
+        if ((int)visit(ctx->u) > 0)
             finite = true;
         return std::make_shared<Interval>(Interval(visit(ctx->l), visit(ctx->u), finite));
     }
@@ -511,7 +504,5 @@ public:
      * @param ctx Context.
      * @return Atomic.
      */
-    antlrcpp::Any visitDigit(FormulaParser::DigitContext *ctx) override {
-        return std::stoi(ctx->getText());
-    }
+    antlrcpp::Any visitDigit(FormulaParser::DigitContext *ctx) override { return std::stoi(ctx->getText()); }
 };

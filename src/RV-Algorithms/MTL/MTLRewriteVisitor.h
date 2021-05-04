@@ -6,10 +6,10 @@
  * Applies rules to transform formula into conjunction of exclusive disjunctions.
  */
 class MTLRewriteVisitor : public ExpressionVisitor {
-public:
+  public:
     void rewrite(Formula &formula);
 
-    //void visitExpression(Expression &expr, Trace &trace, int index);
+    // void visitExpression(Expression &expr, Trace &trace, int index);
 
     [[nodiscard]] std::shared_ptr<Expression> visitAtomic(Atomic &op, Trace &trace, int index) override;
 
@@ -49,11 +49,9 @@ public:
 
     [[nodiscard]] std::shared_ptr<Expression> visitEventOperator(EventOperator &op, Trace &trace, int index) override;
 
-    [[nodiscard]] std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &op, Trace &trace, int index) override;
+    [[nodiscard]] std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &op, Trace &trace,
+                                                                    int index) override;
 
-    [[nodiscard]] std::shared_ptr<Expression> visitResolvingOperator(ResolvingOperator &op, Trace &trace, int index) override;
-
+    [[nodiscard]] std::shared_ptr<Expression> visitResolvingOperator(ResolvingOperator &op, Trace &trace,
+                                                                     int index) override;
 };
-
-
-

@@ -6,21 +6,19 @@
  * Parent class for all binary expressions.
  */
 class Binary : public Expression {
-private:
+  private:
     std::shared_ptr<Expression> left;
     std::shared_ptr<Expression> right;
 
-public:
+  public:
     /**
      * Constructor.
      * @param symbol Symbol of the respective expression.
      * @param left Left expression.
      * @param right Right expression.
      */
-    Binary(std::string symbol, std::shared_ptr<Expression> left,
-           std::shared_ptr<Expression> right)
-            : Expression(std::move(symbol)), left(std::move(left)), right(std::move(right)) {
-    }
+    Binary(std::string symbol, std::shared_ptr<Expression> left, std::shared_ptr<Expression> right)
+        : Expression(std::move(symbol)), left(std::move(left)), right(std::move(right)) {}
 
     /**
      * Getter for left expression.
@@ -48,7 +46,3 @@ public:
 
     [[nodiscard]] std::string to_string() const override;
 };
-
-
-
-

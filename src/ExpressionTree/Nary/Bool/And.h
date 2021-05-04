@@ -6,8 +6,7 @@
  * Class representing an And.
  */
 class And : public Nary<std::set<std::shared_ptr<Expression>, NaryInterface::SharedPtrExprCompare>, And> {
-public:
-
+  public:
     /**
      * Constructor.
      * @param expressions Set of expressions connected with and.
@@ -17,8 +16,4 @@ public:
     [[nodiscard]] std::shared_ptr<Expression> clone() override;
 
     [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, int index) override;
-
 };
-
-
-

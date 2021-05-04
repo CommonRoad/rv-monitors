@@ -1,32 +1,31 @@
-#include <iostream>
 #include "MTLRewriteVisitor.h"
-#include "Trace/Event.h"
-#include "ExpressionTree/Unary/EventOperator.h"
-#include "ExpressionTree/Unary/ResolvingOperator.h"
-#include "ExpressionTree/Unary/DerivingOperator.h"
 #include "ExpressionTree/Atomic/Atomic.h"
 #include "ExpressionTree/Atomic/Constant.h"
-#include "ExpressionTree/Unary/Bool/Not.h"
-#include "ExpressionTree/Nary/NaryInterface.h"
-#include "ExpressionTree/Nary/Bool/And.h"
-#include "ExpressionTree/Nary/Bool/Or.h"
-#include "ExpressionTree/Nary/Bool/Xor.h"
 #include "ExpressionTree/Binary/Binary.h"
 #include "ExpressionTree/Binary/Bool/Equivalence.h"
 #include "ExpressionTree/Binary/Bool/Implication.h"
-#include "ExpressionTree/Unary/Unary.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/Globally.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/Future.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/NextStrong.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/NextWeak.h"
-#include "ExpressionTree/Unary/Temporal/PLTLf/Once.h"
-#include "ExpressionTree/Unary/Temporal/PLTLf/Previously.h"
-#include "ExpressionTree/Unary/Temporal/PLTLf/Historically.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Release.h"
 #include "ExpressionTree/Binary/Temporal/LTLf/Until.h"
 #include "ExpressionTree/Binary/Temporal/PTLf/Since.h"
+#include "ExpressionTree/Nary/Bool/And.h"
+#include "ExpressionTree/Nary/Bool/Or.h"
+#include "ExpressionTree/Nary/Bool/Xor.h"
+#include "ExpressionTree/Nary/NaryInterface.h"
+#include "ExpressionTree/Unary/Bool/Not.h"
+#include "ExpressionTree/Unary/DerivingOperator.h"
+#include "ExpressionTree/Unary/EventOperator.h"
+#include "ExpressionTree/Unary/ResolvingOperator.h"
+#include "ExpressionTree/Unary/Temporal/LTLf/Future.h"
+#include "ExpressionTree/Unary/Temporal/LTLf/Globally.h"
+#include "ExpressionTree/Unary/Temporal/LTLf/NextStrong.h"
+#include "ExpressionTree/Unary/Temporal/LTLf/NextWeak.h"
+#include "ExpressionTree/Unary/Temporal/PLTLf/Historically.h"
+#include "ExpressionTree/Unary/Temporal/PLTLf/Once.h"
+#include "ExpressionTree/Unary/Temporal/PLTLf/Previously.h"
+#include "ExpressionTree/Unary/Unary.h"
 #include "Rewriting/RewriteVisitorUtils.h"
-
+#include "Trace/Event.h"
+#include <iostream>
 
 void MTLRewriteVisitor::rewrite(Formula &formula) {
     std::map<std::string, LazyBool> map;
@@ -116,7 +115,6 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitAnd(And &op, Trace &trace, i
     }
 
     return std::make_shared<And>(expressions);
-
 }
 
 std::shared_ptr<Expression> MTLRewriteVisitor::visitOr(Or &op, Trace &trace, int index) {
@@ -157,7 +155,7 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitOr(Or &op, Trace &trace, int
         return *expressions.begin();
     }
 
-    //a | b = a & b ^ a ^ b
+    // a | b = a & b ^ a ^ b
     And::SetType_T andSet;
     Xor::SetType_T xorSet;
 
@@ -200,7 +198,7 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitXor(Xor &op, Trace &trace, i
         if (expressions.count(*itr) % 2 == 0) {
             newXorSet.emplace(std::make_shared<Constant>(false));
         }
-            // a ^ a ^ a = a
+        // a ^ a ^ a = a
         else {
             newXorSet.emplace(*itr);
         }
@@ -223,7 +221,6 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitXor(Xor &op, Trace &trace, i
         return *newXorSet.begin();
     }
     return std::make_shared<Xor>(newXorSet);
-
 }
 
 std::shared_ptr<Expression> MTLRewriteVisitor::visitImplication(Implication &op, Trace &trace, int index) {
@@ -297,9 +294,9 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitFuture(Future &op, Trace &tr
     }
 
     // F(a) = true U a
-//    Until until {std::make_shared<Constant>(true), op.getLeft(), op.getInterval()};
-//
-//    return std::make_shared<Until>(until);
+    //    Until until {std::make_shared<Constant>(true), op.getLeft(), op.getInterval()};
+    //
+    //    return std::make_shared<Until>(until);
     return std::make_shared<Future>(op);
 }
 
@@ -325,11 +322,11 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitGlobally(Globally &op, Trace
     }
 
     // G(a) = not F(not a) = true ^ F(true ^ a)
-//    Xor::SetType_T xorSetOne{std::make_shared<Constant>(true), op.getLeft()};
-//    auto future {std::make_shared<Future>(std::make_shared<Xor>(xorSetOne), op.getInterval())};
-//    Xor::SetType_T xorSetTwo{std::make_shared<Constant>(true), future};
-//
-//    return std::make_shared<Xor>(xorSetTwo);
+    //    Xor::SetType_T xorSetOne{std::make_shared<Constant>(true), op.getLeft()};
+    //    auto future {std::make_shared<Future>(std::make_shared<Xor>(xorSetOne), op.getInterval())};
+    //    Xor::SetType_T xorSetTwo{std::make_shared<Constant>(true), future};
+    //
+    //    return std::make_shared<Xor>(xorSetTwo);
 
     return std::make_shared<Globally>(op.getLeft(), op.getInterval());
 }
@@ -356,11 +353,11 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitHistorically(Historically &o
     }
 
     // H(a) = not O(not a) = true ^ O(true ^ a)
-//    Xor::SetType_T xorSetOne{std::make_shared<Constant>(true), op.getLeft()};
-//    auto once {std::make_shared<Once>(std::make_shared<Xor>(xorSetOne), op.getInterval())};
-//    Xor::SetType_T xorSetTwo{std::make_shared<Constant>(true), once};
-//
-//    return std::make_shared<Xor>(xorSetTwo);
+    //    Xor::SetType_T xorSetOne{std::make_shared<Constant>(true), op.getLeft()};
+    //    auto once {std::make_shared<Once>(std::make_shared<Xor>(xorSetOne), op.getInterval())};
+    //    Xor::SetType_T xorSetTwo{std::make_shared<Constant>(true), once};
+    //
+    //    return std::make_shared<Xor>(xorSetTwo);
     return std::make_shared<Historically>(op);
 }
 
@@ -391,9 +388,9 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitOnce(Once &op, Trace &trace,
     }
 
     // O(a) = true S a
-//    Since since {std::make_shared<Constant>(true), op.getLeft(), op.getInterval()};
-//
-//    return std::make_shared<Since>(since);
+    //    Since since {std::make_shared<Constant>(true), op.getLeft(), op.getInterval()};
+    //
+    //    return std::make_shared<Since>(since);
     return std::make_shared<Once>(op.getLeft(), op.getInterval());
 }
 
@@ -480,4 +477,3 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitResolvingOperator(ResolvingO
 std::shared_ptr<Expression> MTLRewriteVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace, int index) {
     return std::make_shared<DerivingOperator>(op);
 }
-

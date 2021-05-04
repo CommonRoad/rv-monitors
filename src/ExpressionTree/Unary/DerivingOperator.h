@@ -7,25 +7,25 @@
 
 #include <utility>
 
-#include "Unary.h"
 #include "Trace/Trace.h"
+#include "Unary.h"
 
 /**
  * Class for the DerivingOperator that applies an event to a formula.
  */
 class DerivingOperator : public Unary {
-private:
+  private:
     Trace trace;
     int index;
 
-public:
+  public:
     /**
      * Constructor.
      * @param left Expression event should be applied to.
      * @param event Event.
      */
-    explicit DerivingOperator(const std::shared_ptr<Expression> &left, Trace  trace, int idx) : Unary(
-            trace.getEvent(idx).to_string(), left), trace(std::move(trace)), index(idx) {}
+    explicit DerivingOperator(const std::shared_ptr<Expression> &left, Trace trace, int idx)
+        : Unary(trace.getEvent(idx).to_string(), left), trace(std::move(trace)), index(idx) {}
 
     /**
      * Getter for event.
@@ -40,5 +40,4 @@ public:
     [[nodiscard]] std::string to_string() const override;
 };
 
-
-#endif //RV_MONITORS_DERIVINGOPERATOR_H
+#endif // RV_MONITORS_DERIVINGOPERATOR_H

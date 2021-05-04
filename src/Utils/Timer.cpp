@@ -1,5 +1,5 @@
-#include <stdexcept>
 #include "Timer.h"
+#include <stdexcept>
 
 using namespace std::chrono;
 
@@ -30,5 +30,4 @@ long Timer::stop() {
     return diff;
 }
 
-void Timer::addTime(long nanoseconds) {
-    totalTime += nanoseconds; }
+void Timer::addTime(long nanoseconds) { totalTime += nanoseconds; }
