@@ -20,7 +20,7 @@ clang-format:
 clang-tidy:
   stage: static-test
   script:
-    ./ci/clang-tidy.sh
+    bash ./ci/clang-tidy.sh
 
 
 build-library:
