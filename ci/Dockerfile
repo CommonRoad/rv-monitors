@@ -18,5 +18,9 @@ ENV PATH="/usr/bin/cmake/bin:${PATH}"
 RUN apt-get install -y gcovr > /dev/null
 RUN apt-get install -y doxygen > /dev/null
 RUN apt-get install -y uuid-dev > /dev/null
-RUN apt-get install -y llvm > /dev/null
-RUN apt-get install -y clang > /dev/null
+
+RUN apt install clang-format -y \
+  && rm -rf /var/lib/apt/lists/* > /dev/null
+
+# Append llvm directory to path, that we can use clang-format instead of clang-format-<some-version>
+ENV PATH="$PATH:/usr/lib/llvm-${CLANG_FORMAT_VERSION}/bin/"
