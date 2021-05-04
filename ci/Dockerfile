@@ -18,3 +18,4 @@ ENV PATH="/usr/bin/cmake/bin:${PATH}"
 RUN apt-get install -y gcovr > /dev/null
 RUN apt-get install -y doxygen > /dev/null
 RUN apt-get install -y uuid-dev > /dev/null
+RUN apt-get install -y llvm > /dev/null
