@@ -54,14 +54,12 @@ class DerivingOperator;
 
 class Equivalence;
 
-
 /**
  * Parent class to apply the visitor pattern to the expression tree.
  * The functionality of the single visit functions depends on the inheriting class.
  */
 class ExpressionVisitor {
-public:
-
+  public:
     void visitExpression(Expression &expr, Trace &trace, int index);
 
     /**
@@ -231,9 +229,4 @@ public:
      * @return Transformed EventOperator as a shared_ptr.
      */
     virtual std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &expr, Trace &trace, int index) = 0;
-
 };
-
-
-
-

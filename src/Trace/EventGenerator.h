@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <vector>
 
 /**
@@ -8,10 +7,11 @@
  * E.g. for two predicates a and b, the events (true, true), (true, false), (false, true), (false, false) are generated.
  */
 class EventGenerator {
-private:
+  private:
     std::vector<bool> event;
     size_t numberOfTrue;
-public:
+
+  public:
     /**
      * Constructor.
      * @param length
@@ -35,8 +35,4 @@ public:
      * @return True if there still is a next event.
      */
     [[nodiscard]] bool hasNext();
-
 };
-
-
-

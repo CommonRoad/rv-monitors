@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "Formula/Formula.h"
 #include "MultiTransition.h"
 
@@ -8,13 +7,13 @@
  * State of an MT-FSM.
  */
 class StateMT_FSM {
-private:
+  private:
     size_t id;
     MultiTransition nonTerminal = MultiTransition({});
     MultiTransition terminal = MultiTransition({});
     Formula formula;
 
-public:
+  public:
     /**
      * Constructor.
      * @param id Id.
@@ -92,6 +91,3 @@ public:
      */
     [[nodiscard]] std::string to_string() const;
 };
-
-
-

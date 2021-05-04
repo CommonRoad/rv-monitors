@@ -1,8 +1,8 @@
 #include "Parser.h"
-#include <ANTLRInputStream.h>
 #include "Parser/gen/FormulaLexer.h"
 #include "Parser/gen/FormulaParser.h"
 #include "Visitor.h"
+#include <ANTLRInputStream.h>
 
 Formula Parser::parse(const std::string &formula) {
 

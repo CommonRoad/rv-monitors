@@ -6,7 +6,7 @@
  * Class representing an atomic proposition.
  */
 class Atomic : public Expression {
-public:
+  public:
     /**
      * Constructor.
      * @param symbol Symbol of the Atomic.
@@ -18,8 +18,4 @@ public:
     [[nodiscard]] std::shared_ptr<Expression> clone() override;
 
     [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, int index) override;
-
 };
-
-
-

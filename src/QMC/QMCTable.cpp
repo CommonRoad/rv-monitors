@@ -1,32 +1,26 @@
 #include "QMCTable.h"
-#include "QMC.h"
 #include "Parser/Parser.h"
+#include "QMC.h"
 
-#include <utility>
-#include <algorithm>
 #include <Utils/Utils.h>
+#include <algorithm>
+#include <utility>
 
 QMCTable::QMCTable(std::vector<PrimeTerm> primeTerms) : primeTerms(std::move(primeTerms)) {}
 
-const std::vector<PrimeTerm> &QMCTable::getPrimeTerms() const {
-    return primeTerms;
-}
+const std::vector<PrimeTerm> &QMCTable::getPrimeTerms() const { return primeTerms; }
 
 void QMCTable::eraseCombinedPrimeTerms() {
     for (auto itr = primeTerms.begin(); itr != primeTerms.end();) {
         if ((*itr).getHasBeenCombined()) {
             primeTerms.erase(itr);
-        }
-        else {
+        } else {
             ++itr;
         }
     }
 }
 
-void QMCTable::addPrimeTerm(const PrimeTerm &primeTerm) {
-    primeTerms.push_back(primeTerm);
-
-}
+void QMCTable::addPrimeTerm(const PrimeTerm &primeTerm) { primeTerms.push_back(primeTerm); }
 
 void QMCTable::combinePrimeTerms() {
     if (primeTerms.empty()) {
@@ -51,9 +45,10 @@ void QMCTable::combinePrimeTerms() {
                     auto outerSet = itrOuter->getCombinations();
                     auto innerSet = itrInner->getCombinations();
                     outerSet.merge(innerSet);
-                    PrimeTerm newCombination(outerSet, QMC::combineStringVectors(itrOuter->getAllocation(),
-                                                                                 itrInner->getAllocation(), combineAt),
-                                             false);
+                    PrimeTerm newCombination(
+                        outerSet,
+                        QMC::combineStringVectors(itrOuter->getAllocation(), itrInner->getAllocation(), combineAt),
+                        false);
 
                     // Find combined elements in primeTerms (duplicates should be marked, too, but not added)
                     auto itrIndexFirst = std::find(primeTerms.begin(), primeTerms.end(), *itrOuter);
@@ -69,7 +64,6 @@ void QMCTable::combinePrimeTerms() {
                     if (std::find(primeTerms.begin(), primeTerms.end(), newCombination) == primeTerms.end()) {
                         primeTermsNew.push_back(newCombination);
                         primeTerms.push_back(newCombination);
-
                     }
                 }
             }
@@ -82,7 +76,6 @@ void QMCTable::combinePrimeTerms() {
     while (changed) {
         changed = columnDominance() or rowDominance();
     }
-
 }
 
 bool QMCTable::columnDominance() {
@@ -151,8 +144,6 @@ void QMCTable::eraseEmptyPrimeTerms() {
     primeTerms.erase(std::remove_if(primeTerms.begin(), primeTerms.end(),
                                     [](auto primeTerm) { return primeTerm.getCombinations().empty(); }),
                      primeTerms.end());
-
-
 }
 
 bool QMCTable::rowDominance() {
@@ -182,7 +173,7 @@ bool QMCTable::rowDominance() {
     return changed;
 }
 
-//std::string QMCTable::buildFormulaString(const std::vector<std::string> &atomics) {
+// std::string QMCTable::buildFormulaString(const std::vector<std::string> &atomics) {
 //    // Get all andExpr for final orExpr
 //    std::vector<std::vector<std::string>> orExpr;
 //    for (auto &primeTerm : primeTerms) {
@@ -246,10 +237,8 @@ std::string QMCTable::buildPOS() {
                                   std::inserter(intersection, intersection.begin()));
             if (!intersection.empty()) {
                 combined = true;
-                orExpressions.push_back(
-                        "(" + primeTerms[primeTermCurrent].getAlias() + " | " + primeTerms[primeTermOther].getAlias() +
-                        ")");
-
+                orExpressions.push_back("(" + primeTerms[primeTermCurrent].getAlias() + " | " +
+                                        primeTerms[primeTermOther].getAlias() + ")");
             }
         }
         if (!combined) {
@@ -285,11 +274,9 @@ Formula QMCTable::petrick(const std::vector<std::string> &atomics) {
     auto splitTerms = Utils::splitString(sopFormulaString, "|()");
 
     // Choose product with fewest terms
-    auto shortest = *std::min_element(splitTerms.begin(), splitTerms.end(),
-                                      [](const std::string &s1, const std::string &s2) {
-                                          return s1.length() < s2.length();
-                                      }
-    );
+    auto shortest =
+        *std::min_element(splitTerms.begin(), splitTerms.end(),
+                          [](const std::string &s1, const std::string &s2) { return s1.length() < s2.length(); });
 
     // Reassign primeTerms
     std::stringstream res;
@@ -297,11 +284,9 @@ Formula QMCTable::petrick(const std::vector<std::string> &atomics) {
     for (const auto &c : shortest) {
         if (c == '&') {
             res << ") | (";
-        }
-        else if (c != ' ' and c != '(' and c != ')') {
+        } else if (c != ' ' and c != '(' and c != ')') {
             res << findPrimeTerm(std::string(1, c)).allocationToFormulaString(atomics);
-        }
-        else {
+        } else {
             continue;
         }
     }
@@ -317,4 +302,3 @@ PrimeTerm QMCTable::findPrimeTerm(const std::string &alias) {
     }
     throw std::runtime_error("QMCTable::findPrimeTerm PrimeTerm not found");
 }
-

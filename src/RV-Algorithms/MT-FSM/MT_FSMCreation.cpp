@@ -1,16 +1,16 @@
-#include <algorithm>
-#include <iostream>
-#include "QMC/QMC.h"
-#include "Trace/EventGenerator.h"
-#include "RV-Algorithms/EventConsuming/EventConsuming.h"
 #include "MT_FSMCreation.h"
-#include "Rewriting/BasicRewriteVisitor.h"
-#include "Utils/Utils.h"
 #include "ExpressionTree/Atomic/Atomic.h"
 #include "ExpressionTree/Atomic/Constant.h"
-#include "ExpressionTree/Nary/Bool/Or.h"
 #include "ExpressionTree/Binary/Bool/Equivalence.h"
+#include "ExpressionTree/Nary/Bool/Or.h"
+#include "QMC/QMC.h"
+#include "RV-Algorithms/EventConsuming/EventConsuming.h"
+#include "Rewriting/BasicRewriteVisitor.h"
 #include "StateMT_FSM.h"
+#include "Trace/EventGenerator.h"
+#include "Utils/Utils.h"
+#include <algorithm>
+#include <iostream>
 
 bool MT_FSMCreation::valid(Formula &formula) {
     std::set<Formula> states{formula};
@@ -26,12 +26,11 @@ bool MT_FSMCreation::valid(Formula &formula, std::set<Formula> &states) {
     if (numberOfAtomics == 0) {
         if (auto constant = std::dynamic_pointer_cast<Constant>(formula.getExpr())) {
             return constant->getValue();
-        }
-        else if (auto eq = std::dynamic_pointer_cast<Equivalence>(formula.getExpr())) {
+        } else if (auto eq = std::dynamic_pointer_cast<Equivalence>(formula.getExpr())) {
             if ((*(eq->getLeft()) == *(eq->getRight()))) {
                 return true;
             }
-                // TODO: better way: resolve the formula end return the result
+            // TODO: better way: resolve the formula end return the result
             else if (formula.to_string() == "(false <-> true)" or formula.to_string() == "(true <-> false)") {
                 return false;
             }
@@ -51,9 +50,9 @@ bool MT_FSMCreation::valid(Formula &formula, std::set<Formula> &states) {
         // Nonterminal eventMap
         auto traceTerminal = Utils::boolVectorToTrace(atomics, event, false);
         Formula f = EventConsuming::eventConsumingFuture(formula, traceTerminal);
-        //br.rewrite(f);
+        // br.rewrite(f);
 
-        auto[_, inserted] = states.emplace(f);
+        auto [_, inserted] = states.emplace(f);
         if (inserted and not valid(f, states)) {
             return false;
         }
@@ -90,7 +89,6 @@ MultiTransition MT_FSMCreation::merge(MultiTransition &mt_1, MultiTransition mt_
             auto formulaNonConst = Formula(formula1);
             br.rewrite(formulaNonConst);
             mergedTransitions.emplace(QMC::reduceBoolFormula(formulaNonConst), state1);
-
         }
     }
 
@@ -110,9 +108,8 @@ MultiTransition MT_FSMCreation::merge(MultiTransition &mt_1, MultiTransition mt_
 }
 
 // Fig 5
-void
-MT_FSMCreation::formulaToMT_FSM(const Formula &formula, std::vector<StateMT_FSM> &states, bool past) {
-    //std::cout << formula.to_string() << std::endl;
+void MT_FSMCreation::formulaToMT_FSM(const Formula &formula, std::vector<StateMT_FSM> &states, bool past) {
+    // std::cout << formula.to_string() << std::endl;
     MultiTransition mtTerminal({});
     MultiTransition mtNonTerminal({});
 
@@ -122,18 +119,15 @@ MT_FSMCreation::formulaToMT_FSM(const Formula &formula, std::vector<StateMT_FSM>
     EventGenerator gen(numberOfAtomics);
     for (auto event = gen.getEventVector(); gen.hasNext(); event = gen.getNext()) {
         auto currentEvent = Utils::boolVectorToEvent(atomics, event, false);
-        auto conjunction = Utils::eventToFormula(currentEvent); //7
+        auto conjunction = Utils::eventToFormula(currentEvent); // 7
 
-        auto traceTerminal = Utils::boolVectorToTrace(atomics,
-                                                      event,
-                                                      true);
-        auto formulaEventConsumingTerminal = EventConsuming::eventConsumingFuture(formula,
-                                                                                  traceTerminal);
+        auto traceTerminal = Utils::boolVectorToTrace(atomics, event, true);
+        auto formulaEventConsumingTerminal = EventConsuming::eventConsumingFuture(formula, traceTerminal);
 
         // Sanity check
         if (not std::dynamic_pointer_cast<Constant>(formulaEventConsumingTerminal.getExpr())) {
             throw std::runtime_error(
-                    "MT_FSMCreation::formulaToMT_FSM() EventConsuming did not return a Constant on terminal event");
+                "MT_FSMCreation::formulaToMT_FSM() EventConsuming did not return a Constant on terminal event");
         }
         // Is true or false
         size_t evaluation = formulaEventConsumingTerminal.getExpr()->isConstTrue();
@@ -143,21 +137,19 @@ MT_FSMCreation::formulaToMT_FSM(const Formula &formula, std::vector<StateMT_FSM>
 
         Formula formulaEventConsuming(nullptr);
         if (!past) {
-            auto traceNonTerminal = Utils::boolVectorToTrace(atomics, event,
-                                                             false);
-            formulaEventConsuming = EventConsuming::eventConsumingFuture(formula,
-                                                                         traceNonTerminal);
-        }
-        else {
+            auto traceNonTerminal = Utils::boolVectorToTrace(atomics, event, false);
+            formulaEventConsuming = EventConsuming::eventConsumingFuture(formula, traceNonTerminal);
+        } else {
             auto trace = Utils::boolVectorToTrace(atomics, event, false);
             formulaEventConsuming = EventConsuming::eventConsumingPast(formula, trace);
         }
         // 10 Search for equivalent formula
         bool eqFormulaExists = false;
         for (size_t stateId = 0; stateId < states.size(); ++stateId) {
-            auto equivalence = Formula(std::make_shared<Equivalence>(formulaEventConsuming.getExpr(),
-                                                                     states[stateId].getFormula().getExpr()));
-            //TODO: add shortcut: if string representation of formulaEventConsuming and states[i] is equal then the equivalence is valid (inverse obviously not)
+            auto equivalence = Formula(
+                std::make_shared<Equivalence>(formulaEventConsuming.getExpr(), states[stateId].getFormula().getExpr()));
+            // TODO: add shortcut: if string representation of formulaEventConsuming and states[i] is equal then the
+            // equivalence is valid (inverse obviously not)
 
             if (valid(equivalence)) {
                 currentMT = MultiTransition({{conjunction, stateId}});
@@ -170,7 +162,7 @@ MT_FSMCreation::formulaToMT_FSM(const Formula &formula, std::vector<StateMT_FSM>
 
             // Check if this formula already exists in states since they should be unique
             bool found = false;
-            for (const auto &state: states) {
+            for (const auto &state : states) {
                 if (state.getFormula() == formulaEventConsuming) {
                     currentMT = MultiTransition({{conjunction, state.getId()}});
                     found = true;
@@ -198,8 +190,7 @@ MT_FSMCreation::formulaToMT_FSM(const Formula &formula, std::vector<StateMT_FSM>
         auto formulaTrue = Formula(std::make_shared<Constant>(true));
         auto propositionNT = transitionsNT.find(formulaTrue);
         auto propositionT = transitionsT.find(formulaTrue);
-        if (propositionNT != transitionsNT.end() and
-            propositionT != transitionsT.end()) {
+        if (propositionNT != transitionsNT.end() and propositionT != transitionsT.end()) {
 
             // Replace formula in MT
             auto newFormula = propositionT->first;
@@ -209,12 +200,11 @@ MT_FSMCreation::formulaToMT_FSM(const Formula &formula, std::vector<StateMT_FSM>
         }
     }
 
-    auto currentStateIter = std::find_if(states.begin(), states.end(),
-                                         [&](const StateMT_FSM &s) { return s.getFormula() == formula; });
+    auto currentStateIter =
+        std::find_if(states.begin(), states.end(), [&](const StateMT_FSM &s) { return s.getFormula() == formula; });
     auto &currentState = states[std::distance(states.begin(), currentStateIter)];
     currentState.setTerminal(mtTerminal);
     currentState.setNonTerminal(mtNonTerminal);
-
 }
 
 // Wrapper function

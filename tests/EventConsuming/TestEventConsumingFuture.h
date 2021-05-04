@@ -2,9 +2,4 @@
 
 #include <gtest/gtest.h>
 
-class TestEventConsumingFuture : public testing::Test {
-
-};
-
-
-
+class TestEventConsumingFuture : public testing::Test {};

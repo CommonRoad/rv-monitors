@@ -8,14 +8,13 @@
  */
 class LazyBool {
 
-private:
+  private:
     bool value{false};
     bool initialized{false};
     std::function<bool()> valueFetcher{};
 
-public:
-
-    LazyBool() : initialized(true) {};
+  public:
+    LazyBool() : initialized(true){};
 
     /**
      * Initialize non-lazy.
@@ -33,9 +32,7 @@ public:
      * Implicit cast to bool that fetches the value if necessary.
      * @return
      */
-    operator bool() {
-        return get();
-    }
+    operator bool() { return get(); }
 
     /**
      * Fetches the value.
@@ -51,6 +48,3 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const LazyBool &aBool);
 };
-
-
-

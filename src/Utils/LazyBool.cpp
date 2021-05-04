@@ -19,8 +19,6 @@ std::string LazyBool::to_string() const {
     return "Not initialized";
 }
 
-std::ostream &operator<<(std::ostream &os, const LazyBool &lazyBool) {
-    return os << lazyBool.to_string();
-}
+std::ostream &operator<<(std::ostream &os, const LazyBool &lazyBool) { return os << lazyBool.to_string(); }
 
 LazyBool::LazyBool(bool value) : value(value), initialized(true) {}

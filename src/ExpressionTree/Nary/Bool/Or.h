@@ -1,13 +1,12 @@
 #pragma once
 
-
 #include "ExpressionTree/Nary/Nary.h"
 
 /**
  * Class representing an Or.
  */
 class Or : public Nary<std::set<std::shared_ptr<Expression>, NaryInterface::SharedPtrExprCompare>, Or> {
-public:
+  public:
     /**
      * Constructor.
      * @param expressions Set of expressions connected with or.
@@ -18,5 +17,3 @@ public:
 
     [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, int index) override;
 };
-
-

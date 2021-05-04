@@ -5,37 +5,29 @@
 #ifndef RV_MONITORS_RVMONITOR_H
 #define RV_MONITORS_RVMONITOR_H
 
-#include <iostream>
-#include <vector>
-#include "Trace/Trace.h"
+#include "BTT-FSM/BTT_FSM.h"
 #include "Formula/Formula.h"
 #include "MT-FSM/MT_FSM.h"
-#include "BTT-FSM/BTT_FSM.h"
+#include "Trace/Trace.h"
+#include <iostream>
+#include <vector>
 
-enum AlgorithmType {
-    dynamic,
-    eventconsuming_ltl,
-    mt_fsm,
-    btt_fsm,
-    eventconsuming_mtl
-};
-
+enum AlgorithmType { dynamic, eventconsuming_ltl, mt_fsm, btt_fsm, eventconsuming_mtl };
 
 class RVMonitor {
-private:
-public:
-    RVMonitor(bool past, AlgorithmType algorithm,
-              bool consoleOutput, const Formula &formula);
+  private:
+  public:
+    RVMonitor(bool past, AlgorithmType algorithm, bool consoleOutput, const Formula &formula);
 
-private:
+  private:
     bool past{false};
-    AlgorithmType algorithm { eventconsuming_ltl };
+    AlgorithmType algorithm{eventconsuming_ltl};
     bool consoleOutput{true};
     std::unique_ptr<MT_FSM> mtFSM;
     std::unique_ptr<BTT_FSM> bttFSM;
     Formula formula;
 
-public:
+  public:
     /**
      * Executes algorithm on a given trace and with given parameters.
      * @param formula Formula.
@@ -60,5 +52,5 @@ std::ostream &operator<<(std::ostream &os, const AlgorithmType &algorithm);
  * @param algorithmString
  * @return
  */
-AlgorithmType stringToAlgorithm(const std::string& algorithmString);
-#endif //RV_MONITORS_RVMONITOR_H
+AlgorithmType stringToAlgorithm(const std::string &algorithmString);
+#endif // RV_MONITORS_RVMONITOR_H

@@ -6,10 +6,10 @@
  * Class representing a boolean constant, i.e. true or false.
  */
 class Constant : public Expression {
-private:
+  private:
     bool value;
 
-public:
+  public:
     /**
      * Constructor.
      * @param value Truth value of the constant.
@@ -27,5 +27,4 @@ public:
     std::shared_ptr<Expression> clone() override;
 
     std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, int index) override;
-
 };

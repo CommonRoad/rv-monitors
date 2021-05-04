@@ -1,20 +1,19 @@
 #pragma once
 
-
-#include <set>
-#include <vector>
 #include "Formula/Formula.h"
 #include "StateBTT_FSM.h"
+#include <set>
+#include <vector>
 
 /**
  * Class representing a Binary Transition Tree Finite State Machine (BTT-FSM).
  */
 class BTT_FSM {
-private:
+  private:
     Formula formula;
     std::vector<StateBTT_FSM> states;
 
-public:
+  public:
     /**
      * Constructor for a BTT-FSM.
      * @param formula Forumla that we want the BTT-FSM for.
@@ -52,6 +51,3 @@ public:
      */
     [[nodiscard]] std::string to_string() const;
 };
-
-
-

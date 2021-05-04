@@ -4,7 +4,7 @@
  * Taken from https://github.com/AutoPas/AutoPas/blob/ecbf799e8c1f828eb51e3507b76275afe98a8cb2/src/autopas/utils/Timer.h
  */
 class Timer {
-public:
+  public:
     Timer();
 
     virtual ~Timer();
@@ -33,7 +33,7 @@ public:
      */
     [[nodiscard]] long getTotalTime() const { return totalTime; }
 
-private:
+  private:
     /**
      * Time point of last call of start().
      */
@@ -49,8 +49,3 @@ private:
      */
     bool currentlyRunning = false;
 };
-
-
-
-
-

@@ -1,8 +1,7 @@
-#include <algorithm>
 #include "EventGenerator.h"
+#include <algorithm>
 
-EventGenerator::EventGenerator(size_t length) : numberOfTrue(0),
-                                                event(length, false) {}
+EventGenerator::EventGenerator(size_t length) : numberOfTrue(0), event(length, false) {}
 
 const std::vector<bool> &EventGenerator::getNext() {
 
@@ -14,14 +13,9 @@ const std::vector<bool> &EventGenerator::getNext() {
     }
 
     return event;
-
 }
 
-bool EventGenerator::hasNext() {
-    return numberOfTrue <= event.size() and !event.empty();
-}
+bool EventGenerator::hasNext() { return numberOfTrue <= event.size() and !event.empty(); }
 
 // TODO change to real Event
-const std::vector<bool> &EventGenerator::getEventVector() const {
-    return event;
-}
+const std::vector<bool> &EventGenerator::getEventVector() const { return event; }

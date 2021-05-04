@@ -10,10 +10,10 @@ std::string Interval::to_string() const {
     return "[" + std::to_string(this->start) + ", " + std::to_string(this->end) + "]";
 }
 
-void Interval::reduceInterval(){
+void Interval::reduceInterval() {
     if (!finite)
         start--;
-    else{
+    else {
         end--;
         start--;
     }

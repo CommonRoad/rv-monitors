@@ -1,28 +1,27 @@
 #pragma once
 
-#include <memory>
 #include "ExpressionTree/Atomic/Atomic.h"
 #include "Node.h"
+#include <memory>
 
 /**
  * A Decision is a Node in a BTT with two outgoing branches.
  * Left leads to the next Node if the predicate is true; right to the next Node if predicate is false.
  */
 class Decision : public Node {
-private:
+  private:
     std::shared_ptr<Node> left;
     std::shared_ptr<Node> right;
     std::shared_ptr<Expression> predicate;
 
-public:
+  public:
     /**
      * Constructor for a Decision.
      * @param left Next Node if predicate is true.
      * @param right Next Node if predicate is false.
      * @param predicate Predicate.
      */
-    Decision(std::shared_ptr<Node> left, std::shared_ptr<Node> right,
-             std::shared_ptr<Expression> predicate);
+    Decision(std::shared_ptr<Node> left, std::shared_ptr<Node> right, std::shared_ptr<Expression> predicate);
 
     /**
      * Getter for left.
@@ -67,8 +66,4 @@ public:
      * @return String representation of Decision.
      */
     [[nodiscard]] std::string to_string() const override;
-
 };
-
-
-

@@ -1,17 +1,16 @@
 #pragma once
 
-
 #include "Formula/Formula.h"
 
 /**
  * Class representing a multi-transition.
  */
 class MultiTransition {
-private:
+  private:
     // Outgoing transitions from state
     std::map<Formula, size_t> transitions;
 
-public:
+  public:
     /**
      * Constructor.
      * @param transitions

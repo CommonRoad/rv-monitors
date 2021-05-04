@@ -1,21 +1,22 @@
 #pragma once
 
+#include "Formula/Formula.h"
+#include "StateMT_FSM.h"
+#include "Trace/Trace.h"
 #include <memory>
 #include <utility>
 #include <vector>
-#include "Trace/Trace.h"
-#include "Formula/Formula.h"
-#include "StateMT_FSM.h"
 
 /**
  * Class to manage an MT-FSM*.
  */
 class MT_FSM {
-private:
+  private:
     std::set<std::string> atomics;
     Formula formula;
     std::vector<StateMT_FSM> states;
-public:
+
+  public:
     /**
      * Constructor.
      * @param atomics Predicates.
@@ -65,8 +66,4 @@ public:
      * @return String representation of the MT-FSM*.
      */
     [[nodiscard]] std::string to_string() const;
-
 };
-
-
-

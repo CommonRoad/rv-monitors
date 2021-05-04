@@ -1,20 +1,20 @@
 #pragma once
 
-#include <ExpressionTree/Expression.h>
 #include "ExpressionTree/Binary/Binary.h"
-#include "ExpressionTree/Unary/Unary.h"
 #include "ExpressionTree/Nary/NaryInterface.h"
+#include "ExpressionTree/Unary/Unary.h"
 #include "Trace/Event.h"
+#include <ExpressionTree/Expression.h>
 
 /**
  * Class representing a formula specified in temporal logic.
  */
 class Formula {
-private:
+  private:
     std::shared_ptr<Expression> expr;
     std::shared_ptr<Event> event = nullptr;
 
-public:
+  public:
     /**
      * Constructor.
      * @param expr Expression as root of the expression tree.
@@ -69,8 +69,8 @@ public:
      * @param after Second tree.
      * @return True if they are identical, false otherwise.
      */
-    [[nodiscard]] static bool
-    sameTree(const std::shared_ptr<Expression> &before, const std::shared_ptr<Expression> &after);
+    [[nodiscard]] static bool sameTree(const std::shared_ptr<Expression> &before,
+                                       const std::shared_ptr<Expression> &after);
 
     /**
      * Creates a deep copy of the given expression.
@@ -78,8 +78,7 @@ public:
      * @param exprOrig Expression to be deep copied.
      * @return Deep copy of exprOrig.
      */
-    template<class T>
-    [[nodiscard]] static std::shared_ptr<T> deepCopy(const std::shared_ptr<T> &exprOrig)  {
+    template <class T>[[nodiscard]] static std::shared_ptr<T> deepCopy(const std::shared_ptr<T> &exprOrig) {
         if (exprOrig) {
             auto ret = exprOrig->clone();
 
@@ -90,8 +89,7 @@ public:
                     for (const auto &itr : *nary) {
                         newSet.emplace(deepCopy(itr->clone()));
                     }
-                }
-                else {
+                } else {
                     std::set<std::shared_ptr<Expression>> newSet;
                     for (const auto &itr : *nary) {
                         newSet.emplace(deepCopy(itr->clone()));
@@ -100,7 +98,7 @@ public:
                 ret = nary;
             }
 
-                // Binary
+            // Binary
             else if (auto binary = std::dynamic_pointer_cast<Binary>(ret)) {
                 auto tmpLeft = deepCopy(binary->getLeft()->clone());
                 binary->setLeft(tmpLeft);
@@ -109,7 +107,7 @@ public:
                 ret = binary;
             }
 
-                // Unary
+            // Unary
             else if (auto unary = std::dynamic_pointer_cast<Unary>(ret)) {
                 auto tmpLeft = deepCopy(unary->getLeft()->clone());
                 unary->setLeft(tmpLeft);
@@ -134,7 +132,6 @@ public:
      * @return ostream.
      */
     friend std::ostream &operator<<(std::ostream &os, const Formula &formula);
-
 };
 
 /**
@@ -152,6 +149,3 @@ bool operator<(const Formula &f1, const Formula &f2);
  * @return True if f1 == f2, false otherwise.
  */
 bool operator==(const Formula &f1, const Formula &f2);
-
-
-

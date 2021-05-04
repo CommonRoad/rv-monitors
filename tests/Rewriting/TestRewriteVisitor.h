@@ -2,9 +2,4 @@
 
 #include <gtest/gtest.h>
 
-class TestRewriteVisitor : public testing::Test{
-
-};
-
-
-
+class TestRewriteVisitor : public testing::Test {};

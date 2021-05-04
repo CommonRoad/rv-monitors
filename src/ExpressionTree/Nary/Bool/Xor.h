@@ -1,13 +1,13 @@
 #pragma once
 
-#include "ExpressionTree/Nary/NaryInterface.h"
 #include "ExpressionTree/Nary/Nary.h"
+#include "ExpressionTree/Nary/NaryInterface.h"
 
 /**
  * Class representing an Xor.
  */
 class Xor : public Nary<std::multiset<std::shared_ptr<Expression>, NaryInterface::SharedPtrExprCompare>, Xor> {
-public:
+  public:
     /**
      * Constructor.
      * @param expressions Multiset of expressions connected with xor.
@@ -17,8 +17,4 @@ public:
     [[nodiscard]] std::shared_ptr<Expression> clone() override;
 
     [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, int index) override;
-
 };
-
-
-
