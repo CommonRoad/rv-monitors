@@ -2,11 +2,13 @@ stages:
   - static-test
   - compile
   - test
+#  - sanitizer TODO
   - coverage
-  - docs
+#  - docs TODO
 
 
-image: $CI_REGISTRY/maierhofer/rv-monitors/ci:v0.1
+
+image: $CI_REGISTRY/maierhofer/rv-monitors/ci:0.1
 
 
 build-library:
