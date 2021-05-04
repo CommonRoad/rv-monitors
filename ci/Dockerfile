@@ -19,7 +19,8 @@ RUN apt-get install -y gcovr > /dev/null
 RUN apt-get install -y doxygen > /dev/null
 RUN apt-get install -y uuid-dev > /dev/null
 
-RUN apt install clang-format -y \
+ARG CLANG_FORMAT_VERSION=10
+RUN apt-get install git clang-format -y \
   && rm -rf /var/lib/apt/lists/* > /dev/null
 
 # Append llvm directory to path, that we can use clang-format instead of clang-format-<some-version>
