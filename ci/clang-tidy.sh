@@ -21,12 +21,6 @@ else
     echo "==> Let's start our clang-tidy check"
 fi
 
-# for compilation database
-mkdir -p build
-cd build
-cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DELSA_CUDA_VECTOR=ON -DELSA_BENCHMARKS=ON -DCMAKE_CXX_FLAGS="-stdlib=libc++" -DCMAKE_EXE_LINKER_FLAGS="-lc++abi"
-cd ..
-
 echo
 echo "clang-tidy checking changed files compared to target branch ${target_branch}"
 
