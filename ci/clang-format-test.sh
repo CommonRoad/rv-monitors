@@ -18,8 +18,9 @@ echo
 
 # preference list
 clang_format_tool_candiates=(clang-format-10 clang-format)
-
+echo command -v clang-format
 for candidate in ${clang_format_tool_candiates[@]}; do
+    echo "$candidate"
     if command -v "$candidate" >/dev/null; then
         echo "Formatting check with $candidate --version:"
         $candidate --version
@@ -36,7 +37,7 @@ fi
 echo
 
 # run clang-format
-format_call="find elsa/ benchmarks/ examples/ -regextype egrep -regex '.+\.(h|hpp|cpp|cu|cuh)$' | xargs $clang_format_tool -i -style=file"
+format_call="find src/ tests/ -regextype egrep -regex '.+\.(h|hpp|cpp|cu|cuh)$' | xargs $clang_format_tool -i -style=file"
 eval "$format_call"
 
 # check if something was modified
