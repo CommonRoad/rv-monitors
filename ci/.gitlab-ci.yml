@@ -1,12 +1,16 @@
 stages:
-  - build
+  - static-test
+  - compile
   - test
+  - coverage
+  - docs
 
-image: $CI_REGISTRY/maierhofer/rv-monitors:v0.2
+
+image: $CI_REGISTRY/maierhofer/rv-monitors/ci:v0.1
 
 
 build-library:
-  stage: build
+  stage: compile
   script:
     - mkdir build && cd build
     - cmake -DCMAKE_BUILD_TYPE=Release ..
@@ -20,7 +24,7 @@ build-library:
 #    - make env_model_example_node -j4
 
 build-test:
-  stage: build
+  stage: compile
   script:
     - mkdir build && cd build
     - cmake -DCMAKE_BUILD_TYPE=Debug ..
@@ -31,7 +35,7 @@ build-test:
     expire_in: 20 minutes
 
 build-run-coverage:
-  stage: build
+  stage: compile
   script:
     - mkdir build && cd build
     - cmake -DCODE_COVERAGE=ON -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_BUILD_TYPE=Debug ..
@@ -43,7 +47,7 @@ build-run-coverage:
     expire_in: 20 minutes
 
 
-test:
+test-coverage:
   stage: test
   script:
     - ./rvmonitors_test --gtest_output="xml:report.xml"
@@ -54,7 +58,7 @@ test:
       junit: ./report.xml
 
 publish-coverage:
-  stage: test
+  stage: coverage
   script:
     - gcovr -e 'cmake-(.+/)?/' -e tests/ -e build/ -e src/Parser/gen
   dependencies:
