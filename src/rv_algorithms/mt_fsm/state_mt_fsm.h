@@ -1,7 +1,7 @@
 #pragma once
 
-#include "multi_transition.h"
 #include "formula/formula.h"
+#include "multi_transition.h"
 
 /**
  * State of an MT-FSM.

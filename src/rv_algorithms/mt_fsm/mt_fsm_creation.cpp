@@ -1,5 +1,4 @@
 #include "mt_fsm_creation.h"
-#include "state_mt_fsm.h"
 #include "expression_tree/atomic/atomic.h"
 #include "expression_tree/atomic/constant.h"
 #include "expression_tree/binary/bool/equivalence.h"
@@ -7,6 +6,7 @@
 #include "qmc/qmc.h"
 #include "rewriting/basic_rewrite_visitor.h"
 #include "rv_algorithms/event_consuming/event_consuming.h"
+#include "state_mt_fsm.h"
 #include "trace/event_generator.h"
 #include "utils/utils.h"
 #include <algorithm>
