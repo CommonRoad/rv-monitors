@@ -1,8 +1,8 @@
 #pragma once
 
 #include "formula/formula.h"
-#include "rv_algorithms/MT-FSM/MT_FSM.h"
-#include "rv_algorithms/MT-FSM/MultiTransition.h"
+#include "rv_algorithms/mt_fsm/mt_fsm.h"
+#include "rv_algorithms/mt_fsm/multi_transition.h"
 #include "trace/trace.h"
 #include <vector>
 

@@ -6,7 +6,7 @@
 #include "expression_tree/unary/bool/not.h"
 #include "parser/parser.h"
 #include "qmc_table.h"
-#include "rewriting/BasicRewriteVisitor.h"
+#include "rewriting/basic_rewrite_visitor.h"
 #include "trace/event_generator.h"
 #include "utils/utils.h"
 #include <algorithm>
