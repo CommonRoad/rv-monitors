@@ -1,6 +1,6 @@
 #include "TestQMC.h"
-#include "Parser/Parser.h"
-#include "QMC/QMC.h"
+#include "parser/parser.h"
+#include "qmc/qmc.h"
 
 // Test cases taken from https://github.com/pfpacket/Quine-McCluskey/tree/master/sample
 

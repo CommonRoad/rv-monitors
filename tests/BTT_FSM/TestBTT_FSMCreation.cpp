@@ -1,7 +1,7 @@
 #include "TestBTT_FSMCreation.h"
-#include "Formula/Formula.h"
-#include "Parser/Parser.h"
-#include "RV-Algorithms/BTT-FSM/BTT_FSMCreation.h"
+#include "formula/formula.h"
+#include "parser/parser.h"
+#include "rv_algorithms/BTT-FSM/BTT_FSMCreation.h"
 
 // TODO Set ordering is not deterministic due to pointers
 // TEST(TestBTT_FSMCreation, correctTree) {

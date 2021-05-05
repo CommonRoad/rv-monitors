@@ -1,6 +1,6 @@
 #include "TestBasicRewriteVisitor.h"
-#include "Parser/Parser.h"
-#include "Rewriting/BasicRewriteVisitor.h"
+#include "parser/parser.h"
+#include "rewriting/BasicRewriteVisitor.h"
 
 TEST(TestBasicRewriteVisitor, absorption) {
     auto absorption = Parser::parse("!a & (b | !a)");

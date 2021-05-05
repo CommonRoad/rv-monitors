@@ -1,8 +1,8 @@
 #include "TestEventConsumingFuture.h"
-#include "Parser/Parser.h"
-#include "RV-Algorithms/EventConsuming/EventConsuming.h"
-#include "Trace/Trace.h"
-#include "Utils/Utils.h"
+#include "parser/parser.h"
+#include "rv_algorithms/EventConsuming/EventConsuming.h"
+#include "trace/trace.h"
+#include "utils/utils.h"
 
 TEST(TestECFuture, violated1) {
     Trace trace = Utils::createTrace(

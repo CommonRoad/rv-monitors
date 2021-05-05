@@ -1,8 +1,8 @@
 #include "TestDynamicPast.h"
-#include "Parser/Parser.h"
-#include "RV-Algorithms/DynamicProgramming/DynamicPast.h"
-#include "Trace/Trace.h"
-#include "Utils/Utils.h"
+#include "parser/parser.h"
+#include "rv_algorithms/DynamicProgramming/DynamicPast.h"
+#include "trace/trace.h"
+#include "utils/utils.h"
 
 TEST(TestDynamicPast, violatedEnd) {
     Trace trace =

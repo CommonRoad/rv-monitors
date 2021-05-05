@@ -1,9 +1,9 @@
 #include "TestBTT_FSMEvaluationPast.h"
-#include "Parser/Parser.h"
-#include "RV-Algorithms/BTT-FSM/BTT_FSMCreation.h"
-#include "RV-Algorithms/BTT-FSM/BTT_FSMEvaluation.h"
-#include "Trace/Trace.h"
-#include "Utils/Utils.h"
+#include "parser/parser.h"
+#include "rv_algorithms/BTT-FSM/BTT_FSMCreation.h"
+#include "rv_algorithms/BTT-FSM/BTT_FSMEvaluation.h"
+#include "trace/trace.h"
+#include "utils/utils.h"
 
 TEST(TestBTT_FSMPast, violatedEnd) {
     Trace trace =
