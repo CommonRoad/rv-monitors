@@ -1,4 +1,7 @@
 #include "BasicRewriteVisitor.h"
+#include "RewriteVisitor.h"
+#include "RewriteVisitorUtils.h"
+#include "Trace/Event.h"
 #include "expression_tree/atomic/atomic.h"
 #include "expression_tree/atomic/constant.h"
 #include "expression_tree/binary/bool/equivalence.h"
@@ -20,9 +23,6 @@
 #include "expression_tree/unary/temporal/ptlf/historically.h"
 #include "expression_tree/unary/temporal/ptlf/once.h"
 #include "expression_tree/unary/temporal/ptlf/previously.h"
-#include "RewriteVisitor.h"
-#include "RewriteVisitorUtils.h"
-#include "Trace/Event.h"
 #include <iostream>
 
 void BasicRewriteVisitor::rewrite(Formula &formula) {
@@ -251,7 +251,7 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitGlobally(Globally &op, Tra
     return std::make_shared<Globally>(op);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitHistorically(Historically  &op, Trace &trace, int index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitHistorically(Historically &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     // H(false) = false
     if (op.getLeft()->isConstFalse()) {
@@ -379,7 +379,7 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitSince(Since &op, Trace &tr
     return std::make_shared<Since>(op);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitEventOperator(EventOperator&op, Trace &trace, int index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitEventOperator(EventOperator &op, Trace &trace, int index) {
     return std::make_shared<EventOperator>(op);
 }
 
@@ -388,7 +388,7 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitResolvingOperator(Resolvin
     return std::make_shared<ResolvingOperator>(op);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitDerivingOperator(DerivingOperator&op, Trace &trace, int index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace, int index) {
     return std::make_shared<DerivingOperator>(op);
 }
 

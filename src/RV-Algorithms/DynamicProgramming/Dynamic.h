@@ -1,10 +1,10 @@
 #pragma once
 
+#include "Formula/Formula.h"
+#include "Trace/Trace.h"
 #include "expression_tree/binary/bool/implication.h"
 #include "expression_tree/expression.h"
 #include "expression_tree/nary/nary_interface.h"
-#include "Formula/Formula.h"
-#include "Trace/Trace.h"
 #include <algorithm>
 #include <map>
 #include <stdexcept>

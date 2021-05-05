@@ -1,8 +1,8 @@
 #include "EventConsuming.h"
 #include "EventConsumingVisitor.h"
+#include "Rewriting/RewriteVisitor.h"
 #include "expression_tree/atomic/constant.h"
 #include "expression_tree/unary/event_operator.h"
-#include "Rewriting/RewriteVisitor.h"
 #include <iostream>
 #include <memory>
 

@@ -3,6 +3,10 @@
 #include <queue>
 #include <set>
 
+#include "Parser/Parser.h"
+#include "Timer.h"
+#include "Trace/Trace.h"
+#include "Utils.h"
 #include "expression_tree/atomic/constant.h"
 #include "expression_tree/binary/binary.h"
 #include "expression_tree/nary/bool/and.h"
@@ -11,10 +15,6 @@
 #include "expression_tree/nary/nary.h"
 #include "expression_tree/unary/bool/not.h"
 #include "expression_tree/unary/unary.h"
-#include "Parser/Parser.h"
-#include "Timer.h"
-#include "Trace/Trace.h"
-#include "Utils.h"
 
 bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr,
                                       std::map<std::string, LazyBool> &eventMap) {

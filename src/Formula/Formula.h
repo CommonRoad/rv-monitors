@@ -1,9 +1,9 @@
 #pragma once
 
+#include "Trace/Event.h"
 #include "expression_tree/binary/binary.h"
 #include "expression_tree/nary/nary_interface.h"
 #include "expression_tree/unary/unary.h"
-#include "Trace/Event.h"
 #include <expression_tree/expression.h>
 
 /**

@@ -77,7 +77,7 @@ std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitGlobally(Globally &op
     return std::make_shared<Globally>(op);
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitHistorically(Historically  &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitHistorically(Historically &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     visitExpression(op, trace, index);
     return std::make_shared<Historically>(op);
@@ -124,7 +124,7 @@ std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitSince(Since &op, Trac
     return std::make_shared<Since>(op.getLeft(), op.getRight(), op.getInterval());
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitDerivingOperator(DerivingOperator&op, Trace &trace,
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace,
                                                                             int index) {
     std::shared_ptr<Expression> ret;
 
@@ -212,7 +212,7 @@ std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitDerivingOperator(Deri
     else if (auto since = std::dynamic_pointer_cast<Since>(op.getLeft())) {
         auto resolvingExpr = ResolvingOperator(since, trace, index);
         ret = std::make_shared<DerivingOperator>(
-                DerivingOperator(resolvingExpr.accept(*this, trace, index), trace, index));
+            DerivingOperator(resolvingExpr.accept(*this, trace, index), trace, index));
     }
     return ret->accept(*this, trace, index);
 }
@@ -305,6 +305,6 @@ std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitResolvingOperator(Res
     return ret->accept(*this, trace, index);
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitEventOperator(EventOperator&op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitEventOperator(EventOperator &op, Trace &trace, int index) {
     return std::make_shared<EventOperator>(op);
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Parser/gen/FormulaBaseVisitor.h"
 #include "expression_tree/atomic/atomic.h"
 #include "expression_tree/atomic/constant.h"
 #include "expression_tree/binary/bool/equivalence.h"
@@ -19,7 +20,6 @@
 #include "expression_tree/unary/temporal/ptlf/historically.h"
 #include "expression_tree/unary/temporal/ptlf/once.h"
 #include "expression_tree/unary/temporal/ptlf/previously.h"
-#include "Parser/gen/FormulaBaseVisitor.h"
 
 /**
  * Visitor for parsing.
