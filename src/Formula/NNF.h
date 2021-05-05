@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ExpressionTree/Expression.h"
-#include "ExpressionTree/Unary/Unary.h"
+#include "expression_tree/expression.h"
+#include "expression_tree/unary/unary.h"
 
 /**
  * Functions to transform a formula into its NNF.

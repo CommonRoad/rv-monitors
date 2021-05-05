@@ -165,7 +165,7 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return op as a shared_ptr.
      */
-    std::shared_ptr<Expression> visitHistorically(Historically &op, Trace &trace, int index) override;
+    std::shared_ptr<Expression> visitHistorically(Historically  &op, Trace &trace, int index) override;
 
     /**
      * Applies event to its child and applies rewriting rules from event consuming algorithm.
@@ -173,8 +173,8 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return Expression transformed according to rewriting rules.
      */
-    std::shared_ptr<Expression> visitEventOperator(EventOperator &op, Trace &trace, int index) override;
+    std::shared_ptr<Expression> visitEventOperator(EventOperator&op, Trace &trace, int index) override;
 
     std::shared_ptr<Expression> visitResolvingOperator(ResolvingOperator &op, Trace &trace, int index) override;
-    std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &op, Trace &trace, int index) override;
+    std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator&op, Trace &trace, int index) override;
 };

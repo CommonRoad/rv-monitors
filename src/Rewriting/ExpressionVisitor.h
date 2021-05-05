@@ -8,7 +8,7 @@ class Unary;
 
 class Binary;
 
-class NaryInterface;
+class nary_interface;
 
 class Atomic;
 
@@ -204,7 +204,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed Historically as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitHistorically(Historically &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitHistorically(Historically  &expr, Trace &trace, int index) = 0;
 
     /**
      * Visits an EventOperator.

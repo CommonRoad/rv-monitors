@@ -3,14 +3,14 @@
 #include <queue>
 #include <set>
 
-#include "ExpressionTree/Atomic/Constant.h"
-#include "ExpressionTree/Binary/Binary.h"
-#include "ExpressionTree/Nary/Bool/And.h"
-#include "ExpressionTree/Nary/Bool/Or.h"
-#include "ExpressionTree/Nary/Bool/Xor.h"
-#include "ExpressionTree/Nary/Nary.h"
-#include "ExpressionTree/Unary/Bool/Not.h"
-#include "ExpressionTree/Unary/Unary.h"
+#include "expression_tree/atomic/constant.h"
+#include "expression_tree/binary/binary.h"
+#include "expression_tree/nary/bool/and.h"
+#include "expression_tree/nary/bool/or.h"
+#include "expression_tree/nary/bool/xor.h"
+#include "expression_tree/nary/nary.h"
+#include "expression_tree/unary/bool/not.h"
+#include "expression_tree/unary/unary.h"
 #include "Parser/Parser.h"
 #include "Timer.h"
 #include "Trace/Trace.h"

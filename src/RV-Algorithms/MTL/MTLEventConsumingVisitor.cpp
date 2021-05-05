@@ -1,25 +1,25 @@
 #include "MTLEventConsumingVisitor.h"
-#include "ExpressionTree/Atomic/Atomic.h"
-#include "ExpressionTree/Atomic/Constant.h"
-#include "ExpressionTree/Binary/Bool/Equivalence.h"
-#include "ExpressionTree/Binary/Bool/Implication.h"
-#include "ExpressionTree/Binary/Temporal/LTLf/Release.h"
-#include "ExpressionTree/Binary/Temporal/LTLf/Until.h"
-#include "ExpressionTree/Binary/Temporal/PTLf/Since.h"
-#include "ExpressionTree/Nary/Bool/And.h"
-#include "ExpressionTree/Nary/Bool/Or.h"
-#include "ExpressionTree/Nary/Bool/Xor.h"
-#include "ExpressionTree/Unary/Bool/Not.h"
-#include "ExpressionTree/Unary/DerivingOperator.h"
-#include "ExpressionTree/Unary/EventOperator.h"
-#include "ExpressionTree/Unary/ResolvingOperator.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/Future.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/Globally.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/NextStrong.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/NextWeak.h"
-#include "ExpressionTree/Unary/Temporal/PLTLf/Historically.h"
-#include "ExpressionTree/Unary/Temporal/PLTLf/Once.h"
-#include "ExpressionTree/Unary/Temporal/PLTLf/Previously.h"
+#include "expression_tree/atomic/atomic.h"
+#include "expression_tree/atomic/constant.h"
+#include "expression_tree/binary/bool/equivalence.h"
+#include "expression_tree/binary/bool/implication.h"
+#include "expression_tree/binary/temporal/ltlf/release.h"
+#include "expression_tree/binary/temporal/ltlf/until.h"
+#include "expression_tree/binary/temporal/ptlf/since.h"
+#include "expression_tree/nary/bool/and.h"
+#include "expression_tree/nary/bool/or.h"
+#include "expression_tree/nary/bool/xor.h"
+#include "expression_tree/unary/bool/not.h"
+#include "expression_tree/unary/deriving_operator.h"
+#include "expression_tree/unary/event_operator.h"
+#include "expression_tree/unary/resolving_operator.h"
+#include "expression_tree/unary/temporal/ltlf/future.h"
+#include "expression_tree/unary/temporal/ltlf/globally.h"
+#include "expression_tree/unary/temporal/ltlf/next_strong.h"
+#include "expression_tree/unary/temporal/ltlf/next_weak.h"
+#include "expression_tree/unary/temporal/ptlf/historically.h"
+#include "expression_tree/unary/temporal/ptlf/once.h"
+#include "expression_tree/unary/temporal/ptlf/previously.h"
 #include <iostream>
 
 void MTLEventConsumingVisitor::consumeEvent(Formula &formula, Trace &trace, int index) {
@@ -76,7 +76,7 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitGlobally(Globally &op
     return std::make_shared<Globally>(op);
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitHistorically(Historically &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitHistorically(Historically  &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     visitExpression(op, trace, index);
     return std::make_shared<Historically>(op);
@@ -123,7 +123,7 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitSince(Since &op, Trac
     return std::make_shared<Since>(op.getLeft(), op.getRight(), op.getInterval());
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace,
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitDerivingOperator(DerivingOperator&op, Trace &trace,
                                                                             int index) {
     return std::make_shared<DerivingOperator>(op);
 }
@@ -133,7 +133,7 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitResolvingOperator(Res
     return std::make_shared<ResolvingOperator>(op);
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOperator &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOperator&op, Trace &trace, int index) {
     std::shared_ptr<Expression> ret;
     // Apply eventMap to atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(op.getLeft())) {

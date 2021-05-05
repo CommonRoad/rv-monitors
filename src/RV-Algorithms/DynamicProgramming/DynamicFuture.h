@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "ExpressionTree/Expression.h"
+#include "expression_tree/expression.h"
 #include "Formula/Formula.h"
 #include "Trace/Trace.h"
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ExpressionTree/Atomic/Constant.h"
-#include "ExpressionTree/Unary/Bool/Not.h"
+#include "expression_tree/atomic/constant.h"
+#include "expression_tree/unary/bool/not.h"
 #include <algorithm>
 #include <memory>
 

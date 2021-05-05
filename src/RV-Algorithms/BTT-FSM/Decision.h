@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ExpressionTree/Atomic/Atomic.h"
+#include "expression_tree/atomic/atomic.h"
 #include "Node.h"
 #include <memory>
 

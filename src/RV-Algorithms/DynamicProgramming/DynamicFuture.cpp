@@ -1,9 +1,9 @@
 #include "DynamicFuture.h"
 #include "Dynamic.h"
-#include "ExpressionTree/Binary/Temporal/LTLf/Until.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/Future.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/NextStrong.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/NextWeak.h"
+#include "expression_tree/binary/temporal/ltlf/until.h"
+#include "expression_tree/unary/temporal/ltlf/future.h"
+#include "expression_tree/unary/temporal/ltlf/next_strong.h"
+#include "expression_tree/unary/temporal/ltlf/next_weak.h"
 #include <Utils/Utils.h>
 #include <algorithm>
 #include <iostream>

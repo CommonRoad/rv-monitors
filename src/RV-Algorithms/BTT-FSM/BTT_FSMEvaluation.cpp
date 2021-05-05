@@ -1,5 +1,5 @@
 #include "BTT_FSMEvaluation.h"
-#include "ExpressionTree/Atomic/Constant.h"
+#include "expression_tree/atomic/constant.h"
 #include <iostream>
 
 bool BTT_FSMEvaluation::evaluateBTT_FSM(const BTT_FSM &bttFsm, Trace &trace, bool past) {

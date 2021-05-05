@@ -1,20 +1,20 @@
 #include "NNF.h"
 
-#include "ExpressionTree/Atomic/Atomic.h"
-#include "ExpressionTree/Atomic/Constant.h"
-#include "ExpressionTree/Binary/Bool/Implication.h"
-#include "ExpressionTree/Binary/Temporal/LTLf/Release.h"
-#include "ExpressionTree/Binary/Temporal/LTLf/Until.h"
-#include "ExpressionTree/Nary/Bool/And.h"
-#include "ExpressionTree/Nary/Bool/Or.h"
-#include "ExpressionTree/Nary/Bool/Xor.h"
-#include "ExpressionTree/Unary/Bool/Not.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/Future.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/Globally.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/NextStrong.h"
-#include "ExpressionTree/Unary/Temporal/LTLf/NextWeak.h"
-#include "ExpressionTree/Unary/Temporal/PLTLf/Once.h"
-#include "ExpressionTree/Unary/Temporal/PLTLf/Previously.h"
+#include "expression_tree/atomic/atomic.h"
+#include "expression_tree/atomic/constant.h"
+#include "expression_tree/binary/bool/implication.h"
+#include "expression_tree/binary/temporal/ltlf/release.h"
+#include "expression_tree/binary/temporal/ltlf/until.h"
+#include "expression_tree/nary/bool/and.h"
+#include "expression_tree/nary/bool/or.h"
+#include "expression_tree/nary/bool/xor.h"
+#include "expression_tree/unary/bool/not.h"
+#include "expression_tree/unary/temporal/ltlf/future.h"
+#include "expression_tree/unary/temporal/ltlf/globally.h"
+#include "expression_tree/unary/temporal/ltlf/next_strong.h"
+#include "expression_tree/unary/temporal/ltlf/next_weak.h"
+#include "expression_tree/unary/temporal/ptlf/once.h"
+#include "expression_tree/unary/temporal/ptlf/previously.h"
 
 std::shared_ptr<Expression> NNF::removeDoubleNot(const std::shared_ptr<Not> &expr) {
     // Remove two Nots
@@ -63,36 +63,36 @@ std::shared_ptr<Expression> NNF::removeImplication(const std::shared_ptr<Implica
 
 std::shared_ptr<Expression> NNF::moveNotTemporal(const std::shared_ptr<Not> &expr) {
     // Future
-    if (auto node = dynamic_cast<Future *>(expr->getLeft().get())) {
+    if (auto *node = dynamic_cast<Future *>(expr->getLeft().get())) {
         return std::make_shared<Globally>(std::make_shared<Not>(node->getLeft()));
     }
     // Once
-    if (auto node = dynamic_cast<Once *>(expr->getLeft().get())) {
+    if (auto *node = dynamic_cast<Once *>(expr->getLeft().get())) {
         return std::make_shared<Globally>(std::make_shared<Not>(node->getLeft()));
     }
     // Globally
-    if (auto node = dynamic_cast<Globally *>(expr->getLeft().get())) {
+    if (auto *node = dynamic_cast<Globally *>(expr->getLeft().get())) {
         return std::make_shared<Future>(std::make_shared<Not>(node->getLeft()));
     }
     // Weak Next
-    if (auto node = dynamic_cast<NextWeak *>(expr->getLeft().get())) {
+    if (auto *node = dynamic_cast<NextWeak *>(expr->getLeft().get())) {
         return std::make_shared<NextWeak>(std::make_shared<Not>(node->getLeft()));
     }
     // Strong Next
-    if (auto node = dynamic_cast<NextStrong *>(expr->getLeft().get())) {
+    if (auto *node = dynamic_cast<NextStrong *>(expr->getLeft().get())) {
         return std::make_shared<NextStrong>(std::make_shared<Not>(node->getLeft()));
     }
     // Previously
-    if (auto node = dynamic_cast<Previously *>(expr->getLeft().get())) {
+    if (auto *node = dynamic_cast<Previously *>(expr->getLeft().get())) {
         return std::make_shared<Previously>(std::make_shared<Not>(node->getLeft()));
     }
     // Until
-    if (auto node = dynamic_cast<Until *>(expr->getLeft().get())) {
+    if (auto *node = dynamic_cast<Until *>(expr->getLeft().get())) {
         return std::make_shared<Release>(std::make_shared<Not>(node->getLeft()),
                                          std::make_shared<Not>(node->getRight()));
     }
     // Release
-    if (auto node = dynamic_cast<Release *>(expr->getLeft().get())) {
+    if (auto *node = dynamic_cast<Release *>(expr->getLeft().get())) {
         return std::make_shared<Until>(std::make_shared<Not>(node->getLeft()), std::make_shared<Not>(node->getRight()));
     }
 
@@ -101,11 +101,11 @@ std::shared_ptr<Expression> NNF::moveNotTemporal(const std::shared_ptr<Not> &exp
 
 std::shared_ptr<Expression> NNF::removeFutureAndGlobally(const std::shared_ptr<Unary> &expr) {
     // Future
-    if (auto node = dynamic_cast<Future *>(expr.get())) {
+    if (auto *node = dynamic_cast<Future *>(expr.get())) {
         return std::make_shared<Until>(std::make_shared<Constant>(true), node->getLeft());
     }
     // Globally
-    if (auto node = dynamic_cast<Globally *>(expr.get())) {
+    if (auto *node = dynamic_cast<Globally *>(expr.get())) {
         return std::make_shared<Release>(std::make_shared<Constant>(false), node->getLeft());
     }
     return expr;

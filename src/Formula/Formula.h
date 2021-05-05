@@ -1,10 +1,10 @@
 #pragma once
 
-#include "ExpressionTree/Binary/Binary.h"
-#include "ExpressionTree/Nary/NaryInterface.h"
-#include "ExpressionTree/Unary/Unary.h"
+#include "expression_tree/binary/binary.h"
+#include "expression_tree/nary/nary_interface.h"
+#include "expression_tree/unary/unary.h"
 #include "Trace/Event.h"
-#include <ExpressionTree/Expression.h>
+#include <expression_tree/expression.h>
 
 /**
  * Class representing a formula specified in temporal logic.

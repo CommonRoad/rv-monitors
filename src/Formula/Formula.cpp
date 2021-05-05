@@ -1,7 +1,7 @@
 #include "Formula.h"
 
-#include "ExpressionTree/Binary/Binary.h"
-#include "ExpressionTree/Nary/Bool/Xor.h"
+#include "expression_tree/binary/binary.h"
+#include "expression_tree/nary/bool/xor.h"
 #include "NNF.h"
 #include "Utils/Utils.h"
 #include <utility>
