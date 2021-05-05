@@ -4,14 +4,13 @@ stages:
   - test
 #  - sanitizer TODO
   - coverage
-#  - docs TODO
+  - docs
 
 
 
-image: $CI_REGISTRY/maierhofer/rv-monitors/ci:0.3.5
+image: $CI_REGISTRY/maierhofer/rv-monitors/ci:0.3.6
 
 ### static test ###
-
 clang-format:
   stage: static-test
   script:
@@ -22,10 +21,22 @@ clang-tidy:
   script:
     bash ./ci/clang-tidy.sh
 
-
-build-library:
+### build project ###
+build-clang:
   stage: compile
   script:
+    - export CC=clang
+    - export CXX=clang++
+    - mkdir build && cd build
+    - cmake -DCMAKE_BUILD_TYPE=Release ..
+    - make rvmonitors -j4
+
+
+build-gcc:
+  stage: compile
+  script:
+    - export CC=gcc
+    - export CXX=g++
     - mkdir build && cd build
     - cmake -DCMAKE_BUILD_TYPE=Release ..
     - make rvmonitors -j4
@@ -60,7 +71,7 @@ build-run-coverage:
       - ./rvmonitors_coverage
     expire_in: 20 minutes
 
-
+### tests ###
 test-coverage:
   stage: test
   script:
@@ -77,3 +88,9 @@ publish-coverage:
     - gcovr -e 'cmake-(.+/)?/' -e tests/ -e build/ -e src/Parser/gen
   dependencies:
     - build-run-coverage
+
+docs:
+  stage: docs
+  script:
+    - cd build
+    - make doc_doxygen ..
