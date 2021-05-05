@@ -20,14 +20,13 @@ ENV PATH="/usr/bin/cmake/bin:${PATH}"
 RUN apt-get install -y gcovr > /dev/null
 RUN apt-get install -y doxygen > /dev/null
 RUN apt-get install -y uuid-dev > /dev/null
+RUN apt-get install -y libc++-dev > /dev/null
 
 # Install the compiler, libc++, libc++-abi and OpenMP
 ARG COMPILER_VERSION
 RUN apt-get install -y clang-${COMPILER_VERSION} > /dev/null
 # Setup enviorment variables, PATH first then C and C++ compilers to clang
 ENV PATH="$PATH:/usr/lib/llvm-${COMPILER_VERSION}/bin/"
-ENV CC="clang"
-ENV CXX="clang++"
 
 ARG CLANG_FORMAT_VERSION=10
 RUN apt install git clang-format-${CLANG_FORMAT_VERSION} -y \
