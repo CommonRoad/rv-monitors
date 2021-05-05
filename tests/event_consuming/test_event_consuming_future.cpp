@@ -1,75 +1,85 @@
-#include "TestMT_FSMEvaluationFuture.h"
+#include "test_event_consuming_future.h"
 #include "parser/parser.h"
-#include "rv_algorithms/mt_fsm/mt_fsm_evaluation.h"
+#include "rv_algorithms/event_consuming/event_consuming.h"
 #include "trace/trace.h"
 #include "utils/utils.h"
-#include <rv_algorithms/mt_fsm/mt_fsm_creation.h>
 
-TEST(TestMT_FSMFuture, violated1) {
+TEST(TestECFuture, violated1) {
     Trace trace = Utils::createTrace(
         {"a", "b", "c", "g", "f"},
         {{"a"}, {"b"}, {"a"}, {"b"}, {"a"}, {"c"}, {"a"}, {"a"}, {"b"}, {"g"}, {"f"}, {"h"}, {"c"}, {"b"}, {"a"}});
     Formula formula = Parser::parse("G(a -> F(b))");
-    auto mtFSM = MT_FSMCreation::formulaToMT_FSM(formula, false);
-    EXPECT_FALSE(MT_FSMEvaluation::evaluateMT_FSM(mtFSM, trace, false));
+
+    EXPECT_EQ(EventConsuming::eventConsumingFuture(formula, trace).to_string(), "false");
 }
 
-TEST(TestMT_FSMFuture, satisfied1) {
+TEST(TestECFuture, satisfied1) {
     Trace trace = Utils::createTrace(
         {"a", "b", "c", "g", "f"},
         {{"a"}, {"b"}, {"a"}, {"b"}, {"a"}, {"c"}, {"a"}, {"a"}, {"b"}, {"g"}, {"f"}, {"h"}, {"c"}, {"b"}, {"a"}});
     Formula formula = Parser::parse("F(!G(b -> Fc))");
-    auto mtFSM = MT_FSMCreation::formulaToMT_FSM(formula, false);
 
-    EXPECT_TRUE(MT_FSMEvaluation::evaluateMT_FSM(mtFSM, trace, false));
+    EXPECT_EQ(EventConsuming::eventConsumingFuture(formula, trace).to_string(), "true");
 }
 
-TEST(TestMT_FSMFuture, satisfied2) {
+TEST(TestECFuture, satisfied2) {
     Formula formula = Parser::parse("G(b -> Fc)");
     Trace trace = Utils::createTrace(
         {"a", "b", "c", "g", "f", "h"},
         {{"a"}, {"b"}, {"a"}, {"b"}, {"a"}, {"c"}, {"a"}, {"a"}, {"b"}, {"g"}, {"f"}, {"h"}, {"c"}, {"b"}, {"c"}});
 
-    auto mtFSM = MT_FSMCreation::formulaToMT_FSM(formula, false);
-
-    EXPECT_TRUE(MT_FSMEvaluation::evaluateMT_FSM(mtFSM, trace, false));
+    EXPECT_EQ(EventConsuming::eventConsumingFuture(formula, trace).to_string(), "true");
 }
 
-TEST(TestMT_FSMFuture, violated2) {
+TEST(TestECFuture, violated2) {
     Trace trace = Utils::createTrace(
         {"a", "b", "c", "g", "f", "h"},
         {{"a"}, {"b"}, {"a"}, {"b"}, {"a"}, {"c"}, {"a"}, {"a"}, {"b"}, {"g"}, {"f"}, {"h"}, {"c"}, {"b"}, {"c"}});
     Formula formula = Parser::parse("F(!G(b -> Fc))");
-    auto mtFSM = MT_FSMCreation::formulaToMT_FSM(formula, false);
 
-    EXPECT_FALSE(MT_FSMEvaluation::evaluateMT_FSM(mtFSM, trace, false));
+    EXPECT_EQ(EventConsuming::eventConsumingFuture(formula, trace).to_string(), "false");
 }
 
-TEST(TestMT_FSMFuture, violatedEnd) {
+TEST(TestECFuture, violatedEnd) {
     Trace trace =
         Utils::createTrace({"green", "yellow", "red"},
                            {{"green"}, {"red"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}, {"green"}, {"red"}});
     Formula formula = Parser::parse("G(green -> !red U yellow)");
-    auto mtFSM = MT_FSMCreation::formulaToMT_FSM(formula, false);
-
-    EXPECT_FALSE(MT_FSMEvaluation::evaluateMT_FSM(mtFSM, trace, false));
+    EXPECT_EQ(EventConsuming::eventConsumingFuture(formula, trace).to_string(), "false");
 }
 
-TEST(TestMT_FSMFuture, violatedBeginning) {
+TEST(TestECFuture, violatedBeginning) {
     Trace trace =
         Utils::createTrace({"green", "yellow", "red"},
                            {{"green"}, {"red"}, {"yellow"}, {"red"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}});
     Formula formula = Parser::parse("G(green -> !red U yellow)");
-    auto mtFSM = MT_FSMCreation::formulaToMT_FSM(formula, false);
-
-    EXPECT_FALSE(MT_FSMEvaluation::evaluateMT_FSM(mtFSM, trace, false));
+    EXPECT_EQ(EventConsuming::eventConsumingFuture(formula, trace).to_string(), "false");
 }
 
-TEST(TestMT_FSMFuture, satisfied) {
+TEST(TestECFuture, satisfied) {
     Trace trace = Utils::createTrace({"green", "yellow", "red"},
                                      {{"green"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}, {"red"}, {"red"}});
     Formula formula = Parser::parse("G(green -> !red U yellow)");
-    auto mtFSM = MT_FSMCreation::formulaToMT_FSM(formula, false);
+    EXPECT_EQ(EventConsuming::eventConsumingFuture(formula, trace).to_string(), "true");
+}
 
-    EXPECT_TRUE(MT_FSMEvaluation::evaluateMT_FSM(mtFSM, trace, false));
+TEST(TestECFuture, strongNext) {
+    Trace trace = Utils::createTrace({"a"}, {{"a"}, {"a"}, {"a"}, {"a"}});
+    Formula formula = Parser::parse("G(X(a))");
+
+    EXPECT_EQ(EventConsuming::eventConsumingFuture(formula, trace).to_string(), "false");
+}
+
+TEST(TestECFuture, weakNext) {
+    Trace trace = Utils::createTrace({"a"}, {{"a"}, {"a"}, {"a"}, {"a"}});
+    Formula formula = Parser::parse("G(W(a))");
+
+    EXPECT_EQ(EventConsuming::eventConsumingFuture(formula, trace).to_string(), "true");
+}
+
+TEST(TestECFuture, atomic) {
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"a"}, {"b"}, {"a"}});
+    Formula formula = Parser::parse("G(a)");
+
+    EXPECT_EQ(EventConsuming::eventConsumingFuture(formula, trace).to_string(), "false");
 }

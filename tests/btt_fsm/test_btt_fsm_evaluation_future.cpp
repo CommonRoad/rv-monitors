@@ -1,4 +1,4 @@
-#include "TestBTT_FSMEvaluationFuture.h"
+#include "test_btt_fsm_evaluation_future.h"
 #include "parser/parser.h"
 #include "rv_algorithms/btt_fsm/btt_fsm_creation.h"
 #include "rv_algorithms/btt_fsm/btt_fsm_evaluation.h"

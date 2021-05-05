@@ -1,4 +1,4 @@
-#include "TestBTT_FSMCreation.h"
+#include "test_btt_fsm_creation.h"
 #include "formula/formula.h"
 #include "parser/parser.h"
 #include "rv_algorithms/btt_fsm/btt_fsm_creation.h"

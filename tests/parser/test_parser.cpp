@@ -2,7 +2,7 @@
 // Created by Sebastian Maierhofer on 12.01.21.
 //
 
-#include "TestParser.h"
+#include "test_parser.h"
 #include "formula/formula.h"
 #include "parser/parser.h"
 

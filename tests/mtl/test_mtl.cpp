@@ -2,7 +2,7 @@
 // Created by Sebastian Maierhofer on 15.01.21.
 //
 
-#include "Test_MTL.h"
+#include "test_mtl.h"
 #include "parser/parser.h"
 #include "trace/trace.h"
 #include "utils/utils.h"

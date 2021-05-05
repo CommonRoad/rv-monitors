@@ -1,4 +1,4 @@
-#include "TestRewriteVisitor.h"
+#include "test_rewrite_visitor.h"
 #include "parser/parser.h"
 #include "rewriting/rewrite_visitor.h"
 

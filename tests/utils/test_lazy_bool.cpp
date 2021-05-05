@@ -1,4 +1,4 @@
-#include "TestLazyBool.h"
+#include "test_lazy_bool.h"
 #include "utils/lazy_bool.h"
 
 TEST(TestLazyBool, testFixedValue) {
