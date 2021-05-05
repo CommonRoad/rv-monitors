@@ -34,10 +34,7 @@ cd build
 
 Build with `cmake` and specify paths to external dependencies:
 ```
-cmake \
--DCRCCOSY_LIBRARY_DIR=absolute/Path/To/CurvilinearCoordinateSystem \   
--DCRENV_LIBRARY_DIR=absolute/Path/To/EnvModel \
-..
+cmake -DCMAKE_BUILD_TYPE=Release ..
 ```
 
 Or use `ccmake ..`

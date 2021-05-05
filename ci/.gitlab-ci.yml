@@ -8,7 +8,7 @@ stages:
 
 
 
-image: $CI_REGISTRY/maierhofer/rv-monitors/ci:0.3.6
+image: $CI_REGISTRY/maierhofer/rv-monitors/ci:0.3.7
 
 ### static test ###
 clang-format:
@@ -21,6 +21,7 @@ clang-tidy:
   script:
     bash ./ci/clang-tidy.sh
 
+
 ### build project ###
 build-clang:
   stage: compile
@@ -31,7 +32,6 @@ build-clang:
     - cmake -DCMAKE_BUILD_TYPE=Release ..
     - make rvmonitors -j4
 
-
 build-gcc:
   stage: compile
   script:
@@ -40,13 +40,6 @@ build-gcc:
     - mkdir build && cd build
     - cmake -DCMAKE_BUILD_TYPE=Release ..
     - make rvmonitors -j4
-
-#build-standalone:
-#  stage: build
-#  script:
-#    - mkdir build && cd build
-#    - cmake -DCMAKE_BUILD_TYPE=Release ..
-#    - make env_model_example_node -j4
 
 build-test:
   stage: compile
@@ -71,6 +64,7 @@ build-run-coverage:
       - ./rvmonitors_coverage
     expire_in: 20 minutes
 
+
 ### tests ###
 test-coverage:
   stage: test
@@ -82,6 +76,8 @@ test-coverage:
     reports:
       junit: ./report.xml
 
+
+### coverage ###
 publish-coverage:
   stage: coverage
   script:
@@ -89,6 +85,8 @@ publish-coverage:
   dependencies:
     - build-run-coverage
 
+
+### docs ###
 docs:
   stage: docs
   script:
