@@ -1,6 +1,6 @@
 #pragma once
 
-#include<string>
+#include <string>
 
 /**
  * Parent class for Decision and StateBTT_FSM since we can have both types in a BTT:
