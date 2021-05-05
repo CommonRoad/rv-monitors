@@ -116,7 +116,7 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitSince(Since &op, Trace &
     return std::make_shared<Since>(op.getLeft(), op.getRight(), op.getInterval());
 }
 
-std::shared_ptr<Expression> EventConsumingVisitor::visitHistorically(Historically  &op, Trace &trace, int index) {
+std::shared_ptr<Expression> EventConsumingVisitor::visitHistorically(Historically &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     visitExpression(op, trace, index);
     return std::make_shared<Historically>(op);
@@ -127,12 +127,12 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitResolvingOperator(Resolv
     return std::make_shared<ResolvingOperator>(op);
 }
 
-std::shared_ptr<Expression> EventConsumingVisitor::visitDerivingOperator(DerivingOperator&op, Trace &trace,
+std::shared_ptr<Expression> EventConsumingVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace,
                                                                          int index) {
     return std::make_shared<DerivingOperator>(op);
 }
 
-std::shared_ptr<Expression> EventConsumingVisitor::visitEventOperator(EventOperator&op, Trace &trace, int index) {
+std::shared_ptr<Expression> EventConsumingVisitor::visitEventOperator(EventOperator &op, Trace &trace, int index) {
 
     std::shared_ptr<Expression> ret;
 

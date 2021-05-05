@@ -1,11 +1,11 @@
 #include "BTT_FSMCreation.h"
 #include "Decision.h"
-#include "expression_tree/atomic/constant.h"
-#include "expression_tree/nary/nary_interface.h"
-#include "expression_tree/unary/bool/not.h"
 #include "RV-Algorithms/MT-FSM/MT_FSMCreation.h"
 #include "Rewriting/BasicRewriteVisitor.h"
 #include "Utils/Utils.h"
+#include "expression_tree/atomic/constant.h"
+#include "expression_tree/nary/nary_interface.h"
+#include "expression_tree/unary/bool/not.h"
 #include <iostream>
 
 BTT_FSM BTT_FSMCreation::formulaToBTT_FSM(const Formula &formula, bool past) {

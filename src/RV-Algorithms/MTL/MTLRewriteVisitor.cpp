@@ -1,4 +1,6 @@
 #include "MTLRewriteVisitor.h"
+#include "Rewriting/RewriteVisitorUtils.h"
+#include "Trace/Event.h"
 #include "expression_tree/atomic/atomic.h"
 #include "expression_tree/atomic/constant.h"
 #include "expression_tree/binary/binary.h"
@@ -23,8 +25,6 @@
 #include "expression_tree/unary/temporal/ptlf/once.h"
 #include "expression_tree/unary/temporal/ptlf/previously.h"
 #include "expression_tree/unary/unary.h"
-#include "Rewriting/RewriteVisitorUtils.h"
-#include "Trace/Event.h"
 #include <iostream>
 
 void MTLRewriteVisitor::rewrite(Formula &formula) {
@@ -331,7 +331,7 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitGlobally(Globally &op, Trace
     return std::make_shared<Globally>(op.getLeft(), op.getInterval());
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitHistorically(Historically  &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLRewriteVisitor::visitHistorically(Historically &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     // H(false) = false
     if (op.getLeft()->isConstFalse()) {
@@ -466,7 +466,7 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitSince(Since &op, Trace &trac
     return std::make_shared<Since>(op);
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitEventOperator(EventOperator&op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLRewriteVisitor::visitEventOperator(EventOperator &op, Trace &trace, int index) {
     return std::make_shared<EventOperator>(op);
 }
 
@@ -474,6 +474,6 @@ std::shared_ptr<Expression> MTLRewriteVisitor::visitResolvingOperator(ResolvingO
     return std::make_shared<ResolvingOperator>(op);
 }
 
-std::shared_ptr<Expression> MTLRewriteVisitor::visitDerivingOperator(DerivingOperator&op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLRewriteVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace, int index) {
     return std::make_shared<DerivingOperator>(op);
 }

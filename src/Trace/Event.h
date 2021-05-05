@@ -1,7 +1,7 @@
 #pragma once
 
-#include "expression_tree/atomic/atomic.h"
 #include "Utils/LazyBool.h"
+#include "expression_tree/atomic/atomic.h"
 #include <map>
 #include <sstream>
 

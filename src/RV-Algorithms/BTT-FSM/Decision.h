@@ -1,7 +1,7 @@
 #pragma once
 
-#include "expression_tree/atomic/atomic.h"
 #include "Node.h"
+#include "expression_tree/atomic/atomic.h"
 #include <memory>
 
 /**

@@ -39,7 +39,7 @@ class MTLRewriteVisitor : public ExpressionVisitor {
 
     [[nodiscard]] std::shared_ptr<Expression> visitPreviously(Previously &op, Trace &trace, int index) override;
 
-    [[nodiscard]] std::shared_ptr<Expression> visitHistorically(Historically  &op, Trace &trace, int index) override;
+    [[nodiscard]] std::shared_ptr<Expression> visitHistorically(Historically &op, Trace &trace, int index) override;
 
     [[nodiscard]] std::shared_ptr<Expression> visitRelease(Release &op, Trace &trace, int index) override;
 
@@ -47,9 +47,9 @@ class MTLRewriteVisitor : public ExpressionVisitor {
 
     [[nodiscard]] std::shared_ptr<Expression> visitSince(Since &op, Trace &trace, int index) override;
 
-    [[nodiscard]] std::shared_ptr<Expression> visitEventOperator(EventOperator&op, Trace &trace, int index) override;
+    [[nodiscard]] std::shared_ptr<Expression> visitEventOperator(EventOperator &op, Trace &trace, int index) override;
 
-    [[nodiscard]] std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator&op, Trace &trace,
+    [[nodiscard]] std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &op, Trace &trace,
                                                                     int index) override;
 
     [[nodiscard]] std::shared_ptr<Expression> visitResolvingOperator(ResolvingOperator &op, Trace &trace,

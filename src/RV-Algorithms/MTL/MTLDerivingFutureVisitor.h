@@ -109,7 +109,7 @@ class MTLDerivingFutureVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return op as a shared_ptr.
      */
-    std::shared_ptr<Expression> visitHistorically(Historically  &op, Trace &trace, int index) override;
+    std::shared_ptr<Expression> visitHistorically(Historically &op, Trace &trace, int index) override;
 
     /**
      * Converts op to a shared_ptr.
@@ -175,7 +175,7 @@ class MTLDerivingFutureVisitor : public ExpressionVisitor {
      */
     std::shared_ptr<Expression> visitResolvingOperator(ResolvingOperator &op, Trace &trace, int index) override;
 
-    std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator&op, Trace &trace, int index) override;
+    std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &op, Trace &trace, int index) override;
 
-    std::shared_ptr<Expression> visitEventOperator(EventOperator&op, Trace &trace, int index) override;
+    std::shared_ptr<Expression> visitEventOperator(EventOperator &op, Trace &trace, int index) override;
 };

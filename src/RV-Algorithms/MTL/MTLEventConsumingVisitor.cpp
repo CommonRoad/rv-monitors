@@ -76,7 +76,7 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitGlobally(Globally &op
     return std::make_shared<Globally>(op);
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitHistorically(Historically  &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitHistorically(Historically &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     visitExpression(op, trace, index);
     return std::make_shared<Historically>(op);
@@ -123,7 +123,7 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitSince(Since &op, Trac
     return std::make_shared<Since>(op.getLeft(), op.getRight(), op.getInterval());
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitDerivingOperator(DerivingOperator&op, Trace &trace,
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace,
                                                                             int index) {
     return std::make_shared<DerivingOperator>(op);
 }
@@ -133,7 +133,7 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitResolvingOperator(Res
     return std::make_shared<ResolvingOperator>(op);
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOperator&op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOperator &op, Trace &trace, int index) {
     std::shared_ptr<Expression> ret;
     // Apply eventMap to atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(op.getLeft())) {

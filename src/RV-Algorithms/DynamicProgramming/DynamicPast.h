@@ -1,8 +1,8 @@
 #pragma once
 
-#include "expression_tree/expression.h"
 #include "Formula/Formula.h"
 #include "Trace/Trace.h"
+#include "expression_tree/expression.h"
 #include <algorithm>
 
 /**

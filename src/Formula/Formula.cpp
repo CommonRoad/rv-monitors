@@ -1,9 +1,9 @@
 #include "Formula.h"
 
-#include "expression_tree/binary/binary.h"
-#include "expression_tree/nary/bool/xor.h"
 #include "NNF.h"
 #include "Utils/Utils.h"
+#include "expression_tree/binary/binary.h"
+#include "expression_tree/nary/bool/xor.h"
 #include <utility>
 
 void Formula::toNnf() {

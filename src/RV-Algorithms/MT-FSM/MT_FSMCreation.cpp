@@ -1,14 +1,14 @@
 #include "MT_FSMCreation.h"
-#include "expression_tree/atomic/atomic.h"
-#include "expression_tree/atomic/constant.h"
-#include "expression_tree/binary/bool/equivalence.h"
-#include "expression_tree/nary/bool/or.h"
 #include "QMC/QMC.h"
 #include "RV-Algorithms/EventConsuming/EventConsuming.h"
 #include "Rewriting/BasicRewriteVisitor.h"
 #include "StateMT_FSM.h"
 #include "Trace/EventGenerator.h"
 #include "Utils/Utils.h"
+#include "expression_tree/atomic/atomic.h"
+#include "expression_tree/atomic/constant.h"
+#include "expression_tree/binary/bool/equivalence.h"
+#include "expression_tree/nary/bool/or.h"
 #include <algorithm>
 #include <iostream>
 

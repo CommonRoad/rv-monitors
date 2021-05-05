@@ -1,4 +1,5 @@
 #include "MTLResolvingPastVisitor.h"
+#include "Trace/Event.h"
 #include "expression_tree/atomic/atomic.h"
 #include "expression_tree/atomic/constant.h"
 #include "expression_tree/binary/bool/equivalence.h"
@@ -20,7 +21,6 @@
 #include "expression_tree/unary/temporal/ptlf/historically.h"
 #include "expression_tree/unary/temporal/ptlf/once.h"
 #include "expression_tree/unary/temporal/ptlf/previously.h"
-#include "Trace/Event.h"
 
 void MTLResolvingPastVisitor::consumeEvent(Formula &formula, Trace &trace, int index) {
     std::shared_ptr<ResolvingOperator> resolvingOperator =
@@ -77,7 +77,7 @@ std::shared_ptr<Expression> MTLResolvingPastVisitor::visitGlobally(Globally &op,
     return std::make_shared<Globally>(op);
 }
 
-std::shared_ptr<Expression> MTLResolvingPastVisitor::visitHistorically(Historically  &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLResolvingPastVisitor::visitHistorically(Historically &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
     visitExpression(op, trace, index);
     return std::make_shared<Historically>(op);
@@ -211,7 +211,7 @@ std::shared_ptr<Expression> MTLResolvingPastVisitor::visitResolvingOperator(Reso
     return ret->accept(*this, trace, index);
 }
 
-std::shared_ptr<Expression> MTLResolvingPastVisitor::visitDerivingOperator(DerivingOperator&op, Trace &trace,
+std::shared_ptr<Expression> MTLResolvingPastVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace,
                                                                            int index) {
     std::shared_ptr<Expression> ret;
 
@@ -299,11 +299,11 @@ std::shared_ptr<Expression> MTLResolvingPastVisitor::visitDerivingOperator(Deriv
     else if (auto since = std::dynamic_pointer_cast<Since>(op.getLeft())) {
         auto resolvingExpr = ResolvingOperator(since, trace, index);
         ret = std::make_shared<DerivingOperator>(
-                DerivingOperator(resolvingExpr.accept(*this, trace, index), trace, index));
+            DerivingOperator(resolvingExpr.accept(*this, trace, index), trace, index));
     }
     return ret->accept(*this, trace, index);
 }
 
-std::shared_ptr<Expression> MTLResolvingPastVisitor::visitEventOperator(EventOperator&op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLResolvingPastVisitor::visitEventOperator(EventOperator &op, Trace &trace, int index) {
     return std::make_shared<EventOperator>(op);
 }

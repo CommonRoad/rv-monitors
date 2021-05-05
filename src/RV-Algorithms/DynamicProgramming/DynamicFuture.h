@@ -2,9 +2,9 @@
 
 #include <algorithm>
 
-#include "expression_tree/expression.h"
 #include "Formula/Formula.h"
 #include "Trace/Trace.h"
+#include "expression_tree/expression.h"
 
 /**
  * DynamicFuture Dynamic programming algorithm for formulas in LTLf.

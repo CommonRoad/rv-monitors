@@ -1,8 +1,8 @@
 #include "DynamicPast.h"
 #include "Dynamic.h"
+#include "Utils/Utils.h"
 #include "expression_tree/unary/temporal/ptlf/once.h"
 #include "expression_tree/unary/temporal/ptlf/previously.h"
-#include "Utils/Utils.h"
 #include <algorithm>
 #include <iostream>
 #include <queue>

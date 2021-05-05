@@ -6,9 +6,9 @@
 #include <set>
 #include <vector>
 
+#include "Formula/Formula.h"
 #include "expression_tree/expression.h"
 #include "expression_tree/nary/nary_interface.h"
-#include "Formula/Formula.h"
 
 /**
  * Functions for the Quine-McCluskey algorithm.
