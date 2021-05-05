@@ -28,10 +28,11 @@ class RVMonitor {
      * @param consoleOutput True if console output is desired.
      */
     bool verify(Trace trace);
+
   private:
-    bool past { false };
-    AlgorithmType algorithm { eventconsuming_ltl };
-    bool consoleOutput { true };
+    bool past{false};
+    AlgorithmType algorithm{eventconsuming_ltl};
+    bool consoleOutput{true};
     std::unique_ptr<MtFsm> mtFSM;
     std::unique_ptr<BttFsm> bttFSM;
     Formula formula;
