@@ -1,34 +1,27 @@
-#include "TestMT_FSMEvaluationFuture.h"
+#include "test_dynamic_past.h"
 #include "parser/parser.h"
-#include "rv_algorithms/mt_fsm/mt_fsm_creation.h"
-#include "rv_algorithms/mt_fsm/mt_fsm_evaluation.h"
+#include "rv_algorithms/dynamic_programming/dynamic_past.h"
 #include "trace/trace.h"
 #include "utils/utils.h"
 
-TEST(TestMT_FSMPast, violatedEnd) {
+TEST(TestDynamicPast, violatedEnd) {
     Trace trace =
         Utils::createTrace({"green", "yellow", "red"}, {{"green"}, {"red"}, {"yellow"}, {"green"}, {"red"}, {"green"}});
     Formula formula = Parser::parse("G(green -> P(yellow))");
-    auto mtFSM = MT_FSMCreation::formulaToMT_FSM(formula, true);
-
-    EXPECT_FALSE(MT_FSMEvaluation::evaluateMT_FSM(mtFSM, trace, true));
+    EXPECT_FALSE(DynamicPast::checkTraceDynamically(formula, trace));
 }
 
-TEST(TestMT_FSMPast, violatedBeginning) {
+TEST(TestDynamicPast, violatedBeginning) {
     Trace trace = Utils::createTrace({"green", "yellow", "red"},
                                      {{"red"}, {"green"}, {"red"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}});
     Formula formula = Parser::parse("G(green -> P(yellow))");
-    auto mtFSM = MT_FSMCreation::formulaToMT_FSM(formula, true);
-
-    EXPECT_FALSE(MT_FSMEvaluation::evaluateMT_FSM(mtFSM, trace, true));
+    EXPECT_FALSE(DynamicPast::checkTraceDynamically(formula, trace));
 }
 
-TEST(TestMT_FSMPast, satisfied) {
+TEST(TestDynamicPast, satisfied) {
     Trace trace =
         Utils::createTrace({"green", "yellow", "red"},
                            {{"yellow"}, {"green"}, {"red"}, {"yellow"}, {"green"}, {"red"}, {"yellow"}, {"green"}});
     Formula formula = Parser::parse("G(green -> P(yellow))");
-    auto mtFSM = MT_FSMCreation::formulaToMT_FSM(formula, true);
-
-    EXPECT_TRUE(MT_FSMEvaluation::evaluateMT_FSM(mtFSM, trace, true));
+    EXPECT_TRUE(DynamicPast::checkTraceDynamically(formula, trace));
 }

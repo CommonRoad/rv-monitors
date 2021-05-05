@@ -13,22 +13,22 @@ endif ()
 include(monitors_googletest)
 
 set(RV_MONITOR_TEST_SRC_FILES
-        allTests.cpp
-        btt_fsm/TestBTT_FSMEvaluationFuture.cpp
-        btt_fsm/TestBTT_FSMEvaluationPast.cpp
-        btt_fsm/TestBTT_FSMCreation.cpp
-        dynamic_programming/TestDynamicFuture.cpp
-        dynamic_programming/TestDynamicPast.cpp
-        event_consuming/TestEventConsumingFuture.cpp
-        event_consuming/TestEventConsumingPast.cpp
-        mt_fsm/TestMT_FSMEvaluationFuture.cpp
-        mt_fsm/TestMT_FSMEvaluationPast.cpp
-        mtl/Test_MTL.cpp
-        parser/TestParser.cpp
-        qmc/TestQMC.cpp
-        rewriting/TestBasicRewriteVisitor.cpp
-        rewriting/TestRewriteVisitor.cpp
-        utils/TestLazyBool.cpp
+        all_tests.cpp
+        btt_fsm/test_btt_fsm_evaluation_future.cpp
+        btt_fsm/test_btt_fsm_evaluation_past.cpp
+        btt_fsm/test_btt_fsm_creation.cpp
+        dynamic_programming/test_dynamic_future.cpp
+        dynamic_programming/test_dynamic_past.cpp
+        event_consuming/test_event_consuming_future.cpp
+        event_consuming/test_event_consuming_past.cpp
+        mt_fsm/test_mt_fsm_evaluation_future.cpp
+        mt_fsm/test_mt_fsm_evaluation_past.cpp
+        mtl/test_mtl.cpp
+        parser/test_parser.cpp
+        qmc/test_qmc.cpp
+        rewriting/test_basic_rewrite_visitor.cpp
+        rewriting/test_rewrite_visitor.cpp
+        utils/test_lazy_bool.cpp
         )
 
 

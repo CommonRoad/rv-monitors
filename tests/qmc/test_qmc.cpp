@@ -1,4 +1,4 @@
-#include "TestQMC.h"
+#include "test_qmc.h"
 #include "parser/parser.h"
 #include "qmc/qmc.h"
 

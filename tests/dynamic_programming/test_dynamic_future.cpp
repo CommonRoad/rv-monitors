@@ -1,4 +1,4 @@
-#include "TestDynamicFuture.h"
+#include "test_dynamic_future.h"
 #include "parser/parser.h"
 #include "rv_algorithms/dynamic_programming/dynamic_future.h"
 #include "trace/trace.h"

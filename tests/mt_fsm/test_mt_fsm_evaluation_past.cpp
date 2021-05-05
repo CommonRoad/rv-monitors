@@ -1,27 +1,34 @@
-#include "TestEventConsumingPast.h"
+#include "test_mt_fsm_evaluation_future.h"
 #include "parser/parser.h"
-#include "rv_algorithms/event_consuming/event_consuming.h"
+#include "rv_algorithms/mt_fsm/mt_fsm_creation.h"
+#include "rv_algorithms/mt_fsm/mt_fsm_evaluation.h"
 #include "trace/trace.h"
 #include "utils/utils.h"
 
-TEST(TestECPast, violatedEnd) {
+TEST(TestMT_FSMPast, violatedEnd) {
     Trace trace =
         Utils::createTrace({"green", "yellow", "red"}, {{"green"}, {"red"}, {"yellow"}, {"green"}, {"red"}, {"green"}});
     Formula formula = Parser::parse("G(green -> P(yellow))");
-    EXPECT_EQ(EventConsuming::eventConsumingPast(formula, trace).to_string(), "false");
+    auto mtFSM = MT_FSMCreation::formulaToMT_FSM(formula, true);
+
+    EXPECT_FALSE(MT_FSMEvaluation::evaluateMT_FSM(mtFSM, trace, true));
 }
 
-TEST(TestECPast, violatedBeginning) {
+TEST(TestMT_FSMPast, violatedBeginning) {
     Trace trace = Utils::createTrace({"green", "yellow", "red"},
                                      {{"red"}, {"green"}, {"red"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}});
     Formula formula = Parser::parse("G(green -> P(yellow))");
-    EXPECT_EQ(EventConsuming::eventConsumingPast(formula, trace).to_string(), "false");
+    auto mtFSM = MT_FSMCreation::formulaToMT_FSM(formula, true);
+
+    EXPECT_FALSE(MT_FSMEvaluation::evaluateMT_FSM(mtFSM, trace, true));
 }
 
-TEST(TestECPast, satisfied) {
+TEST(TestMT_FSMPast, satisfied) {
     Trace trace =
         Utils::createTrace({"green", "yellow", "red"},
                            {{"yellow"}, {"green"}, {"red"}, {"yellow"}, {"green"}, {"red"}, {"yellow"}, {"green"}});
     Formula formula = Parser::parse("G(green -> P(yellow))");
-    EXPECT_EQ(EventConsuming::eventConsumingPast(formula, trace).to_string(), "true");
+    auto mtFSM = MT_FSMCreation::formulaToMT_FSM(formula, true);
+
+    EXPECT_TRUE(MT_FSMEvaluation::evaluateMT_FSM(mtFSM, trace, true));
 }
