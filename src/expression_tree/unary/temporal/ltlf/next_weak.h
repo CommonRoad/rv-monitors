@@ -20,7 +20,7 @@ class NextWeak : public Unary, public TemporalOperator {
 
     [[nodiscard]] std::shared_ptr<Expression> clone() override { return std::make_shared<NextWeak>(*this); }
 
-    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, int index) override {
+    [[nodiscard]] std::shared_ptr<Expression> accept(expression_visitor &visitor, Trace &trace, int index) override {
         return visitor.visitNextWeak(*this, trace, index);
     }
 };

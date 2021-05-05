@@ -2,7 +2,7 @@
 
 std::shared_ptr<Expression> EventOperator::clone() { return std::make_shared<EventOperator>(*this); }
 
-std::shared_ptr<Expression> EventOperator::accept(ExpressionVisitor &visitor, Trace &tr, int idx) {
+std::shared_ptr<Expression> EventOperator::accept(expression_visitor &visitor, Trace &tr, int idx) {
     return visitor.visitEventOperator(*this, tr, idx);
 }
 

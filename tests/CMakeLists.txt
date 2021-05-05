@@ -14,20 +14,20 @@ include(monitors_googletest)
 
 set(RV_MONITOR_TEST_SRC_FILES
         allTests.cpp
-        BTT_FSM/TestBTT_FSMEvaluationFuture.cpp
-        BTT_FSM/TestBTT_FSMEvaluationPast.cpp
-        BTT_FSM/TestBTT_FSMCreation.cpp
-        DynamicProgramming/TestDynamicFuture.cpp
-        DynamicProgramming/TestDynamicPast.cpp
-        EventConsuming/TestEventConsumingFuture.cpp
-        EventConsuming/TestEventConsumingPast.cpp
-        MT_FSM/TestMT_FSMEvaluationFuture.cpp
-        MT_FSM/TestMT_FSMEvaluationPast.cpp
-        MTL/Test_MTL.cpp
+        btt_fsm/TestBTT_FSMEvaluationFuture.cpp
+        btt_fsm/TestBTT_FSMEvaluationPast.cpp
+        btt_fsm/TestBTT_FSMCreation.cpp
+        dynamic_programming/TestDynamicFuture.cpp
+        dynamic_programming/TestDynamicPast.cpp
+        event_consuming/TestEventConsumingFuture.cpp
+        event_consuming/TestEventConsumingPast.cpp
+        mt_fsm/TestMT_FSMEvaluationFuture.cpp
+        mt_fsm/TestMT_FSMEvaluationPast.cpp
+        mtl/Test_MTL.cpp
         parser/TestParser.cpp
-        QMC/TestQMC.cpp
-        Rewriting/TestBasicRewriteVisitor.cpp
-        Rewriting/TestRewriteVisitor.cpp
+        qmc/TestQMC.cpp
+        rewriting/TestBasicRewriteVisitor.cpp
+        rewriting/TestRewriteVisitor.cpp
         utils/TestLazyBool.cpp
         )
 

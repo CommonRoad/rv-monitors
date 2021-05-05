@@ -4,7 +4,7 @@ std::string Constant::to_string() const { return this->getSymbol(); }
 
 std::shared_ptr<Expression> Constant::clone() { return std::make_shared<Constant>(*this); }
 
-std::shared_ptr<Expression> Constant::accept(ExpressionVisitor &visitor, Trace &trace, int index) {
+std::shared_ptr<Expression> Constant::accept(expression_visitor &visitor, Trace &trace, int index) {
     return visitor.visitConstant(*this, trace, index);
 }
 

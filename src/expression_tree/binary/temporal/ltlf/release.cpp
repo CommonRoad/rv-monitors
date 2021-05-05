@@ -2,6 +2,6 @@
 
 std::shared_ptr<Expression> Release::clone() { return std::make_shared<Release>(*this); }
 
-std::shared_ptr<Expression> Release::accept(ExpressionVisitor &visitor, Trace &trace, int index) {
+std::shared_ptr<Expression> Release::accept(expression_visitor &visitor, Trace &trace, int index) {
     return visitor.visitRelease(*this, trace, index);
 }

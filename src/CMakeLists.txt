@@ -38,30 +38,30 @@ set(RV_MONITOR_SRC_FILES
         qmc/prime_term.cpp
         qmc/qmc.cpp
         qmc/qmc_table.cpp
-        rewriting/BasicRewriteVisitor.cpp
-        rewriting/ExpressionVisitor.cpp
-        rewriting/RewriteVisitor.cpp
-        rv_algorithms/RVMonitor.cpp
-        rv_algorithms/BTT-FSM/BTT_FSM.cpp
-        rv_algorithms/BTT-FSM/BTT_FSMCreation.cpp
-        rv_algorithms/BTT-FSM/BTT_FSMEvaluation.cpp
-        rv_algorithms/BTT-FSM/Decision.cpp
-        rv_algorithms/BTT-FSM/StateBTT_FSM.cpp
-        rv_algorithms/DynamicProgramming/Dynamic.cpp
-        rv_algorithms/DynamicProgramming/DynamicFuture.cpp
-        rv_algorithms/DynamicProgramming/DynamicPast.cpp
-        rv_algorithms/EventConsuming/EventConsuming.cpp
-        rv_algorithms/EventConsuming/EventConsumingVisitor.cpp
-        rv_algorithms/MT-FSM/MT_FSM.cpp
-        rv_algorithms/MT-FSM/MT_FSMEvaluation.cpp
-        rv_algorithms/MT-FSM/MT_FSMCreation.cpp
-        rv_algorithms/MT-FSM/MultiTransition.cpp
-        rv_algorithms/MT-FSM/StateMT_FSM.cpp
-        rv_algorithms/MTL/MTLEventConsuming.cpp
-        rv_algorithms/MTL/MTLDerivingFutureVisitor.cpp
-        rv_algorithms/MTL/MTLEventConsumingVisitor.cpp
-        rv_algorithms/MTL/MTLResolvingPastVisitor.cpp
-        rv_algorithms/MTL/MTLRewriteVisitor.cpp
+        rewriting/basic_rewrite_visitor.cpp
+        rewriting/expression_visitor.cpp
+        rewriting/rewrite_visitor.cpp
+        rv_algorithms/rv_monitor.cpp
+        rv_algorithms/btt_fsm/btt_fsm.cpp
+        rv_algorithms/btt_fsm/btt_fsm_creation.cpp
+        rv_algorithms/btt_fsm/btt_fsm_evaluation.cpp
+        rv_algorithms/btt_fsm/decision.cpp
+        rv_algorithms/btt_fsm/state_btt_fsm.cpp
+        rv_algorithms/dynamic_programming/dynamic.cpp
+        rv_algorithms/dynamic_programming/dynamic_future.cpp
+        rv_algorithms/dynamic_programming/dynamic_past.cpp
+        rv_algorithms/event_consuming/event_consuming.cpp
+        rv_algorithms/event_consuming/event_consuming_visitor.cpp
+        rv_algorithms/mt_fsm/mt_fsm.cpp
+        rv_algorithms/mt_fsm/mt_fsm_evaluation.cpp
+        rv_algorithms/mt_fsm/mt_fsm_creation.cpp
+        rv_algorithms/mt_fsm/multi_transition.cpp
+        rv_algorithms/mt_fsm/state_mt_fsm.cpp
+        rv_algorithms/mtl/mtl_event_consuming.cpp
+        rv_algorithms/mtl/mtl_deriving_future_visitor.cpp
+        rv_algorithms/mtl/mtl_event_consuming_visitor.cpp
+        rv_algorithms/mtl/mtl_resolving_past_visitor.cpp
+        rv_algorithms/mtl/mtl_rewrite_visitor.cpp
         trace/event.cpp
         trace/event_generator.cpp
         utils/lazy_bool.cpp
