@@ -75,6 +75,11 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
                 "ci/"                                                             #  to BASE_DIRECTORY, with CMake 3.4+)
                 "docs/"
                 "external/"
+                "src/parser/gen/"
+                "build/"
+                "cmake/"
+                "cmake-build-debug/"
+                "cmake-build-debug-coverage/"
         )
     endif()
 endif()

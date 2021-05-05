@@ -35,11 +35,6 @@ bool RVMonitor::verify(Trace trace) {
 
     bool verdict = false;
 
-    //    constexpr size_t textwidth = 15;
-    //    if (consoleOutput) {
-    //        std::cout << std::setw(textwidth) << std::left << "Algorithm" << ": " << algorithm << std::endl;
-    //    }
-
     switch (algorithm) {
     case mt_fsm: {
         evaluationTimer.start();
@@ -120,7 +115,7 @@ AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
     }
 }
 
-RVMonitor::RVMonitor(bool past, AlgorithmType algorithm, bool consoleOutput, const Formula &formula)
+RVMonitor::RVMonitor(AlgorithmType algorithm, bool consoleOutput, const Formula &formula, bool past)
     : past(past), algorithm(algorithm), consoleOutput(consoleOutput), formula(formula) {
 
     if (algorithm == mt_fsm)
