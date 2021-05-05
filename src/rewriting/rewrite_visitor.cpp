@@ -1,5 +1,4 @@
 #include "rewrite_visitor.h"
-#include "rewrite_visitor_utils.h"
 #include "expression_tree/atomic/atomic.h"
 #include "expression_tree/atomic/constant.h"
 #include "expression_tree/binary/binary.h"
@@ -24,6 +23,7 @@
 #include "expression_tree/unary/temporal/ptlf/once.h"
 #include "expression_tree/unary/temporal/ptlf/previously.h"
 #include "expression_tree/unary/unary.h"
+#include "rewrite_visitor_utils.h"
 #include "trace/event.h"
 #include <iostream>
 

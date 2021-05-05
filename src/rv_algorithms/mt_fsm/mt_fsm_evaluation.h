@@ -1,7 +1,7 @@
 #pragma once
 
-#include "mt_fsm.h"
 #include "formula/formula.h"
+#include "mt_fsm.h"
 #include "trace/trace.h"
 
 namespace MT_FSMEvaluation {

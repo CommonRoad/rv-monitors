@@ -1,7 +1,7 @@
 #pragma once
 
-#include "state_btt_fsm.h"
 #include "formula/formula.h"
+#include "state_btt_fsm.h"
 #include <set>
 #include <vector>
 

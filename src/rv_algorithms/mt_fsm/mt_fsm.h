@@ -1,7 +1,7 @@
 #pragma once
 
-#include "state_mt_fsm.h"
 #include "formula/formula.h"
+#include "state_mt_fsm.h"
 #include "trace/trace.h"
 #include <memory>
 #include <utility>
@@ -13,8 +13,7 @@
 class MtFsm {
   private:
     std::set<std::string> atomics;
-    Formula
-    formula;
+    Formula formula;
     std::vector<StateMT_FSM> states;
 
   public:

@@ -125,7 +125,7 @@ std::shared_ptr<Expression> mtl_resolving_past_visitor::visitSince(Since &op, Tr
 }
 
 std::shared_ptr<Expression> mtl_resolving_past_visitor::visitResolvingOperator(ResolvingOperator &op, Trace &trace,
-                                                                            int index) {
+                                                                               int index) {
 
     std::shared_ptr<Expression> ret;
     // Deriving
@@ -212,7 +212,7 @@ std::shared_ptr<Expression> mtl_resolving_past_visitor::visitResolvingOperator(R
 }
 
 std::shared_ptr<Expression> mtl_resolving_past_visitor::visitDerivingOperator(DerivingOperator &op, Trace &trace,
-                                                                           int index) {
+                                                                              int index) {
     std::shared_ptr<Expression> ret;
 
     // resolving

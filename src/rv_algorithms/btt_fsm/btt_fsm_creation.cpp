@@ -12,7 +12,7 @@ BttFsm BTT_FSMCreation::formulaToBTT_FSM(const Formula &formula, bool past) {
     // Only a constant
     if (auto constant = std::dynamic_pointer_cast<Constant>(formula.getExpr())) {
         StateBttFsm singleState(constant->getValue(), {}, {});
-        return BttFsm (formula, {singleState});
+        return BttFsm(formula, {singleState});
     }
     // Get corresponding MT-FSM
     auto mtFsm = MT_FSMCreation::formulaToMT_FSM(formula, past);
@@ -46,7 +46,7 @@ BttFsm BTT_FSMCreation::formulaToBTT_FSM(const Formula &formula, bool past) {
 
     //    auto btt = BttFsm (mtFsm.getFormula(), bttStates);
     //    std::cout << btt.to_string() << std::endl;
-    return BttFsm (mtFsm.getFormula(), bttStates);
+    return BttFsm(mtFsm.getFormula(), bttStates);
 }
 
 std::map<std::string, size_t> BTT_FSMCreation::getAtomicFrequencies(const MultiTransition &multiTransition) {
@@ -244,8 +244,7 @@ std::shared_ptr<node> BTT_FSMCreation::findNextNode(const MultiTransition &multi
                                                                   atomicCopy);
                             } else {
                                 return std::make_shared<Decision>(findNextNode(newMultitransition, weights),
-                                                                  std::make_shared<StateBttFsm>(nextState),
-                                                                  atomicCopy);
+                                                                  std::make_shared<StateBttFsm>(nextState), atomicCopy);
                             }
                         }
                     }

@@ -1,6 +1,6 @@
 #include "mt_fsm_evaluation.h"
-#include "mt_fsm.h"
 #include "expression_tree/atomic/constant.h"
+#include "mt_fsm.h"
 #include <iostream>
 
 bool MT_FSMEvaluation::evaluateMT_FSM(const MtFsm &mtFsm, Trace &trace, bool past) {

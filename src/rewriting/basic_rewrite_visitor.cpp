@@ -1,6 +1,4 @@
 #include "basic_rewrite_visitor.h"
-#include "rewrite_visitor.h"
-#include "rewrite_visitor_utils.h"
 #include "expression_tree/atomic/atomic.h"
 #include "expression_tree/atomic/constant.h"
 #include "expression_tree/binary/bool/equivalence.h"
@@ -22,6 +20,8 @@
 #include "expression_tree/unary/temporal/ptlf/historically.h"
 #include "expression_tree/unary/temporal/ptlf/once.h"
 #include "expression_tree/unary/temporal/ptlf/previously.h"
+#include "rewrite_visitor.h"
+#include "rewrite_visitor_utils.h"
 #include "trace/event.h"
 #include <iostream>
 

@@ -6,8 +6,8 @@
 #define RV_MONITORS_RV_MONITOR_H
 
 #include "btt_fsm/btt_fsm.h"
-#include "mt_fsm/mt_fsm.h"
 #include "formula/formula.h"
+#include "mt_fsm/mt_fsm.h"
 #include "trace/trace.h"
 #include <iostream>
 #include <vector>

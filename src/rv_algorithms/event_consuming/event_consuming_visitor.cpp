@@ -123,12 +123,12 @@ std::shared_ptr<Expression> event_consuming_visitor::visitHistorically(Historica
 }
 
 std::shared_ptr<Expression> event_consuming_visitor::visitResolvingOperator(ResolvingOperator &op, Trace &trace,
-                                                                          int index) {
+                                                                            int index) {
     return std::make_shared<ResolvingOperator>(op);
 }
 
 std::shared_ptr<Expression> event_consuming_visitor::visitDerivingOperator(DerivingOperator &op, Trace &trace,
-                                                                         int index) {
+                                                                           int index) {
     return std::make_shared<DerivingOperator>(op);
 }
 
