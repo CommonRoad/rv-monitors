@@ -6,8 +6,8 @@
 #include <set>
 #include <vector>
 
-#include "ExpressionTree/Expression.h"
-#include "ExpressionTree/Nary/NaryInterface.h"
+#include "expression_tree/expression.h"
+#include "expression_tree/nary/nary_interface.h"
 #include "Formula/Formula.h"
 
 /**

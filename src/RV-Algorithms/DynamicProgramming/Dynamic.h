@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ExpressionTree/Binary/Bool/Implication.h"
-#include "ExpressionTree/Expression.h"
-#include "ExpressionTree/Nary/NaryInterface.h"
+#include "expression_tree/binary/bool/implication.h"
+#include "expression_tree/expression.h"
+#include "expression_tree/nary/nary_interface.h"
 #include "Formula/Formula.h"
 #include "Trace/Trace.h"
 #include <algorithm>

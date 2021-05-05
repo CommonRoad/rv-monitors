@@ -39,7 +39,7 @@ class RewriteVisitor : public ExpressionVisitor {
 
     [[nodiscard]] std::shared_ptr<Expression> visitPreviously(Previously &op, Trace &trace, int index) override;
 
-    [[nodiscard]] std::shared_ptr<Expression> visitHistorically(Historically &op, Trace &trace, int index) override;
+    [[nodiscard]] std::shared_ptr<Expression> visitHistorically(Historically  &op, Trace &trace, int index) override;
 
     [[nodiscard]] std::shared_ptr<Expression> visitRelease(Release &op, Trace &trace, int index) override;
 
