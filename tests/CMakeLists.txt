@@ -24,11 +24,11 @@ set(RV_MONITOR_TEST_SRC_FILES
         MT_FSM/TestMT_FSMEvaluationFuture.cpp
         MT_FSM/TestMT_FSMEvaluationPast.cpp
         MTL/Test_MTL.cpp
-        Parser/TestParser.cpp
+        parser/TestParser.cpp
         QMC/TestQMC.cpp
         Rewriting/TestBasicRewriteVisitor.cpp
         Rewriting/TestRewriteVisitor.cpp
-        Utils/TestLazyBool.cpp
+        utils/TestLazyBool.cpp
         )
 
 

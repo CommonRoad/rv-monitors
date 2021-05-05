@@ -5,8 +5,8 @@
 #include <string>
 #include <utility>
 
-#include "Rewriting/ExpressionVisitor.h"
-#include "Symbols/Symbols.h"
+#include "rewriting/ExpressionVisitor.h"
+#include "symbols/Symbols.h"
 
 class Trace;
 

@@ -1,9 +1,9 @@
 #include "TestMT_FSMEvaluationFuture.h"
-#include "Parser/Parser.h"
-#include "RV-Algorithms/MT-FSM/MT_FSMEvaluation.h"
-#include "Trace/Trace.h"
-#include "Utils/Utils.h"
-#include <RV-Algorithms/MT-FSM/MT_FSMCreation.h>
+#include "parser/parser.h"
+#include "rv_algorithms/MT-FSM/MT_FSMEvaluation.h"
+#include "trace/trace.h"
+#include "utils/utils.h"
+#include <rv_algorithms/MT-FSM/MT_FSMCreation.h>
 
 TEST(TestMT_FSMFuture, violated1) {
     Trace trace = Utils::createTrace(
