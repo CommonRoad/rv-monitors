@@ -8,7 +8,7 @@ stages:
 
 
 
-image: $CI_REGISTRY/maierhofer/rv-monitors/ci:0.3.7
+image: $CI_REGISTRY/maierhofer/rv-monitors/ci:0.3.8
 
 ### static test ###
 clang-format:
