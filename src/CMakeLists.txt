@@ -1,4 +1,4 @@
-set(LIBRARY_NAME monitors)
+set(LIBRARY_NAME rvmonitors)
 
 set(RV_MONITOR_SRC_FILES
         monitors/expression_tree/expression.cpp
