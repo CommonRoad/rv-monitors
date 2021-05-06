@@ -3,10 +3,10 @@
 //
 
 #include "test_mtl.h"
-#include "parser/parser.h"
-#include "trace/trace.h"
-#include "utils/utils.h"
-#include <rv_algorithms/mtl/mtl_event_consuming.h>
+#include "monitors/parser/parser.h"
+#include "monitors/rv_algorithms/mtl/mtl_event_consuming.h"
+#include "monitors/trace/trace.h"
+#include "monitors/utils/utils.h"
 
 TEST(TestMTL, violated1) {
     Trace trace = Utils::createTrace({"a", "b", "c"}, {{"b"}, {"b"}, {"b"}, {"a"}, {"b"}, {"b"}, {"b"}});

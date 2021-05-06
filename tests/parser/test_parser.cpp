@@ -3,8 +3,8 @@
 //
 
 #include "test_parser.h"
-#include "formula/formula.h"
-#include "parser/parser.h"
+#include "monitors/formula/formula.h"
+#include "monitors/parser/parser.h"
 
 TEST(TestParser, interval) {
     //    Formula formula = Parser::parse("G(a -> F[0, 3](b))");

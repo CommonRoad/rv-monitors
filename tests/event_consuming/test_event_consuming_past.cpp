@@ -1,8 +1,8 @@
 #include "test_event_consuming_past.h"
-#include "parser/parser.h"
-#include "rv_algorithms/event_consuming/event_consuming.h"
-#include "trace/trace.h"
-#include "utils/utils.h"
+#include "monitors/parser/parser.h"
+#include "monitors/rv_algorithms/event_consuming/event_consuming.h"
+#include "monitors/trace/trace.h"
+#include "monitors/utils/utils.h"
 
 TEST(TestECPast, violatedEnd) {
     Trace trace =
