@@ -3,7 +3,7 @@
 #include "monitors/formula/formula.h"
 
 /**
- * Applies rules to transform formula into conjunction of exclusive disjuntions.
+ * Applies rules to transform formula into conjunction of exclusive disjunctions.
  */
 class rewrite_visitor : public expression_visitor {
   public:

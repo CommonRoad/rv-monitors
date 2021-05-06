@@ -18,7 +18,7 @@ void expression_visitor::visitExpression(Expression &expr, Trace &trace, int ind
     // Nary
     else if (auto *nary = dynamic_cast<NaryInterface *>(&expr)) {
         // Xor needs multiset
-        if (dynamic_cast<Xor *>(nary)) {
+        if (dynamic_cast<Xor *>(nary) != nullptr) {
             Xor::SetType_T newSet;
             for (const auto &itr : *nary) {
                 newSet.emplace(itr->accept(*this, trace, index));

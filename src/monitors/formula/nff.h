@@ -15,7 +15,7 @@ namespace NNF {
 std::shared_ptr<Expression> removeDoubleNot(const std::shared_ptr<Not> &expr);
 
 /**
- * Applay de Morgan's rule to an expression.
+ * Apply de Morgan's rule to an expression.
  * @param expr Expression.
  * @return Expression after de Morgan was applied.
  */
