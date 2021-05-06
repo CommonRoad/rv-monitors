@@ -1,8 +1,8 @@
 #include "test_dynamic_future.h"
-#include "parser/parser.h"
-#include "rv_algorithms/dynamic_programming/dynamic_future.h"
-#include "trace/trace.h"
-#include "utils/utils.h"
+#include "monitors/parser/parser.h"
+#include "monitors/rv_algorithms/dynamic_programming/dynamic_future.h"
+#include "monitors/trace/trace.h"
+#include "monitors/utils/utils.h"
 
 TEST(TestDynamicFuture, violated1) {
     Trace trace1 = Utils::createTrace(

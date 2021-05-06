@@ -1,9 +1,9 @@
 #include "test_btt_fsm_evaluation_past.h"
-#include "parser/parser.h"
-#include "rv_algorithms/btt_fsm/btt_fsm_creation.h"
-#include "rv_algorithms/btt_fsm/btt_fsm_evaluation.h"
-#include "trace/trace.h"
-#include "utils/utils.h"
+#include "monitors/parser/parser.h"
+#include "monitors/rv_algorithms/btt_fsm/btt_fsm_creation.h"
+#include "monitors/rv_algorithms/btt_fsm/btt_fsm_evaluation.h"
+#include "monitors/trace/trace.h"
+#include "monitors/utils/utils.h"
 
 TEST(TestBTT_FSMPast, violatedEnd) {
     Trace trace =

@@ -1,5 +1,5 @@
 #include "test_lazy_bool.h"
-#include "utils/lazy_bool.h"
+#include "monitors/utils/lazy_bool.h"
 
 TEST(TestLazyBool, testFixedValue) {
     lazy_bool t(true);
