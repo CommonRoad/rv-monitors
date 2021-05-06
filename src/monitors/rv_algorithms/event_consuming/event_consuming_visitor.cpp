@@ -151,7 +151,6 @@ std::shared_ptr<Expression> event_consuming_visitor::visitEventOperator(EventOpe
         }
         ret = std::make_shared<And>(newExprSet);
     }
-
     // Or
     else if (auto orExpr = std::dynamic_pointer_cast<Or>(op.getLeft())) {
         Or::SetType_T newExprSet;

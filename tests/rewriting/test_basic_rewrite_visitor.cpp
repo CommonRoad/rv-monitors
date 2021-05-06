@@ -37,43 +37,6 @@ TEST(TestBasicRewriteVisitor, absorption4) {
     EXPECT_EQ(absorption.to_string(), "(a U b)");
 }
 
-// TEST(TestBasicRewriteVisitor, distr) {
-//    auto absorption = Parser::parse("(a | b) & (a | c)");
-//    BasicRewriteVisitor rw;
-//    rw.rewrite(absorption);
-//    EXPECT_EQ(absorption.to_string(), "((b & c) | a)");
-//}
-//
-// TEST(TestBasicRewriteVisitor, distr1) {
-//    auto absorption = Parser::parse("(a | b | c) & (a | c | d)");
-//    BasicRewriteVisitor rw;
-//    rw.rewrite(absorption);
-//    EXPECT_EQ(absorption.to_string(), "((b & d) | a | c)");
-//}
-//
-// TEST(TestBasicRewriteVisitor, distr2) {
-//    //auto distr = Parser::parse("(a & b) | (a & c)");
-//    auto distr = Parser::parse("(a & !d & !f) | (a & d & e)");
-//
-//    BasicRewriteVisitor rw;
-//    rw.rewrite(distr);
-//    EXPECT_EQ(distr.to_string(), "((b | c) & a)");
-//}
-//
-// TEST(TestBasicRewriteVisitor, distr3) {
-//    auto absorption = Parser::parse("(a & b & c) | (a & c & d)");
-//    BasicRewriteVisitor rw;
-//    rw.rewrite(absorption);
-//    EXPECT_EQ(absorption.to_string(), "((b | d) & a & c)");
-//}
-
-// TEST(TestBasicRewriteVisitor, distr4) {
-//    auto absorption = Parser::parse("(aUx | b | c) & (aUx | c | d)");
-//    BasicRewriteVisitor rw;
-//    rw.rewrite(absorption);
-//    EXPECT_EQ(absorption.to_string(), "((a U x) | (b & d) | c)");
-//}
-
 TEST(TestBasicRewriteVisitor, reduceXor) {
     auto xorFormula = Parser::parse("a ^ b ^ c ^ (a | b)");
     BasicRewriteVisitor rw;

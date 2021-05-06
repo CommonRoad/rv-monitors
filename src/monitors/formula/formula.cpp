@@ -37,10 +37,7 @@ void Formula::setEvent(std::shared_ptr<Event> ev) { event = std::move(ev); }
 
 bool Formula::containsAtomic(const std::shared_ptr<Atomic> &atomic) const {
     auto atomics = Utils::getAtomics(this->getExpr());
-    if (atomics.find(atomic->to_string()) != atomics.end()) {
-        return true;
-    }
-    return false;
+    return atomics.find(atomic->to_string()) != atomics.end();
 }
 
 Formula Formula::deepCopy() const { return Formula(Formula::deepCopy(getExpr())); }

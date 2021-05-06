@@ -37,34 +37,6 @@ TEST(TestRewriteVisitor, absorption4) {
     EXPECT_EQ(absorption.to_string(), "a");
 }
 
-// TEST(TestRewriteVisitor, distr) {
-//    auto absorption = Parser::parse("(a | b) & (a | c)");
-//    RewriteVisitor rw;
-//    rw.rewrite(absorption);
-//    EXPECT_EQ(absorption.to_string(), "a & (b | c)");
-//}
-//
-// TEST(TestRewriteVisitor, distr1) {
-//    auto absorption = Parser::parse("(a | b | c) & (a | c | d)");
-//    RewriteVisitor rw;
-//    rw.rewrite(absorption);
-//    EXPECT_EQ(absorption.to_string(), "((b & d) | a | c)");
-//}
-//
-// TEST(TestRewriteVisitor, distr2) {
-//    auto absorption = Parser::parse("(a & b) | (a & c)");
-//    RewriteVisitor rw;
-//    rw.rewrite(absorption);
-//    EXPECT_EQ(absorption.to_string(), "((b | c) & a)");
-//}
-//
-// TEST(TestRewriteVisitor, distr3) {
-//    auto absorption = Parser::parse("(a & b & c) | (a & c & d)");
-//    RewriteVisitor rw;
-//    rw.rewrite(absorption);
-//    EXPECT_EQ(absorption.to_string(), "((b | d) & a & c)");
-//}
-
 TEST(TestRewriteVisitor, reduceXor) {
     auto xorFormula = Parser::parse("a ^ b ^ c ^ (a | b)");
     rewrite_visitor rw;
