@@ -39,7 +39,7 @@ target_compile_definitions(rvmonitors_test PRIVATE)
 target_link_libraries(
         rvmonitors_test
         PUBLIC
-        monitors
+        rvmonitors
         gmock # gmock includes the gtest target, so we don't need it here.
 )
 
