@@ -59,7 +59,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
         add_executable(rvmonitors_test_coverage ${RV_MONITOR_SRC_FILES} ${RV_MONITOR_TEST_SRC_FILES})
         target_include_directories(rvmonitors_test_coverage PUBLIC "../src/")
         target_link_libraries(rvmonitors_test_coverage PUBLIC
-                ${EXECUTABLE_NAME}
+                rvmonitors
                 antlr4cpp
                 gtest
                 )
