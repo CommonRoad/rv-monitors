@@ -11,7 +11,7 @@
 class Event {
   private:
     std::map<std::string, lazy_bool> eventMap;
-    int timeStep;
+    size_t timeStep;
     bool terminal;
 
   public:
@@ -20,7 +20,7 @@ class Event {
      * @param event Map from predicates to LazyBool.
      * @param terminal True if event is terminal, false other wise.
      */
-    explicit Event(std::map<std::string, lazy_bool> &event, int time, bool terminal)
+    explicit Event(std::map<std::string, lazy_bool> &event, size_t time, bool terminal)
         : eventMap(event), timeStep(time), terminal(terminal) {}
 
     /**
@@ -73,11 +73,11 @@ class Event {
      * Getter for time step.
      * @return Time step of event.
      */
-    [[nodiscard]] int getTimeStep() const;
+    [[nodiscard]] size_t getTimeStep() const;
 
     /**
      * Setter for time step.
      * @param timeStep time step to be set
      */
-    void setTimeStep(int timeStep);
+    void setTimeStep(size_t timeStep);
 };
