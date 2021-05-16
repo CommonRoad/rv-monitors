@@ -10,20 +10,20 @@ bool Event::getValue(const Atomic &atomic) { return getValue(atomic.to_string())
 
 bool Event::isTerminal() const { return terminal; }
 
-void Event::setEventMap(const std::map<std::string, lazy_bool> &eventMap) { Event::eventMap = eventMap; }
+void Event::setEventMap(const std::map<std::string, lazy_bool> &newEventMap) { Event::eventMap = newEventMap; }
 
-void Event::setTerminal(bool terminal) { Event::terminal = terminal; }
+void Event::setTerminal(bool isTerminal) { Event::terminal = isTerminal; }
 
 std::string Event::to_string() const {
     std::stringstream res;
     res << "{";
-    for (auto &[key, value] : eventMap) {
+    for (const auto &[key, value] : eventMap) {
         res << key << ": " << value << "; ";
     }
     res << terminal << "}";
     return res.str();
 }
 
-int Event::getTimeStep() const { return timeStep; }
+size_t Event::getTimeStep() const { return timeStep; }
 
-void Event::setTimeStep(int timeStep) { Event::timeStep = timeStep; }
+void Event::setTimeStep(size_t newTimeStep) { Event::timeStep = newTimeStep; }

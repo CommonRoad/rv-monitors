@@ -38,7 +38,7 @@ namespace Utils {
  * @return
  */
 [[nodiscard]] Trace createLazyTrace(const std::map<std::string, std::function<bool(int)>> &atomicsAndFunctions,
-                                    const std::vector<int> &timeSteps);
+                                    const std::vector<size_t> &timeSteps);
 
 /**
  * Creates a string set of all predicates in a formula. Wrapper for getAtomics().
