@@ -222,6 +222,7 @@ Trace Utils::createLazyTrace(const std::map<std::string, std::function<bool(int)
     std::vector<Event> finalTrace;
     size_t length = timeSteps.size();
     finalTrace.reserve(length);
+    size_t initialTimeStep{timeSteps.at(0)};
 
     for (auto const i : timeSteps) {
         std::map<std::string, lazy_bool> event;
@@ -230,7 +231,7 @@ Trace Utils::createLazyTrace(const std::map<std::string, std::function<bool(int)
             auto valueFetcherBound = std::bind(valueFetcher, i);
             event[atomic] = lazy_bool(valueFetcherBound);
         }
-        finalTrace.emplace_back(Event(event, i, i == length - 1));
+        finalTrace.emplace_back(Event(event, i, i == length + initialTimeStep - 1));
         event.clear();
     }
     return Trace{finalTrace};
