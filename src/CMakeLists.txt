@@ -67,7 +67,7 @@ set(RV_MONITOR_SRC_FILES
         monitors/trace/event.cpp
         monitors/trace/event_generator.cpp
         monitors/utils/lazy_bool.cpp
-        monitors/utils/timer.cpp
+        monitors/utils/execution_statistic.cpp
         monitors/utils/utils.cpp
         )
 

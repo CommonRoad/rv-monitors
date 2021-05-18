@@ -11,9 +11,7 @@
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm_creation.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm_evaluation.h"
 #include "monitors/rv_algorithms/mtl/mtl_event_consuming.h"
-#include "monitors/utils/timer.h"
 #include "monitors/utils/utils.h"
-#include <utility>
 
 /**
  * Executes algorithm on a given trace and with given parameters.
@@ -24,48 +22,45 @@
  * @param consoleOutput True if console output is desired.
  */
 bool RVMonitor::verify(Trace trace) {
-
     if (algorithm > eventconsuming_mtl) {
         throw std::runtime_error("main::verify() No valid argument for algorithm given. Try MT_FSM, BTT_FSM, DYNAMIC, "
                                  "or EVENTCONSUMING-LTL, EVENTCONSUMING-MTL.)");
     }
     auto predicates = Utils::getAtomics(formula);
 
-    timer creationTimer, evaluationTimer;
-
     bool verdict = false;
 
     switch (algorithm) {
     case mt_fsm: {
-        evaluationTimer.start();
+        executionStatistic.start();
         verdict = MT_FSMEvaluation::evaluateMT_FSM(*mtFSM, trace, past);
-        evaluationTimer.stop();
+        executionStatistic.stop(trace.getLength());
         break;
     }
     case btt_fsm: {
-        evaluationTimer.start();
+        executionStatistic.start();
         verdict = BTT_FSMEvaluation::evaluateBTT_FSM(*bttFSM, trace, past);
-        evaluationTimer.stop();
+        executionStatistic.stop(trace.getLength());
         break;
     }
     case dynamic: {
-        evaluationTimer.start();
+        executionStatistic.start();
         verdict = Dynamic::dynamic(formula, trace, past);
-        evaluationTimer.stop();
+        executionStatistic.stop(trace.getLength());
         break;
     }
     case eventconsuming_ltl: {
         auto formulaCopy = formula.deepCopy();
-        evaluationTimer.start();
+        executionStatistic.start();
         verdict = EventConsuming::eventConsuming(formulaCopy, trace, past);
-        evaluationTimer.stop();
+        executionStatistic.stop(trace.getLength());
         break;
     }
     case eventconsuming_mtl:
         auto formulaCopy = formula.deepCopy();
-        evaluationTimer.start();
+        executionStatistic.start();
         verdict = MTLEventConsuming::eventConsuming(formulaCopy, trace);
-        evaluationTimer.stop();
+        executionStatistic.stop(trace.getLength());
         break;
     }
     return verdict;
@@ -123,3 +118,4 @@ RVMonitor::RVMonitor(AlgorithmType algorithm, bool consoleOutput, const Formula 
     else if (algorithm == btt_fsm)
         bttFSM = std::make_unique<BttFsm>(BTT_FSMCreation::formulaToBTT_FSM(formula, past));
 }
+const ExecutionStatistic &RVMonitor::getExecutionStatistic() const { return executionStatistic; }
