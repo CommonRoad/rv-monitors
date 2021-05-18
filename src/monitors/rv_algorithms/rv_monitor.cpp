@@ -32,35 +32,35 @@ bool RVMonitor::verify(Trace trace) {
 
     switch (algorithm) {
     case mt_fsm: {
-        executionStatistic.start();
+        auto startTime{ExecutionStatistic::start()};
         verdict = MT_FSMEvaluation::evaluateMT_FSM(*mtFSM, trace, past);
-        executionStatistic.stop(trace.getLength());
+        executionStatistic.stop(startTime, trace.getLength());
         break;
     }
     case btt_fsm: {
-        executionStatistic.start();
+        auto startTime{ExecutionStatistic::start()};
         verdict = BTT_FSMEvaluation::evaluateBTT_FSM(*bttFSM, trace, past);
-        executionStatistic.stop(trace.getLength());
+        executionStatistic.stop(startTime, trace.getLength());
         break;
     }
     case dynamic: {
-        executionStatistic.start();
+        auto startTime{ExecutionStatistic::start()};
         verdict = Dynamic::dynamic(formula, trace, past);
-        executionStatistic.stop(trace.getLength());
+        executionStatistic.stop(startTime, trace.getLength());
         break;
     }
     case eventconsuming_ltl: {
         auto formulaCopy = formula.deepCopy();
-        executionStatistic.start();
+        auto startTime{ExecutionStatistic::start()};
         verdict = EventConsuming::eventConsuming(formulaCopy, trace, past);
-        executionStatistic.stop(trace.getLength());
+        executionStatistic.stop(startTime, trace.getLength());
         break;
     }
     case eventconsuming_mtl:
         auto formulaCopy = formula.deepCopy();
-        executionStatistic.start();
+        auto startTime{ExecutionStatistic::start()};
         verdict = MTLEventConsuming::eventConsuming(formulaCopy, trace);
-        executionStatistic.stop(trace.getLength());
+        executionStatistic.stop(startTime, trace.getLength());
         break;
     }
     return verdict;

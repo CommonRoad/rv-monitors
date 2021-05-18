@@ -3,25 +3,16 @@
 
 using namespace std::chrono;
 
-ExecutionStatistic::ExecutionStatistic() : startTime{} {}
+ExecutionStatistic::ExecutionStatistic() = default;
 
 ExecutionStatistic::~ExecutionStatistic() = default;
 
-void ExecutionStatistic::start() {
-    if (currentlyRunning) {
-        throw std::runtime_error("Timer::start() ExecutionStatistic is already running.");
-    }
-    currentlyRunning = true;
-    startTime = high_resolution_clock::now();
+std::chrono::high_resolution_clock::time_point ExecutionStatistic::start() {
+    return high_resolution_clock::now();
 }
 
-long ExecutionStatistic::stop(size_t traceLength) {
+long ExecutionStatistic::stop(std::chrono::high_resolution_clock::time_point startTime, size_t traceLength) {
     const auto time(high_resolution_clock::now());
-
-    if (not currentlyRunning) {
-        throw std::runtime_error("Timer::stop() ExecutionStatistic did not even start.");
-    }
-    currentlyRunning = false;
 
     const auto diff = duration_cast<nanoseconds>(time - startTime).count();
 
