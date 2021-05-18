@@ -7,9 +7,7 @@ ExecutionStatistic::ExecutionStatistic() = default;
 
 ExecutionStatistic::~ExecutionStatistic() = default;
 
-std::chrono::high_resolution_clock::time_point ExecutionStatistic::start() {
-    return high_resolution_clock::now();
-}
+std::chrono::high_resolution_clock::time_point ExecutionStatistic::start() { return high_resolution_clock::now(); }
 
 long ExecutionStatistic::stop(std::chrono::high_resolution_clock::time_point startTime, size_t traceLength) {
     const auto time(high_resolution_clock::now());
