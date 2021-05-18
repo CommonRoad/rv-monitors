@@ -9,6 +9,7 @@
 #include "monitors/rv_algorithms/btt_fsm/btt_fsm.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
 #include "monitors/trace/trace.h"
+#include "monitors/utils/execution_statistic.h"
 #include <iostream>
 #include <vector>
 
@@ -36,6 +37,10 @@ class RVMonitor {
     std::unique_ptr<MtFsm> mtFSM;
     std::unique_ptr<BttFsm> bttFSM;
     Formula formula;
+    ExecutionStatistic executionStatistic;
+
+  public:
+    const ExecutionStatistic &getExecutionStatistic() const;
 };
 
 /**

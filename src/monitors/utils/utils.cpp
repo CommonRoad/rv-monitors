@@ -3,6 +3,7 @@
 #include <queue>
 #include <set>
 
+#include "execution_statistic.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/binary/binary.h"
 #include "monitors/expression_tree/nary/bool/and.h"
@@ -13,7 +14,6 @@
 #include "monitors/expression_tree/unary/unary.h"
 #include "monitors/parser/parser.h"
 #include "monitors/trace/trace.h"
-#include "timer.h"
 #include "utils.h"
 
 bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr,
