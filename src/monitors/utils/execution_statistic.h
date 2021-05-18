@@ -1,6 +1,6 @@
 #pragma once
-#include <chrono>
 #include <cfloat>
+#include <chrono>
 /**
  * Taken from https://github.com/AutoPas/AutoPas/blob/ecbf799e8c1f828eb51e3507b76275afe98a8cb2/src/autopas/utils/Timer.h
  */

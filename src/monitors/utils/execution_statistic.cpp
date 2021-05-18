@@ -28,10 +28,10 @@ long ExecutionStatistic::stop(size_t traceLength) {
     totalTime += diff;
     numExecutions++;
     totalTraceLength += traceLength;
-    if(diff/traceLength < minTime)
-        minTime = diff/traceLength;
-    if(diff/traceLength > maxTime)
-        maxTime = diff/traceLength;
+    if (diff / traceLength < minTime)
+        minTime = diff / traceLength;
+    if (diff / traceLength > maxTime)
+        maxTime = diff / traceLength;
 
     return diff;
 }
