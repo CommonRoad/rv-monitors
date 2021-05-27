@@ -50,6 +50,7 @@ build-test:
   artifacts:
     paths:
       - ./rvmonitors_test
+      - ./librvmonitors.so
     expire_in: 20 minutes
 
 build-run-coverage:
