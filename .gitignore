@@ -5,3 +5,4 @@ build/
 rvmonitors_test
 rvmonitors_test_coverage
 *.a
+*.so
