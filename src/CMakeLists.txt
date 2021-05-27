@@ -73,7 +73,7 @@ set(RV_MONITOR_SRC_FILES
 
 
 # create library of this project
-add_library(${LIBRARY_NAME} STATIC ${RV_MONITOR_SRC_FILES})
+add_library(${LIBRARY_NAME} SHARED ${RV_MONITOR_SRC_FILES})
 
 target_include_directories(${LIBRARY_NAME}
         PUBLIC
