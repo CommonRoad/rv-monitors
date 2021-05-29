@@ -29,13 +29,13 @@ class ExecutionStatistic {
      * Adds the given amount of nanoseconds to the total time.
      * @param nanoseconds
      */
-    void addTime(long nanoseconds);
+    void addTime(size_t nanoseconds);
 
     /**
      * Get total accumulated time.
      * @return Total time in nano seconds.
      */
-    [[nodiscard]] long getTotalTime() const { return totalTime; }
+    [[nodiscard]] size_t getTotalTime() const { return totalTime; }
 
     /**
      * Get maximum computation time averaged by trace length.
@@ -53,19 +53,19 @@ class ExecutionStatistic {
      * Total number of executions.
      * @return Total number of executions.
      */
-    [[nodiscard]] long getNumExecutions() const;
+    [[nodiscard]] size_t getNumExecutions() const;
 
     /**
      * Get total accumulated trace length.
      * @return Total trace length.
      */
-    [[nodiscard]] double getTotalTraceLength() const;
+    [[nodiscard]] size_t getTotalTraceLength() const;
 
   private:
     /**
      * Accumulated total time.
      */
-    long totalTime{0};
+    size_t totalTime{0};
 
     /**
      * Max. computation time (averaged by trace length).
@@ -80,10 +80,10 @@ class ExecutionStatistic {
     /**
      * Total number of executions.
      */
-    long numExecutions{0};
+    size_t numExecutions{0};
 
     /**
      * Total trace lengths.
      */
-    long totalTraceLength{0};
+    size_t totalTraceLength{0};
 };
