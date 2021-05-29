@@ -25,12 +25,12 @@ long ExecutionStatistic::stop(std::chrono::high_resolution_clock::time_point sta
     return diff;
 }
 
-void ExecutionStatistic::addTime(long nanoseconds) { totalTime += nanoseconds; }
+void ExecutionStatistic::addTime(size_t nanoseconds) { totalTime += nanoseconds; }
 
 double ExecutionStatistic::getMaxTime() const { return maxTime; }
 
 double ExecutionStatistic::getMinTime() const { return minTime; }
 
-long ExecutionStatistic::getNumExecutions() const { return numExecutions; }
+size_t ExecutionStatistic::getNumExecutions() const { return numExecutions; }
 
-double ExecutionStatistic::getTotalTraceLength() const { return totalTraceLength; }
+size_t ExecutionStatistic::getTotalTraceLength() const { return totalTraceLength; }
