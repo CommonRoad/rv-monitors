@@ -6,6 +6,10 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+option(BUILD_DOXYGEN "Build doxygen" OFF)
+option(BUILD_TESTS "Build tests" ON)
+option(BUILD_PYBIND "Build python interface" OFF)
+
 # Appends dictionary where other cmake files are stored which install required Software
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/)
 
@@ -20,7 +24,9 @@ include(monitors_sanitizers)
 # get antlr4 as external project
 include(monitors_antlr4cpp)
 # Doxygen
-include(doxygen)
+if(BUILD_DOXYGEN)
+    include(doxygen)
+endif(BUILD_DOXYGEN)
 
 # Activate code coverage
 if (CODE_COVERAGE)
