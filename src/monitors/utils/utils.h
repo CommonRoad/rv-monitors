@@ -37,7 +37,7 @@ namespace Utils {
  * @param timeSteps time steps for which predicates should be evaluated
  * @return
  */
-[[nodiscard]] Trace createLazyTrace(const std::map<std::string, std::function<bool(int)>> &atomicsAndFunctions,
+[[nodiscard]] Trace createLazyTrace(const std::map<std::string, std::function<bool(size_t)>> &atomicsAndFunctions,
                                     const std::vector<size_t> &timeSteps);
 
 /**
