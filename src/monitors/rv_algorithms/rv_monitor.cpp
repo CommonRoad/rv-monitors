@@ -27,42 +27,35 @@ bool RVMonitor::verify(Trace trace) {
                                  "or EVENTCONSUMING-LTL, EVENTCONSUMING-MTL.)");
     }
     auto predicates = Utils::getAtomics(formula);
-
     bool verdict = false;
-
+    std::chrono::high_resolution_clock::time_point startTime;
+    if (performanceMeasurement)
+        startTime = ExecutionStatistic::start();
     switch (algorithm) {
     case mt_fsm: {
-        auto startTime{ExecutionStatistic::start()};
         verdict = MT_FSMEvaluation::evaluateMT_FSM(*mtFSM, trace, past);
-        executionStatistic.stop(startTime, trace.getLength());
         break;
     }
     case btt_fsm: {
-        auto startTime{ExecutionStatistic::start()};
         verdict = BTT_FSMEvaluation::evaluateBTT_FSM(*bttFSM, trace, past);
-        executionStatistic.stop(startTime, trace.getLength());
         break;
     }
     case dynamic: {
-        auto startTime{ExecutionStatistic::start()};
         verdict = Dynamic::dynamic(formula, trace, past);
-        executionStatistic.stop(startTime, trace.getLength());
         break;
     }
     case eventconsuming_ltl: {
         auto formulaCopy = formula.deepCopy();
-        auto startTime{ExecutionStatistic::start()};
         verdict = EventConsuming::eventConsuming(formulaCopy, trace, past);
-        executionStatistic.stop(startTime, trace.getLength());
         break;
     }
     case eventconsuming_mtl:
         auto formulaCopy = formula.deepCopy();
-        auto startTime{ExecutionStatistic::start()};
         verdict = MTLEventConsuming::eventConsuming(formulaCopy, trace);
-        executionStatistic.stop(startTime, trace.getLength());
         break;
     }
+    if (performanceMeasurement)
+        executionStatistic.stop(startTime, trace.getLength());
     return verdict;
 }
 /**
@@ -110,8 +103,8 @@ AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
     }
 }
 
-RVMonitor::RVMonitor(AlgorithmType algorithm, bool consoleOutput, const Formula &formula, bool past)
-    : past(past), algorithm(algorithm), consoleOutput(consoleOutput), formula(formula) {
+RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement)
+    : past(past), algorithm(algorithm), formula(formula), performanceMeasurement(measurement) {
 
     if (algorithm == mt_fsm)
         mtFSM = std::make_unique<MtFsm>(MT_FSMCreation::formulaToMT_FSM(formula, past));
