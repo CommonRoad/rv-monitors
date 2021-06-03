@@ -18,7 +18,7 @@ enum AlgorithmType { dynamic, eventconsuming_ltl, mt_fsm, btt_fsm, eventconsumin
 class RVMonitor {
   private:
   public:
-    RVMonitor(AlgorithmType algorithm, bool consoleOutput, const Formula &formula, bool past);
+    RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement);
 
     /**
      * Executes algorithm on a given trace and with given parameters.
@@ -33,11 +33,11 @@ class RVMonitor {
   private:
     bool past{false};
     AlgorithmType algorithm{eventconsuming_ltl};
-    bool consoleOutput{true};
     std::unique_ptr<MtFsm> mtFSM;
     std::unique_ptr<BttFsm> bttFSM;
     Formula formula;
     ExecutionStatistic executionStatistic;
+    bool performanceMeasurement;
 
   public:
     const ExecutionStatistic &getExecutionStatistic() const;
