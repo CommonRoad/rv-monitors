@@ -8,7 +8,7 @@
 #include "monitors/expression_tree/expression.h"
 #include <vector>
 
-class Predicate : public Expression{
+class Predicate : public Expression {
   public:
     Predicate(std::string symbol, std::vector<std::string> params);
 
@@ -21,7 +21,7 @@ class Predicate : public Expression{
   private:
     std::string name;
     std::vector<std::string> parameters;
-   // std::function<bool(size_t)> implementation;
+    // std::function<bool(size_t)> implementation;
 };
 
 #endif // RV_MONITORS_SRC_MONITORS_EXPRESSION_TREE_ATOMIC_PREDICATE_H_

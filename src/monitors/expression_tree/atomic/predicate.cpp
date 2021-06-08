@@ -15,4 +15,3 @@ std::shared_ptr<Expression> Predicate::clone() { return std::make_shared<Predica
 std::shared_ptr<Expression> Predicate::accept(ExpressionVisitor &visitor, Trace &trace, int index) {
     return visitor.visitPredicate(*this, trace, index);
 }
-

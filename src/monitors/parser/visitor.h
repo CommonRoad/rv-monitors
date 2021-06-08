@@ -2,6 +2,7 @@
 
 #include "monitors/expression_tree/atomic/atomic.h"
 #include "monitors/expression_tree/atomic/constant.h"
+#include "monitors/expression_tree/atomic/predicate.h"
 #include "monitors/expression_tree/binary/bool/equivalence.h"
 #include "monitors/expression_tree/binary/bool/implication.h"
 #include "monitors/expression_tree/binary/temporal/ltlf/release.h"
@@ -20,7 +21,6 @@
 #include "monitors/expression_tree/unary/temporal/ptlf/once.h"
 #include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
 #include "monitors/parser/gen/FormulaBaseVisitor.h"
-#include "monitors/expression_tree/atomic/predicate.h"
 
 /**
  * Visitor for parsing.
