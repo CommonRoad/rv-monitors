@@ -5,7 +5,7 @@
 /**
  * Applies rules to transform formula into conjunction of exclusive disjunctions.
  */
-class rewrite_visitor : public expression_visitor {
+class RewriteVisitor : public ExpressionVisitor {
   public:
     void rewrite(Formula &formula);
 
@@ -54,4 +54,6 @@ class rewrite_visitor : public expression_visitor {
 
     [[nodiscard]] std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &op, Trace &trace,
                                                                     int index) override;
+
+    [[nodiscard]] std::shared_ptr<Expression> visitPredicate(Predicate &op, Trace &trace, int index) override;
 };

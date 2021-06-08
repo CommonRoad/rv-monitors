@@ -19,6 +19,7 @@ and_expr
  : release_until_expr (op=AND release_until_expr)*  #And
  ;
 
+
 release_until_expr
 : <assoc=right> left=unary op=RELEASE right=unary                      #Release
 | <assoc=right> left=unary op=UNTIL right=unary                        #Until
@@ -46,6 +47,7 @@ unary
   | op=HISTORICALLY iv=interval right=atom       #HistoricallyInterval
   | op=NOT right=atom                            #Not
   | op=NOT right=expr                            #NotExpr
+  | op=ATOMIC right='('ATOMIC (',' ATOMIC)*')'   #Predicate
   | atom                                         #AtomExpr
  ;
 

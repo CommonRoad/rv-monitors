@@ -20,6 +20,7 @@
 #include "monitors/expression_tree/unary/temporal/ptlf/once.h"
 #include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
 #include "monitors/parser/gen/FormulaBaseVisitor.h"
+#include "monitors/expression_tree/atomic/predicate.h"
 
 /**
  * Visitor for parsing.
@@ -39,6 +40,9 @@ class Visitor : public FormulaBaseVisitor {
         // Constant
         if (expr.is<std::shared_ptr<Constant>>()) {
             return expr.as<std::shared_ptr<Constant>>();
+        }
+        if (expr.is<std::shared_ptr<Predicate>>()) {
+            return expr.as<std::shared_ptr<Predicate>>();
         }
         // Not
         if (expr.is<std::shared_ptr<Not>>()) {
@@ -155,7 +159,7 @@ class Visitor : public FormulaBaseVisitor {
      */
     antlrcpp::Any visitXor(FormulaParser::XorContext *ctx) override {
         // Not an xor -> continue with children
-        if (!ctx->op || ctx->op->getText() != "xor" && ctx->op->getText() != "^") {
+        if ((ctx->op == nullptr) || ctx->op->getText() != "xor" && ctx->op->getText() != "^") {
             return visitChildren(ctx);
         }
         Xor::SetType_T xorSet;
@@ -177,7 +181,7 @@ class Visitor : public FormulaBaseVisitor {
      * @return Or if actual orExpr visited, result of visitChildren() otherwise.
      */
     antlrcpp::Any visitOr(FormulaParser::OrContext *ctx) override {
-        if (!ctx->op || ctx->op->getText() != "or" && ctx->op->getText() != "|") {
+        if ((ctx->op == nullptr) || ctx->op->getText() != "or" && ctx->op->getText() != "|") {
             return visitChildren(ctx);
         }
         Or::SetType_T orSet;
@@ -198,7 +202,7 @@ class Visitor : public FormulaBaseVisitor {
      * @return And if actual orExpr visited, result of visitChildren() otherwise.
      */
     antlrcpp::Any visitAnd(FormulaParser::AndContext *ctx) override {
-        if (!ctx->op || ctx->op->getText() != "and" && ctx->op->getText() != "&") {
+        if ((ctx->op == nullptr) || ctx->op->getText() != "and" && ctx->op->getText() != "&") {
             return visitChildren(ctx);
         }
         And::SetType_T andSet;
@@ -505,4 +509,16 @@ class Visitor : public FormulaBaseVisitor {
      * @return Atomic.
      */
     antlrcpp::Any visitDigit(FormulaParser::DigitContext *ctx) override { return std::stoi(ctx->getText()); }
+
+    antlrcpp::Any visitPredicate(FormulaParser::PredicateContext *ctx) override {
+        const std::vector<std::string> invalidLiterals{"(", ")", ","};
+        std::vector<std::string> params;
+        for (auto &child : ctx->children) {
+            if (std::any_of(invalidLiterals.begin(), invalidLiterals.end(),
+                            [child](const std::string &lit) { return lit == child->getText(); }))
+                continue;
+            params.push_back(child->getText());
+        }
+        return std::make_shared<Predicate>(Predicate(ctx->getText(), params));
+    }
 };
