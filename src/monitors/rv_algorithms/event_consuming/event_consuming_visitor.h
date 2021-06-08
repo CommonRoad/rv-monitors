@@ -180,5 +180,4 @@ class EventConsumingVisitor : public ExpressionVisitor {
     std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &op, Trace &trace, int index) override;
 
     std::shared_ptr<Expression> visitPredicate(Predicate &op, Trace &trace, int index) override;
-
 };
