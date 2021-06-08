@@ -60,7 +60,7 @@ class Expression {
      * @param event Event.
      * @return Result of visit function of respective expression.
      */
-    virtual std::shared_ptr<Expression> accept(expression_visitor &, Trace &, int index) = 0;
+    virtual std::shared_ptr<Expression> accept(ExpressionVisitor &, Trace &, int index) = 0;
 
     /**
      * Checks if expression is a specific Constant.

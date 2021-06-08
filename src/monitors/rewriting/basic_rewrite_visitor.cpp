@@ -1,6 +1,7 @@
 #include "basic_rewrite_visitor.h"
 #include "monitors/expression_tree/atomic/atomic.h"
 #include "monitors/expression_tree/atomic/constant.h"
+#include "monitors/expression_tree/atomic/predicate.h"
 #include "monitors/expression_tree/binary/bool/equivalence.h"
 #include "monitors/expression_tree/binary/bool/implication.h"
 #include "monitors/expression_tree/binary/temporal/ltlf/release.h"
@@ -402,4 +403,7 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitEquivalence(Equivalence &o
     auto newRight = std::make_shared<Implication>(op.getRight(), op.getLeft());
     And::SetType_T andSet{newLeft, newRight};
     return std::make_shared<And>(andSet);
+}
+std::shared_ptr<Expression> BasicRewriteVisitor::visitPredicate(Predicate &op, Trace &trace, int index) {
+    return std::make_shared<Predicate>(op);
 }

@@ -5,7 +5,7 @@
 #include "monitors/expression_tree/nary/nary_interface.h"
 #include "monitors/expression_tree/unary/unary.h"
 
-void expression_visitor::visitExpression(Expression &expr, Trace &trace, int index) {
+void ExpressionVisitor::visitExpression(Expression &expr, Trace &trace, int index) {
     // Unary
     if (auto *unary = dynamic_cast<Unary *>(&expr)) {
         unary->setLeft(unary->getLeft()->accept(*this, trace, index));

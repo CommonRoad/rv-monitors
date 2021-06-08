@@ -6,7 +6,7 @@
 /**
  * Visitor applying the event consuming rules to a formula and propagating the EventOperator down the expression tree.
  */
-class MTLDerivingFutureVisitor : public expression_visitor {
+class MTLDerivingFutureVisitor : public ExpressionVisitor {
 
   public:
     /**

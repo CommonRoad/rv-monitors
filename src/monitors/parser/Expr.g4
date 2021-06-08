@@ -20,6 +20,7 @@ expr:
 	| <assoc=right> left=expr op=EQ right=expr            #Equivalence
     | '(' content=expr+ ')'                               #Brackets
     ;
+
 BOOL		: TRUE|FALSE;
 NOT         : ('!'|'not');
 GLOBALLY	: 'G';

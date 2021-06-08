@@ -14,8 +14,8 @@ Formula EventConsuming::eventConsumingFuture(const Formula &formula, Trace &trac
     }
     // Copy formula before working on it
     auto formulaCopy = formula.deepCopy();
-    rewrite_visitor rw;
-    event_consuming_visitor ec;
+    RewriteVisitor rw;
+    EventConsumingVisitor ec;
 
     // Rewrite
     rw.rewrite(formulaCopy);
@@ -42,8 +42,8 @@ Formula EventConsuming::eventConsumingPast(const Formula &formula, Trace &trace)
     }
     // Copy formula before working on it
     auto formulaCopy = formula.deepCopy();
-    rewrite_visitor rw;
-    event_consuming_visitor ec;
+    RewriteVisitor rw;
+    EventConsumingVisitor ec;
 
     // Update terminal event
     trace.setTerminalEvent(false);
