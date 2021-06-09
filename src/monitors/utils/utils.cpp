@@ -140,18 +140,18 @@ std::set<std::string> Utils::getPredicates(const std::shared_ptr<Expression> &ex
         }
     }
 
-        // Binary
+    // Binary
     else if (auto binary = std::dynamic_pointer_cast<Binary>(expr)) {
         predicates = getPredicates(binary->getLeft(), predicates);
         predicates = getPredicates(binary->getRight(), predicates);
     }
 
-        // Unary
+    // Unary
     else if (auto unary = std::dynamic_pointer_cast<Unary>(expr)) {
         predicates = getPredicates(unary->getLeft(), predicates);
     }
 
-        // Atomic
+    // Atomic
     else if (auto predicate = std::dynamic_pointer_cast<Predicate>(expr)) {
         predicates.emplace(expr->to_string());
     }
