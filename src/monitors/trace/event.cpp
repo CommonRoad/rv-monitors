@@ -8,6 +8,8 @@ std::map<std::string, lazy_bool> &Event::getEventMapRef() { return this->eventMa
 
 bool Event::getValue(const Atomic &atomic) { return getValue(atomic.to_string()); }
 
+bool Event::getValue(const Predicate &predicate) { return getValue(predicate.to_string()); }
+
 bool Event::isTerminal() const { return terminal; }
 
 void Event::setEventMap(const std::map<std::string, lazy_bool> &newEventMap) { Event::eventMap = newEventMap; }
