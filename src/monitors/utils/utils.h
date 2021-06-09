@@ -92,6 +92,19 @@ namespace Utils {
                                                   std::set<std::string> predicates);
 
 /**
+ * Creates a string set of all predicates in a formula. Wrapper for getPredicates().
+ *
+ * @param formula Formula.
+ * @return string set of all predicates in @param formula.
+ */
+[[nodiscard]] std::map<std::string, std::tuple<std::string, std::vector<std::string>>>
+getPredicatesAndParameters(const Formula &formula);
+
+std::map<std::string, std::tuple<std::string, std::vector<std::string>>> getPredicatesAndParameters(
+    const std::shared_ptr<Expression> &expr,
+    std::map<std::string, std::tuple<std::string, std::vector<std::string>>> predicatesWithParameters);
+
+/**
  * Computes the number of predicates is @param expr.
  *
  * @param expr Expression.

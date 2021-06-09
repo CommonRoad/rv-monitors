@@ -5,8 +5,8 @@
 #include "predicate.h"
 
 #include <utility>
-Predicate::Predicate(std::string symbol, std::vector<std::string> params)
-    : Expression(std::move(symbol)), parameters(std::move(params)) {}
+Predicate::Predicate(std::string symbol, std::string na, std::vector<std::string> params)
+    : Expression(std::move(symbol)), name(std::move(na)), parameters(std::move(params)) {}
 
 std::string Predicate::to_string() const { return this->getSymbol(); }
 
@@ -15,3 +15,6 @@ std::shared_ptr<Expression> Predicate::clone() { return std::make_shared<Predica
 std::shared_ptr<Expression> Predicate::accept(ExpressionVisitor &visitor, Trace &trace, int index) {
     return visitor.visitPredicate(*this, trace, index);
 }
+const std::string &Predicate::getName() const { return name; }
+
+const std::vector<std::string> &Predicate::getParameters() const { return parameters; }
