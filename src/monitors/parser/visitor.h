@@ -513,7 +513,7 @@ class Visitor : public FormulaBaseVisitor {
     antlrcpp::Any visitPredicate(FormulaParser::PredicateContext *ctx) override {
         const std::vector<std::string> invalidLiterals{"(", ")", ","};
         std::vector<std::string> params;
-        for(size_t idx{1}; idx < ctx->children.size(); ++idx){
+        for (size_t idx{1}; idx < ctx->children.size(); ++idx) {
             auto child{ctx->children.at(idx)->getText()};
             if (std::any_of(invalidLiterals.begin(), invalidLiterals.end(),
                             [child](const std::string &lit) { return lit == child; }))
