@@ -41,7 +41,7 @@ namespace Utils {
                                     const std::vector<size_t> &timeSteps);
 
 /**
- * Creates a string set of all predicates in a formula. Wrapper for getAtomics().
+ * Creates a string set of all atomics in a formula. Wrapper for getAtomics().
  *
  * @param formula Formula.
  * @return string set of all predicates in @param formula.
@@ -49,12 +49,37 @@ namespace Utils {
 [[nodiscard]] std::set<std::string> getAtomics(const Formula &formula);
 
 /**
- * Creates a string set of all predicates in an expression. Wrapper for getAtomics().
+ * Creates a string set of all predicates in a formula. Wrapper for getPredicates().
+ *
+ * @param formula Formula.
+ * @return string set of all predicates in @param formula.
+ */
+[[nodiscard]] std::set<std::string> getPredicates(const Formula &formula);
+
+/**
+ * Creates a string set of all atomics in an expression. Wrapper for getAtomics().
  *
  * @param expr Expression.
  * @return string set of all predicates in @param expr.
  */
 [[nodiscard]] std::set<std::string> getAtomics(const std::shared_ptr<Expression> &expr);
+
+/**
+ * Creates a string set of all predicates in an expression. Wrapper for getPredicates().
+ *
+ * @param expr Expression.
+ * @return string set of all predicates in @param expr.
+ */
+[[nodiscard]] std::set<std::string> getPredicates(const std::shared_ptr<Expression> &expr);
+
+/**
+ * Creates a string set of all atomics in an expression.
+ *
+ * @param expr Expression.
+ * @param atomics Set of all atomics that is built recursively.
+ * @return string set of all atomics in @param expr.
+ */
+[[nodiscard]] std::set<std::string> getAtomics(const std::shared_ptr<Expression> &expr, std::set<std::string> atomics);
 
 /**
  * Creates a string set of all predicates in an expression.
@@ -63,7 +88,8 @@ namespace Utils {
  * @param atomics Set of all predicates that is built recursively.
  * @return string set of all predicates in @param expr.
  */
-[[nodiscard]] std::set<std::string> getAtomics(const std::shared_ptr<Expression> &expr, std::set<std::string> atomics);
+[[nodiscard]] std::set<std::string> getPredicates(const std::shared_ptr<Expression> &expr,
+                                                  std::set<std::string> predicates);
 
 /**
  * Computes the number of predicates is @param expr.

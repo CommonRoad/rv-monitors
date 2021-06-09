@@ -72,7 +72,7 @@ bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr,
 Trace Utils::createTrace(const std::set<std::string> &atomics, std::vector<std::vector<std::string>> trueAtomics) {
     std::vector<Event> finalTrace;
     std::map<std::string, lazy_bool> event;
-    int timeStep{0};
+    size_t timeStep{0};
     for (auto const &trueAtomic : trueAtomics) {
         for (auto const &atomic : atomics) {
             // Check if atomic exists in vector at current position
@@ -88,6 +88,9 @@ Trace Utils::createTrace(const std::set<std::string> &atomics, std::vector<std::
 
 // Wrapper
 std::set<std::string> Utils::getAtomics(const Formula &formula) { return getAtomics(formula.getExpr(), {}); }
+
+// Wrapper
+std::set<std::string> Utils::getPredicates(const Formula &formula) { return getPredicates(formula.getExpr(), {}); }
 
 // Wrapper
 std::set<std::string> Utils::getAtomics(const std::shared_ptr<Expression> &expr) { return getAtomics(expr, {}); }
@@ -123,6 +126,39 @@ std::set<std::string> Utils::getAtomics(const std::shared_ptr<Expression> &expr,
     // Don't count constants
 
     return atomics;
+}
+
+std::set<std::string> Utils::getPredicates(const std::shared_ptr<Expression> &expr, std::set<std::string> predicates) {
+    if (!expr) {
+        return predicates;
+    }
+
+    // Nary
+    if (auto nary = std::dynamic_pointer_cast<NaryInterface>(expr)) {
+        for (const auto &itr : *nary) {
+            predicates = getPredicates(itr, predicates);
+        }
+    }
+
+        // Binary
+    else if (auto binary = std::dynamic_pointer_cast<Binary>(expr)) {
+        predicates = getPredicates(binary->getLeft(), predicates);
+        predicates = getPredicates(binary->getRight(), predicates);
+    }
+
+        // Unary
+    else if (auto unary = std::dynamic_pointer_cast<Unary>(expr)) {
+        predicates = getPredicates(unary->getLeft(), predicates);
+    }
+
+        // Atomic
+    else if (auto predicate = std::dynamic_pointer_cast<Predicate>(expr)) {
+        predicates.emplace(expr->to_string());
+    }
+
+    // Don't count constants
+
+    return predicates;
 }
 
 int Utils::getNumberOfAtomics(const std::shared_ptr<Expression> &expr) { return getAtomics(expr, {}).size(); }
