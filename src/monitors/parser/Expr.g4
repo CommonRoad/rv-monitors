@@ -4,6 +4,7 @@ formula: expr;
 expr:
     op=NOT right=expr                                     #Not
     | atomic=ATOMIC                                       #Atomic
+    | right=ATOMIC'('ATOMIC(',' ATOMIC)*')'               #Predicate
     | boolean=BOOL                                        #Boolean
     | <assoc=right> op=NEXT_STRONG right=expr             #NextStrong
     | <assoc=right> op=NEXT_WEAK right=expr               #NextWeak

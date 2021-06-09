@@ -93,6 +93,12 @@ std::set<std::string> Utils::getAtomics(const Formula &formula) { return getAtom
 std::set<std::string> Utils::getPredicates(const Formula &formula) { return getPredicates(formula.getExpr(), {}); }
 
 // Wrapper
+std::map<std::string, std::tuple<std::string, std::vector<std::string>>>
+Utils::getPredicatesAndParameters(const Formula &formula) {
+    return getPredicatesAndParameters(formula.getExpr(), {});
+}
+
+// Wrapper
 std::set<std::string> Utils::getAtomics(const std::shared_ptr<Expression> &expr) { return getAtomics(expr, {}); }
 
 std::set<std::string> Utils::getAtomics(const std::shared_ptr<Expression> &expr, std::set<std::string> atomics) {
@@ -120,7 +126,7 @@ std::set<std::string> Utils::getAtomics(const std::shared_ptr<Expression> &expr,
 
     // Atomic
     else if (auto atomic = std::dynamic_pointer_cast<Atomic>(expr)) {
-        atomics.emplace(expr->to_string());
+        atomics.emplace(atomic->to_string());
     }
 
     // Don't count constants
@@ -151,14 +157,46 @@ std::set<std::string> Utils::getPredicates(const std::shared_ptr<Expression> &ex
         predicates = getPredicates(unary->getLeft(), predicates);
     }
 
-    // Atomic
+    // Predicate
     else if (auto predicate = std::dynamic_pointer_cast<Predicate>(expr)) {
-        predicates.emplace(expr->to_string());
+        predicates.emplace(predicate->to_string());
     }
 
-    // Don't count constants
+    // Don't count constants and atomics
 
     return predicates;
+}
+
+std::map<std::string, std::tuple<std::string, std::vector<std::string>>> Utils::getPredicatesAndParameters(
+    const std::shared_ptr<Expression> &expr,
+    std::map<std::string, std::tuple<std::string, std::vector<std::string>>> predicatesWithParameters) {
+    if (!expr) {
+        return predicatesWithParameters;
+    }
+
+    // Nary
+    if (auto nary = std::dynamic_pointer_cast<NaryInterface>(expr)) {
+        for (const auto &itr : *nary) {
+            predicatesWithParameters = getPredicatesAndParameters(itr, predicatesWithParameters);
+        }
+    }
+    // Binary
+    else if (auto binary = std::dynamic_pointer_cast<Binary>(expr)) {
+        predicatesWithParameters = getPredicatesAndParameters(binary->getLeft(), predicatesWithParameters);
+        predicatesWithParameters = getPredicatesAndParameters(binary->getRight(), predicatesWithParameters);
+    }
+    // Unary
+    else if (auto unary = std::dynamic_pointer_cast<Unary>(expr)) {
+        predicatesWithParameters = getPredicatesAndParameters(unary->getLeft(), predicatesWithParameters);
+    }
+    // Predicate
+    else if (auto predicate = std::dynamic_pointer_cast<Predicate>(expr)) {
+        predicatesWithParameters.insert({predicate->to_string(), {predicate->getName(), predicate->getParameters()}});
+    }
+
+    // Don't count constants and atomics
+
+    return predicatesWithParameters;
 }
 
 int Utils::getNumberOfAtomics(const std::shared_ptr<Expression> &expr) { return getAtomics(expr, {}).size(); }
