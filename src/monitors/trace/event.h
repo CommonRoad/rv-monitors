@@ -1,6 +1,7 @@
 #pragma once
 
 #include "monitors/expression_tree/atomic/atomic.h"
+#include "monitors/expression_tree/atomic/predicate.h"
 #include "monitors/utils/lazy_bool.h"
 #include <map>
 #include <sstream>
@@ -48,6 +49,13 @@ class Event {
      * @return Truth value of the atomic.
      */
     [[nodiscard]] bool getValue(const Atomic &atomic);
+
+    /**
+     * Getter for the truth value of an predicate.
+     * @param predicate
+     * @return Truth value of the predicate.
+     */
+    [[nodiscard]] bool getValue(const Predicate &predicate);
 
     /**
      *

@@ -140,8 +140,13 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitEventOperator(EventOpera
     // Apply eventMap to atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(op.getLeft())) {
         ret = std::make_shared<Constant>(trace.getEvent(index).getValue(*atomic));
+        // Constant
     } else if (auto constant = std::dynamic_pointer_cast<Constant>(op.getLeft())) {
         ret = std::make_shared<Constant>(constant->getValue());
+    }
+    // predicate
+    else if (auto predicate = std::dynamic_pointer_cast<Predicate>(op.getLeft())) {
+        ret = std::make_shared<Constant>(trace.getEvent(index).getValue(*predicate));
     }
     // And
     else if (auto andExpr = std::dynamic_pointer_cast<And>(op.getLeft())) {
