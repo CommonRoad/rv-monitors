@@ -24,12 +24,12 @@ std::string MtFsm::to_string() const {
 
 const std::set<std::string> &MtFsm::getAtomics() const { return atomics; }
 
-void MtFsm::setAtomics(const std::set<std::string> &atomics) { MtFsm::atomics = atomics; }
+void MtFsm::setAtomics(const std::set<std::string> &at) { MtFsm::atomics = at; }
 
 const Formula &MtFsm::getFormula() const { return formula; }
 
-void MtFsm::setFormula(const Formula &formula) { MtFsm::formula = formula; }
+void MtFsm::setFormula(const Formula &fm) { MtFsm::formula = fm; }
 
 const std::vector<StateMT_FSM> &MtFsm::getStates() const { return states; }
 
-void MtFsm::setStates(const std::vector<StateMT_FSM> &states) { MtFsm::states = states; }
+void MtFsm::setStates(const std::vector<StateMT_FSM> &st) { MtFsm::states = st; }
