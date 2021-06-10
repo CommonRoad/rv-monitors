@@ -22,6 +22,10 @@ bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr,
     if (auto atomicExpr = std::dynamic_pointer_cast<Atomic>(expr)) {
         return eventMap.at(atomicExpr->to_string());
     }
+    // Predicate
+    if (auto predicateExpr = std::dynamic_pointer_cast<Predicate>(expr)) {
+        return eventMap.at(predicateExpr->to_string());
+    }
     // Constant
     if (auto constantExpr = std::dynamic_pointer_cast<Constant>(expr)) {
         return constantExpr->getValue();
@@ -33,7 +37,7 @@ bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr,
     // And
     if (auto andExpr = std::dynamic_pointer_cast<And>(expr)) {
         auto res = true;
-        for (auto &childExpr : *andExpr) {
+        for (const auto &childExpr : *andExpr) {
             res and_eq evaluateBooleanExpression(childExpr, eventMap);
             // Short-circuit: if anything in the And is false the whole expression must be false.
             if (not res) {
@@ -46,7 +50,7 @@ bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr,
     // Or
     if (auto orExpr = std::dynamic_pointer_cast<Or>(expr)) {
         auto res = false;
-        for (auto &childExpr : *orExpr) {
+        for (const auto &childExpr : *orExpr) {
             res or_eq evaluateBooleanExpression(childExpr, eventMap);
             // Short-circuit: if anything in the Or is true the whole expression must be true.
             if (res) {
@@ -167,6 +171,20 @@ std::set<std::string> Utils::getPredicates(const std::shared_ptr<Expression> &ex
     return predicates;
 }
 
+std::set<std::string> Utils::getAtomicsAndPredicates(const std::shared_ptr<Expression> &expr, const std::set<std::string>& atomics){
+    auto collectedAtomics{getAtomics(expr, atomics)};
+    auto predicates{getPredicates(expr, atomics)};
+    std::set<std::string> combinedSet;
+    std::set_union(collectedAtomics.begin(), collectedAtomics.end(),
+                          predicates.begin(), predicates.end(),
+                          std::inserter(combinedSet, combinedSet.begin()));
+    return combinedSet;
+}
+
+std::set<std::string> Utils::getAtomicsAndPredicates(const std::shared_ptr<Expression> &expr){
+    return getAtomicsAndPredicates(expr, {});
+}
+
 std::map<std::string, std::tuple<std::string, std::vector<std::string>>> Utils::getPredicatesAndParameters(
     const std::shared_ptr<Expression> &expr,
     std::map<std::string, std::tuple<std::string, std::vector<std::string>>> predicatesWithParameters) {
@@ -199,7 +217,9 @@ std::map<std::string, std::tuple<std::string, std::vector<std::string>>> Utils::
     return predicatesWithParameters;
 }
 
-int Utils::getNumberOfAtomics(const std::shared_ptr<Expression> &expr) { return getAtomics(expr, {}).size(); }
+size_t Utils::getNumberOfAtomics(const std::shared_ptr<Expression> &expr) { return getAtomics(expr, {}).size(); }
+
+size_t Utils::getNumberOfAtomicsAndPredicates(const std::shared_ptr<Expression> &expr) { return getAtomics(expr, {}).size() + getPredicates(expr, {}).size(); }
 
 Trace Utils::boolVectorToTrace(const std::set<std::string> &atomics, const std::vector<bool> &vector, bool terminal) {
     Event event = boolVectorToEvent(atomics, vector, terminal);

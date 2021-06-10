@@ -11,7 +11,7 @@
 BttFsm BTT_FSMCreation::formulaToBTT_FSM(const Formula &formula, bool past) {
     // Only a constant
     if (auto constant = std::dynamic_pointer_cast<Constant>(formula.getExpr())) {
-        StateBttFsm singleState(constant->getValue(), {}, {});
+        StateBttFsm singleState(static_cast<size_t>(constant->getValue()), {}, {});
         return BttFsm(formula, {singleState});
     }
     // Get corresponding MT-FSM
@@ -26,7 +26,7 @@ BttFsm BTT_FSMCreation::formulaToBTT_FSM(const Formula &formula, bool past) {
     for (const auto &mtFsmState : mtFsmStates) {
         size_t id = mtFsmState.getId();
         // States false (0) and true (1)
-        if (!id or id == 1) {
+        if ((id == 0u) or id == 1) {
             bttStates.emplace_back(id);
             continue;
         }
@@ -51,7 +51,7 @@ BttFsm BTT_FSMCreation::formulaToBTT_FSM(const Formula &formula, bool past) {
 
 std::map<std::string, size_t> BTT_FSMCreation::getAtomicFrequencies(const MultiTransition &multiTransition) {
     std::map<std::string, size_t> frequencies;
-    auto &transitions = multiTransition.getTransitions();
+    const auto &transitions = multiTransition.getTransitions();
     for (const auto &[formula, state] : transitions) {
         // Formula of transition
         auto atomics = Utils::getAtomics(formula);
@@ -266,6 +266,4 @@ std::shared_ptr<node> BTT_FSMCreation::findNextNode(const MultiTransition &multi
     return std::make_shared<Decision>(findNextNode(newMultitransitionTrue, weights),
                                       findNextNode(newMultitransitionFalse, weights), atomicCopy);
 
-    throw std::runtime_error("BTT_FSMCreation::findNextNode() Atomics are not in multiTransition or no transition was "
-                             "found that is satisfied by only one atomic.");
 }

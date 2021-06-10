@@ -48,6 +48,10 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitConstant(Constant &op, Tra
     return std::make_shared<Constant>(op);
 }
 
+std::shared_ptr<Expression> BasicRewriteVisitor::visitPredicate(Predicate &op, Trace &trace, int index) {
+    return std::make_shared<Predicate>(op);
+}
+
 std::shared_ptr<Expression> BasicRewriteVisitor::visitAnd(And &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
 
@@ -403,7 +407,4 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitEquivalence(Equivalence &o
     auto newRight = std::make_shared<Implication>(op.getRight(), op.getLeft());
     And::SetType_T andSet{newLeft, newRight};
     return std::make_shared<And>(andSet);
-}
-std::shared_ptr<Expression> BasicRewriteVisitor::visitPredicate(Predicate &op, Trace &trace, int index) {
-    return std::make_shared<Predicate>(op);
 }

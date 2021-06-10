@@ -92,6 +92,23 @@ namespace Utils {
                                                   std::set<std::string> predicates);
 
 /**
+ * Creates a string set of all atomics and predicates in an expression.
+ *
+ * @param expr Expression.
+ * @param atomics Set of all atomics and predicates that is built recursively.
+ * @return string set of all atomics and predicates in @param expr.
+ */
+[[nodiscard]] std::set<std::string> getAtomicsAndPredicates(const std::shared_ptr<Expression> &expr, const std::set<std::string>& atomics);
+
+/**
+ * Creates a string set of all atomics and predicates in an expression.
+ *
+ * @param expr Expression.
+ * @return string set of all atomics and predicates in @param expr.
+ */
+[[nodiscard]] std::set<std::string> getAtomicsAndPredicates(const std::shared_ptr<Expression> &expr);
+
+/**
  * Creates a string set of all predicates in a formula. Wrapper for getPredicates().
  *
  * @param formula Formula.
@@ -105,12 +122,20 @@ std::map<std::string, std::tuple<std::string, std::vector<std::string>>> getPred
     std::map<std::string, std::tuple<std::string, std::vector<std::string>>> predicatesWithParameters);
 
 /**
- * Computes the number of predicates is @param expr.
+ * Computes the number of predicates in @param expr.
  *
  * @param expr Expression.
  * @return Number of predicates.
  */
-[[nodiscard]] int getNumberOfAtomics(const std::shared_ptr<Expression> &expr);
+[[nodiscard]] size_t getNumberOfAtomics(const std::shared_ptr<Expression> &expr);
+
+/**
+ * Computes the number of predicates and atomics in @param expr.
+ *
+ * @param expr Expression.
+ * @return Number of predicates and atomics.
+ */
+[[nodiscard]] size_t getNumberOfAtomicsAndPredicates(const std::shared_ptr<Expression> &expr);
 
 /**
  * Creates event mapping from predicates (=names) to values (=bools) and wraps it into a trace of length 1.

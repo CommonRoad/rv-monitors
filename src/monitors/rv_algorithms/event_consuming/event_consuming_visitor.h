@@ -14,7 +14,7 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param formula Formula.
      * @param trace Trace.
      */
-    void consumeEvent(Formula &formula, Trace &trace, int index);
+    void consumeEvent(Formula &formula, Trace &trace, size_t index);
 
     /**
      * Logic for traversing entire expression tree.

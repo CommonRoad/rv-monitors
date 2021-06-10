@@ -22,13 +22,17 @@
 #include "monitors/expression_tree/unary/temporal/ptlf/once.h"
 #include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
 
-void EventConsumingVisitor::consumeEvent(Formula &formula, Trace &trace, int index) {
+void EventConsumingVisitor::consumeEvent(Formula &formula, Trace &trace, size_t index) {
     std::shared_ptr<EventOperator> eventOperator = std::make_shared<EventOperator>(formula.getExpr(), trace, index);
     formula.setExpr(eventOperator->accept(*this, trace, index));
 }
 
 std::shared_ptr<Expression> EventConsumingVisitor::visitAtomic(Atomic &op, Trace &trace, int index) {
     return std::make_shared<Atomic>(op);
+}
+
+std::shared_ptr<Expression> EventConsumingVisitor::visitPredicate(Predicate &op, Trace &trace, int index) {
+    return std::make_shared<Predicate>(op);
 }
 
 std::shared_ptr<Expression> EventConsumingVisitor::visitConstant(Constant &op, Trace &trace, int index) {
@@ -255,6 +259,4 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitEventOperator(EventOpera
     }
     return ret->accept(*this, trace, index);
 }
-std::shared_ptr<Expression> EventConsumingVisitor::visitPredicate(Predicate &op, Trace &trace, int index) {
-    return std::shared_ptr<Predicate>();
-}
+

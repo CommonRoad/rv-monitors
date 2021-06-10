@@ -19,7 +19,7 @@ Formula EventConsuming::eventConsumingFuture(const Formula &formula, Trace &trac
 
     // Rewrite
     rw.rewrite(formulaCopy);
-    for (int i = 0; i < trace.getLength(); ++i) {
+    for (size_t i = 0; i < trace.getLength(); ++i) {
         ec.consumeEvent(formulaCopy, trace, i);
         rw.rewrite(formulaCopy);
         if (formulaCopy.to_string() == "false") {

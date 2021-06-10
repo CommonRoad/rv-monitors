@@ -50,6 +50,10 @@ std::shared_ptr<Expression> RewriteVisitor::visitConstant(Constant &op, Trace &t
     return std::make_shared<Constant>(op);
 }
 
+std::shared_ptr<Expression> RewriteVisitor::visitPredicate(Predicate &op, Trace &trace, int index) {
+    return std::make_shared<Predicate>(op);
+}
+
 std::shared_ptr<Expression> RewriteVisitor::visitAnd(And &op, Trace &trace, int index) {
     visitExpression(op, trace, index);
 
@@ -453,6 +457,4 @@ std::shared_ptr<Expression> RewriteVisitor::visitResolvingOperator(ResolvingOper
 std::shared_ptr<Expression> RewriteVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace, int index) {
     return std::make_shared<DerivingOperator>(op);
 }
-std::shared_ptr<Expression> RewriteVisitor::visitPredicate(Predicate &op, Trace &trace, int index) {
-    return std::shared_ptr<Predicate>();
-}
+

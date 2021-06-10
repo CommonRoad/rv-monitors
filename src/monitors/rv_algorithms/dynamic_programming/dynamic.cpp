@@ -15,10 +15,13 @@
 
 void Dynamic::initialize(size_t j, std::vector<bool> &initVector, std::map<std::string, lazy_bool> &eventMap,
                          const std::vector<std::shared_ptr<Expression>> &subformulas) {
-    // TODO evaluate predicates
     // Atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(subformulas[j])) {
         initVector[j] = eventMap.at(atomic->to_string());
+    }
+    // Predicate
+    if (auto predicate = std::dynamic_pointer_cast<Predicate>(subformulas[j])) {
+        initVector[j] = eventMap.at(predicate->to_string());
     }
     // Constant
     if (auto constant = std::dynamic_pointer_cast<Constant>(subformulas[j])) {
@@ -68,6 +71,10 @@ void Dynamic::update(size_t j, std::vector<bool> &updateVector, std::vector<bool
     // Atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(subformulas[j])) {
         updateVector[j] = eventMap.at(atomic->to_string());
+    }
+    // Predicate
+    if (auto predicate = std::dynamic_pointer_cast<Predicate>(subformulas[j])) {
+        updateVector[j] = eventMap.at(predicate->to_string());
     }
     // Constant
     if (auto constant = std::dynamic_pointer_cast<Constant>(subformulas[j])) {
