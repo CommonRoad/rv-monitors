@@ -457,4 +457,3 @@ std::shared_ptr<Expression> RewriteVisitor::visitResolvingOperator(ResolvingOper
 std::shared_ptr<Expression> RewriteVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace, int index) {
     return std::make_shared<DerivingOperator>(op);
 }
-

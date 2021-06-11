@@ -49,7 +49,8 @@ BttFsm BTT_FSMCreation::formulaToBTT_FSM(const Formula &formula, bool past) {
     return BttFsm(mtFsm.getFormula(), bttStates);
 }
 
-std::map<std::string, size_t> BTT_FSMCreation::getAtomicAndPredicateFrequencies(const MultiTransition &multiTransition) {
+std::map<std::string, size_t>
+BTT_FSMCreation::getAtomicAndPredicateFrequencies(const MultiTransition &multiTransition) {
     std::map<std::string, size_t> frequencies;
     const auto &transitions = multiTransition.getTransitions();
     for (const auto &[formula, state] : transitions) {
@@ -265,5 +266,4 @@ std::shared_ptr<node> BTT_FSMCreation::findNextNode(const MultiTransition &multi
 
     return std::make_shared<Decision>(findNextNode(newMultitransitionTrue, weights),
                                       findNextNode(newMultitransitionFalse, weights), atomicCopy);
-
 }

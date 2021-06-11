@@ -12,8 +12,7 @@
 class Predicate : public Expression {
   public:
     Predicate(std::string symbol, std::string na, std::vector<std::string> params)
-        : Expression(std::move(symbol)), name(std::move(na)), parameters(std::move(params)) {
-    }
+        : Expression(std::move(symbol)), name(std::move(na)), parameters(std::move(params)) {}
 
     [[nodiscard]] std::string to_string() const override;
 

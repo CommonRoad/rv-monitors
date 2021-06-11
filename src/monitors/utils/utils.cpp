@@ -171,21 +171,21 @@ std::set<std::string> Utils::getPredicates(const std::shared_ptr<Expression> &ex
     return predicates;
 }
 
-std::set<std::string> Utils::getAtomicsAndPredicates(const std::shared_ptr<Expression> &expr, const std::set<std::string>& atomics){
+std::set<std::string> Utils::getAtomicsAndPredicates(const std::shared_ptr<Expression> &expr,
+                                                     const std::set<std::string> &atomics) {
     auto collectedAtomics{getAtomics(expr, atomics)};
     auto predicates{getPredicates(expr, atomics)};
     std::set<std::string> combinedSet;
-    std::set_union(collectedAtomics.begin(), collectedAtomics.end(),
-                          predicates.begin(), predicates.end(),
-                          std::inserter(combinedSet, combinedSet.begin()));
+    std::set_union(collectedAtomics.begin(), collectedAtomics.end(), predicates.begin(), predicates.end(),
+                   std::inserter(combinedSet, combinedSet.begin()));
     return combinedSet;
 }
 
-std::set<std::string> Utils::getAtomicsAndPredicates(const std::shared_ptr<Expression> &expr){
+std::set<std::string> Utils::getAtomicsAndPredicates(const std::shared_ptr<Expression> &expr) {
     return getAtomicsAndPredicates(expr, {});
 }
 
-std::set<std::string> Utils::getAtomicsAndPredicates(const Formula &formula){
+std::set<std::string> Utils::getAtomicsAndPredicates(const Formula &formula) {
     return getAtomicsAndPredicates(formula.getExpr());
 }
 
@@ -223,7 +223,9 @@ std::map<std::string, std::tuple<std::string, std::vector<std::string>>> Utils::
 
 size_t Utils::getNumberOfAtomics(const std::shared_ptr<Expression> &expr) { return getAtomics(expr, {}).size(); }
 
-size_t Utils::getNumberOfAtomicsAndPredicates(const std::shared_ptr<Expression> &expr) { return getAtomics(expr, {}).size() + getPredicates(expr, {}).size(); }
+size_t Utils::getNumberOfAtomicsAndPredicates(const std::shared_ptr<Expression> &expr) {
+    return getAtomics(expr, {}).size() + getPredicates(expr, {}).size();
+}
 
 Trace Utils::boolVectorToTrace(const std::set<std::string> &atomics, const std::vector<bool> &vector, bool terminal) {
     Event event = boolVectorToEvent(atomics, vector, terminal);

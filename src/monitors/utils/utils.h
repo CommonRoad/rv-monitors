@@ -106,7 +106,8 @@ namespace Utils {
  * @param atomics Set of all atomics and predicates that is built recursively.
  * @return string set of all atomics and predicates in @param expr.
  */
-[[nodiscard]] std::set<std::string> getAtomicsAndPredicates(const std::shared_ptr<Expression> &expr, const std::set<std::string>& atomics);
+[[nodiscard]] std::set<std::string> getAtomicsAndPredicates(const std::shared_ptr<Expression> &expr,
+                                                            const std::set<std::string> &atomics);
 
 /**
  * Creates a string set of all atomics and predicates in an expression.
