@@ -23,7 +23,7 @@ bool MT_FSMEvaluation::evaluateMT_FSM(const MtFsm &mtFsm, Trace &trace, bool pas
         // If past then access in inverted order
         size_t eventIndex = past ? trace.getLength() - 1 - i : i;
         size_t nextState = currentState.nextState(trace.getEvent(eventIndex));
-        if (!nextState) {
+        if (nextState == 0u) {
             // std::cout << "Formula violated in event " << eventIndex << std::endl;
             return false;
         }

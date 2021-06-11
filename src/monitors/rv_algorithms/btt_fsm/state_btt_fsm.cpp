@@ -12,15 +12,15 @@ StateBttFsm::StateBttFsm(size_t id) : id(id) {}
 
 size_t StateBttFsm::getId() const { return id; }
 
-void StateBttFsm::setId(size_t id) { StateBttFsm::id = id; }
+void StateBttFsm::setId(size_t index) { StateBttFsm::id = index; }
 
 const std::shared_ptr<node> &StateBttFsm::getNonTerminal() const { return nonTerminal; }
 
-void StateBttFsm::setNonTerminal(const std::shared_ptr<node> &nonTerminal) { StateBttFsm::nonTerminal = nonTerminal; }
+void StateBttFsm::setNonTerminal(const std::shared_ptr<node> &nonTerm) { StateBttFsm::nonTerminal = nonTerm; }
 
 const std::shared_ptr<node> &StateBttFsm::getTerminal() const { return terminal; }
 
-void StateBttFsm::setTerminal(const std::shared_ptr<node> &terminal) { StateBttFsm::terminal = terminal; }
+void StateBttFsm::setTerminal(const std::shared_ptr<node> &term) { StateBttFsm::terminal = term; }
 
 size_t StateBttFsm::nextState(Event &event) {
     std::shared_ptr<Decision> decision;
@@ -57,7 +57,7 @@ size_t StateBttFsm::nextState(Event &event, const std::shared_ptr<Decision> &dec
 
 std::string StateBttFsm::to_string() const {
     std::stringstream res;
-    if (!id) {
+    if (id == 0u) {
         res << "false" << std::endl;
     } else if (id == 1) {
         res << "true" << std::endl;

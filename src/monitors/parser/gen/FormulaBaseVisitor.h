@@ -100,6 +100,8 @@ class FormulaBaseVisitor : public FormulaVisitor {
 
     virtual antlrcpp::Any visitAtomExpr(FormulaParser::AtomExprContext *ctx) override { return visitChildren(ctx); }
 
+    virtual antlrcpp::Any visitPredicate(FormulaParser::PredicateContext *ctx) override { return visitChildren(ctx); }
+
     virtual antlrcpp::Any visitFiniteInterval(FormulaParser::FiniteIntervalContext *ctx) override {
         return visitChildren(ctx);
     }

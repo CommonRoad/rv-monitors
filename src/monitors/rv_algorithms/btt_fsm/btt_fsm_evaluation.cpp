@@ -23,7 +23,7 @@ bool BTT_FSMEvaluation::evaluateBTT_FSM(const BttFsm &bttFsm, Trace &trace, bool
         // If past then access in inverted order
         size_t eventIndex = past ? trace.getLength() - 1 - i : i;
         size_t nextState = currentState.nextState(trace.getEvent(eventIndex));
-        if (!nextState) {
+        if (nextState == 0u) {
             // std::cout << "Formula violated in event " << eventIndex << std::endl;
             return false;
         }

@@ -34,8 +34,9 @@ class FormulaLexer : public antlr4::Lexer {
         TRUE = 24,
         FALSE = 25,
         ATOMIC = 26,
-        WS = 27,
-        DIGIT = 28
+        PREDICATE = 27,
+        WS = 28,
+        DIGIT = 29
     };
 
     FormulaLexer(antlr4::CharStream *input);

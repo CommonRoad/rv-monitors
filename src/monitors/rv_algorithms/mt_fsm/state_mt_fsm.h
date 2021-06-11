@@ -21,14 +21,14 @@ class StateMT_FSM {
      * @param terminal Terminal transitions.
      * @param formula Formula.
      */
-    StateMT_FSM(size_t id, MultiTransition nonTerminal, MultiTransition terminal, const Formula &formula);
+    StateMT_FSM(size_t id, MultiTransition nonTerminal, MultiTransition terminal, Formula formula);
 
     /**
      * Constructor.
      * @param id Id.
      * @param formula Formula.
      */
-    StateMT_FSM(size_t id, const Formula &formula);
+    StateMT_FSM(size_t id, Formula formula);
 
     /**
      * Getter for id.
@@ -46,7 +46,7 @@ class StateMT_FSM {
      * Getter for non-terminal transitions.
      * @return nonTerminal.
      */
-    [[nodiscard]] const MultiTransition getNonTerminal() const;
+    [[nodiscard]] MultiTransition getNonTerminal() const;
 
     /**
      * Getter for terminal transitions.

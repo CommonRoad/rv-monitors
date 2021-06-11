@@ -77,6 +77,8 @@ class FormulaVisitor : public antlr4::tree::AbstractParseTreeVisitor {
 
     virtual antlrcpp::Any visitAtomExpr(FormulaParser::AtomExprContext *context) = 0;
 
+    virtual antlrcpp::Any visitPredicate(FormulaParser::PredicateContext *context) = 0;
+
     virtual antlrcpp::Any visitFiniteInterval(FormulaParser::FiniteIntervalContext *context) = 0;
 
     virtual antlrcpp::Any visitInfiniteInterval(FormulaParser::InfiniteIntervalContext *context) = 0;

@@ -6,7 +6,7 @@
 /**
  * Visitor applying the event consuming rules to a formula and propagating the EventOperator down the expression tree.
  */
-class event_consuming_visitor : public expression_visitor {
+class EventConsumingVisitor : public ExpressionVisitor {
 
   public:
     /**
@@ -14,7 +14,7 @@ class event_consuming_visitor : public expression_visitor {
      * @param formula Formula.
      * @param trace Trace.
      */
-    void consumeEvent(Formula &formula, Trace &trace, int index);
+    void consumeEvent(Formula &formula, Trace &trace, size_t index);
 
     /**
      * Logic for traversing entire expression tree.
@@ -176,5 +176,8 @@ class event_consuming_visitor : public expression_visitor {
     std::shared_ptr<Expression> visitEventOperator(EventOperator &op, Trace &trace, int index) override;
 
     std::shared_ptr<Expression> visitResolvingOperator(ResolvingOperator &op, Trace &trace, int index) override;
+
     std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &op, Trace &trace, int index) override;
+
+    std::shared_ptr<Expression> visitPredicate(Predicate &op, Trace &trace, int index) override;
 };

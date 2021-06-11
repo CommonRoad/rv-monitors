@@ -6,7 +6,7 @@
 /**
  * Visitor applying the event consuming rules to a formula and propagating the EventOperator down the expression tree.
  */
-class mtl_resolving_past_visitor : public expression_visitor {
+class mtl_resolving_past_visitor : public ExpressionVisitor {
 
   public:
     /**

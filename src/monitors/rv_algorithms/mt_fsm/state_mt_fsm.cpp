@@ -2,26 +2,26 @@
 #include "monitors/utils/utils.h"
 #include <utility>
 
-StateMT_FSM::StateMT_FSM(size_t id, MultiTransition nonTerminal, MultiTransition terminal, const Formula &formula)
-    : id(id), nonTerminal(std::move(nonTerminal)), terminal(std::move(terminal)), formula(formula) {}
+StateMT_FSM::StateMT_FSM(size_t id, MultiTransition nonTerminal, MultiTransition terminal, Formula formula)
+    : id(id), nonTerminal(std::move(nonTerminal)), terminal(std::move(terminal)), formula(std::move(formula)) {}
 
-StateMT_FSM::StateMT_FSM(size_t id, const Formula &formula) : id(id), formula(formula) {}
+StateMT_FSM::StateMT_FSM(size_t id, Formula formula) : id(id), formula(std::move(formula)) {}
 
 size_t StateMT_FSM::getId() const { return id; }
 
-void StateMT_FSM::setId(size_t id) { StateMT_FSM::id = id; }
+void StateMT_FSM::setId(size_t index) { StateMT_FSM::id = index; }
 
-const MultiTransition StateMT_FSM::getNonTerminal() const { return nonTerminal; }
+MultiTransition StateMT_FSM::getNonTerminal() const { return nonTerminal; }
 
-void StateMT_FSM::setNonTerminal(const MultiTransition &nonTerminal) { StateMT_FSM::nonTerminal = nonTerminal; }
+void StateMT_FSM::setNonTerminal(const MultiTransition &nonT) { StateMT_FSM::nonTerminal = nonT; }
 
 const MultiTransition &StateMT_FSM::getTerminal() const { return terminal; }
 
-void StateMT_FSM::setTerminal(const MultiTransition &terminal) { StateMT_FSM::terminal = terminal; }
+void StateMT_FSM::setTerminal(const MultiTransition &ter) { StateMT_FSM::terminal = ter; }
 
 const Formula &StateMT_FSM::getFormula() const { return formula; }
 
-void StateMT_FSM::setFormula(const Formula &formula) { StateMT_FSM::formula = formula; }
+void StateMT_FSM::setFormula(const Formula &form) { StateMT_FSM::formula = form; }
 
 std::string StateMT_FSM::to_string() const {
     std::stringstream ret;

@@ -1,6 +1,7 @@
 #include "basic_rewrite_visitor.h"
 #include "monitors/expression_tree/atomic/atomic.h"
 #include "monitors/expression_tree/atomic/constant.h"
+#include "monitors/expression_tree/atomic/predicate.h"
 #include "monitors/expression_tree/binary/bool/equivalence.h"
 #include "monitors/expression_tree/binary/bool/implication.h"
 #include "monitors/expression_tree/binary/temporal/ltlf/release.h"
@@ -45,6 +46,10 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitAtomic(Atomic &op, Trace &
 
 std::shared_ptr<Expression> BasicRewriteVisitor::visitConstant(Constant &op, Trace &trace, int index) {
     return std::make_shared<Constant>(op);
+}
+
+std::shared_ptr<Expression> BasicRewriteVisitor::visitPredicate(Predicate &op, Trace &trace, int index) {
+    return std::make_shared<Predicate>(op);
 }
 
 std::shared_ptr<Expression> BasicRewriteVisitor::visitAnd(And &op, Trace &trace, int index) {

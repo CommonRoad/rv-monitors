@@ -12,7 +12,7 @@ bool MTLEventConsuming::eventConsuming(const Formula &formula, Trace &trace) {
     }
     // Copy formula before working on it
     auto formulaCopy = formula.deepCopy();
-    mtl_rewrite_visitor rw;
+    MtlRewriteVisitor rw;
     MTLEventConsumingVisitor ev;
     // Rewrite
     rw.rewrite(formulaCopy);

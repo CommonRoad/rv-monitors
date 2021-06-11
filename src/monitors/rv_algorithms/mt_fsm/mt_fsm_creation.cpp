@@ -19,8 +19,8 @@ bool MT_FSMCreation::valid(Formula &formula) {
 
 // Fig 6
 bool MT_FSMCreation::valid(Formula &formula, std::set<Formula> &states) {
-    auto atomics = Utils::getAtomics(formula.getExpr(), {});
-    auto numberOfAtomics = Utils::getNumberOfAtomics(formula.getExpr());
+    auto atomics = Utils::getAtomicsAndPredicates(formula.getExpr(), {});
+    auto numberOfAtomics = Utils::getNumberOfAtomicsAndPredicates(formula.getExpr());
 
     // Only constants
     if (numberOfAtomics == 0) {
@@ -62,7 +62,6 @@ bool MT_FSMCreation::valid(Formula &formula, std::set<Formula> &states) {
 
 MultiTransition MT_FSMCreation::merge(MultiTransition &mt_1, MultiTransition mt_2) {
     BasicRewriteVisitor br;
-
     std::map<Formula, size_t> mergedTransitions;
 
     // Keeps track of every transition in mt_2 if it was already merged
@@ -113,8 +112,8 @@ void MT_FSMCreation::formulaToMT_FSM(const Formula &formula, std::vector<StateMT
     MultiTransition mtTerminal({});
     MultiTransition mtNonTerminal({});
 
-    auto atomics = Utils::getAtomics(formula.getExpr(), {});
-    auto numberOfAtomics = Utils::getNumberOfAtomics(formula.getExpr());
+    auto atomics = Utils::getAtomicsAndPredicates(formula.getExpr(), {});
+    auto numberOfAtomics = Utils::getNumberOfAtomicsAndPredicates(formula.getExpr());
     // All possible events
     EventGenerator gen(numberOfAtomics);
     for (auto event = gen.getEventVector(); gen.hasNext(); event = gen.getNext()) {
@@ -130,7 +129,7 @@ void MT_FSMCreation::formulaToMT_FSM(const Formula &formula, std::vector<StateMT
                 "MT_FSMCreation::formulaToMT_FSM() EventConsuming did not return a Constant on terminal event");
         }
         // Is true or false
-        size_t evaluation = formulaEventConsumingTerminal.getExpr()->isConstTrue();
+        size_t evaluation = static_cast<size_t>(formulaEventConsumingTerminal.getExpr()->isConstTrue());
 
         MultiTransition currentMT = MultiTransition({{conjunction, evaluation}});
         mtTerminal = merge(currentMT, mtTerminal);
@@ -145,12 +144,12 @@ void MT_FSMCreation::formulaToMT_FSM(const Formula &formula, std::vector<StateMT
         }
         // 10 Search for equivalent formula
         bool eqFormulaExists = false;
+
         for (size_t stateId = 0; stateId < states.size(); ++stateId) {
             auto equivalence = Formula(
                 std::make_shared<Equivalence>(formulaEventConsuming.getExpr(), states[stateId].getFormula().getExpr()));
             // TODO: add shortcut: if string representation of formulaEventConsuming and states[i] is equal then the
             // equivalence is valid (inverse obviously not)
-
             if (valid(equivalence)) {
                 currentMT = MultiTransition({{conjunction, stateId}});
                 mtNonTerminal = merge(currentMT, mtNonTerminal);
@@ -212,7 +211,7 @@ MtFsm MT_FSMCreation::formulaToMT_FSM(const Formula &formula, bool past) {
     auto formulaCopy = formula.deepCopy();
     // Only a constant
     if (auto constant = std::dynamic_pointer_cast<Constant>(formula.getExpr())) {
-        StateMT_FSM singleState(constant->getValue(), formula);
+        StateMT_FSM singleState(static_cast<size_t>(constant->getValue()), formula);
         std::set<std::string> empty{};
         std::vector<StateMT_FSM> vector{singleState};
         return MtFsm(empty, formulaCopy, vector);
@@ -223,7 +222,7 @@ MtFsm MT_FSMCreation::formulaToMT_FSM(const Formula &formula, bool past) {
     StateMT_FSM stateTrue(1, formulaTrue);
     StateMT_FSM stateFirst(2, formulaCopy);
     std::vector<StateMT_FSM> states{stateFalse, stateTrue, stateFirst};
-    auto atomics = Utils::getAtomics(formula.getExpr());
+    auto atomics = Utils::getAtomicsAndPredicates(formula.getExpr());
     formulaToMT_FSM(formulaCopy, states, past);
     return MtFsm{atomics, formulaCopy, states};
 }

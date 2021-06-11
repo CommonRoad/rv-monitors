@@ -34,8 +34,9 @@ class FormulaParser : public antlr4::Parser {
         TRUE = 24,
         FALSE = 25,
         ATOMIC = 26,
-        WS = 27,
-        DIGIT = 28
+        PREDICATE = 27,
+        WS = 28,
+        DIGIT = 29
     };
 
     enum {
@@ -447,6 +448,18 @@ class FormulaParser : public antlr4::Parser {
         antlr4::tree::TerminalNode *NEXT_STRONG();
         IntervalContext *interval();
         AtomContext *atom();
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    class PredicateContext : public UnaryContext {
+      public:
+        PredicateContext(UnaryContext *ctx);
+
+        antlr4::Token *op = nullptr;
+        antlr4::Token *right = nullptr;
+        antlr4::tree::TerminalNode *PREDICATE();
+        std::vector<antlr4::tree::TerminalNode *> ATOMIC();
+        antlr4::tree::TerminalNode *ATOMIC(size_t i);
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
