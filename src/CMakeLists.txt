@@ -7,6 +7,7 @@ set(RV_MONITOR_SRC_FILES
         monitors/expression_tree/interval.cpp
         monitors/expression_tree/atomic/atomic.cpp
         monitors/expression_tree/atomic/constant.cpp
+        monitors/expression_tree/atomic/predicate.cpp
         monitors/expression_tree/binary/binary.cpp
         monitors/expression_tree/binary/bool/equivalence.cpp
         monitors/expression_tree/binary/bool/implication.cpp

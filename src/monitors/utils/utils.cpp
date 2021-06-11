@@ -22,6 +22,10 @@ bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr,
     if (auto atomicExpr = std::dynamic_pointer_cast<Atomic>(expr)) {
         return eventMap.at(atomicExpr->to_string());
     }
+    // Predicate
+    if (auto predicateExpr = std::dynamic_pointer_cast<Predicate>(expr)) {
+        return eventMap.at(predicateExpr->to_string());
+    }
     // Constant
     if (auto constantExpr = std::dynamic_pointer_cast<Constant>(expr)) {
         return constantExpr->getValue();
@@ -33,7 +37,7 @@ bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr,
     // And
     if (auto andExpr = std::dynamic_pointer_cast<And>(expr)) {
         auto res = true;
-        for (auto &childExpr : *andExpr) {
+        for (const auto &childExpr : *andExpr) {
             res and_eq evaluateBooleanExpression(childExpr, eventMap);
             // Short-circuit: if anything in the And is false the whole expression must be false.
             if (not res) {
@@ -46,7 +50,7 @@ bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr,
     // Or
     if (auto orExpr = std::dynamic_pointer_cast<Or>(expr)) {
         auto res = false;
-        for (auto &childExpr : *orExpr) {
+        for (const auto &childExpr : *orExpr) {
             res or_eq evaluateBooleanExpression(childExpr, eventMap);
             // Short-circuit: if anything in the Or is true the whole expression must be true.
             if (res) {
@@ -72,7 +76,7 @@ bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr,
 Trace Utils::createTrace(const std::set<std::string> &atomics, std::vector<std::vector<std::string>> trueAtomics) {
     std::vector<Event> finalTrace;
     std::map<std::string, lazy_bool> event;
-    int timeStep{0};
+    size_t timeStep{0};
     for (auto const &trueAtomic : trueAtomics) {
         for (auto const &atomic : atomics) {
             // Check if atomic exists in vector at current position
@@ -88,6 +92,15 @@ Trace Utils::createTrace(const std::set<std::string> &atomics, std::vector<std::
 
 // Wrapper
 std::set<std::string> Utils::getAtomics(const Formula &formula) { return getAtomics(formula.getExpr(), {}); }
+
+// Wrapper
+std::set<std::string> Utils::getPredicates(const Formula &formula) { return getPredicates(formula.getExpr(), {}); }
+
+// Wrapper
+std::map<std::string, std::tuple<std::string, std::vector<std::string>>>
+Utils::getPredicatesAndParameters(const Formula &formula) {
+    return getPredicatesAndParameters(formula.getExpr(), {});
+}
 
 // Wrapper
 std::set<std::string> Utils::getAtomics(const std::shared_ptr<Expression> &expr) { return getAtomics(expr, {}); }
@@ -117,7 +130,7 @@ std::set<std::string> Utils::getAtomics(const std::shared_ptr<Expression> &expr,
 
     // Atomic
     else if (auto atomic = std::dynamic_pointer_cast<Atomic>(expr)) {
-        atomics.emplace(expr->to_string());
+        atomics.emplace(atomic->to_string());
     }
 
     // Don't count constants
@@ -125,7 +138,94 @@ std::set<std::string> Utils::getAtomics(const std::shared_ptr<Expression> &expr,
     return atomics;
 }
 
-int Utils::getNumberOfAtomics(const std::shared_ptr<Expression> &expr) { return getAtomics(expr, {}).size(); }
+std::set<std::string> Utils::getPredicates(const std::shared_ptr<Expression> &expr, std::set<std::string> predicates) {
+    if (!expr) {
+        return predicates;
+    }
+
+    // Nary
+    if (auto nary = std::dynamic_pointer_cast<NaryInterface>(expr)) {
+        for (const auto &itr : *nary) {
+            predicates = getPredicates(itr, predicates);
+        }
+    }
+
+    // Binary
+    else if (auto binary = std::dynamic_pointer_cast<Binary>(expr)) {
+        predicates = getPredicates(binary->getLeft(), predicates);
+        predicates = getPredicates(binary->getRight(), predicates);
+    }
+
+    // Unary
+    else if (auto unary = std::dynamic_pointer_cast<Unary>(expr)) {
+        predicates = getPredicates(unary->getLeft(), predicates);
+    }
+
+    // Predicate
+    else if (auto predicate = std::dynamic_pointer_cast<Predicate>(expr)) {
+        predicates.emplace(predicate->to_string());
+    }
+
+    // Don't count constants and atomics
+
+    return predicates;
+}
+
+std::set<std::string> Utils::getAtomicsAndPredicates(const std::shared_ptr<Expression> &expr,
+                                                     const std::set<std::string> &atomics) {
+    auto collectedAtomics{getAtomics(expr, atomics)};
+    auto predicates{getPredicates(expr, atomics)};
+    std::set<std::string> combinedSet;
+    std::set_union(collectedAtomics.begin(), collectedAtomics.end(), predicates.begin(), predicates.end(),
+                   std::inserter(combinedSet, combinedSet.begin()));
+    return combinedSet;
+}
+
+std::set<std::string> Utils::getAtomicsAndPredicates(const std::shared_ptr<Expression> &expr) {
+    return getAtomicsAndPredicates(expr, {});
+}
+
+std::set<std::string> Utils::getAtomicsAndPredicates(const Formula &formula) {
+    return getAtomicsAndPredicates(formula.getExpr());
+}
+
+std::map<std::string, std::tuple<std::string, std::vector<std::string>>> Utils::getPredicatesAndParameters(
+    const std::shared_ptr<Expression> &expr,
+    std::map<std::string, std::tuple<std::string, std::vector<std::string>>> predicatesWithParameters) {
+    if (!expr) {
+        return predicatesWithParameters;
+    }
+
+    // Nary
+    if (auto nary = std::dynamic_pointer_cast<NaryInterface>(expr)) {
+        for (const auto &itr : *nary) {
+            predicatesWithParameters = getPredicatesAndParameters(itr, predicatesWithParameters);
+        }
+    }
+    // Binary
+    else if (auto binary = std::dynamic_pointer_cast<Binary>(expr)) {
+        predicatesWithParameters = getPredicatesAndParameters(binary->getLeft(), predicatesWithParameters);
+        predicatesWithParameters = getPredicatesAndParameters(binary->getRight(), predicatesWithParameters);
+    }
+    // Unary
+    else if (auto unary = std::dynamic_pointer_cast<Unary>(expr)) {
+        predicatesWithParameters = getPredicatesAndParameters(unary->getLeft(), predicatesWithParameters);
+    }
+    // Predicate
+    else if (auto predicate = std::dynamic_pointer_cast<Predicate>(expr)) {
+        predicatesWithParameters.insert({predicate->to_string(), {predicate->getName(), predicate->getParameters()}});
+    }
+
+    // Don't count constants and atomics
+
+    return predicatesWithParameters;
+}
+
+size_t Utils::getNumberOfAtomics(const std::shared_ptr<Expression> &expr) { return getAtomics(expr, {}).size(); }
+
+size_t Utils::getNumberOfAtomicsAndPredicates(const std::shared_ptr<Expression> &expr) {
+    return getAtomics(expr, {}).size() + getPredicates(expr, {}).size();
+}
 
 Trace Utils::boolVectorToTrace(const std::set<std::string> &atomics, const std::vector<bool> &vector, bool terminal) {
     Event event = boolVectorToEvent(atomics, vector, terminal);

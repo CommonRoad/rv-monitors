@@ -1,6 +1,7 @@
 #include "mtl_event_consuming_visitor.h"
 #include "monitors/expression_tree/atomic/atomic.h"
 #include "monitors/expression_tree/atomic/constant.h"
+#include "monitors/expression_tree/atomic/predicate.h"
 #include "monitors/expression_tree/binary/bool/equivalence.h"
 #include "monitors/expression_tree/binary/bool/implication.h"
 #include "monitors/expression_tree/binary/temporal/ltlf/release.h"
@@ -138,8 +139,13 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
     // Apply eventMap to atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(op.getLeft())) {
         ret = std::make_shared<Constant>(trace.getEvent(index).getValue(*atomic));
+        // constant
     } else if (auto constant = std::dynamic_pointer_cast<Constant>(op.getLeft())) {
         ret = std::make_shared<Constant>(constant->getValue());
+    }
+    // predicate
+    else if (auto predicate = std::dynamic_pointer_cast<Predicate>(op.getLeft())) {
+        ret = std::make_shared<Constant>(trace.getEvent(index).getValue(*predicate));
     }
     // And
     else if (auto andExpr = std::dynamic_pointer_cast<And>(op.getLeft())) {
@@ -282,4 +288,7 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
         }
     }
     return ret->accept(*this, trace, index);
+}
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitPredicate(Predicate &op, Trace &trace, int index) {
+    return std::shared_ptr<Predicate>();
 }

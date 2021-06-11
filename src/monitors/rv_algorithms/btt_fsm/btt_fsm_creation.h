@@ -22,7 +22,7 @@ BttFsm formulaToBTT_FSM(const Formula &formula, bool past);
  * @param multiTransition MultiTransition with formulas where atomic frequencies should be counted.
  * @return Map from string representation of each atomic to its frequency in the MultiTransition.
  */
-[[nodiscard]] std::map<std::string, size_t> getAtomicFrequencies(const MultiTransition &multiTransition);
+[[nodiscard]] std::map<std::string, size_t> getAtomicAndPredicateFrequencies(const MultiTransition &multiTransition);
 
 /**
  * Gives each atomic a weight w = (1/frequency) * cost. The higher the value the deeper the atomic is nested into the
@@ -30,7 +30,7 @@ BttFsm formulaToBTT_FSM(const Formula &formula, bool past);
  * @param multiTransition MultiTransition.
  * @return Multimap weight -> atomic. This way the atomics are already ordered.
  */
-std::multimap<double, std::shared_ptr<Atomic>> getAtomicWeight(const MultiTransition &multiTransition);
+std::multimap<double, std::shared_ptr<Atomic>> getAtomicAndPredicateWeight(const MultiTransition &multiTransition);
 
 /**
  * Helper function. Flips a map and turns it into a multimap.

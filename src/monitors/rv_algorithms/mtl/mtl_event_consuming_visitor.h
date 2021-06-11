@@ -6,7 +6,7 @@
 /**
  * Visitor applying the event consuming rules to a formula and propagating the EventOperator down the expression tree.
  */
-class MTLEventConsumingVisitor : public expression_visitor {
+class MTLEventConsumingVisitor : public ExpressionVisitor {
 
   public:
     /**
@@ -178,4 +178,6 @@ class MTLEventConsumingVisitor : public expression_visitor {
     std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &op, Trace &trace, int index) override;
 
     std::shared_ptr<Expression> visitEventOperator(EventOperator &op, Trace &trace, int index) override;
+
+    std::shared_ptr<Expression> visitPredicate(Predicate &op, Trace &trace, int index) override;
 };

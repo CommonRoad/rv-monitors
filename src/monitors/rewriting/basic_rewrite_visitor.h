@@ -5,7 +5,7 @@
 /**
  * Reduces formulas.
  */
-class BasicRewriteVisitor : public expression_visitor {
+class BasicRewriteVisitor : public ExpressionVisitor {
   public:
     void rewrite(Formula &formula);
 
@@ -54,4 +54,6 @@ class BasicRewriteVisitor : public expression_visitor {
 
     [[nodiscard]] std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &op, Trace &trace,
                                                                     int index) override;
+
+    [[nodiscard]] std::shared_ptr<Expression> visitPredicate(Predicate &op, Trace &trace, int index) override;
 };

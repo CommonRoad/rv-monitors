@@ -11,7 +11,7 @@
 BttFsm BTT_FSMCreation::formulaToBTT_FSM(const Formula &formula, bool past) {
     // Only a constant
     if (auto constant = std::dynamic_pointer_cast<Constant>(formula.getExpr())) {
-        StateBttFsm singleState(constant->getValue(), {}, {});
+        StateBttFsm singleState(static_cast<size_t>(constant->getValue()), {}, {});
         return BttFsm(formula, {singleState});
     }
     // Get corresponding MT-FSM
@@ -26,14 +26,14 @@ BttFsm BTT_FSMCreation::formulaToBTT_FSM(const Formula &formula, bool past) {
     for (const auto &mtFsmState : mtFsmStates) {
         size_t id = mtFsmState.getId();
         // States false (0) and true (1)
-        if (!id or id == 1) {
+        if ((id == 0u) or id == 1) {
             bttStates.emplace_back(id);
             continue;
         }
         // Other state
         // Get precedences
-        auto precedencesNonTerminal = getAtomicWeight(mtFsmState.getNonTerminal());
-        auto precedencesTerminal = getAtomicWeight(mtFsmState.getTerminal());
+        auto precedencesNonTerminal = getAtomicAndPredicateWeight(mtFsmState.getNonTerminal());
+        auto precedencesTerminal = getAtomicAndPredicateWeight(mtFsmState.getTerminal());
 
         // Create BTT for terminal and non-terminal multitransition
         auto bttNonTerminal = findNextNode(mtFsmState.getNonTerminal(), precedencesNonTerminal);
@@ -49,15 +49,16 @@ BttFsm BTT_FSMCreation::formulaToBTT_FSM(const Formula &formula, bool past) {
     return BttFsm(mtFsm.getFormula(), bttStates);
 }
 
-std::map<std::string, size_t> BTT_FSMCreation::getAtomicFrequencies(const MultiTransition &multiTransition) {
+std::map<std::string, size_t>
+BTT_FSMCreation::getAtomicAndPredicateFrequencies(const MultiTransition &multiTransition) {
     std::map<std::string, size_t> frequencies;
-    auto &transitions = multiTransition.getTransitions();
+    const auto &transitions = multiTransition.getTransitions();
     for (const auto &[formula, state] : transitions) {
         // Formula of transition
-        auto atomics = Utils::getAtomics(formula);
-        for (const auto &atomic : atomics) {
+        auto predicates = Utils::getAtomicsAndPredicates(formula);
+        for (const auto &predicate : predicates) {
             // Adds key if it is not yet in map
-            frequencies[atomic]++;
+            frequencies[predicate]++;
         }
     }
     return frequencies;
@@ -65,13 +66,13 @@ std::map<std::string, size_t> BTT_FSMCreation::getAtomicFrequencies(const MultiT
 
 // TODO use Predicates.h for costs
 std::multimap<double, std::shared_ptr<Atomic>>
-BTT_FSMCreation::getAtomicWeight(const MultiTransition &multiTransition) {
+BTT_FSMCreation::getAtomicAndPredicateWeight(const MultiTransition &multiTransition) {
     std::map<std::shared_ptr<Atomic>, double> precedences;
     auto numberOfTransitions = multiTransition.getTransitions().size();
-    auto frequencies = getAtomicFrequencies(multiTransition);
-    for (const auto &[atomicString, freq] : frequencies) {
-        auto atomic = std::make_shared<Atomic>(atomicString);
-        precedences[atomic] = 1 / (double(freq) / numberOfTransitions);
+    auto frequencies = getAtomicAndPredicateFrequencies(multiTransition);
+    for (const auto &[predicateString, freq] : frequencies) {
+        auto predicate = std::make_shared<Atomic>(predicateString);
+        precedences[predicate] = 1 / (double(freq) / numberOfTransitions);
     }
     return createWeightMultimap(precedences);
 }
@@ -265,7 +266,4 @@ std::shared_ptr<node> BTT_FSMCreation::findNextNode(const MultiTransition &multi
 
     return std::make_shared<Decision>(findNextNode(newMultitransitionTrue, weights),
                                       findNextNode(newMultitransitionFalse, weights), atomicCopy);
-
-    throw std::runtime_error("BTT_FSMCreation::findNextNode() Atomics are not in multiTransition or no transition was "
-                             "found that is satisfied by only one atomic.");
 }

@@ -24,6 +24,13 @@ TEST(TestBTT_FSMEvaluation, satisfied1) {
     EXPECT_TRUE(BTT_FSMEvaluation::evaluateBTT_FSM(btt, trace, false));
 }
 
+TEST(TestBTT_FSMEvaluation, dsfdsf) {
+    Formula formula = Parser::parse("G(a(x) & b(y) -> c(z))");
+    // Formula formula = Parser::parse("G(a & b -> c)");
+    auto bttFSM = BTT_FSMCreation::formulaToBTT_FSM(formula, false);
+    std::cout << bttFSM.to_string() << '\n';
+}
+
 TEST(TestBTT_FSMEvaluation, satisfied2) {
     Formula formula = Parser::parse("G(b -> Fc)");
     Trace trace = Utils::createTrace(

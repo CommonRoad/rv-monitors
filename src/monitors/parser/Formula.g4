@@ -19,6 +19,7 @@ and_expr
  : release_until_expr (op=AND release_until_expr)*  #And
  ;
 
+
 release_until_expr
 : <assoc=right> left=unary op=RELEASE right=unary                      #Release
 | <assoc=right> left=unary op=UNTIL right=unary                        #Until
@@ -47,6 +48,7 @@ unary
   | op=NOT right=atom                            #Not
   | op=NOT right=expr                            #NotExpr
   | atom                                         #AtomExpr
+  | op=PREDICATE right=ATOMIC (',' ATOMIC)*')'   #Predicate
  ;
 
 interval
@@ -55,9 +57,9 @@ interval
 ;
 
 atom
- : BOOL                         #Boolean
- | ATOMIC                       #Atomic
- | '(' content=expr+ ')'        #Brackets
+ : BOOL                                            #Boolean
+ | ATOMIC                                          #Atomic
+ | '(' content=expr+ ')'                           #Brackets
  ;
 
 number
@@ -84,6 +86,7 @@ number
  TRUE       	            : ('True'|'true');
  FALSE      	            : ('False'|'false');
  ATOMIC		                : [a-z]+([_]?[a-z]+)*;
+ PREDICATE                  : [a-z]+([_]?[a-z]+)*'(';
  WS                         : [ \t\n]+ -> skip;       //Skip whitespaces
  DIGIT                      : [0-9] | [1-9][0-9]+;
 
