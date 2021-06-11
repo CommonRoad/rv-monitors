@@ -32,8 +32,8 @@ BttFsm BTT_FSMCreation::formulaToBTT_FSM(const Formula &formula, bool past) {
         }
         // Other state
         // Get precedences
-        auto precedencesNonTerminal = getAtomicWeight(mtFsmState.getNonTerminal());
-        auto precedencesTerminal = getAtomicWeight(mtFsmState.getTerminal());
+        auto precedencesNonTerminal = getAtomicAndPredicateWeight(mtFsmState.getNonTerminal());
+        auto precedencesTerminal = getAtomicAndPredicateWeight(mtFsmState.getTerminal());
 
         // Create BTT for terminal and non-terminal multitransition
         auto bttNonTerminal = findNextNode(mtFsmState.getNonTerminal(), precedencesNonTerminal);
@@ -49,15 +49,15 @@ BttFsm BTT_FSMCreation::formulaToBTT_FSM(const Formula &formula, bool past) {
     return BttFsm(mtFsm.getFormula(), bttStates);
 }
 
-std::map<std::string, size_t> BTT_FSMCreation::getAtomicFrequencies(const MultiTransition &multiTransition) {
+std::map<std::string, size_t> BTT_FSMCreation::getAtomicAndPredicateFrequencies(const MultiTransition &multiTransition) {
     std::map<std::string, size_t> frequencies;
     const auto &transitions = multiTransition.getTransitions();
     for (const auto &[formula, state] : transitions) {
         // Formula of transition
-        auto atomics = Utils::getAtomics(formula);
-        for (const auto &atomic : atomics) {
+        auto predicates = Utils::getAtomicsAndPredicates(formula);
+        for (const auto &predicate : predicates) {
             // Adds key if it is not yet in map
-            frequencies[atomic]++;
+            frequencies[predicate]++;
         }
     }
     return frequencies;
@@ -65,13 +65,13 @@ std::map<std::string, size_t> BTT_FSMCreation::getAtomicFrequencies(const MultiT
 
 // TODO use Predicates.h for costs
 std::multimap<double, std::shared_ptr<Atomic>>
-BTT_FSMCreation::getAtomicWeight(const MultiTransition &multiTransition) {
+BTT_FSMCreation::getAtomicAndPredicateWeight(const MultiTransition &multiTransition) {
     std::map<std::shared_ptr<Atomic>, double> precedences;
     auto numberOfTransitions = multiTransition.getTransitions().size();
-    auto frequencies = getAtomicFrequencies(multiTransition);
-    for (const auto &[atomicString, freq] : frequencies) {
-        auto atomic = std::make_shared<Atomic>(atomicString);
-        precedences[atomic] = 1 / (double(freq) / numberOfTransitions);
+    auto frequencies = getAtomicAndPredicateFrequencies(multiTransition);
+    for (const auto &[predicateString, freq] : frequencies) {
+        auto predicate = std::make_shared<Atomic>(predicateString);
+        precedences[predicate] = 1 / (double(freq) / numberOfTransitions);
     }
     return createWeightMultimap(precedences);
 }

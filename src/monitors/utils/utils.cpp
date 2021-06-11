@@ -185,6 +185,10 @@ std::set<std::string> Utils::getAtomicsAndPredicates(const std::shared_ptr<Expre
     return getAtomicsAndPredicates(expr, {});
 }
 
+std::set<std::string> Utils::getAtomicsAndPredicates(const Formula &formula){
+    return getAtomicsAndPredicates(formula.getExpr());
+}
+
 std::map<std::string, std::tuple<std::string, std::vector<std::string>>> Utils::getPredicatesAndParameters(
     const std::shared_ptr<Expression> &expr,
     std::map<std::string, std::tuple<std::string, std::vector<std::string>>> predicatesWithParameters) {
