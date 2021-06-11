@@ -93,14 +93,14 @@ Formula QMC::reduceBoolFormula(const Formula &formula) {
         not std::dynamic_pointer_cast<Or>(formula.getExpr())) {
         return formula;
     }
-    size_t numberOfAtomics = Utils::getNumberOfAtomics(formula.getExpr());
+    size_t numberOfAtomics = Utils::getNumberOfAtomicsAndPredicates(formula.getExpr());
     EventGenerator gen(numberOfAtomics);
     QMCTable qmcTable({});
 
     // Truth table for all combinations, only add minTerms (evaluate to 1)
     size_t index = 0;
     for (auto event = gen.getEventVector(); gen.hasNext(); event = gen.getNext()) {
-        auto currentEvent = Utils::boolVectorToEvent(Utils::getAtomics(formula.getExpr()), event, false);
+        auto currentEvent = Utils::boolVectorToEvent(Utils::getAtomicsAndPredicates(formula.getExpr()), event, false);
         auto truthValue = Utils::evaluateBooleanExpression(formula.getExpr(), currentEvent.getEventMapRef());
         if (truthValue) {
             // Add to table
@@ -122,7 +122,7 @@ Formula QMC::reduceBoolFormula(const Formula &formula) {
     qmcTable.combinePrimeTerms();
 
     // Apply Petrick's method
-    auto atomics = Utils::getAtomics(formula.getExpr());
+    auto atomics = Utils::getAtomicsAndPredicates(formula.getExpr());
     auto atomicsVector = std::vector<std::string>(atomics.begin(), atomics.end());
     auto reducedFormula = qmcTable.petrick(atomicsVector);
     return reducedFormula;

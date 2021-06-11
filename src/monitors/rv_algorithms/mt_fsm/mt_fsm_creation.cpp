@@ -62,7 +62,6 @@ bool MT_FSMCreation::valid(Formula &formula, std::set<Formula> &states) {
 
 MultiTransition MT_FSMCreation::merge(MultiTransition &mt_1, MultiTransition mt_2) {
     BasicRewriteVisitor br;
-
     std::map<Formula, size_t> mergedTransitions;
 
     // Keeps track of every transition in mt_2 if it was already merged
@@ -145,12 +144,12 @@ void MT_FSMCreation::formulaToMT_FSM(const Formula &formula, std::vector<StateMT
         }
         // 10 Search for equivalent formula
         bool eqFormulaExists = false;
+
         for (size_t stateId = 0; stateId < states.size(); ++stateId) {
             auto equivalence = Formula(
                 std::make_shared<Equivalence>(formulaEventConsuming.getExpr(), states[stateId].getFormula().getExpr()));
             // TODO: add shortcut: if string representation of formulaEventConsuming and states[i] is equal then the
             // equivalence is valid (inverse obviously not)
-
             if (valid(equivalence)) {
                 currentMT = MultiTransition({{conjunction, stateId}});
                 mtNonTerminal = merge(currentMT, mtNonTerminal);

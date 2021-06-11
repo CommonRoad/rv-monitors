@@ -57,6 +57,14 @@ namespace Utils {
 [[nodiscard]] std::set<std::string> getPredicates(const Formula &formula);
 
 /**
+ * Creates a string set of all predicates in a formula. Wrapper for getPredicates().
+ *
+ * @param formula Formula.
+ * @return string set of all predicates in @param formula.
+ */
+[[nodiscard]] std::set<std::string> getAtomicsAndPredicates(const Formula &formula);
+
+/**
  * Creates a string set of all atomics in an expression. Wrapper for getAtomics().
  *
  * @param expr Expression.
