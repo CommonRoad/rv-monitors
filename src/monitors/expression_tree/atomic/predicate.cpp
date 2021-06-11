@@ -14,4 +14,3 @@ std::shared_ptr<Expression> Predicate::accept(ExpressionVisitor &visitor, Trace 
 const std::string &Predicate::getName() const { return name; }
 
 const std::vector<std::string> &Predicate::getParameters() const { return parameters; }
-

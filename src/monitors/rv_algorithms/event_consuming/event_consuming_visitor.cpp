@@ -259,4 +259,3 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitEventOperator(EventOpera
     }
     return ret->accept(*this, trace, index);
 }
-

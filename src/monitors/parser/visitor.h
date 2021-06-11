@@ -522,10 +522,9 @@ class Visitor : public FormulaBaseVisitor {
         }
         std::string name{ctx->getText().substr(0, ctx->getText().find('('))};
         std::string symbol{name};
-        for(const auto &par : params)
+        for (const auto &par : params)
             symbol += par + "_";
-        symbol = symbol.substr(0, symbol.size()-1);
-        return std::make_shared<Predicate>(
-            Predicate(symbol, name, params));
+        symbol = symbol.substr(0, symbol.size() - 1);
+        return std::make_shared<Predicate>(Predicate(symbol, name, params));
     }
 };
