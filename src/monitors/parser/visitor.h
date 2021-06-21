@@ -159,7 +159,7 @@ class Visitor : public FormulaBaseVisitor {
      */
     antlrcpp::Any visitXor(FormulaParser::XorContext *ctx) override {
         // Not an xor -> continue with children
-        if ((ctx->op == nullptr) || ctx->op->getText() != "xor" && ctx->op->getText() != "^") {
+        if ((ctx->op == nullptr) || (ctx->op->getText() != "xor" && ctx->op->getText() != "^")) {
             return visitChildren(ctx);
         }
         Xor::SetType_T xorSet;
@@ -181,7 +181,7 @@ class Visitor : public FormulaBaseVisitor {
      * @return Or if actual orExpr visited, result of visitChildren() otherwise.
      */
     antlrcpp::Any visitOr(FormulaParser::OrContext *ctx) override {
-        if ((ctx->op == nullptr) || ctx->op->getText() != "or" && ctx->op->getText() != "|") {
+        if ((ctx->op == nullptr) || (ctx->op->getText() != "or" && ctx->op->getText() != "|")) {
             return visitChildren(ctx);
         }
         Or::SetType_T orSet;
@@ -202,7 +202,7 @@ class Visitor : public FormulaBaseVisitor {
      * @return And if actual orExpr visited, result of visitChildren() otherwise.
      */
     antlrcpp::Any visitAnd(FormulaParser::AndContext *ctx) override {
-        if ((ctx->op == nullptr) || ctx->op->getText() != "and" && ctx->op->getText() != "&") {
+        if ((ctx->op == nullptr) || (ctx->op->getText() != "and" && ctx->op->getText() != "&")) {
             return visitChildren(ctx);
         }
         And::SetType_T andSet;

@@ -5,17 +5,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-option(BUILD_DOXYGEN "Build doxygen" OFF)
-option(BUILD_TESTS "Build tests" ON)
-option(BUILD_PYBIND "Build python interface" OFF)
-
-# Appends dictionary where other cmake files are stored which install required Software
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/)
-
-# Set compiler optimizations for build types
-set(CMAKE_CXX_FLAGS_RELEASE  "-O3")
-set(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
-
 # Set a default build type if none was specified
 set(default_build_type "Release")
 if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
@@ -26,6 +15,17 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "${default_build_type}" CACHE
             STRING "Choose the type of build." FORCE)
 endif()
+
+option(BUILD_DOXYGEN "Build doxygen" OFF)
+option(BUILD_TESTS "Build tests" ON)
+option(BUILD_PYBIND "Build python interface" OFF)
+
+# Appends dictionary where other cmake files are stored which install required Software
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/)
+
+# Set compiler optimizations for build types
+set(CMAKE_CXX_FLAGS_RELEASE  "-O3")
+set(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
 
 set(ANTLR4CPP_JAR_LOCATION ${CMAKE_SOURCE_DIR}/libs/antlr.jar)
 
