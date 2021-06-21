@@ -1,36 +1,61 @@
 stages:
-  - static-test
   - compile
   - test
-#  - sanitizer TODO
+  #  - sanitizer TODO
   - coverage
+  - static-test
   - docs
 
 
 
-image: $CI_REGISTRY/maierhofer/rv-monitors/ci:0.3.8
+image: $CI_REGISTRY/maierhofer/rv-monitors/ci:0.4.0
 
 ### static test ###
 clang-format:
   stage: static-test
-  script:
-    bash ./ci/clang-format-test.sh
+  script: bash ./ci/clang-format.sh
+  needs: []
 
 clang-tidy:
   stage: static-test
-  script:
-    bash ./ci/clang-tidy.sh
+  script: bash ./ci/clang-tidy.sh
+  needs:
+    - job: build-compile-commands
+      artifacts: true
 
+cppcheck:
+  stage: static-test
+  script:
+    cppcheck
+    --project=build/compile_commands.json
+    -i"$(pwd)/external"
+  needs:
+    - job: build-compile-commands
+      artifacts: true
 
 ### build project ###
+build-compile-commands:
+  stage: compile
+  script:
+    # run CMake in order to get compile_commands.json
+    - mkdir build && cd build
+    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON  ..
+    - cd ..
+  needs: []
+  artifacts:
+    paths:
+      - ./build/compile_commands.json
+    expire_in: 20 minutes
+
 build-clang:
   stage: compile
   script:
     - export CC=clang
     - export CXX=clang++
     - mkdir build && cd build
-    - cmake -DCMAKE_BUILD_TYPE=Release ..
+    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Release ..
     - make rvmonitors -j4
+  needs: []
 
 build-gcc:
   stage: compile
@@ -38,14 +63,15 @@ build-gcc:
     - export CC=gcc
     - export CXX=g++
     - mkdir build && cd build
-    - cmake -DCMAKE_BUILD_TYPE=Release ..
+    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Release ..
     - make rvmonitors -j4
+  needs: []
 
 build-test:
   stage: compile
   script:
     - mkdir build && cd build
-    - cmake -DCMAKE_BUILD_TYPE=Debug ..
+    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Debug ..
     - make rvmonitors_test -j4
   artifacts:
     paths:
@@ -58,8 +84,9 @@ build-run-coverage:
   stage: compile
   script:
     - mkdir build && cd build
-    - cmake -DCODE_COVERAGE=ON -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_BUILD_TYPE=Debug ..
+    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCODE_COVERAGE=ON -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_BUILD_TYPE=Debug ..
     - make rvmonitors_coverage -j4
+  needs: []
   artifacts:
     paths:
       - ./build/
@@ -81,18 +108,58 @@ test-coverage:
 
 
 ### coverage ###
-publish-coverage:
+coverage-analyze:
   stage: coverage
   script:
-    - gcovr -e 'cmake-(.+/)?/' -e tests/ -e build/ -e src/Parser/gen
-  dependencies:
-    - build-run-coverage
+    - gcovr --version
+    - gcovr
+      -f src/
+      -e src/Parser/gen
+      --print-summary
+      --exclude-unreachable-branches
+      --output coverage.xml
+      --xml
+  needs:
+    - job: build-run-coverage
+      artifacts: true
+  coverage: /^\s*lines:\s*\d+.\d+\%/
+  artifacts:
+    reports:
+      cobertura: coverage.xml
 
+coverage-report:
+  stage: coverage
+  script:
+    - gcovr --version
+    - gcovr
+      -f src/
+      -e src/Parser/gen
+      --print-summary
+      --exclude-unreachable-branches
+      --output coverage.html
+      --html
+      --html-details
+    - mkdir coverage
+    - mv coverage*.html coverage
+  needs:
+    - job: build-run-coverage
+      artifacts: true
+  artifacts:
+    paths:
+      - coverage
+    expose_as: 'Coverage Report'
+    expire_in: 20 minutes
 
-### docs ###
+### create documentation ###
 docs:
   stage: docs
   script:
-    - cd build
-    - cmake -DBUILD_DOXYGEN=ON ..
+    - mkdir -p build && cd build
+    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Debug -DBUILD_DOXYGEN=ON  ..
     - make doc_doxygen ..
+  dependencies: []
+  artifacts:
+    paths:
+      - build/doc_doxygen/html/
+    expose_as: 'Doxygen Documentation'
+    expire_in: 20 minutes
