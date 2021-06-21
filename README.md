@@ -22,66 +22,38 @@ Tested with
 - [gtest](https://github.com/google/googletest) version 1.10.0 is used for tests.
 
 ## Build
-Make a build folder:
+1. Make a build folder and change into it:
 ```bash
-mkdir build
+mkdir build-debug && cd build-debug
 ```
+**NB:** You can in theory use `build` as a name
+for the build folder, however keep in mind that Python's setuptools will always use the `build` folder for
+their build process.
+This normally shouldn't cause any issues since the file names
+used by setuptools don't clash with any names CMake uses currently, but you should still consider using separate folders just in case.
 
-Go into build folder:
-```bash
-cd build
-```
-
-Build with `cmake` and specify paths to external dependencies:
-```
-cmake -DCMAKE_BUILD_TYPE=Release ..
-```
-
-Or use `ccmake ..`
-
-Compile the project running: 
-```bash
-make 
-```
-
-## Running:
-Required command line argument (must be provided first):
-
-```
---input-file       ../test_scenarios/DEU_test_consider_entering_vehicles_for_lane_change.xml
-```
-
-Additional command line arguments:
-
-```
---h                Help
---algorithms       Options are dynamicprogramming, eventconsuming, mt-fsm*, btt-fsm*. You can pass more than one algorithm. Default: dynamicprogramming
---past             true if formula is in PLTLf, false otherwise. Default: false
---runs             Number of runs for each algorithm. Default: 1
---delays           Delay in microseconds in predicate evaluation functions. You can pass more than one delay. Default: 0
---lazyModes        true for lazy evaluation, false for non-lazy, or both. Default: false
---rebuildFSMs      true if MT-FSM* and BTT-FSM* should be built again in each run. Default: false
---consoleOutput    true if output is desired for each run. Default: true
---outputFile       Name of the output file. Default: Evaluation.csv
-```
-
-You can also use an input file and run the program with
+Generate the build files with `cmake`.
+Consider specifying an installation prefix where you want to install the RV-Monitors using `-DCMAKE_INSTALL_PREFIX`.
+The recommended approach is to use a user-writable folder as the installation prefix.
+It is totally fine to use the same installation prefix for all C++ libraries.
 
 ```bash
-./Monitors $(cat Path/To/File)
+cmake \
+-DCMAKE_INSTALL_PREFIX=/path/to/install/prefix \
+-DCMAKE_BUILD_TYPE=Release ..
 ```
 
-An example for such a file is `input.txt`
-## Changing the formula
-To change the formula adapt it in ``main()``. Also adapt the functions for predicate
-evaluation in ``testRunner()``.
-
-## Testing
-The project contains tests using [gtest](https://github.com/google/googletest) that can be run with `ctest`
+Afterward build with make,
+```bash
+make -j4
+```
+where you can replace `-j4` in case more/less threads are available for the build.
 
 ## Documentation
-Documentation can be generated with 
+Add the `-DBUILD_DOXYGEN=ON` to the cmake command above.
+Afterward, the documentation can be generated with
 ```bash
+cd build-debug
 make doc_doxygen
 ```
 
