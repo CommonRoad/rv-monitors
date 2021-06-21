@@ -189,8 +189,6 @@ std::shared_ptr<Expression> NNF::evaluate(const std::shared_ptr<Expression> &exp
         }
         // Nary
         if (auto nary = std::dynamic_pointer_cast<NaryInterface>(ret)) {
-            for (const auto &itr : *nary) {
-            }
             return nary;
         }
         return ret;

@@ -9,7 +9,7 @@ RUN apt-get update && \
         build-essential git pkg-config wget libomp-dev \
         gcovr doxygen graphviz cppcheck \
         libeigen3-dev libboost-all-dev uuid-dev \
-        libcgal-dev libc++-dev && \
+        libcgal-dev libc++-dev libc++abi-dev libomp-dev && \
     rm -rf /var/lib/apt/lists/*
 
 ARG CMAKE_VERSION=3.19.0
