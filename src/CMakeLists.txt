@@ -76,11 +76,30 @@ set(RV_MONITOR_SRC_FILES
 # create library of this project
 add_library(${LIBRARY_NAME} SHARED ${RV_MONITOR_SRC_FILES})
 
+target_compile_features(${LIBRARY_NAME}
+        PUBLIC cxx_lambdas cxx_auto_type
+        PRIVATE cxx_lambdas cxx_auto_type)
+
+set_property(TARGET ${LIBRARY_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
+
 target_include_directories(${LIBRARY_NAME}
         PUBLIC
-        "."
+        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
 target_link_libraries(${LIBRARY_NAME}
         antlr4cpp
         )
+
+# this adds many warnings to the build. They usually help to find some bugs
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
+    target_compile_options(${LIBRARY_NAME}  PRIVATE -Wall -Wextra -Wconversion
+            -pedantic -Wfatal-errors)
+endif()
+if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    target_compile_options(${LIBRARY_NAME}  PRIVATE /W3 /WX)
+    target_compile_options(HW01Main PRIVATE /W3 /WX)
+endif()
