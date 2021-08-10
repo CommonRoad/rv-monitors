@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <cstddef>
 
 /**
  * Class to generate events for a number of predicates.
