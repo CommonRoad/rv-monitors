@@ -14,16 +14,6 @@ TEST(TestMT_FSMFuture, violated1) {
     EXPECT_FALSE(MT_FSMEvaluation::evaluateMT_FSM(mtFSM, trace, false));
 }
 
-TEST(TestMT_FSMFuture, dsfdsf) {
-    Formula formula1 = Parser::parse("G(a(x) & b(y) -> c(z))");
-    Formula formula2 = Parser::parse("G(a & b -> c)");
-    auto mtFSM1 = MT_FSMCreation::formulaToMT_FSM(formula1, false);
-    std::cout << "---" << '\n';
-    auto mtFSM2 = MT_FSMCreation::formulaToMT_FSM(formula2, false);
-    std::cout << mtFSM1.to_string() << '\n';
-    std::cout << mtFSM2.to_string() << '\n';
-}
-
 TEST(TestMT_FSMFuture, satisfied1) {
     Trace trace = Utils::createTrace(
         {"a", "b", "c", "g", "f"},

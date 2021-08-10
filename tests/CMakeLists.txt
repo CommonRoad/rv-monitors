@@ -14,16 +14,17 @@ include(monitors_googletest)
 
 set(RV_MONITOR_TEST_SRC_FILES
         all_tests.cpp
-        btt_fsm/test_btt_fsm_evaluation_future.cpp
-        btt_fsm/test_btt_fsm_evaluation_past.cpp
-        btt_fsm/test_btt_fsm_creation.cpp
-        dynamic_programming/test_dynamic_future.cpp
-        dynamic_programming/test_dynamic_past.cpp
-        event_consuming/test_event_consuming_future.cpp
-        event_consuming/test_event_consuming_past.cpp
-        mt_fsm/test_mt_fsm_evaluation_future.cpp
-        mt_fsm/test_mt_fsm_evaluation_past.cpp
-        mtl/test_mtl.cpp
+        rv_algorithms/btt_fsm/test_btt_fsm_evaluation_future.cpp
+        rv_algorithms/btt_fsm/test_btt_fsm_evaluation_past.cpp
+        rv_algorithms/btt_fsm/test_btt_fsm_creation.cpp
+        rv_algorithms/dynamic_programming/test_dynamic_future.cpp
+        rv_algorithms/dynamic_programming/test_dynamic_past.cpp
+        rv_algorithms/event_consuming/test_event_consuming_future.cpp
+        rv_algorithms/event_consuming/test_event_consuming_past.cpp
+        rv_algorithms/mt_fsm/test_mt_fsm_evaluation_future.cpp
+        rv_algorithms/mt_fsm/test_mt_fsm_evaluation_past.cpp
+        rv_algorithms/mtl_rewriting/test_mtl_rewriting.cpp
+       # rv_algorithms/hydra/test_hydra.cpp
         parser/test_parser.cpp
         qmc/test_qmc.cpp
         rewriting/test_basic_rewrite_visitor.cpp
