@@ -10,7 +10,7 @@
 #include "monitors/rv_algorithms/event_consuming/event_consuming.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm_creation.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm_evaluation.h"
-#include "monitors/rv_algorithms/mtl_rewriting/mtl_event_consuming.h"
+#include "monitors/rv_algorithms/mtl_event_consuming/mtl_event_consuming.h"
 #include "monitors/utils/utils.h"
 
 /**

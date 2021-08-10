@@ -35,10 +35,10 @@
    are private implementation details.  Do not rely on them.  */
 
 #ifndef YY_YY_PARSER_H_INCLUDED
-# define YY_YY_PARSER_H_INCLUDED
+#define YY_YY_PARSER_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+#define YYDEBUG 0
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -46,15 +46,14 @@ extern int yydebug;
 /* "%code requires" blocks.  */
 #line 19 "parser.y" /* yacc.c:1921  */
 
-    typedef void *yyscan_t;
+typedef void *yyscan_t;
 
 #line 52 "parser.h" /* yacc.c:1921  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
-# define YYTOKENTYPE
-  enum yytokentype
-  {
+#define YYTOKENTYPE
+enum yytokentype {
     TOKEN_INFINITY = 258,
     TOKEN_TRUE = 259,
     TOKEN_FALSE = 260,
@@ -86,14 +85,13 @@ extern int yydebug;
     TOKEN_INTLPAREN = 286,
     TOKEN_SEP = 287,
     TOKEN_INTRPAREN = 288
-  };
+};
 #endif
 
 /* Value type.  */
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+#if !defined YYSTYPE && !defined YYSTYPE_IS_DECLARED
 
-union YYSTYPE
-{
+union YYSTYPE {
 #line 31 "parser.y" /* yacc.c:1921  */
 
     char *name;
@@ -107,12 +105,10 @@ union YYSTYPE
 };
 
 typedef union YYSTYPE YYSTYPE;
-# define YYSTYPE_IS_TRIVIAL 1
-# define YYSTYPE_IS_DECLARED 1
+#define YYSTYPE_IS_TRIVIAL 1
+#define YYSTYPE_IS_DECLARED 1
 #endif
 
-
-
-int yyparse (Formula **fmla, yyscan_t scanner);
+int yyparse(Formula **fmla, yyscan_t scanner);
 
 #endif /* !YY_YY_PARSER_H_INCLUDED  */

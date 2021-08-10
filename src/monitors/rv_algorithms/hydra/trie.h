@@ -3,14 +3,14 @@
 
 #include <cstdlib>
 
-template<typename T>
-struct TrieNode {
+template <typename T> struct TrieNode {
     T value;
     TrieNode *next[256];
 
     TrieNode(T init) {
         value = init;
-        for (int i = 0; i < 256; i++) next[i] = NULL;
+        for (int i = 0; i < 256; i++)
+            next[i] = NULL;
     }
     ~TrieNode() {
         for (int i = 0; i < 256; i++) {

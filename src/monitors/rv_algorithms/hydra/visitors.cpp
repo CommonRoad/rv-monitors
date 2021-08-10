@@ -3,8 +3,7 @@
 #include <cstdio>
 #include <cstring>
 
-template<typename MH>
-std::pair<DFA *, MH *> createMH(Regex *r, InputReader *input_reader) {
+template <typename MH> std::pair<DFA *, MH *> createMH(Regex *r, InputReader *input_reader) {
     std::vector<Formula *> fmla;
     CollectVisitor c(fmla);
     r->accept(c);
@@ -15,7 +14,8 @@ std::pair<DFA *, MH *> createMH(Regex *r, InputReader *input_reader) {
     NFA *nfa = new NFA(f.get(), s.get());
     DFA *dfa = new DFA(nfa);
     int buf_len = 0;
-    while ((1 << buf_len) < s.get() + 1) buf_len++;
+    while ((1 << buf_len) < s.get() + 1)
+        buf_len++;
     MonitorVisitor mv(input_reader);
     Event *ap_handle = input_reader->open_handle();
     std::vector<Monitor *> sub_mon;
@@ -35,8 +35,7 @@ std::pair<DFA *, MH *> createMH(Regex *r, InputReader *input_reader) {
 template std::pair<DFA *, MH_FW *> createMH(Regex *r, InputReader *input_reader);
 template std::pair<DFA *, MH_BW *> createMH(Regex *r, InputReader *input_reader);
 
-template<typename MH>
-std::pair<DFA *, MH *> createConsumeMH(ConsumeRegex *r, InputReader *input_reader) {
+template <typename MH> std::pair<DFA *, MH *> createConsumeMH(ConsumeRegex *r, InputReader *input_reader) {
     std::vector<Formula *> fmla;
     CollectConsumeVisitor c(fmla);
     r->accept(c);
@@ -52,7 +51,8 @@ std::pair<DFA *, MH *> createConsumeMH(ConsumeRegex *r, InputReader *input_reade
     NFA *nfa = new NFA(f.get(), s.get());
     DFA *dfa = new DFA(nfa);
     int buf_len = 0;
-    while ((1 << buf_len) < s.get() + 1) buf_len++;
+    while ((1 << buf_len) < s.get() + 1)
+        buf_len++;
     MonitorVisitor mv(input_reader);
     Event *ap_handle = input_reader->open_handle();
     std::vector<Monitor *> sub_mon;
@@ -88,25 +88,21 @@ void PrintConsumeRegexVisitor::visit(AtomicConsumeRegex *r) {
     r->f->accept(f);
 }
 
-void print_fmla_hydra(const char *fname, Formula *fmla)
-{
+void print_fmla_hydra(const char *fname, Formula *fmla) {
     FILE *out = open_file_type(fname, ".mdl", "w");
     PrintHydraFormulaVisitor f(out);
     fmla->accept(f);
     fclose(out);
 }
 
-void print_fmla_monpoly(const char *fname, Formula *fmla)
-{
+void print_fmla_monpoly(const char *fname, Formula *fmla) {
     FILE *out = open_file_type(fname, ".mfotl", "w");
     PrintMonpolyVisitor f(out);
     fmla->accept(f);
     fclose(out);
 }
 
-static bool mystrcmp(const char *s1, const char *s2) {
-    return strcmp(s1, s2) < 0;
-}
+static bool mystrcmp(const char *s1, const char *s2) { return strcmp(s1, s2) < 0; }
 
 void print_regex_reelay(const char *fname, ConsumeRegex *r) {
     FILE *out = open_file_type(fname, ".yaml", "w");
@@ -130,8 +126,7 @@ void print_regex_reelay(const char *fname, ConsumeRegex *r) {
     fclose(out);
 }
 
-void print_fmla_reelay(const char *fname, Formula *fmla)
-{
+void print_fmla_reelay(const char *fname, Formula *fmla) {
     FILE *out = open_file_type(fname, ".yaml", "w");
     fprintf(out, "---\n");
     fprintf(out, "name : \"rand\"\n");
@@ -153,16 +148,14 @@ void print_fmla_reelay(const char *fname, Formula *fmla)
     fclose(out);
 }
 
-void print_fmla_rymtl(const char *fname, Formula *fmla)
-{
+void print_fmla_rymtl(const char *fname, Formula *fmla) {
     FILE *out = open_file_type(fname, ".rmtl", "w");
     PrintRymtlVisitor f(out);
     fmla->accept(f);
     fclose(out);
 }
 
-void print_fmla_r2u2(const char *fname, Formula *fmla)
-{
+void print_fmla_r2u2(const char *fname, Formula *fmla) {
     FILE *out = open_file_type(fname, ".mltl", "w");
     PrintR2U2Visitor f(out);
     fmla->accept(f);

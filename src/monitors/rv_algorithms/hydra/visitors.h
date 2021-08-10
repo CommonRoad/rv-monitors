@@ -4,20 +4,16 @@
 #include "formula.h"
 #include "monitor.h"
 
-template<typename MH>
-std::pair<DFA *, MH *> createMH(Regex *r, InputReader *input_reader);
-template<typename MH>
-std::pair<DFA *, MH *> createConsumeMH(ConsumeRegex *r, InputReader *input_reader);
+template <typename MH> std::pair<DFA *, MH *> createMH(Regex *r, InputReader *input_reader);
+template <typename MH> std::pair<DFA *, MH *> createConsumeMH(ConsumeRegex *r, InputReader *input_reader);
 
 class MonitorVisitor : public FormulaVisitor {
     InputReader *input_reader;
     Monitor *mon;
 
-public:
+  public:
     MonitorVisitor(InputReader *input_reader) : input_reader(input_reader) {}
-    Monitor *get_mon() {
-        return mon;
-    }
+    Monitor *get_mon() { return mon; }
     void visit(BwFormula *f) {
         std::pair<DFA *, MH_BW *> icalp = createMH<MH_BW>(f->r, input_reader);
         mon = new BwMonitor(f->from, f->to, icalp.first, icalp.second);
@@ -42,12 +38,8 @@ public:
         std::pair<DFA *, MH_FW *> icalp = createMH<MH_FW>(f->r, input_reader);
         mon = new FwOneMonitor(f->delta, icalp.first, icalp.second);
     }
-    void visit(BoolFormula *f) {
-        mon = new NonTempMonitor(f, input_reader, input_reader->open_handle());
-    }
-    void visit(PredFormula *f) {
-        mon = new NonTempMonitor(f, input_reader, input_reader->open_handle());
-    }
+    void visit(BoolFormula *f) { mon = new NonTempMonitor(f, input_reader, input_reader->open_handle()); }
+    void visit(PredFormula *f) { mon = new NonTempMonitor(f, input_reader, input_reader->open_handle()); }
     void visit(NegFormula *f) {
         if (f->f->is_temporal) {
             f->f->accept(*this);
@@ -129,43 +121,33 @@ public:
 class NullableConsumeVisitor : public ConsumeRegexVisitor {
     int is_nullable;
 
-public:
-    int nullable() {
-        return is_nullable;
-    }
+  public:
+    int nullable() { return is_nullable; }
 
-    void visit(AtomicConsumeRegex *r) {
-        is_nullable = 0;
-    }
+    void visit(AtomicConsumeRegex *r) { is_nullable = 0; }
     void visit(OrConsumeRegex *r) {
         r->left->accept(*this);
-        if (is_nullable) return;
+        if (is_nullable)
+            return;
         r->right->accept(*this);
     }
     void visit(ConcatConsumeRegex *r) {
         r->left->accept(*this);
-        if (!is_nullable) return;
+        if (!is_nullable)
+            return;
         r->right->accept(*this);
     }
-    void visit(StarConsumeRegex *r) {
-        is_nullable = 1;
-    }
+    void visit(StarConsumeRegex *r) { is_nullable = 1; }
 };
 
 class StateCount : public RegexVisitor {
     int state_cnt = 0;
 
-public:
-    int get() {
-        return state_cnt;
-    }
+  public:
+    int get() { return state_cnt; }
 
-    void visit(TestRegex *r) {
-        state_cnt++;
-    }
-    void visit(WildCardRegex *r) {
-        state_cnt++;
-    }
+    void visit(TestRegex *r) { state_cnt++; }
+    void visit(WildCardRegex *r) { state_cnt++; }
     void visit(OrRegex *r) {
         state_cnt++;
         r->left->accept(*this);
@@ -184,14 +166,10 @@ public:
 class ConsumeStateCount : public ConsumeRegexVisitor {
     int state_cnt = 0;
 
-public:
-    int get() {
-        return state_cnt;
-    }
+  public:
+    int get() { return state_cnt; }
 
-    void visit(AtomicConsumeRegex *r) {
-        state_cnt++;
-    }
+    void visit(AtomicConsumeRegex *r) { state_cnt++; }
     void visit(OrConsumeRegex *r) {
         state_cnt++;
         r->left->accept(*this);
@@ -201,9 +179,11 @@ public:
         state_cnt++;
         NullableConsumeVisitor nv;
         r->left->accept(nv);
-        if (nv.nullable()) state_cnt++;
+        if (nv.nullable())
+            state_cnt++;
         r->right->accept(nv);
-        if (nv.nullable()) state_cnt++;
+        if (nv.nullable())
+            state_cnt++;
         r->left->accept(*this);
         r->right->accept(*this);
     }
@@ -216,12 +196,13 @@ public:
 class CollectVisitor : public RegexVisitor {
     std::vector<Formula *> &fmla;
 
-public:
+  public:
     CollectVisitor(std::vector<Formula *> &fmla) : fmla(fmla) {}
     void visit(TestRegex *r) {
         for (int i = 0; i < fmla.size(); i++) {
             if (r->f->equal(fmla[i])) {
-                if (r->f_owner) delete r->f;
+                if (r->f_owner)
+                    delete r->f;
                 r->f = fmla[i];
                 r->f_owner = 0;
                 return;
@@ -238,20 +219,19 @@ public:
         r->left->accept(*this);
         r->right->accept(*this);
     }
-    void visit(StarRegex *r) {
-        r->body->accept(*this);
-    }
+    void visit(StarRegex *r) { r->body->accept(*this); }
 };
 
 class CollectConsumeVisitor : public ConsumeRegexVisitor {
     std::vector<Formula *> &fmla;
 
-public:
+  public:
     CollectConsumeVisitor(std::vector<Formula *> &fmla) : fmla(fmla) {}
     void visit(AtomicConsumeRegex *r) {
         for (int i = 0; i < fmla.size(); i++) {
             if (r->f->equal(fmla[i])) {
-                if (r->f_owner) delete r->f;
+                if (r->f_owner)
+                    delete r->f;
                 r->f = fmla[i];
                 r->f_owner = 0;
                 return;
@@ -267,20 +247,16 @@ public:
         r->left->accept(*this);
         r->right->accept(*this);
     }
-    void visit(StarConsumeRegex *r) {
-        r->body->accept(*this);
-    }
+    void visit(StarConsumeRegex *r) { r->body->accept(*this); }
 };
 
 class FragVisitor : public RegexVisitor {
     const std::vector<Formula *> &fmla;
     Frag f;
 
-public:
+  public:
     FragVisitor(const std::vector<Formula *> &fmla) : fmla(fmla) {}
-    Frag get() {
-        return f;
-    }
+    Frag get() { return f; }
     void visit(TestRegex *r) {
         for (int i = 0; i < fmla.size(); i++) {
             if (r->f == fmla[i]) {
@@ -325,15 +301,13 @@ class FragConsumeVisitor : public ConsumeRegexVisitor {
     const std::vector<Formula *> &fmla;
     Frag f;
 
-public:
+  public:
     FragConsumeVisitor(const std::vector<Formula *> &fmla) : fmla(fmla) {}
     void nullate() {
         f.start = new NState(Split, f.start, NULL);
         f.out.push_back(&f.start->out1);
     }
-    Frag get() {
-        return f;
-    }
+    Frag get() { return f; }
     void visit(AtomicConsumeRegex *r) {
         for (int i = 0; i < fmla.size(); i++) {
             if (r->f == fmla[i]) {
@@ -392,7 +366,7 @@ public:
 class AtomRegexVisitor : public RegexVisitor {
     std::vector<const char *> &atoms;
 
-public:
+  public:
     AtomRegexVisitor(std::vector<const char *> &atoms) : atoms(atoms) {}
     void visit(TestRegex *r);
     void visit(WildCardRegex *r) {}
@@ -404,15 +378,13 @@ public:
         r->left->accept(*this);
         r->right->accept(*this);
     }
-    void visit(StarRegex *r) {
-        r->body->accept(*this);
-    }
+    void visit(StarRegex *r) { r->body->accept(*this); }
 };
 
 class AtomConsumeRegexVisitor : public ConsumeRegexVisitor {
     std::vector<const char *> &atoms;
 
-public:
+  public:
     AtomConsumeRegexVisitor(std::vector<const char *> &atoms) : atoms(atoms) {}
     void visit(AtomicConsumeRegex *r);
     void visit(OrConsumeRegex *r) {
@@ -423,15 +395,13 @@ public:
         r->left->accept(*this);
         r->right->accept(*this);
     }
-    void visit(StarConsumeRegex *r) {
-        r->body->accept(*this);
-    }
+    void visit(StarConsumeRegex *r) { r->body->accept(*this); }
 };
 
 class AtomFormulaVisitor : public FormulaVisitor {
     std::vector<const char *> &atoms;
 
-public:
+  public:
     AtomFormulaVisitor(std::vector<const char *> &atoms) : atoms(atoms) {}
     void visit(BwFormula *f) {
         AtomRegexVisitor v(atoms);
@@ -460,13 +430,12 @@ public:
     void visit(BoolFormula *f) {}
     void visit(PredFormula *f) {
         for (size_t i = 0; i < atoms.size(); i++) {
-            if (!strcmp(atoms[i], f->pred_name)) return;
+            if (!strcmp(atoms[i], f->pred_name))
+                return;
         }
         atoms.push_back(f->pred_name);
     }
-    void visit(NegFormula *f) {
-        f->f->accept(*this);
-    }
+    void visit(NegFormula *f) { f->f->accept(*this); }
     void visit(AndFormula *f) {
         f->f->accept(*this);
         f->g->accept(*this);
@@ -483,12 +452,8 @@ public:
         f->f->accept(*this);
         f->g->accept(*this);
     }
-    void visit(PrevFormula *f) {
-        f->f->accept(*this);
-    }
-    void visit(NextFormula *f) {
-        f->f->accept(*this);
-    }
+    void visit(PrevFormula *f) { f->f->accept(*this); }
+    void visit(NextFormula *f) { f->f->accept(*this); }
     void visit(SinceFormula *f) {
         f->f->accept(*this);
         f->g->accept(*this);
@@ -502,12 +467,10 @@ public:
 class PrintHydraRegexVisitor : public RegexVisitor {
     FILE *out;
 
-public:
+  public:
     PrintHydraRegexVisitor(FILE *out) : out(out) {}
     void visit(TestRegex *r);
-    void visit(WildCardRegex *r) {
-        fprintf(out, ".");
-    }
+    void visit(WildCardRegex *r) { fprintf(out, "."); }
     void visit(OrRegex *r) {
         fprintf(out, "(");
         r->left->accept(*this);
@@ -532,7 +495,7 @@ public:
 class PrintConsumeRegexVisitor : public ConsumeRegexVisitor {
     FILE *out;
 
-public:
+  public:
     PrintConsumeRegexVisitor(FILE *out) : out(out) {}
     void visit(AtomicConsumeRegex *r);
     void visit(OrConsumeRegex *r) {
@@ -559,20 +522,24 @@ public:
 class PrintHydraFormulaVisitor : public FormulaVisitor {
     FILE *out;
 
-public:
+  public:
     PrintHydraFormulaVisitor(FILE *out) : out(out) {}
     void visit(BwFormula *f) {
         fprintf(out, "(");
-        if (f->to < MAX_TIMESTAMP) fprintf(out, "◁ [%d,%d] ", f->from, f->to);
-        else fprintf(out, "◁ [%d,INFINITY] ", f->from);
+        if (f->to < MAX_TIMESTAMP)
+            fprintf(out, "◁ [%d,%d] ", f->from, f->to);
+        else
+            fprintf(out, "◁ [%d,INFINITY] ", f->from);
         PrintHydraRegexVisitor r(out);
         f->r->accept(r);
         fprintf(out, ")");
     }
     void visit(BwConsumeFormula *f) {
         fprintf(out, "(");
-        if (f->to < MAX_TIMESTAMP) fprintf(out, "◁r [%d,%d] ", f->from, f->to);
-        else fprintf(out, "◁r [%d,INFINITY] ", f->from);
+        if (f->to < MAX_TIMESTAMP)
+            fprintf(out, "◁r [%d,%d] ", f->from, f->to);
+        else
+            fprintf(out, "◁r [%d,INFINITY] ", f->from);
         PrintConsumeRegexVisitor r(out);
         f->r->accept(r);
         fprintf(out, ")");
@@ -586,16 +553,20 @@ public:
     }
     void visit(FwFormula *f) {
         fprintf(out, "(");
-        if (f->to < MAX_TIMESTAMP) fprintf(out, "▷ [%d,%d] ", f->from, f->to);
-        else fprintf(out, "▷ [%d,INFINITY] ", f->from);
+        if (f->to < MAX_TIMESTAMP)
+            fprintf(out, "▷ [%d,%d] ", f->from, f->to);
+        else
+            fprintf(out, "▷ [%d,INFINITY] ", f->from);
         PrintHydraRegexVisitor r(out);
         f->r->accept(r);
         fprintf(out, ")");
     }
     void visit(FwConsumeFormula *f) {
         fprintf(out, "(");
-        if (f->to < MAX_TIMESTAMP) fprintf(out, "▷r [%d,%d] ", f->from, f->to);
-        else fprintf(out, "▷r [%d,INFINITY] ", f->from);
+        if (f->to < MAX_TIMESTAMP)
+            fprintf(out, "▷r [%d,%d] ", f->from, f->to);
+        else
+            fprintf(out, "▷r [%d,INFINITY] ", f->from);
         PrintConsumeRegexVisitor r(out);
         f->r->accept(r);
         fprintf(out, ")");
@@ -607,12 +578,8 @@ public:
         f->r->accept(r);
         fprintf(out, ")");
     }
-    void visit(BoolFormula *f) {
-        fprintf(out, "%s", f->b ? "true" : "false");
-    }
-    void visit(PredFormula *f) {
-        fprintf(out, "%s", f->pred_name);
-    }
+    void visit(BoolFormula *f) { fprintf(out, "%s", f->b ? "true" : "false"); }
+    void visit(PredFormula *f) { fprintf(out, "%s", f->pred_name); }
     void visit(NegFormula *f) {
         fprintf(out, "(");
         fprintf(out, "NOT ");
@@ -649,31 +616,39 @@ public:
     }
     void visit(PrevFormula *f) {
         fprintf(out, "(");
-        if (f->to < MAX_TIMESTAMP) fprintf(out, "PREV[%d,%d] ", f->from, f->to);
-        else fprintf(out, "PREV[%d,INFINITY] ", f->from);
+        if (f->to < MAX_TIMESTAMP)
+            fprintf(out, "PREV[%d,%d] ", f->from, f->to);
+        else
+            fprintf(out, "PREV[%d,INFINITY] ", f->from);
         f->f->accept(*this);
         fprintf(out, ")");
     }
     void visit(NextFormula *f) {
         fprintf(out, "(");
-        if (f->to < MAX_TIMESTAMP) fprintf(out, "NEXT[%d,%d] ", f->from, f->to);
-        else fprintf(out, "NEXT[%d,INFINITY] ", f->from);
+        if (f->to < MAX_TIMESTAMP)
+            fprintf(out, "NEXT[%d,%d] ", f->from, f->to);
+        else
+            fprintf(out, "NEXT[%d,INFINITY] ", f->from);
         f->f->accept(*this);
         fprintf(out, ")");
     }
     void visit(SinceFormula *f) {
         fprintf(out, "(");
         f->f->accept(*this);
-        if (f->to < MAX_TIMESTAMP) fprintf(out, " SINCE[%d,%d] ", f->from, f->to);
-        else fprintf(out, " SINCE[%d,INFINITY] ", f->from);
+        if (f->to < MAX_TIMESTAMP)
+            fprintf(out, " SINCE[%d,%d] ", f->from, f->to);
+        else
+            fprintf(out, " SINCE[%d,INFINITY] ", f->from);
         f->g->accept(*this);
         fprintf(out, ")");
     }
     void visit(UntilFormula *f) {
         fprintf(out, "(");
         f->f->accept(*this);
-        if (f->to < MAX_TIMESTAMP) fprintf(out, " UNTIL[%d,%d] ", f->from, f->to);
-        else fprintf(out, " UNTIL[%d,INFINITY] ", f->from);
+        if (f->to < MAX_TIMESTAMP)
+            fprintf(out, " UNTIL[%d,%d] ", f->from, f->to);
+        else
+            fprintf(out, " UNTIL[%d,INFINITY] ", f->from);
         f->g->accept(*this);
         fprintf(out, ")");
     }
@@ -682,32 +657,16 @@ public:
 class PrintMonpolyVisitor : public FormulaVisitor {
     FILE *out;
 
-public:
+  public:
     PrintMonpolyVisitor(FILE *out) : out(out) {}
-    void visit(BwFormula *f) {
-        CHECK(0);
-    }
-    void visit(BwConsumeFormula *f) {
-        CHECK(0);
-    }
-    void visit(BwOneFormula *f) {
-        CHECK(0);
-    }
-    void visit(FwFormula *f) {
-        CHECK(0);
-    }
-    void visit(FwConsumeFormula *f) {
-        CHECK(0);
-    }
-    void visit(FwOneFormula *f) {
-        CHECK(0);
-    }
-    void visit(BoolFormula *f) {
-        fprintf(out, "%s", f->b ? "TRUE" : "FALSE");
-    }
-    void visit(PredFormula *f) {
-        fprintf(out, "%s()", f->pred_name);
-    }
+    void visit(BwFormula *f) { CHECK(0); }
+    void visit(BwConsumeFormula *f) { CHECK(0); }
+    void visit(BwOneFormula *f) { CHECK(0); }
+    void visit(FwFormula *f) { CHECK(0); }
+    void visit(FwConsumeFormula *f) { CHECK(0); }
+    void visit(FwOneFormula *f) { CHECK(0); }
+    void visit(BoolFormula *f) { fprintf(out, "%s", f->b ? "TRUE" : "FALSE"); }
+    void visit(PredFormula *f) { fprintf(out, "%s()", f->pred_name); }
     void visit(NegFormula *f) {
         fprintf(out, "(");
         fprintf(out, "NOT ");
@@ -744,31 +703,39 @@ public:
     }
     void visit(PrevFormula *f) {
         fprintf(out, "(");
-        if (f->to < MAX_TIMESTAMP) fprintf(out, "PREV[%d,%d] ", f->from, f->to);
-        else fprintf(out, "PREV[%d,*) ", f->from);
+        if (f->to < MAX_TIMESTAMP)
+            fprintf(out, "PREV[%d,%d] ", f->from, f->to);
+        else
+            fprintf(out, "PREV[%d,*) ", f->from);
         f->f->accept(*this);
         fprintf(out, ")");
     }
     void visit(NextFormula *f) {
         fprintf(out, "(");
-        if (f->to < MAX_TIMESTAMP) fprintf(out, "NEXT[%d,%d] ", f->from, f->to);
-        else fprintf(out, "NEXT[%d,*) ", f->from);
+        if (f->to < MAX_TIMESTAMP)
+            fprintf(out, "NEXT[%d,%d] ", f->from, f->to);
+        else
+            fprintf(out, "NEXT[%d,*) ", f->from);
         f->f->accept(*this);
         fprintf(out, ")");
     }
     void visit(SinceFormula *f) {
         fprintf(out, "(");
         f->f->accept(*this);
-        if (f->to < MAX_TIMESTAMP) fprintf(out, " SINCE[%d,%d] ", f->from, f->to);
-        else fprintf(out, " SINCE[%d,*) ", f->from);
+        if (f->to < MAX_TIMESTAMP)
+            fprintf(out, " SINCE[%d,%d] ", f->from, f->to);
+        else
+            fprintf(out, " SINCE[%d,*) ", f->from);
         f->g->accept(*this);
         fprintf(out, ")");
     }
     void visit(UntilFormula *f) {
         fprintf(out, "(");
         f->f->accept(*this);
-        if (f->to < MAX_TIMESTAMP) fprintf(out, " UNTIL[%d,%d] ", f->from, f->to);
-        else fprintf(out, " UNTIL[%d,*) ", f->from);
+        if (f->to < MAX_TIMESTAMP)
+            fprintf(out, " UNTIL[%d,%d] ", f->from, f->to);
+        else
+            fprintf(out, " UNTIL[%d,*) ", f->from);
         f->g->accept(*this);
         fprintf(out, ")");
     }
@@ -777,32 +744,16 @@ public:
 class PrintReelayFormulaVisitor : public FormulaVisitor {
     FILE *out;
 
-public:
+  public:
     PrintReelayFormulaVisitor(FILE *out) : out(out) {}
-    void visit(BwFormula *f) {
-        CHECK(0);
-    }
-    void visit(BwConsumeFormula *f) {
-        CHECK(0);
-    }
-    void visit(BwOneFormula *f) {
-        CHECK(0);
-    }
-    void visit(FwFormula *f) {
-        CHECK(0);
-    }
-    void visit(FwConsumeFormula *f) {
-        CHECK(0);
-    }
-    void visit(FwOneFormula *f) {
-        CHECK(0);
-    }
-    void visit(BoolFormula *f) {
-        CHECK(0);
-    }
-    void visit(PredFormula *f) {
-        fprintf(out, "%s", f->pred_name);
-    }
+    void visit(BwFormula *f) { CHECK(0); }
+    void visit(BwConsumeFormula *f) { CHECK(0); }
+    void visit(BwOneFormula *f) { CHECK(0); }
+    void visit(FwFormula *f) { CHECK(0); }
+    void visit(FwConsumeFormula *f) { CHECK(0); }
+    void visit(FwOneFormula *f) { CHECK(0); }
+    void visit(BoolFormula *f) { CHECK(0); }
+    void visit(PredFormula *f) { fprintf(out, "%s", f->pred_name); }
     void visit(NegFormula *f) {
         fprintf(out, "(");
         fprintf(out, "! ");
@@ -830,65 +781,47 @@ public:
         f->g->accept(*this);
         fprintf(out, ")");
     }
-    void visit(EqFormula *f) {
-        CHECK(0);
-    }
+    void visit(EqFormula *f) { CHECK(0); }
     void visit(PrevFormula *f) {
         fprintf(out, "(");
         fprintf(out, "pre ");
         f->f->accept(*this);
         fprintf(out, ")");
     }
-    void visit(NextFormula *f) {
-        CHECK(0);
-    }
+    void visit(NextFormula *f) { CHECK(0); }
     void visit(SinceFormula *f) {
         fprintf(out, "(");
         f->f->accept(*this);
         if (f->from == 0) {
-            if (f->to == MAX_TIMESTAMP) fprintf(out, " since ");
-            else fprintf(out, " since[<=%d] ", f->to);
+            if (f->to == MAX_TIMESTAMP)
+                fprintf(out, " since ");
+            else
+                fprintf(out, " since[<=%d] ", f->to);
         } else {
-            if (f->to == MAX_TIMESTAMP) fprintf(out, " since[>=%d] ", f->from);
-            else fprintf(out, " since[%d,%d] ", f->from, f->to);
+            if (f->to == MAX_TIMESTAMP)
+                fprintf(out, " since[>=%d] ", f->from);
+            else
+                fprintf(out, " since[%d,%d] ", f->from, f->to);
         }
         f->g->accept(*this);
         fprintf(out, ")");
     }
-    void visit(UntilFormula *f) {
-        CHECK(0);
-    }
+    void visit(UntilFormula *f) { CHECK(0); }
 };
 
 class PrintRymtlVisitor : public FormulaVisitor {
     FILE *out;
 
-public:
+  public:
     PrintRymtlVisitor(FILE *out) : out(out) {}
-    void visit(BwFormula *f) {
-        CHECK(0);
-    }
-    void visit(BwConsumeFormula *f) {
-        CHECK(0);
-    }
-    void visit(BwOneFormula *f) {
-        CHECK(0);
-    }
-    void visit(FwFormula *f) {
-        CHECK(0);
-    }
-    void visit(FwConsumeFormula *f) {
-        CHECK(0);
-    }
-    void visit(FwOneFormula *f) {
-        CHECK(0);
-    }
-    void visit(BoolFormula *f) {
-        CHECK(0);
-    }
-    void visit(PredFormula *f) {
-        fprintf(out, "%s", f->pred_name);
-    }
+    void visit(BwFormula *f) { CHECK(0); }
+    void visit(BwConsumeFormula *f) { CHECK(0); }
+    void visit(BwOneFormula *f) { CHECK(0); }
+    void visit(FwFormula *f) { CHECK(0); }
+    void visit(FwConsumeFormula *f) { CHECK(0); }
+    void visit(FwOneFormula *f) { CHECK(0); }
+    void visit(BoolFormula *f) { CHECK(0); }
+    void visit(PredFormula *f) { fprintf(out, "%s", f->pred_name); }
     void visit(NegFormula *f) {
         fprintf(out, "(");
         fprintf(out, "! ");
@@ -916,65 +849,47 @@ public:
         f->g->accept(*this);
         fprintf(out, ")");
     }
-    void visit(EqFormula *f) {
-        CHECK(0);
-    }
+    void visit(EqFormula *f) { CHECK(0); }
     void visit(PrevFormula *f) {
         fprintf(out, "(");
         fprintf(out, "Y ");
         f->f->accept(*this);
         fprintf(out, ")");
     }
-    void visit(NextFormula *f) {
-        CHECK(0);
-    }
+    void visit(NextFormula *f) { CHECK(0); }
     void visit(SinceFormula *f) {
         fprintf(out, "(");
         f->f->accept(*this);
         if (f->from == 0) {
-            if (f->to == MAX_TIMESTAMP) fprintf(out, " S ");
-            else fprintf(out, " S[:%d] ", f->to);
+            if (f->to == MAX_TIMESTAMP)
+                fprintf(out, " S ");
+            else
+                fprintf(out, " S[:%d] ", f->to);
         } else {
-            if (f->to == MAX_TIMESTAMP) fprintf(out, " S[%d:] ", f->from);
-            else fprintf(out, " S[%d:%d] ", f->from, f->to);
+            if (f->to == MAX_TIMESTAMP)
+                fprintf(out, " S[%d:] ", f->from);
+            else
+                fprintf(out, " S[%d:%d] ", f->from, f->to);
         }
         f->g->accept(*this);
         fprintf(out, ")");
     }
-    void visit(UntilFormula *f) {
-        CHECK(0);
-    }
+    void visit(UntilFormula *f) { CHECK(0); }
 };
 
 class PrintR2U2Visitor : public FormulaVisitor {
     FILE *out;
 
-public:
+  public:
     PrintR2U2Visitor(FILE *out) : out(out) {}
-    void visit(BwFormula *f) {
-        CHECK(0);
-    }
-    void visit(BwConsumeFormula *f) {
-        CHECK(0);
-    }
-    void visit(BwOneFormula *f) {
-        CHECK(0);
-    }
-    void visit(FwFormula *f) {
-        CHECK(0);
-    }
-    void visit(FwConsumeFormula *f) {
-        CHECK(0);
-    }
-    void visit(FwOneFormula *f) {
-        CHECK(0);
-    }
-    void visit(BoolFormula *f) {
-        CHECK(0);
-    }
-    void visit(PredFormula *f) {
-        fprintf(out, "(%s)", f->pred_name);
-    }
+    void visit(BwFormula *f) { CHECK(0); }
+    void visit(BwConsumeFormula *f) { CHECK(0); }
+    void visit(BwOneFormula *f) { CHECK(0); }
+    void visit(FwFormula *f) { CHECK(0); }
+    void visit(FwConsumeFormula *f) { CHECK(0); }
+    void visit(FwOneFormula *f) { CHECK(0); }
+    void visit(BoolFormula *f) { CHECK(0); }
+    void visit(PredFormula *f) { fprintf(out, "(%s)", f->pred_name); }
     void visit(NegFormula *f) {
         fprintf(out, "(");
         fprintf(out, "! ");

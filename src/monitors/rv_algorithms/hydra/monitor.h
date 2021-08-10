@@ -14,7 +14,7 @@
 struct Formula;
 
 class Monitor {
-public:
+  public:
     bool eof = false;
 
     virtual ~Monitor() {}
@@ -34,11 +34,10 @@ class EvalMonitor : public Monitor {
     InputReader *input_reader;
     Event *handle;
 
-public:
-    EvalMonitor(Formula *fmla, InputReader *input_reader, Event *handle) : fmla(fmla), input_reader(input_reader), handle(handle) {}
-    Monitor *clone() override {
-        return new EvalMonitor(fmla, input_reader, handle->clone());
-    }
+  public:
+    EvalMonitor(Formula *fmla, InputReader *input_reader, Event *handle)
+        : fmla(fmla), input_reader(input_reader), handle(handle) {}
+    Monitor *clone() override { return new EvalMonitor(fmla, input_reader, handle->clone()); }
     BooleanVerdict step_impl() override {
         bool b = fmla->eval(handle);
         return BooleanVerdict(handle->ts, b ? TRUE : FALSE);
@@ -52,7 +51,7 @@ class LastReader {
     Event *ap_handle;
     std::vector<Monitor *> sub_mon;
 
-public:
+  public:
     int unresolved;
 
     std::vector<Event *> sub_es;
@@ -60,12 +59,19 @@ public:
     size_t buf_len, buf_len_mask;
     size_t buf_beg, buf_end;
 
-    LastReader(InputReader *input_reader, const vector<Formula *> &fmla, Event *ap_handle, const std::vector<Monitor *> &sub_mon, size_t buf_len) : input_reader(input_reader), fmla(fmla), ap_handle(ap_handle), sub_mon(sub_mon), unresolved(0), buf_len(buf_len), buf_len_mask((1 << buf_len) - 1) {
+    LastReader(InputReader *input_reader, const vector<Formula *> &fmla, Event *ap_handle,
+               const std::vector<Monitor *> &sub_mon, size_t buf_len)
+        : input_reader(input_reader), fmla(fmla), ap_handle(ap_handle), sub_mon(sub_mon), unresolved(0),
+          buf_len(buf_len), buf_len_mask((1 << buf_len) - 1) {
         sub_es.resize(1 << buf_len);
-        for (size_t i = 0; i < (1 << buf_len); i++) sub_es[i] = new Event(fmla.size());
+        for (size_t i = 0; i < (1 << buf_len); i++)
+            sub_es[i] = new Event(fmla.size());
         buf_beg = buf_end = 0;
     }
-    LastReader(LastReader *l_reader) : input_reader(l_reader->input_reader), fmla(l_reader->fmla), unresolved(l_reader->unresolved), buf_len(l_reader->buf_len), buf_len_mask(l_reader->buf_len_mask), buf_beg(l_reader->buf_beg), buf_end(l_reader->buf_end) {
+    LastReader(LastReader *l_reader)
+        : input_reader(l_reader->input_reader), fmla(l_reader->fmla), unresolved(l_reader->unresolved),
+          buf_len(l_reader->buf_len), buf_len_mask(l_reader->buf_len_mask), buf_beg(l_reader->buf_beg),
+          buf_end(l_reader->buf_end) {
         ap_handle = l_reader->ap_handle->clone();
         for (size_t i = 0; i < fmla.size(); i++) {
             if (fmla[i]->is_temporal) {
@@ -75,25 +81,32 @@ public:
             }
         }
         sub_es.resize(1 << buf_len);
-        for (size_t i = 0; i < (1 << buf_len); i++) sub_es[i] = new Event(l_reader->sub_es[i]);
+        for (size_t i = 0; i < (1 << buf_len); i++)
+            sub_es[i] = new Event(l_reader->sub_es[i]);
     }
     ~LastReader() {
         delete ap_handle;
-        for (size_t i = 0; i < sub_mon.size(); i++) delete sub_mon[i];
-        for (size_t i = 0; i < sub_es.size(); i++) delete sub_es[i];
+        for (size_t i = 0; i < sub_mon.size(); i++)
+            delete sub_mon[i];
+        for (size_t i = 0; i < sub_es.size(); i++)
+            delete sub_es[i];
     }
 
     void run() {
-        if (ap_handle->eof) return;
+        if (ap_handle->eof)
+            return;
         size_t buf_end_mod = buf_end & buf_len_mask;
         try {
             input_reader->read_handle(ap_handle);
             for (size_t i = 0; i < fmla.size(); i++) {
                 BooleanVerdict v = sub_mon[i]->step();
-                if (v.b == UNRESOLVED) unresolved = 1;
-                else sub_es[buf_end_mod]->ap_lookup[i] = (v.b == TRUE);
+                if (v.b == UNRESOLVED)
+                    unresolved = 1;
+                else
+                    sub_es[buf_end_mod]->ap_lookup[i] = (v.b == TRUE);
             }
-        } catch(const EOL &e) {}
+        } catch (const EOL &e) {
+        }
         sub_es[buf_end_mod]->ts = ap_handle->ts;
         sub_es[buf_end_mod]->tp = ap_handle->tp;
         sub_es[buf_end_mod]->eof = ap_handle->eof;
@@ -102,7 +115,7 @@ public:
 };
 
 class MH_FW {
-protected:
+  protected:
     DFA *dfa;
     LastReader *b_reader, *f_reader;
     int unresolved;
@@ -113,53 +126,50 @@ protected:
 
     // used by run_back()
     struct CurEntry {
-        DState *q;                                          // current state in the run from dfa->init
-        std::optional<std::pair<timestamp, int> > last_sat; // last satisfaction in the run from dfa->init
+        DState *q;                                         // current state in the run from dfa->init
+        std::optional<std::pair<timestamp, int>> last_sat; // last satisfaction in the run from dfa->init
     } cur;
 
     struct QMapEntry {
-        DState *q;                                                // used by run_back()
-        std::optional<std::pair<timestamp, int> > last_sat = {}; // last satisfaction before end time-point
-        DState *end_q;                                            // state at end time-point
+        DState *q;                                              // used by run_back()
+        std::optional<std::pair<timestamp, int>> last_sat = {}; // last satisfaction before end time-point
+        DState *end_q;                                          // state at end time-point
 
         QMapEntry() {}
-        QMapEntry(const std::optional<std::pair<timestamp, int> > &last_sat, DState *end_q) : last_sat(last_sat), end_q(end_q) {}
+        QMapEntry(const std::optional<std::pair<timestamp, int>> &last_sat, DState *end_q)
+            : last_sat(last_sat), end_q(end_q) {}
     };
 
     // q_map
-    std::vector<std::pair<DState *, QMapEntry> > q_map;
+    std::vector<std::pair<DState *, QMapEntry>> q_map;
     size_t q_map_init;
 
     timestamp back_ts, front_ts;
     int back_tp, front_tp;
 
-    DState *e_closure(DState *q, const Event *e) {
-        return dfa->run(q, e);
-    }
-    bool acc(DState *q, const Event *e) {
-        return e_closure(q, e)->accept;
-    }
-    DState *step(DState *q, const Event *e) {
-        return dfa->step(e_closure(q, e));
-    }
+    DState *e_closure(DState *q, const Event *e) { return dfa->run(q, e); }
+    bool acc(DState *q, const Event *e) { return e_closure(q, e)->accept; }
+    DState *step(DState *q, const Event *e) { return dfa->step(e_closure(q, e)); }
     std::pair<DState *, bool> step_acc(DState *q, const Event *e) {
         DState *e_closure_state = e_closure(q, e);
         return std::make_pair(dfa->step(e_closure_state), e_closure_state->accept);
     }
-    void rescale_seen() {
-        seen.resize(dfa->get_cnt(), -1);
-    }
-    const Event *back_es() {
-        return b_reader->sub_es[b_reader->buf_beg & b_reader->buf_len_mask];
-    }
+    void rescale_seen() { seen.resize(dfa->get_cnt(), -1); }
+    const Event *back_es() { return b_reader->sub_es[b_reader->buf_beg & b_reader->buf_len_mask]; }
     const Event *front_es() {
-        if (b_reader->sub_es[(b_reader->buf_end - 1) & b_reader->buf_len_mask]->tp == front_tp) return b_reader->sub_es[(b_reader->buf_end - 1) & b_reader->buf_len_mask];
-        else return f_reader->sub_es[(f_reader->buf_end - 1) & f_reader->buf_len_mask];
+        if (b_reader->sub_es[(b_reader->buf_end - 1) & b_reader->buf_len_mask]->tp == front_tp)
+            return b_reader->sub_es[(b_reader->buf_end - 1) & b_reader->buf_len_mask];
+        else
+            return f_reader->sub_es[(f_reader->buf_end - 1) & f_reader->buf_len_mask];
     }
 
-    MH_FW(MH_FW *s) : dfa(s->dfa), b_reader(new LastReader(s->b_reader)), unresolved(s->unresolved), seen(s->seen), q_map(s->q_map), q_map_init(s->q_map_init) {
-        if (s->f_reader != NULL) f_reader = new LastReader(s->f_reader);
-        else f_reader = NULL;
+    MH_FW(MH_FW *s)
+        : dfa(s->dfa), b_reader(new LastReader(s->b_reader)), unresolved(s->unresolved), seen(s->seen), q_map(s->q_map),
+          q_map_init(s->q_map_init) {
+        if (s->f_reader != NULL)
+            f_reader = new LastReader(s->f_reader);
+        else
+            f_reader = NULL;
 
         back_ts = s->back_ts;
         front_ts = s->front_ts;
@@ -167,7 +177,7 @@ protected:
         front_tp = s->front_tp;
     }
 
-public:
+  public:
     MH_FW(DFA *dfa, LastReader *l_reader) : dfa(dfa), b_reader(l_reader) {
         b_reader->run();
         CHECK(b_reader->buf_beg == 0);
@@ -184,34 +194,41 @@ public:
     }
     ~MH_FW() {
         delete b_reader;
-        if (f_reader) delete f_reader;
+        if (f_reader)
+            delete f_reader;
     }
-    virtual MH_FW *clone() {
-        return new MH_FW(this);
-    }
+    virtual MH_FW *clone() { return new MH_FW(this); }
     Boolean check_init_ts(timestamp from) {
         QMapEntry *e = &q_map[q_map_init].second;
-        if (e->last_sat && e->last_sat->first - back_ts >= from) return TRUE;
-        else return UNRESOLVED;
+        if (e->last_sat && e->last_sat->first - back_ts >= from)
+            return TRUE;
+        else
+            return UNRESOLVED;
     }
     Boolean check_init_tp() {
         QMapEntry *e = &q_map[q_map_init].second;
-        if (e->last_sat && e->last_sat->second == front_tp) return TRUE;
-        else return FALSE;
+        if (e->last_sat && e->last_sat->second == front_tp)
+            return TRUE;
+        else
+            return FALSE;
     }
     BooleanVerdict check_fw(timestamp from, timestamp to) {
         assert(!back_eof());
         timestamp t = back_ts;
         Boolean b = check_init_ts(from);
         while (!front_eof() && front_ts - back_ts <= to) {
-            if (b_reader->unresolved || (f_reader && f_reader->unresolved)) unresolved = 1;
+            if (b_reader->unresolved || (f_reader && f_reader->unresolved))
+                unresolved = 1;
             run_front();
             b = check_init_ts(from);
         }
-        if (front_eof()) unresolved = 1;
-        else if (b == UNRESOLVED) b = FALSE;
+        if (front_eof())
+            unresolved = 1;
+        else if (b == UNRESOLVED)
+            b = FALSE;
         run_back();
-        if (unresolved) b = UNRESOLVED;
+        if (unresolved)
+            b = UNRESOLVED;
         return BooleanVerdict(t, b);
     }
     BooleanVerdict check_fw_shift(timestamp delta) {
@@ -219,22 +236,25 @@ public:
         timestamp t = back_ts;
         Boolean b = UNRESOLVED;
         while (!front_eof() && front_ts - back_ts <= delta) {
-            if (b_reader->unresolved || (f_reader && f_reader->unresolved)) unresolved = 1;
+            if (b_reader->unresolved || (f_reader && f_reader->unresolved))
+                unresolved = 1;
             b = check_init_tp();
             run_front();
         }
-        if (front_eof()) unresolved = 1;
+        if (front_eof())
+            unresolved = 1;
         run_back();
-        if (unresolved) b = UNRESOLVED;
+        if (unresolved)
+            b = UNRESOLVED;
         return BooleanVerdict(t, b);
     }
     int front_eof() {
-        if (b_reader->sub_es[(b_reader->buf_end - 1) & b_reader->buf_len_mask]->tp == front_tp) return b_reader->sub_es[(b_reader->buf_end - 1) & b_reader->buf_len_mask]->eof;
-        else return f_reader->sub_es[(f_reader->buf_end - 1) & f_reader->buf_len_mask]->eof;
+        if (b_reader->sub_es[(b_reader->buf_end - 1) & b_reader->buf_len_mask]->tp == front_tp)
+            return b_reader->sub_es[(b_reader->buf_end - 1) & b_reader->buf_len_mask]->eof;
+        else
+            return f_reader->sub_es[(f_reader->buf_end - 1) & f_reader->buf_len_mask]->eof;
     }
-    int back_eof() {
-        return b_reader->sub_es[b_reader->buf_beg & b_reader->buf_len_mask]->eof;
-    }
+    int back_eof() { return b_reader->sub_es[b_reader->buf_beg & b_reader->buf_len_mask]->eof; }
     virtual void run_front() {
         CHECK(!q_map.empty());
         CHECK(!front_eof());
@@ -247,7 +267,8 @@ public:
             QMapEntry *e = &q_map[i].second;
             std::pair<DState *, bool> q_new_pair = step_acc(e->end_q, cur_front_es);
             e->end_q = q_new_pair.first;
-            if (q_new_pair.second) e->last_sat = std::make_pair(cur_front_ts, cur_front_tp);
+            if (q_new_pair.second)
+                e->last_sat = std::make_pair(cur_front_ts, cur_front_tp);
         }
 
         if (b_reader->buf_end - b_reader->buf_beg < (1 << b_reader->buf_len)) {
@@ -309,7 +330,8 @@ public:
         back_tp++;
         back_ts = b_reader->sub_es[b_reader->buf_beg & b_reader->buf_len_mask]->ts;
 
-        if (init_found) return;
+        if (init_found)
+            return;
 
         // current state is not in q_map
         int cur_tp = back_tp;
@@ -324,11 +346,13 @@ public:
                 QMapEntry *e = &q_map[i].second;
                 if (e->q == cur.q) {
                     cur.q = e->end_q;
-                    if (e->last_sat && e->last_sat->second >= cur_tp) cur.last_sat = e->last_sat;
+                    if (e->last_sat && e->last_sat->second >= cur_tp)
+                        cur.last_sat = e->last_sat;
                     found = 1;
                 }
             }
-            if (found) break;
+            if (found)
+                break;
 
             const Event *cur_es;
             timestamp cur_ts;
@@ -348,7 +372,8 @@ public:
                 q_map[i].second.q = step(q_map[i].second.q, cur_es);
             }
 
-            if (acc(cur.q, cur_es)) cur.last_sat = std::make_pair(cur_ts, cur_tp);
+            if (acc(cur.q, cur_es))
+                cur.last_sat = std::make_pair(cur_ts, cur_tp);
             cur.q = step(cur.q, cur_es);
 
             if (cur_tp >= b_reader->buf_end - 1) {
@@ -356,7 +381,8 @@ public:
             }
             cur_tp++;
         }
-        if (c_reader != NULL) delete c_reader;
+        if (c_reader != NULL)
+            delete c_reader;
 
         q_map_init = q_map.size();
         q_map.push_back(std::make_pair(dfa->init, QMapEntry(cur.last_sat, cur.q)));
@@ -365,12 +391,13 @@ public:
 
 class MH_BW : public MH_FW {
     // earliest matching suffix (for BwMonitor)
-    std::vector<std::pair<DState *, std::pair<timestamp, int> > > e_map;
+    std::vector<std::pair<DState *, std::pair<timestamp, int>>> e_map;
 
     void e_map_add(DState *s, std::pair<timestamp, int> tsp) {
         for (size_t i = 0; i < e_map.size(); i++) {
             if (e_map[i].first == s) {
-                if (e_map[i].second.second < tsp.second) e_map[i].second = tsp;
+                if (e_map[i].second.second < tsp.second)
+                    e_map[i].second = tsp;
                 return;
             }
         }
@@ -379,39 +406,47 @@ class MH_BW : public MH_FW {
 
     MH_BW(MH_BW *s) : MH_FW(s), e_map(s->e_map) {}
 
-public:
+  public:
     MH_BW(DFA *dfa, LastReader *l_reader) : MH_FW(dfa, l_reader) {}
-    virtual MH_BW *clone() override {
-        return new MH_BW(this);
-    }
+    virtual MH_BW *clone() override { return new MH_BW(this); }
     BooleanVerdict check_bw(timestamp from, timestamp to) {
         assert(!front_eof());
         timestamp t = front_ts;
         Boolean b = FALSE;
-        while (back_tp < front_tp && front_ts - back_ts >= from) run_back();
-        if (b_reader->unresolved || (f_reader && f_reader->unresolved)) unresolved = 1;
-        if (from == 0 && acc(dfa->init, front_es())) b = TRUE;
+        while (back_tp < front_tp && front_ts - back_ts >= from)
+            run_back();
+        if (b_reader->unresolved || (f_reader && f_reader->unresolved))
+            unresolved = 1;
+        if (from == 0 && acc(dfa->init, front_es()))
+            b = TRUE;
         for (size_t i = 0; b == FALSE && i < e_map.size(); i++) {
-            if (acc(e_map[i].first, front_es()) && front_ts - e_map[i].second.first <= to) b = TRUE;
+            if (acc(e_map[i].first, front_es()) && front_ts - e_map[i].second.first <= to)
+                b = TRUE;
         }
         run_front();
-        if (unresolved) b = UNRESOLVED;
+        if (unresolved)
+            b = UNRESOLVED;
         return BooleanVerdict(t, b);
     }
     BooleanVerdict check_bw_shift(timestamp delta) {
         assert(!front_eof());
         timestamp t = front_ts;
         Boolean b = UNRESOLVED;
-        while (back_tp < front_tp && front_ts - back_ts > delta) run_back();
+        while (back_tp < front_tp && front_ts - back_ts > delta)
+            run_back();
         if (back_tp < front_tp) {
             b = check_init_tp();
         } else {
-            if (acc(dfa->init, front_es())) b = TRUE;
-            else b = FALSE;
+            if (acc(dfa->init, front_es()))
+                b = TRUE;
+            else
+                b = FALSE;
         }
-        if (b_reader->unresolved || (f_reader && f_reader->unresolved)) unresolved = 1;
+        if (b_reader->unresolved || (f_reader && f_reader->unresolved))
+            unresolved = 1;
         run_front();
-        if (unresolved) b = UNRESOLVED;
+        if (unresolved)
+            b = UNRESOLVED;
         return BooleanVerdict(t, b);
     }
     virtual void run_front() override {
@@ -458,10 +493,12 @@ class BwMonitor : public Monitor {
 
     MH_BW *s;
 
-public:
-    BwMonitor(timestamp from, timestamp to, DFA *dfa, MH_BW *s, int dfa_owner = 1) : from(from), to(to), dfa(dfa), dfa_owner(dfa_owner), s(s) {}
+  public:
+    BwMonitor(timestamp from, timestamp to, DFA *dfa, MH_BW *s, int dfa_owner = 1)
+        : from(from), to(to), dfa(dfa), dfa_owner(dfa_owner), s(s) {}
     ~BwMonitor() {
-        if (dfa_owner) delete dfa;
+        if (dfa_owner)
+            delete dfa;
         delete s;
     }
     Monitor *clone() override;
@@ -475,10 +512,12 @@ class BwOneMonitor : public Monitor {
 
     MH_BW *s;
 
-public:
-    BwOneMonitor(timestamp delta, DFA *dfa, MH_BW *s, int dfa_owner = 1) : delta(delta), dfa(dfa), dfa_owner(dfa_owner), s(s) {}
+  public:
+    BwOneMonitor(timestamp delta, DFA *dfa, MH_BW *s, int dfa_owner = 1)
+        : delta(delta), dfa(dfa), dfa_owner(dfa_owner), s(s) {}
     ~BwOneMonitor() {
-        if (dfa_owner) delete dfa;
+        if (dfa_owner)
+            delete dfa;
         delete s;
     }
     Monitor *clone() override;
@@ -492,10 +531,12 @@ class FwMonitor : public Monitor {
 
     MH_FW *s;
 
-public:
-    FwMonitor(timestamp from, timestamp to, DFA *dfa, MH_FW *s, int dfa_owner = 1) : from(from), to(to), dfa(dfa), dfa_owner(dfa_owner), s(s) {}
+  public:
+    FwMonitor(timestamp from, timestamp to, DFA *dfa, MH_FW *s, int dfa_owner = 1)
+        : from(from), to(to), dfa(dfa), dfa_owner(dfa_owner), s(s) {}
     ~FwMonitor() {
-        if (dfa_owner) delete dfa;
+        if (dfa_owner)
+            delete dfa;
         delete s;
     }
     Monitor *clone() override;
@@ -509,10 +550,12 @@ class FwOneMonitor : public Monitor {
 
     MH_FW *s;
 
-public:
-    FwOneMonitor(timestamp delta, DFA *dfa, MH_FW *s, int dfa_owner = 1) : delta(delta), dfa(dfa), dfa_owner(dfa_owner), s(s) {}
+  public:
+    FwOneMonitor(timestamp delta, DFA *dfa, MH_FW *s, int dfa_owner = 1)
+        : delta(delta), dfa(dfa), dfa_owner(dfa_owner), s(s) {}
     ~FwOneMonitor() {
-        if (dfa_owner) delete dfa;
+        if (dfa_owner)
+            delete dfa;
         delete s;
     }
     Monitor *clone() override;
@@ -526,10 +569,12 @@ class NonTempMonitor : public Monitor {
     Event *handle;
     std::optional<timestamp> t;
 
-public:
-    NonTempMonitor(Formula *fmla, InputReader *input_reader, Event *handle, int fmla_owner = 0) : fmla(fmla), input_reader(input_reader), handle(handle), fmla_owner(fmla_owner) {}
+  public:
+    NonTempMonitor(Formula *fmla, InputReader *input_reader, Event *handle, int fmla_owner = 0)
+        : fmla(fmla), input_reader(input_reader), handle(handle), fmla_owner(fmla_owner) {}
     ~NonTempMonitor() {
-        if (fmla_owner) delete fmla;
+        if (fmla_owner)
+            delete fmla;
         delete handle;
     }
     Monitor *clone() override;
@@ -539,85 +584,63 @@ public:
 class NegMonitor : public Monitor {
     Monitor *subf;
 
-public:
+  public:
     NegMonitor(Monitor *subf) : subf(subf) {}
-    ~NegMonitor() {
-        delete subf;
-    }
-    Monitor *clone() override {
-        return new NegMonitor(subf->clone());
-    }
-    BooleanVerdict step_impl() override {
-        return !subf->step();
-    }
+    ~NegMonitor() { delete subf; }
+    Monitor *clone() override { return new NegMonitor(subf->clone()); }
+    BooleanVerdict step_impl() override { return !subf->step(); }
 };
 
 class AndMonitor : public Monitor {
     Monitor *subf, *subg;
 
-public:
+  public:
     AndMonitor(Monitor *subf, Monitor *subg) : subf(subf), subg(subg) {}
     ~AndMonitor() {
         delete subf;
         delete subg;
     }
-    Monitor *clone() override {
-        return new AndMonitor(subf->clone(), subg->clone());
-    }
-    BooleanVerdict step_impl() override {
-        return subf->step() && subg->step();
-    }
+    Monitor *clone() override { return new AndMonitor(subf->clone(), subg->clone()); }
+    BooleanVerdict step_impl() override { return subf->step() && subg->step(); }
 };
 
 class OrMonitor : public Monitor {
     Monitor *subf, *subg;
 
-public:
+  public:
     OrMonitor(Monitor *subf, Monitor *subg) : subf(subf), subg(subg) {}
     ~OrMonitor() {
         delete subf;
         delete subg;
     }
-    Monitor *clone() override {
-        return new OrMonitor(subf->clone(), subg->clone());
-    }
-    BooleanVerdict step_impl() override {
-        return subf->step() || subg->step();
-    }
+    Monitor *clone() override { return new OrMonitor(subf->clone(), subg->clone()); }
+    BooleanVerdict step_impl() override { return subf->step() || subg->step(); }
 };
 
 class ImpMonitor : public Monitor {
     Monitor *subf, *subg;
 
-public:
+  public:
     ImpMonitor(Monitor *subf, Monitor *subg) : subf(subf), subg(subg) {}
     ~ImpMonitor() {
         delete subf;
         delete subg;
     }
-    Monitor *clone() override {
-        return new ImpMonitor(subf->clone(), subg->clone());
-    }
-    BooleanVerdict step_impl() override {
-        return subf->step().imp(subg->step());
-    }
+    Monitor *clone() override { return new ImpMonitor(subf->clone(), subg->clone()); }
+    BooleanVerdict step_impl() override { return subf->step().imp(subg->step()); }
 };
 
 class EqMonitor : public Monitor {
     Monitor *subf, *subg;
 
-public:
+  public:
     EqMonitor(Monitor *subf, Monitor *subg) : subf(subf), subg(subg) {}
     ~EqMonitor() {
         delete subf;
         delete subg;
     }
-    Monitor *clone() override {
-        return new EqMonitor(subf->clone(), subg->clone());
-    }
-    BooleanVerdict step_impl() override {
-        return subf->step().eq(subg->step());
-    }
+    Monitor *clone() override { return new EqMonitor(subf->clone(), subg->clone()); }
+    BooleanVerdict step_impl() override { return subf->step().eq(subg->step()); }
 };
 
 class PrevMonitor : public Monitor {
@@ -625,11 +648,9 @@ class PrevMonitor : public Monitor {
     Monitor *subf;
     std::optional<BooleanVerdict> v;
 
-public:
+  public:
     PrevMonitor(Monitor *subf, timestamp from, timestamp to) : from(from), to(to), subf(subf) {}
-    ~PrevMonitor() {
-        delete subf;
-    }
+    ~PrevMonitor() { delete subf; }
     Monitor *clone() override;
     BooleanVerdict step_impl() override;
 };
@@ -639,11 +660,9 @@ class NextMonitor : public Monitor {
     Monitor *subf;
     std::optional<timestamp> t;
 
-public:
+  public:
     NextMonitor(Monitor *subf, timestamp from, timestamp to) : from(from), to(to), subf(subf) {}
-    ~NextMonitor() {
-        delete subf;
-    }
+    ~NextMonitor() { delete subf; }
     Monitor *clone() override;
     BooleanVerdict step_impl() override;
 };
@@ -667,11 +686,12 @@ class SinceMonitor : public Monitor {
     HeadPos subfp, subgp;
     int unresolved = 0;
 
-    std::optional<std::pair<timestamp, int> > last_sat;
-    std::optional<std::pair<timestamp, int> > last_viol;
+    std::optional<std::pair<timestamp, int>> last_sat;
+    std::optional<std::pair<timestamp, int>> last_viol;
 
-public:
-    SinceMonitor(Monitor *subf, Monitor *subg, timestamp from, timestamp to) : from(from), to(to), subf(subf), subg(subg) {}
+  public:
+    SinceMonitor(Monitor *subf, Monitor *subg, timestamp from, timestamp to)
+        : from(from), to(to), subf(subf), subg(subg) {}
     ~SinceMonitor() {
         delete subf;
         delete subg;
@@ -688,8 +708,8 @@ class UntilMonitor : public Monitor {
     HeadPos subfp, subgp, subhp;
     int unresolved = 0;
 
-    std::optional<std::pair<timestamp, int> > last_sat;
-    std::optional<std::pair<timestamp, int> > last_viol;
+    std::optional<std::pair<timestamp, int>> last_sat;
+    std::optional<std::pair<timestamp, int>> last_viol;
 
     void read_fg() {
         CHECK(subfp.tp == -1 || subfp.ts == subgp.ts);
@@ -699,7 +719,7 @@ class UntilMonitor : public Monitor {
             subfp.update(subfv->ts);
             subgv = subg->step();
             subgp.update(subgv->ts);
-        } catch(const EOL &e) {
+        } catch (const EOL &e) {
             CHECK(!subfp.eof && !subgp.eof);
             subfp.tp++;
             subfp.eof = 1;
@@ -708,8 +728,9 @@ class UntilMonitor : public Monitor {
         }
     }
 
-public:
-    UntilMonitor(Monitor *subf, Monitor *subg, Monitor *subh, timestamp from, timestamp to) : from(from), to(to), subf(subf), subg(subg), subh(subh) {}
+  public:
+    UntilMonitor(Monitor *subf, Monitor *subg, Monitor *subh, timestamp from, timestamp to)
+        : from(from), to(to), subf(subf), subg(subg), subh(subh) {}
     ~UntilMonitor() {
         delete subf;
         delete subg;
