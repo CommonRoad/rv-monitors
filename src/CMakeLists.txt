@@ -60,11 +60,11 @@ set(RV_MONITOR_SRC_FILES
         monitors/rv_algorithms/mt_fsm/mt_fsm_creation.cpp
         monitors/rv_algorithms/mt_fsm/multi_transition.cpp
         monitors/rv_algorithms/mt_fsm/state_mt_fsm.cpp
-        monitors/rv_algorithms/mtl_rewriting/mtl_event_consuming.cpp
-        monitors/rv_algorithms/mtl_rewriting/mtl_deriving_future_visitor.cpp
-        monitors/rv_algorithms/mtl_rewriting/mtl_event_consuming_visitor.cpp
-        monitors/rv_algorithms/mtl_rewriting/mtl_resolving_past_visitor.cpp
-        monitors/rv_algorithms/mtl_rewriting/mtl_rewrite_visitor.cpp
+        monitors/rv_algorithms/mtl_event_consuming/mtl_event_consuming.cpp
+        monitors/rv_algorithms/mtl_event_consuming/mtl_deriving_future_visitor.cpp
+        monitors/rv_algorithms/mtl_event_consuming/mtl_event_consuming_visitor.cpp
+        monitors/rv_algorithms/mtl_event_consuming/mtl_resolving_past_visitor.cpp
+        monitors/rv_algorithms/mtl_event_consuming/mtl_rewrite_visitor.cpp
     #    monitors/rv_algorithms/hydra/hydra.cpp
    #     monitors/rv_algorithms/hydra/monitor.cpp
         monitors/trace/event.cpp

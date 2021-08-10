@@ -3,28 +3,29 @@
 #include <exception>
 #include <stdexcept>
 
-#include "constants.h"
 #include "common.h"
+#include "constants.h"
 #include "formula.h"
-#include "parser.h"
 #include "lexer.h"
+#include "parser.h"
 #include "util.h"
 #include "visitors.h"
 
 #include "monitor.h"
 #include "trie.h"
 
-Formula *getAST(const char *formula)
-{
+Formula *getAST(const char *formula) {
     Formula *fmla;
     yyscan_t scanner;
     YY_BUFFER_STATE state;
 
-    if (yylex_init(&scanner)) return NULL;
+    if (yylex_init(&scanner))
+        return NULL;
 
     state = yy_scan_string(formula, scanner);
 
-    if (yyparse(&fmla, scanner)) return NULL;
+    if (yyparse(&fmla, scanner))
+        return NULL;
 
     yy_delete_buffer(state, scanner);
     yylex_destroy(scanner);
@@ -32,14 +33,12 @@ Formula *getAST(const char *formula)
     return fmla;
 }
 
-void printUsage()
-{
+void printUsage() {
     fprintf(stderr, "hydra MDL LOG [-pure_mdl] [-grep]\n");
     exit(EXIT_FAILURE);
 }
 
-void printFmla(Formula *fmla)
-{
+void printFmla(Formula *fmla) {
     printf("Monitoring ");
     PrintHydraFormulaVisitor f(stdout);
     fmla->accept(f);
@@ -62,9 +61,8 @@ struct TimePoint {
         tp++;
     }
 };
- 
-int main(int argc, char **argv)
-{
+
+int main(int argc, char **argv) {
     if (argc < 3) {
         printUsage();
     }
@@ -94,17 +92,20 @@ int main(int argc, char **argv)
     Formula *fmla;
     try {
         fmla = getAST(line);
-    } catch(const std::runtime_error &e) {
+    } catch (const std::runtime_error &e) {
         fprintf(stderr, "Error: %s\n", e.what());
         exit(EXIT_FAILURE);
     }
-    if (!grep) printFmla(fmla);
+    if (!grep)
+        printFmla(fmla);
     free(line);
 
     InputReader *input_reader;
 
-    if (grep) input_reader = new GrepInputReader(argv[2]);
-    else input_reader = new MapInputReader(argv[2], &trie);
+    if (grep)
+        input_reader = new GrepInputReader(argv[2]);
+    else
+        input_reader = new MapInputReader(argv[2], &trie);
 
     MonitorVisitor mv(input_reader);
     fmla->accept(mv);
@@ -115,15 +116,17 @@ int main(int argc, char **argv)
             BooleanVerdict v = mon->step();
             tp.update(v.ts);
             if (grep) {
-                if (v.b == TRUE) printf("%d\n", tp.tp);
+                if (v.b == TRUE)
+                    printf("%d\n", tp.tp);
             } else if (v.b != UNRESOLVED) {
                 printf("%d:%d %s\n", tp.ts, tp.off, (v.b == FALSE ? "false" : "true"));
             }
         } catch (const EOL &e) {
-            if (!grep) printf("Bye.\n");
+            if (!grep)
+                printf("Bye.\n");
             break;
         }
-    } while(true);
+    } while (true);
 
     delete fmla;
     delete mon;

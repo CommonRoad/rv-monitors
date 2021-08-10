@@ -7,6 +7,6 @@
 
 #include <gtest/gtest.h>
 
-class TestMTLRewriting : public testing::Test {};
+class TestMTLEventConsuming : public testing::Test {};
 
 #endif // RV_MONITORS_TEST_MTL_H

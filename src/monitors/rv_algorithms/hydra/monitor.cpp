@@ -20,7 +20,8 @@ Monitor *NonTempMonitor::clone() {
 }
 BooleanVerdict NonTempMonitor::step_impl() {
     input_reader->read_handle(handle);
-    if (handle->eof) throw EOL();
+    if (handle->eof)
+        throw EOL();
     bool b = fmla->eval(handle);
     return BooleanVerdict(handle->ts, b ? TRUE : FALSE);
 }
@@ -33,7 +34,8 @@ Monitor *BwMonitor::clone() {
 BooleanVerdict BwMonitor::step_impl() {
     BooleanVerdict v = s->check_bw(from, to);
 
-    if (s->front_eof()) eof = 1;
+    if (s->front_eof())
+        eof = 1;
 
     return v;
 }
@@ -46,7 +48,8 @@ Monitor *BwOneMonitor::clone() {
 BooleanVerdict BwOneMonitor::step_impl() {
     BooleanVerdict v = s->check_bw_shift(delta);
 
-    if (s->front_eof()) eof = 1;
+    if (s->front_eof())
+        eof = 1;
 
     return v;
 }
@@ -90,8 +93,10 @@ BooleanVerdict PrevMonitor::step_impl() {
     if (v) {
         BooleanVerdict last_subv = *v;
         v = subv;
-        if (contains(subv.ts - last_subv.ts, from, to)) return BooleanVerdict(subv.ts, last_subv.b);
-        else return BooleanVerdict(subv.ts, FALSE);
+        if (contains(subv.ts - last_subv.ts, from, to))
+            return BooleanVerdict(subv.ts, last_subv.b);
+        else
+            return BooleanVerdict(subv.ts, FALSE);
     } else {
         v = subv;
         return BooleanVerdict(subv.ts, FALSE);
@@ -113,20 +118,22 @@ BooleanVerdict NextMonitor::step_impl() {
             if (t) {
                 timestamp last_ts = *t;
                 t = subv.ts;
-                if (contains(subv.ts - last_ts, from, to)) return BooleanVerdict(last_ts, subv.b);
-                else return BooleanVerdict(last_ts, FALSE);
+                if (contains(subv.ts - last_ts, from, to))
+                    return BooleanVerdict(last_ts, subv.b);
+                else
+                    return BooleanVerdict(last_ts, FALSE);
             } else {
                 t = subv.ts;
             }
-        } catch(const EOL &e) {
+        } catch (const EOL &e) {
             if (t) {
                 timestamp ts = *t;
                 t = {};
                 return BooleanVerdict(ts, UNRESOLVED);
-            }
-            else throw EOL();
+            } else
+                throw EOL();
         }
-    } while(true);
+    } while (true);
 }
 
 Monitor *SinceMonitor::clone() {
@@ -167,7 +174,7 @@ BooleanVerdict SinceMonitor::step_impl() {
         try {
             subgv = subg->step();
             subgp.update(subgv->ts);
-        } catch(const EOL &e) {
+        } catch (const EOL &e) {
             subgp.eof = 1;
             subgp.tp++;
         }
@@ -202,10 +209,13 @@ BooleanVerdict UntilMonitor::step_impl() {
     subhv = subh->step();
     subhp.update(subhv->ts);
 
-    if (last_sat && last_sat->second < subhp.tp) last_sat = {};
-    if (last_viol && last_viol->second < subhp.tp) last_viol = {};
+    if (last_sat && last_sat->second < subhp.tp)
+        last_sat = {};
+    if (last_viol && last_viol->second < subhp.tp)
+        last_viol = {};
 
-    if (subfp.tp == -1) read_fg();
+    if (subfp.tp == -1)
+        read_fg();
 
     while (!subfp.eof && !last_viol && subfp.ts - subhp.ts <= to) {
         if (subgv->b == UNRESOLVED) {

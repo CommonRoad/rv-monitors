@@ -13,9 +13,7 @@ typedef int32_t timestamp;
 typedef int32_t timestamp_delta;
 const timestamp MAX_TIMESTAMP = 0x7FFFFFFF;
 
-enum Boolean {
-    FALSE, TRUE, UNRESOLVED
-};
+enum Boolean { FALSE, TRUE, UNRESOLVED };
 
 Boolean BooleanAnd(Boolean b1, Boolean b2);
 Boolean BooleanOr(Boolean b1, Boolean b2);
@@ -29,9 +27,7 @@ struct BoolVerdict {
 
     BoolVerdict() {}
     BoolVerdict(timestamp ts, bool b) : ts(ts), b(b) {}
-    bool operator==(const BoolVerdict &bv) const {
-        return ts == bv.ts && b == bv.b;
-    }
+    bool operator==(const BoolVerdict &bv) const { return ts == bv.ts && b == bv.b; }
 };
 
 struct BooleanVerdict {
@@ -39,12 +35,8 @@ struct BooleanVerdict {
     Boolean b;
 
     BooleanVerdict(timestamp ts, Boolean b) : ts(ts), b(b) {}
-    bool operator==(const BooleanVerdict &bv) const {
-        return ts == bv.ts && b == bv.b;
-    }
-    BooleanVerdict operator!() const {
-        return BooleanVerdict(this->ts, BooleanNot(this->b));
-    }
+    bool operator==(const BooleanVerdict &bv) const { return ts == bv.ts && b == bv.b; }
+    BooleanVerdict operator!() const { return BooleanVerdict(this->ts, BooleanNot(this->b)); }
     BooleanVerdict operator&&(const BooleanVerdict &w) const {
         CHECK(this->ts == w.ts);
         return BooleanVerdict(this->ts, BooleanAnd(this->b, w.b));

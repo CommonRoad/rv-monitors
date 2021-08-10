@@ -14,14 +14,8 @@
  * If c == Wild, unlabeled arrow to out.
  * Otherwise, labeled arrow with c-th formula to out.
  */
-enum
-{
-    Match = -1,
-    Split = -2,
-    Wild = -3
-};
-struct NState
-{
+enum { Match = -1, Split = -2, Wild = -3 };
+struct NState {
     int c;
     NState *out;
     NState *out1;
@@ -36,8 +30,7 @@ struct NState
  * Frag.out is a list of places that need to be set to the
  * next state for this fragment.
  */
-struct Frag
-{
+struct Frag {
     NState *start;
     std::vector<NState **> out;
 };
@@ -61,8 +54,7 @@ struct NFA {
     void run_state(NState *s, const Event *e, std::vector<NState *> &l);
 };
 
-struct DState
-{
+struct DState {
     NFA *nfa;
     std::vector<NState *> l;
     int accept;
@@ -83,10 +75,10 @@ struct DState
 class DFA {
     NFA *nfa;
     std::map<std::vector<NState *>, DState *> state_cache;
-    std::vector<std::map<Event, DState *> > run_cache;
+    std::vector<std::map<Event, DState *>> run_cache;
     size_t dstate_cnt;
 
-public:
+  public:
     DState *init;
     DState *empty;
 
@@ -96,9 +88,7 @@ public:
     }
     ~DFA();
 
-    size_t get_cnt() {
-        return dstate_cnt;
-    }
+    size_t get_cnt() { return dstate_cnt; }
     DState *lookup(const std::vector<NState *> &l);
     DState *run(DState *s, const Event *e);
     DState *step(DState *s);

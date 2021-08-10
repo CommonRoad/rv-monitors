@@ -7,15 +7,15 @@
 #include <algorithm>
 #include <cassert>
 #include <cstdio>
-#include <optional>
-#include <vector>
 #include <exception>
+#include <fcntl.h>
+#include <optional>
 #include <stdexcept>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <fcntl.h>
 #include <unistd.h>
+#include <vector>
 using namespace std;
 
 struct EOL : std::exception {};
@@ -31,13 +31,10 @@ struct Event {
     vector<int> ap_lookup;
 
     Event(int ap_cnt = 0) : pos(0), ts(0), tp(-1), eof(0), c(-1), ap_cnt(ap_cnt), ap_lookup(ap_cnt) {}
-    Event(const Event *e) : pos(e->pos), ts(e->ts), tp(e->tp), eof(e->eof), c(e->c), ap_cnt(e->ap_cnt), ap_lookup(e->ap_lookup) {}
-    bool operator<(const Event &e) const {
-        return c < e.c || (c == e.c && ap_lookup < e.ap_lookup);
-    }
-    Event *clone() const {
-        return new Event(this);
-    }
+    Event(const Event *e)
+        : pos(e->pos), ts(e->ts), tp(e->tp), eof(e->eof), c(e->c), ap_cnt(e->ap_cnt), ap_lookup(e->ap_lookup) {}
+    bool operator<(const Event &e) const { return c < e.c || (c == e.c && ap_lookup < e.ap_lookup); }
+    Event *clone() const { return new Event(this); }
     int eval(int fid) const {
         CHECK(0 <= fid && fid < ap_cnt);
         return ap_lookup[fid];
@@ -53,7 +50,7 @@ struct Event {
 };
 
 class InputReader {
-public:
+  public:
     virtual ~InputReader() {}
 
     virtual Event *open_handle() = 0;
@@ -72,7 +69,8 @@ class MapInputReader : public InputReader {
         TrieNode<int> *t = &trie->root;
         size_t i = *pos;
         while (i < f_size && line[i] != ' ' && line[i] != '\r' && line[i] != '\n') {
-            if (line[i] & 0x80) throw std::runtime_error("log file format");
+            if (line[i] & 0x80)
+                throw std::runtime_error("log file format");
             if (t->next[line[i]] == NULL) {
                 *pos = i;
                 return -1;
@@ -83,7 +81,7 @@ class MapInputReader : public InputReader {
         return t->value;
     }
 
-public:
+  public:
     MapInputReader(const char *fname, Trie *trie) : trie(trie) {
         fd = open(fname, O_RDONLY);
         if (fd < 0) {
@@ -100,38 +98,43 @@ public:
         close(fd);
     }
 
-    Event *open_handle() override {
-        return new Event(trie->cnt);
-    }
+    Event *open_handle() override { return new Event(trie->cnt); }
     void read_handle(Event *e) override {
         CHECK(e != NULL);
-        if (e->eof) return;
+        if (e->eof)
+            return;
         size_t pos = e->pos;
         timestamp ts;
-        while (pos < f_size && (mapped[pos] == '\r' || mapped[pos] == '\n')) pos++;
+        while (pos < f_size && (mapped[pos] == '\r' || mapped[pos] == '\n'))
+            pos++;
         if (pos == f_size) {
             e->eof = 1;
             e->tp++;
             throw EOL();
         }
-        if (mapped[pos++] != '@') throw std::runtime_error("log file format");
-        if (parseNumber(mapped, &pos, &ts)) throw std::runtime_error("timestamp");
+        if (mapped[pos++] != '@')
+            throw std::runtime_error("log file format");
+        if (parseNumber(mapped, &pos, &ts))
+            throw std::runtime_error("timestamp");
         e->ts = ts;
         e->tp++;
-        for (int i = 0; i < e->ap_cnt; i++) e->ap_lookup[i] = 0;
+        for (int i = 0; i < e->ap_cnt; i++)
+            e->ap_lookup[i] = 0;
         while (pos < f_size && mapped[pos] != '\r' && mapped[pos] != '\n') {
-           if (mapped[pos] == ' ') {
-               pos++;
-           } else {
-               int value = fsm(mapped, &pos);
-               if (value == -1) {
-                   while(pos < f_size && mapped[pos] != ' ' && mapped[pos] != '\r' && mapped[pos] != '\n') pos++;
-               } else {
-                   e->ap_lookup[value] = 1;
-               }
-           }
+            if (mapped[pos] == ' ') {
+                pos++;
+            } else {
+                int value = fsm(mapped, &pos);
+                if (value == -1) {
+                    while (pos < f_size && mapped[pos] != ' ' && mapped[pos] != '\r' && mapped[pos] != '\n')
+                        pos++;
+                } else {
+                    e->ap_lookup[value] = 1;
+                }
+            }
         }
-        while (pos < f_size && (mapped[pos] == '\r' || mapped[pos] == '\n')) pos++;
+        while (pos < f_size && (mapped[pos] == '\r' || mapped[pos] == '\n'))
+            pos++;
         e->pos = pos;
     }
 };
@@ -142,7 +145,7 @@ class GrepInputReader : public InputReader {
     size_t f_size;
     const char *mapped;
 
-public:
+  public:
     GrepInputReader(const char *fname) {
         fd = open(fname, O_RDONLY);
         if (fd < 0) {
@@ -159,12 +162,11 @@ public:
         close(fd);
     }
 
-    Event *open_handle() override {
-        return new Event(0);
-    }
+    Event *open_handle() override { return new Event(0); }
     void read_handle(Event *e) override {
         CHECK(e != NULL);
-        if (e->eof) return;
+        if (e->eof)
+            return;
         if (e->pos == f_size) {
             e->eof = 1;
             e->tp++;

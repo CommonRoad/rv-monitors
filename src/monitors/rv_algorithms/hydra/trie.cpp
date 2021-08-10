@@ -4,8 +4,7 @@
 
 Trie trie;
 
-int Trie::getOrAdd(const char *s)
-{
+int Trie::getOrAdd(const char *s) {
     TrieNode<int> *cur = &root;
 
     while (*s != 0) {
