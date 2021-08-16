@@ -6,6 +6,12 @@
 #include "monitors/trace/trace.h"
 #include <vector>
 
+struct Verdict {
+    size_t ts;
+    bool b;
+    bool operator==(const Verdict &bv) const { return ts == bv.ts && b == bv.b; }
+};
+
 /**
  * Utils Several functions for working with formulas, traces, and events.
  */
