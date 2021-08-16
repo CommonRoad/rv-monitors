@@ -1,6 +1,6 @@
 #pragma once
 
-#include "monitors/formula/formula.h"
+#include <monitors/formula/formula.h>
 
 /**
  * Class representing a multi-transition.
@@ -41,4 +41,48 @@ class MultiTransition {
      * @return Next state in MT-FSM*.
      */
     [[nodiscard]] size_t evaluate(std::map<std::string, lazy_bool> &eventMap) const;
+
+    /**
+     * Counts the frequency of all atomics in a MultiTransition.
+     * @param multiTransition MultiTransition with formulas where atomic frequencies should be counted.
+     * @return Map from string representation of each atomic to its frequency in the MultiTransition.
+     */
+    [[nodiscard]] std::map<std::string, size_t> getAtomicAndPredicateFrequencies() const;
+
+    /**
+     * Gives each atomic a weight w = (1/frequency) * cost. The higher the value the deeper the atomic is nested into
+     * the tree.
+     * @param multiTransition MultiTransition.
+     * @return Multimap weight -> atomic. This way the atomics are already ordered.
+     */
+    std::multimap<double, std::shared_ptr<Atomic>> getAtomicAndPredicateWeight() const;
+
+    /**
+     * Flips a pair pair.
+     * @tparam A First type.
+     * @tparam B Second type.
+     * @param pair Pair to be flipped.
+     * @return Flipped pair.
+     */
+    template <typename A, typename B> std::pair<B, A> flip_pair(const std::pair<A, B> &pair) const;
+
+    /**
+     * Flips a map.
+     * @tparam A Key type.
+     * @tparam B Value type.
+     * @tparam Map Map type.
+     * @tparam Args Additional arguments, optional.
+     * @param map Map to be flipped.
+     * @return Multimap with flipped key value pairs.
+     */
+    template <typename A, typename B, template <class, class, class...> class Map, class... Args>
+    std::multimap<B, A> flip_map(const Map<A, B, Args...> &map) const;
+
+    /**
+     * Helper function. Flips a map and turns it into a multimap.
+     * @param weights Map of atomic -> weight.
+     * @return Multimap weight -> atomic.
+     */
+    std::multimap<double, std::shared_ptr<Atomic>>
+    createWeightMultimap(const std::map<std::shared_ptr<Atomic>, double> &weights) const;
 };

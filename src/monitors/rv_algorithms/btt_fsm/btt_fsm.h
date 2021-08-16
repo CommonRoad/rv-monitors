@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../monitor.h"
 #include "monitors/formula/formula.h"
 #include "state_btt_fsm.h"
 #include <set>
@@ -8,24 +9,18 @@
 /**
  * Class representing a Binary Transition Tree Finite State Machine (BTT-FSM).
  */
-class BttFsm {
+class BttFsm : private Monitor {
   private:
-    Formula formula;
     std::vector<StateBttFsm> states;
+    bool pastEvaluation;
 
   public:
     /**
      * Constructor for a BTT-FSM.
-     * @param formula Forumla that we want the BTT-FSM for.
-     * @param states Vector of StateBttFsm.
+     * @param formula Formula that we want the BTT-FSM for.
+     * @param pastEvaluation Boolean indicating whether past-based evaluation should be applied.
      */
-    BttFsm(Formula formula, std::vector<StateBttFsm> states);
-
-    /**
-     * Returns the formula the BTT-FSM was constrcuted for.
-     * @return Formula.
-     */
-    [[nodiscard]] const Formula &getFormula() const;
+    BttFsm(const Formula &formula, bool pastEvaluation = false);
 
     /**
      * Returns a vector of all states in the BTT-FSM.
@@ -34,20 +29,25 @@ class BttFsm {
     [[nodiscard]] const std::vector<StateBttFsm> &getStates() const;
 
     /**
-     * Setter for formula.
-     * @param formula
-     */
-    void setFormula(const Formula &formula);
-
-    /**
-     * Setter for state vector.
-     * @param states
-     */
-    void setStates(const std::vector<StateBttFsm> &states);
-
-    /**
      * to_string() function.
      * @return String representation of the BTT-FSM.
      */
-    [[nodiscard]] std::string to_string() const;
+    [[nodiscard]] std::string to_string() const override;
+
+    /**
+     * Creates a BTT-FSM from a given formula.
+     *
+     * @param formula Formula.
+     * @return BTT-FSM of formula.
+     */
+    std::vector<StateBttFsm> formulaToBTT_FSM();
+
+    /**
+     * Evaluation function for monitor algorithms.
+     *
+     * @param trace Trace which should be evaluated.
+     * @return List of verdicts for each time step of the trace. If the length of the vector is 1,
+     * the runtime verification algorithm can only provide a global verdict for the complete trace.
+     */
+    std::vector<Verdict> evaluate(Trace &trace) override;
 };

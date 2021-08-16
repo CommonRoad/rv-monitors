@@ -10,8 +10,9 @@ TEST(TestBTT_FSMEvaluation, violated1) {
         {"a", "b", "c", "g", "f"},
         {{"a"}, {"b"}, {"a"}, {"b"}, {"a"}, {"c"}, {"a"}, {"a"}, {"b"}, {"g"}, {"f"}, {"h"}, {"c"}, {"b"}, {"a"}});
     Formula formula = Parser::parse("G(a -> F(b))");
-    auto btt = BTT_FSMCreation::formulaToBTT_FSM(formula, false);
-    EXPECT_FALSE(BTT_FSMEvaluation::evaluateBTT_FSM(btt, trace, false));
+    auto btt = BttFsm(formula);
+
+    EXPECT_FALSE(btt.evaluate(trace).at(0).b);
 }
 
 TEST(TestBTT_FSMEvaluation, satisfied1) {
@@ -19,9 +20,9 @@ TEST(TestBTT_FSMEvaluation, satisfied1) {
         {"a", "b", "c", "g", "f"},
         {{"a"}, {"b"}, {"a"}, {"b"}, {"a"}, {"c"}, {"a"}, {"a"}, {"b"}, {"g"}, {"f"}, {"h"}, {"c"}, {"b"}, {"a"}});
     Formula formula = Parser::parse("F(!G(b -> Fc))");
-    auto btt = BTT_FSMCreation::formulaToBTT_FSM(formula, false);
+    auto btt = BttFsm(formula);
 
-    EXPECT_TRUE(BTT_FSMEvaluation::evaluateBTT_FSM(btt, trace, false));
+    EXPECT_TRUE(btt.evaluate(trace).at(0).b);
 }
 
 TEST(TestBTT_FSMEvaluation, satisfied2) {
@@ -30,8 +31,9 @@ TEST(TestBTT_FSMEvaluation, satisfied2) {
         {"a", "b", "c", "g", "f", "h"},
         {{"a"}, {"b"}, {"a"}, {"b"}, {"a"}, {"c"}, {"a"}, {"a"}, {"b"}, {"g"}, {"f"}, {"h"}, {"c"}, {"b"}, {"c"}});
 
-    auto btt = BTT_FSMCreation::formulaToBTT_FSM(formula, false);
-    EXPECT_TRUE(BTT_FSMEvaluation::evaluateBTT_FSM(btt, trace, false));
+    auto btt = BttFsm(formula);
+
+    EXPECT_TRUE(btt.evaluate(trace).at(0).b);
 }
 
 TEST(TestBTT_FSMEvaluation, violated2) {
@@ -39,9 +41,9 @@ TEST(TestBTT_FSMEvaluation, violated2) {
         {"a", "b", "c", "g", "f", "h"},
         {{"a"}, {"b"}, {"a"}, {"b"}, {"a"}, {"c"}, {"a"}, {"a"}, {"b"}, {"g"}, {"f"}, {"h"}, {"c"}, {"b"}, {"c"}});
     Formula formula = Parser::parse("F(!G(b -> Fc))");
-    auto btt = BTT_FSMCreation::formulaToBTT_FSM(formula, false);
+    auto btt = BttFsm(formula);
 
-    EXPECT_FALSE(BTT_FSMEvaluation::evaluateBTT_FSM(btt, trace, false));
+    EXPECT_FALSE(btt.evaluate(trace).at(0).b);
 }
 
 TEST(TestBTT_FSMEvaluation, satisfied3) {
@@ -49,9 +51,9 @@ TEST(TestBTT_FSMEvaluation, satisfied3) {
         {"a", "b", "c", "d", "e"},
         {{"a"}, {"b"}, {"a"}, {"b"}, {"a"}, {"c"}, {"a"}, {"a"}, {"b"}, {"e"}, {"d"}, {"e"}, {"c"}, {"b"}, {"c"}});
     Formula formula = Parser::parse("G((a & b & c & F(d)) -> (!(!(e) & F(e))))");
-    auto btt = BTT_FSMCreation::formulaToBTT_FSM(formula, false);
+    auto btt = BttFsm(formula);
 
-    EXPECT_TRUE(BTT_FSMEvaluation::evaluateBTT_FSM(btt, trace, false));
+    EXPECT_TRUE(btt.evaluate(trace).at(0).b);
 }
 
 TEST(TestBTT_FSMEvaluation, violatedEnd) {
@@ -59,9 +61,9 @@ TEST(TestBTT_FSMEvaluation, violatedEnd) {
         Utils::createTrace({"green", "yellow", "red"},
                            {{"green"}, {"red"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}, {"green"}, {"red"}});
     Formula formula = Parser::parse("G(green -> !red U yellow)");
-    auto btt = BTT_FSMCreation::formulaToBTT_FSM(formula, false);
+    auto btt = BttFsm(formula);
 
-    EXPECT_FALSE(BTT_FSMEvaluation::evaluateBTT_FSM(btt, trace, false));
+    EXPECT_FALSE(btt.evaluate(trace).at(0).b);
 }
 
 TEST(TestBTT_FSMEvaluation, violatedBeginning) {
@@ -69,16 +71,16 @@ TEST(TestBTT_FSMEvaluation, violatedBeginning) {
         Utils::createTrace({"green", "yellow", "red"},
                            {{"green"}, {"red"}, {"yellow"}, {"red"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}});
     Formula formula = Parser::parse("G(green -> !red U yellow)");
-    auto btt = BTT_FSMCreation::formulaToBTT_FSM(formula, false);
+    auto btt = BttFsm(formula);
 
-    EXPECT_FALSE(BTT_FSMEvaluation::evaluateBTT_FSM(btt, trace, false));
+    EXPECT_FALSE(btt.evaluate(trace).at(0).b);
 }
 
 TEST(TestBTT_FSMEvaluation, satisfied) {
     Trace trace = Utils::createTrace({"green", "yellow", "red"},
                                      {{"green"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}, {"red"}, {"red"}});
     Formula formula = Parser::parse("G(green -> !red U yellow)");
-    auto btt = BTT_FSMCreation::formulaToBTT_FSM(formula, false);
+    auto btt = BttFsm(formula);
 
-    EXPECT_TRUE(BTT_FSMEvaluation::evaluateBTT_FSM(btt, trace, false));
+    EXPECT_TRUE(btt.evaluate(trace).at(0).b);
 }

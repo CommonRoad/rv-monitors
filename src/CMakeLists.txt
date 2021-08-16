@@ -44,10 +44,10 @@ set(RV_MONITOR_SRC_FILES
         monitors/rewriting/basic_rewrite_visitor.cpp
         monitors/rewriting/expression_visitor.cpp
         monitors/rewriting/rewrite_visitor.cpp
+        monitors/rv_algorithms/monitor.cpp
         monitors/rv_algorithms/rv_monitor.cpp
         monitors/rv_algorithms/btt_fsm/btt_fsm.cpp
         monitors/rv_algorithms/btt_fsm/btt_fsm_creation.cpp
-        monitors/rv_algorithms/btt_fsm/btt_fsm_evaluation.cpp
         monitors/rv_algorithms/btt_fsm/decision.cpp
         monitors/rv_algorithms/btt_fsm/state_btt_fsm.cpp
         monitors/rv_algorithms/dynamic_programming/dynamic.cpp

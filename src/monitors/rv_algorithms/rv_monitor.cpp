@@ -3,9 +3,6 @@
 //
 
 #include "rv_monitor.h"
-
-#include "monitors/rv_algorithms/btt_fsm/btt_fsm_creation.h"
-#include "monitors/rv_algorithms/btt_fsm/btt_fsm_evaluation.h"
 #include "monitors/rv_algorithms/dynamic_programming/dynamic.h"
 #include "monitors/rv_algorithms/event_consuming/event_consuming.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm_creation.h"
@@ -37,7 +34,7 @@ bool RVMonitor::verify(Trace trace) {
         break;
     }
     case btt_fsm: {
-        verdict = BTT_FSMEvaluation::evaluateBTT_FSM(*bttFSM, trace, past);
+        verdict = bttFSM->evaluate(trace).at(0).b;
         break;
     }
     case dynamic: {
@@ -109,6 +106,6 @@ RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past,
     if (algorithm == mt_fsm)
         mtFSM = std::make_unique<MtFsm>(MT_FSMCreation::formulaToMT_FSM(formula, past));
     else if (algorithm == btt_fsm)
-        bttFSM = std::make_unique<BttFsm>(BTT_FSMCreation::formulaToBTT_FSM(formula, past));
+        bttFSM = std::make_unique<BttFsm>(formula);
 }
 const ExecutionStatistic &RVMonitor::getExecutionStatistic() const { return executionStatistic; }
