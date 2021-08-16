@@ -65,7 +65,7 @@ set(RV_MONITOR_SRC_FILES
         monitors/rv_algorithms/mtl_event_consuming/mtl_event_consuming_visitor.cpp
         monitors/rv_algorithms/mtl_event_consuming/mtl_resolving_past_visitor.cpp
         monitors/rv_algorithms/mtl_event_consuming/mtl_rewrite_visitor.cpp
-    #    monitors/rv_algorithms/hydra/hydra.cpp
+        monitors/rv_algorithms/hydra/hydra.cpp
    #     monitors/rv_algorithms/hydra/monitor.cpp
         monitors/trace/event.cpp
         monitors/trace/event_generator.cpp

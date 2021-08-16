@@ -31,13 +31,11 @@ class Monitor {
 
 class EvalMonitor : public Monitor {
     Formula *fmla;
-    InputReader *input_reader;
     Event *handle;
 
   public:
-    EvalMonitor(Formula *fmla, InputReader *input_reader, Event *handle)
-        : fmla(fmla), input_reader(input_reader), handle(handle) {}
-    Monitor *clone() override { return new EvalMonitor(fmla, input_reader, handle->clone()); }
+    EvalMonitor(Formula *fmla, Event *handle) : fmla(fmla), handle(handle) {}
+    Monitor *clone() override { return new EvalMonitor(fmla, handle->clone()); }
     BooleanVerdict step_impl() override {
         bool b = fmla->eval(handle);
         return BooleanVerdict(handle->ts, b ? TRUE : FALSE);
@@ -45,8 +43,6 @@ class EvalMonitor : public Monitor {
 };
 
 class LastReader {
-    InputReader *input_reader;
-
     std::vector<Formula *> fmla;
     Event *ap_handle;
     std::vector<Monitor *> sub_mon;

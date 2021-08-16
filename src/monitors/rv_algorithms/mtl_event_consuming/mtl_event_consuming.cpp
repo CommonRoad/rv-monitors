@@ -16,7 +16,7 @@ bool MTLEventConsuming::eventConsuming(const Formula &formula, Trace &trace) {
     MTLEventConsumingVisitor ev;
     // Rewrite
     rw.rewrite(formulaCopy);
-    for (int i = 0; i < trace.getLength(); ++i) {
+    for (size_t i = 0; i < trace.getLength(); ++i) {
         ev.consumeEvent(formulaCopy, trace, i);
         rw.rewrite(formulaCopy);
         if (formulaCopy.to_string() == "false") {

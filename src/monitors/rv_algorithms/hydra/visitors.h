@@ -8,45 +8,43 @@ template <typename MH> std::pair<DFA *, MH *> createMH(Regex *r, InputReader *in
 template <typename MH> std::pair<DFA *, MH *> createConsumeMH(ConsumeRegex *r, InputReader *input_reader);
 
 class MonitorVisitor : public FormulaVisitor {
-    InputReader *input_reader;
     Monitor *mon;
 
   public:
-    MonitorVisitor(InputReader *input_reader) : input_reader(input_reader) {}
     Monitor *get_mon() { return mon; }
     void visit(BwFormula *f) {
-        std::pair<DFA *, MH_BW *> icalp = createMH<MH_BW>(f->r, input_reader);
+        std::pair<DFA *, MH_BW *> icalp = createMH<MH_BW>(f->r);
         mon = new BwMonitor(f->from, f->to, icalp.first, icalp.second);
     }
     void visit(BwConsumeFormula *f) {
-        std::pair<DFA *, MH_BW *> icalp = createConsumeMH<MH_BW>(f->r, input_reader);
+        std::pair<DFA *, MH_BW *> icalp = createConsumeMH<MH_BW>(f->r);
         mon = new BwMonitor(f->from, f->to, icalp.first, icalp.second);
     }
     void visit(BwOneFormula *f) {
-        std::pair<DFA *, MH_BW *> icalp = createMH<MH_BW>(f->r, input_reader);
+        std::pair<DFA *, MH_BW *> icalp = createMH<MH_BW>(f->r);
         mon = new BwOneMonitor(f->delta, icalp.first, icalp.second);
     }
     void visit(FwFormula *f) {
-        std::pair<DFA *, MH_FW *> icalp = createMH<MH_FW>(f->r, input_reader);
+        std::pair<DFA *, MH_FW *> icalp = createMH<MH_FW>(f->r);
         mon = new FwMonitor(f->from, f->to, icalp.first, icalp.second);
     }
     void visit(FwConsumeFormula *f) {
-        std::pair<DFA *, MH_FW *> icalp = createConsumeMH<MH_FW>(f->r, input_reader);
+        std::pair<DFA *, MH_FW *> icalp = createConsumeMH<MH_FW>(f->r);
         mon = new FwMonitor(f->from, f->to, icalp.first, icalp.second);
     }
     void visit(FwOneFormula *f) {
-        std::pair<DFA *, MH_FW *> icalp = createMH<MH_FW>(f->r, input_reader);
+        std::pair<DFA *, MH_FW *> icalp = createMH<MH_FW>(f->r);
         mon = new FwOneMonitor(f->delta, icalp.first, icalp.second);
     }
-    void visit(BoolFormula *f) { mon = new NonTempMonitor(f, input_reader, input_reader->open_handle()); }
-    void visit(PredFormula *f) { mon = new NonTempMonitor(f, input_reader, input_reader->open_handle()); }
+    void visit(BoolFormula *f) { mon = new NonTempMonitor(f); }
+    void visit(PredFormula *f) { mon = new NonTempMonitor(f); }
     void visit(NegFormula *f) {
         if (f->f->is_temporal) {
             f->f->accept(*this);
             Monitor *monf = mon;
             mon = new NegMonitor(monf);
         } else {
-            mon = new NonTempMonitor(f, input_reader, input_reader->open_handle());
+            mon = new NonTempMonitor(f);
         }
     }
     void visit(AndFormula *f) {
@@ -57,7 +55,7 @@ class MonitorVisitor : public FormulaVisitor {
             Monitor *mong = mon;
             mon = new AndMonitor(monf, mong);
         } else {
-            mon = new NonTempMonitor(f, input_reader, input_reader->open_handle());
+            mon = new NonTempMonitor(f);
         }
     }
     void visit(OrFormula *f) {
