@@ -21,6 +21,7 @@ bool MT_FSMCreation::valid(Formula &formula) {
 bool MT_FSMCreation::valid(Formula &formula, std::set<Formula> &states) {
     auto atomics = Utils::getAtomicsAndPredicates(formula.getExpr(), {});
     auto numberOfAtomics = Utils::getNumberOfAtomicsAndPredicates(formula.getExpr());
+    auto eventConsuming = EventConsumingLTL(formula);
 
     // Only constants
     if (numberOfAtomics == 0) {
@@ -44,13 +45,12 @@ bool MT_FSMCreation::valid(Formula &formula, std::set<Formula> &states) {
     for (auto event = gen.getEventVector(); gen.hasNext(); event = gen.getNext()) {
         // Terminal eventMap
         auto traceNonTerminal = Utils::boolVectorToTrace(atomics, event, true);
-        if (EventConsuming::eventConsumingFuture(formula, traceNonTerminal).getExpr()->isConstFalse()) {
+        if (eventConsuming.eventConsumingFuture(traceNonTerminal).getExpr()->isConstFalse()) {
             return false;
         }
-        // Nonterminal eventMap
+        // Non-terminal eventMap
         auto traceTerminal = Utils::boolVectorToTrace(atomics, event, false);
-        Formula f = EventConsuming::eventConsumingFuture(formula, traceTerminal);
-        // br.rewrite(f);
+        Formula f = eventConsuming.eventConsumingFuture(traceTerminal);
 
         auto [_, inserted] = states.emplace(f);
         if (inserted and not valid(f, states)) {
@@ -108,10 +108,9 @@ MultiTransition MT_FSMCreation::merge(MultiTransition &mt_1, MultiTransition mt_
 
 // Fig 5
 void MT_FSMCreation::formulaToMT_FSM(const Formula &formula, std::vector<StateMT_FSM> &states, bool past) {
-    // std::cout << formula.to_string() << std::endl;
     MultiTransition mtTerminal({});
     MultiTransition mtNonTerminal({});
-
+    auto eventConsuming = EventConsumingLTL(formula);
     auto atomics = Utils::getAtomicsAndPredicates(formula.getExpr(), {});
     auto numberOfAtomics = Utils::getNumberOfAtomicsAndPredicates(formula.getExpr());
     // All possible events
@@ -121,7 +120,7 @@ void MT_FSMCreation::formulaToMT_FSM(const Formula &formula, std::vector<StateMT
         auto conjunction = Utils::eventToFormula(currentEvent); // 7
 
         auto traceTerminal = Utils::boolVectorToTrace(atomics, event, true);
-        auto formulaEventConsumingTerminal = EventConsuming::eventConsumingFuture(formula, traceTerminal);
+        auto formulaEventConsumingTerminal = eventConsuming.eventConsumingFuture(traceTerminal);
 
         // Sanity check
         if (not std::dynamic_pointer_cast<Constant>(formulaEventConsumingTerminal.getExpr())) {
@@ -137,10 +136,10 @@ void MT_FSMCreation::formulaToMT_FSM(const Formula &formula, std::vector<StateMT
         Formula formulaEventConsuming(nullptr);
         if (!past) {
             auto traceNonTerminal = Utils::boolVectorToTrace(atomics, event, false);
-            formulaEventConsuming = EventConsuming::eventConsumingFuture(formula, traceNonTerminal);
+            formulaEventConsuming = eventConsuming.eventConsumingFuture(traceNonTerminal);
         } else {
             auto trace = Utils::boolVectorToTrace(atomics, event, false);
-            formulaEventConsuming = EventConsuming::eventConsumingPast(formula, trace);
+            formulaEventConsuming = eventConsuming.eventConsumingPast(trace);
         }
         // 10 Search for equivalent formula
         bool eqFormulaExists = false;
