@@ -58,27 +58,6 @@ class MultiTransition {
     std::multimap<double, std::shared_ptr<Atomic>> getAtomicAndPredicateWeight() const;
 
     /**
-     * Flips a pair pair.
-     * @tparam A First type.
-     * @tparam B Second type.
-     * @param pair Pair to be flipped.
-     * @return Flipped pair.
-     */
-    template <typename A, typename B> std::pair<B, A> flip_pair(const std::pair<A, B> &pair) const;
-
-    /**
-     * Flips a map.
-     * @tparam A Key type.
-     * @tparam B Value type.
-     * @tparam Map Map type.
-     * @tparam Args Additional arguments, optional.
-     * @param map Map to be flipped.
-     * @return Multimap with flipped key value pairs.
-     */
-    template <typename A, typename B, template <class, class, class...> class Map, class... Args>
-    std::multimap<B, A> flip_map(const Map<A, B, Args...> &map) const;
-
-    /**
      * Helper function. Flips a map and turns it into a multimap.
      * @param weights Map of atomic -> weight.
      * @return Multimap weight -> atomic.

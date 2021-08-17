@@ -54,15 +54,5 @@ std::multimap<double, std::shared_ptr<Atomic>>
 MultiTransition::createWeightMultimap(const std::map<std::shared_ptr<Atomic>, double> &weights) const {
     std::vector<std::shared_ptr<Atomic>> atomics;
     // Is now ordered by weights
-    return flip_map(weights);
-}
-template <typename A, typename B> std::pair<B, A> MultiTransition::flip_pair(const std::pair<A, B> &pair) const {
-    return std::pair<B, A>(pair.second, pair.first);
-}
-
-template <typename A, typename B, template <class, class, class...> class Map, class... Args>
-std::multimap<B, A> MultiTransition::flip_map(const Map<A, B, Args...> &map) const {
-    std::multimap<B, A> flippedMap;
-    std::transform(map.begin(), map.end(), std::inserter(flippedMap, flippedMap.begin()), (this->*flip_pair<A, B>));
-    return flippedMap;
+    return Utils::flip_map(weights);
 }

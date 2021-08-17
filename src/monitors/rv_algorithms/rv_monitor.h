@@ -1,22 +1,23 @@
 //
-// Created by Sebastian Maierhofer on 18.01.21.
+// Created by Sebastian Maierhofer.
+// Technical University of Munich - Cyber-Physical Systems Group
+// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
+// Credits: BMW Car@TUM
 //
-
-#ifndef RV_MONITORS_RV_MONITOR_H
-#define RV_MONITORS_RV_MONITOR_H
+#pragma once
 
 #include "monitors/formula/formula.h"
 #include "monitors/rv_algorithms/btt_fsm/btt_fsm.h"
+#include "monitors/rv_algorithms/dynamic_programming/dynamic.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
 #include "monitors/trace/trace.h"
 #include "monitors/utils/execution_statistic.h"
 #include <iostream>
 #include <vector>
 
-enum AlgorithmType { dynamic, eventconsuming_ltl, mt_fsm, btt_fsm, eventconsuming_mtl };
+enum AlgorithmType { dynamic_programming_ltl, event_consuming_ltl, mt_fsm, btt_fsm, event_consuming_mtl };
 
 class RVMonitor {
-  private:
   public:
     RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement);
 
@@ -30,17 +31,17 @@ class RVMonitor {
      */
     bool verify(Trace trace);
 
+    const ExecutionStatistic &getExecutionStatistic() const;
+
   private:
     bool past{false};
-    AlgorithmType algorithm{eventconsuming_ltl};
+    AlgorithmType algorithm{event_consuming_ltl};
     std::unique_ptr<MtFsm> mtFSM;
     std::unique_ptr<BttFsm> bttFSM;
+    std::unique_ptr<DynamicProgrammingLTL> dynamic_programming;
     Formula formula;
     ExecutionStatistic executionStatistic;
     bool performanceMeasurement;
-
-  public:
-    const ExecutionStatistic &getExecutionStatistic() const;
 };
 
 /**
@@ -57,4 +58,3 @@ std::ostream &operator<<(std::ostream &os, const AlgorithmType &algorithm);
  * @return
  */
 AlgorithmType stringToAlgorithm(const std::string &algorithmString);
-#endif // RV_MONITORS_RV_MONITOR_H

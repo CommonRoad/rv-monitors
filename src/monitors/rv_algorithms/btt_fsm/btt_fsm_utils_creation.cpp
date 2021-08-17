@@ -1,4 +1,4 @@
-#include "btt_fsm_creation.h"
+#include "btt_fsm_utils_creation.h"
 #include "decision.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/nary/nary_interface.h"
@@ -7,8 +7,9 @@
 #include "monitors/utils/utils.h"
 #include <iostream>
 
-std::shared_ptr<Expression>
-BTT_FSMCreation::replaceAtomicByConstant(const Formula &formula, const std::shared_ptr<Atomic> &atomic, bool constant) {
+std::shared_ptr<Expression> BTT_FSMUtilsCreation::replaceAtomicByConstant(const Formula &formula,
+                                                                          const std::shared_ptr<Atomic> &atomic,
+                                                                          bool constant) {
     auto expression = formula.getExpr();
 
     // Single atomic
@@ -59,8 +60,8 @@ BTT_FSMCreation::replaceAtomicByConstant(const Formula &formula, const std::shar
     return newFormula.getExpr();
 }
 
-MultiTransition BTT_FSMCreation::eraseAtomicFromFormula(const MultiTransition &multiTransition,
-                                                        const std::shared_ptr<Atomic> &atomic) {
+MultiTransition BTT_FSMUtilsCreation::eraseAtomicFromFormula(const MultiTransition &multiTransition,
+                                                             const std::shared_ptr<Atomic> &atomic) {
 
     std::map<Formula, size_t> newTransitions;
     // To search for negated atomic
@@ -99,8 +100,9 @@ MultiTransition BTT_FSMCreation::eraseAtomicFromFormula(const MultiTransition &m
     return MultiTransition(newTransitions);
 }
 
-MultiTransition BTT_FSMCreation::replaceAtomicInMultiTransition(const MultiTransition &multiTransition,
-                                                                const std::shared_ptr<Atomic> &atomic, bool constant) {
+MultiTransition BTT_FSMUtilsCreation::replaceAtomicInMultiTransition(const MultiTransition &multiTransition,
+                                                                     const std::shared_ptr<Atomic> &atomic,
+                                                                     bool constant) {
 
     std::map<Formula, size_t> newTransitions;
     for (const auto &[formula, state] : multiTransition.getTransitions()) {
@@ -111,8 +113,8 @@ MultiTransition BTT_FSMCreation::replaceAtomicInMultiTransition(const MultiTrans
     return MultiTransition(newTransitions);
 }
 
-std::shared_ptr<node> BTT_FSMCreation::findNextNode(const MultiTransition &multiTransition,
-                                                    std::multimap<double, std::shared_ptr<Atomic>> &weights) {
+std::shared_ptr<node> BTT_FSMUtilsCreation::findNextNode(const MultiTransition &multiTransition,
+                                                         std::multimap<double, std::shared_ptr<Atomic>> &weights) {
     // Constant
     if (multiTransition.getTransitions().size() == 1) {
         if (auto constantExpr =

@@ -1,7 +1,7 @@
 #include "test_btt_fsm_creation.h"
 #include "monitors/formula/formula.h"
 #include "monitors/parser/parser.h"
-#include "monitors/rv_algorithms/btt_fsm/btt_fsm_creation.h"
+#include "monitors/rv_algorithms/btt_fsm/btt_fsm_utils_creation.h"
 
 // TODO Set ordering is not deterministic due to pointers
 // TEST(TestBTT_FSMCreation, correctTree) {

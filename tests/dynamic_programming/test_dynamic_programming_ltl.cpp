@@ -1,6 +1,6 @@
-#include "test_dynamic_future.h"
+#include "test_dynamic_programming_ltl.h"
 #include "monitors/parser/parser.h"
-#include "monitors/rv_algorithms/dynamic_programming/dynamic_future.h"
+#include "monitors/rv_algorithms/dynamic_programming/dynamic.h"
 #include "monitors/trace/trace.h"
 #include "monitors/utils/utils.h"
 
@@ -9,8 +9,8 @@ TEST(TestDynamicFuture, violated1) {
         {"a", "b", "c", "g", "f"},
         {{"a"}, {"b"}, {"a"}, {"b"}, {"a"}, {"c"}, {"a"}, {"a"}, {"b"}, {"g"}, {"f"}, {"h"}, {"c"}, {"b"}, {"a"}});
     Formula formula = Parser::parse("G(a -> Fb)");
-
-    EXPECT_FALSE(DynamicFuture::checkTraceDynamically(formula, trace1));
+    auto dynamic{DynamicProgrammingLTL(formula)};
+    EXPECT_FALSE(dynamic.evaluate(trace1).at(0).b);
 }
 
 TEST(TestDynamicFuture, satisfied2) {
@@ -18,8 +18,8 @@ TEST(TestDynamicFuture, satisfied2) {
     Trace trace2 = Utils::createTrace(
         {"a", "b", "c", "g", "f", "h"},
         {{"a"}, {"b"}, {"a"}, {"b"}, {"a"}, {"c"}, {"a"}, {"a"}, {"b"}, {"g"}, {"f"}, {"h"}, {"c"}, {"b"}, {"c"}});
-
-    EXPECT_TRUE(DynamicFuture::checkTraceDynamically(formula, trace2));
+    auto dynamic{DynamicProgrammingLTL(formula)};
+    EXPECT_TRUE(dynamic.evaluate(trace2).at(0).b);
 }
 
 TEST(TestDynamicFuture, violated2) {
@@ -27,15 +27,16 @@ TEST(TestDynamicFuture, violated2) {
         {"a", "b", "c", "g", "f", "h"},
         {{"a"}, {"b"}, {"a"}, {"b"}, {"a"}, {"c"}, {"a"}, {"a"}, {"b"}, {"g"}, {"f"}, {"h"}, {"c"}, {"b"}, {"c"}});
     Formula formula = Parser::parse("F(!(G(b -> Fc)))");
-
-    EXPECT_FALSE(DynamicFuture::checkTraceDynamically(formula, trace2));
+    auto dynamic{DynamicProgrammingLTL(formula)};
+    EXPECT_FALSE(dynamic.evaluate(trace2).at(0).b);
 }
 
 TEST(TestDynamicFuture, violatedEnd) {
     Trace trace = Utils::createTrace({"green", "yellow", "red"},
                                      {{"green"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}, {"green"}, {"red"}});
     Formula formula = Parser::parse("G(green -> !red U yellow)");
-    EXPECT_FALSE(DynamicFuture::checkTraceDynamically(formula, trace));
+    auto dynamic{DynamicProgrammingLTL(formula)};
+    EXPECT_FALSE(dynamic.evaluate(trace).at(0).b);
 }
 
 TEST(TestDynamicFuture, violatedBeginning) {
@@ -43,25 +44,54 @@ TEST(TestDynamicFuture, violatedBeginning) {
         Utils::createTrace({"green", "yellow", "red"},
                            {{"green"}, {"red"}, {"yellow"}, {"red"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}});
     Formula formula = Parser::parse("G(green -> !red U yellow)");
-    EXPECT_FALSE(DynamicFuture::checkTraceDynamically(formula, trace));
+    auto dynamic{DynamicProgrammingLTL(formula)};
+    EXPECT_FALSE(dynamic.evaluate(trace).at(0).b);
 }
 
 TEST(TestDynamicFuture, satisfied) {
     Trace trace = Utils::createTrace({"green", "yellow", "red"},
                                      {{"green"}, {"yellow"}, {"red"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}});
     Formula formula = Parser::parse("G(green -> !red U yellow)");
-    EXPECT_TRUE(DynamicFuture::checkTraceDynamically(formula, trace));
+    auto dynamic{DynamicProgrammingLTL(formula)};
+    EXPECT_TRUE(dynamic.evaluate(trace).at(0).b);
 }
 
 TEST(TestDynamicFuture, strongNext) {
     Trace trace = Utils::createTrace({"a", "b"}, {{"b"}, {"a"}, {"b"}});
     Formula formula = Parser::parse("G(b -> (X(a)))");
 
-    EXPECT_FALSE(DynamicFuture::checkTraceDynamically(formula, trace));
+    auto dynamic{DynamicProgrammingLTL(formula)};
+    EXPECT_FALSE(dynamic.evaluate(trace).at(0).b);
 }
 
 TEST(TestDynamicFuture, until) {
     Trace trace = Utils::createTrace({"a", "b", "c"}, {{"b"}, {"a"}, {"b"}});
     Formula formula = Parser::parse("a U b");
-    EXPECT_TRUE(DynamicFuture::checkTraceDynamically(formula, trace));
+    auto dynamic{DynamicProgrammingLTL(formula)};
+    EXPECT_TRUE(dynamic.evaluate(trace).at(0).b);
+}
+
+TEST(TestDynamicPast, violatedEnd) {
+    Trace trace =
+        Utils::createTrace({"green", "yellow", "red"}, {{"green"}, {"red"}, {"yellow"}, {"green"}, {"red"}, {"green"}});
+    Formula formula = Parser::parse("G(green -> P(yellow))");
+    auto dynamic{DynamicProgrammingLTL(formula, true)};
+    EXPECT_FALSE(dynamic.evaluate(trace).at(0).b);
+}
+
+TEST(TestDynamicPast, violatedBeginning) {
+    Trace trace = Utils::createTrace({"green", "yellow", "red"},
+                                     {{"red"}, {"green"}, {"red"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}});
+    Formula formula = Parser::parse("G(green -> P(yellow))");
+    auto dynamic{DynamicProgrammingLTL(formula, true)};
+    EXPECT_FALSE(dynamic.evaluate(trace).at(0).b);
+}
+
+TEST(TestDynamicPast, satisfied) {
+    Trace trace =
+        Utils::createTrace({"green", "yellow", "red"},
+                           {{"yellow"}, {"green"}, {"red"}, {"yellow"}, {"green"}, {"red"}, {"yellow"}, {"green"}});
+    Formula formula = Parser::parse("G(green -> P(yellow))");
+    auto dynamic{DynamicProgrammingLTL(formula, true)};
+    EXPECT_TRUE(dynamic.evaluate(trace).at(0).b);
 }

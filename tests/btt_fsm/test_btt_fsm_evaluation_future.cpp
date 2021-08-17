@@ -1,7 +1,6 @@
 #include "test_btt_fsm_evaluation_future.h"
 #include "monitors/parser/parser.h"
-#include "monitors/rv_algorithms/btt_fsm/btt_fsm_creation.h"
-#include "monitors/rv_algorithms/btt_fsm/btt_fsm_evaluation.h"
+#include "monitors/rv_algorithms/btt_fsm/btt_fsm_utils_creation.h"
 #include "monitors/trace/trace.h"
 #include "monitors/utils/utils.h"
 

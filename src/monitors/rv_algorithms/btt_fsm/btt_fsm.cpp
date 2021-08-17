@@ -1,5 +1,5 @@
 #include "btt_fsm.h"
-#include "btt_fsm_creation.h"
+#include "btt_fsm_utils_creation.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm_creation.h"
 
@@ -67,8 +67,8 @@ std::vector<StateBttFsm> BttFsm::formulaToBTT_FSM() {
         auto precedencesTerminal = mtFsmState.getTerminal().getAtomicAndPredicateWeight();
 
         // Create BTT for terminal and non-terminal multitransition
-        auto bttNonTerminal = BTT_FSMCreation::findNextNode(mtFsmState.getNonTerminal(), precedencesNonTerminal);
-        auto bttTerminal = BTT_FSMCreation::findNextNode(mtFsmState.getTerminal(), precedencesTerminal);
+        auto bttNonTerminal = BTT_FSMUtilsCreation::findNextNode(mtFsmState.getNonTerminal(), precedencesNonTerminal);
+        auto bttTerminal = BTT_FSMUtilsCreation::findNextNode(mtFsmState.getTerminal(), precedencesTerminal);
 
         // Create new state and add it
         auto newState = StateBttFsm(id, bttNonTerminal, bttTerminal);

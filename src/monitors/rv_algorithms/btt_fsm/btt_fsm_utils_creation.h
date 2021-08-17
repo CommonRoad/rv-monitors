@@ -8,7 +8,7 @@
 /**
  * Encapsulates all functions needed to create a BTT-FSM from a formula.
  */
-namespace BTT_FSMCreation {
+namespace BTT_FSMUtilsCreation {
 
 /**
  * Replaces an atomic with a constant in a given formula. This is used to determine the next node in the BTT.
@@ -41,4 +41,4 @@ MultiTransition eraseAtomicFromFormula(const MultiTransition &multiTransition, c
 std::shared_ptr<node> findNextNode(const MultiTransition &multiTransition,
                                    std::multimap<double, std::shared_ptr<Atomic>> &weights);
 
-} // namespace BTT_FSMCreation
+} // namespace BTT_FSMUtilsCreation
