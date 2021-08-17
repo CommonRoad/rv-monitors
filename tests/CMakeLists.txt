@@ -17,8 +17,7 @@ set(RV_MONITOR_TEST_SRC_FILES
         btt_fsm/test_btt_fsm_evaluation_future.cpp
         btt_fsm/test_btt_fsm_evaluation_past.cpp
         btt_fsm/test_btt_fsm_creation.cpp
-        dynamic_programming/test_dynamic_future.cpp
-        dynamic_programming/test_dynamic_past.cpp
+        dynamic_programming/test_dynamic_programming_ltl.cpp
         event_consuming/test_event_consuming_future.cpp
         event_consuming/test_event_consuming_past.cpp
         mt_fsm/test_mt_fsm_evaluation_future.cpp

@@ -47,12 +47,10 @@ set(RV_MONITOR_SRC_FILES
         monitors/rv_algorithms/monitor.cpp
         monitors/rv_algorithms/rv_monitor.cpp
         monitors/rv_algorithms/btt_fsm/btt_fsm.cpp
-        monitors/rv_algorithms/btt_fsm/btt_fsm_creation.cpp
+        monitors/rv_algorithms/btt_fsm/btt_fsm_utils_creation.cpp
         monitors/rv_algorithms/btt_fsm/decision.cpp
         monitors/rv_algorithms/btt_fsm/state_btt_fsm.cpp
         monitors/rv_algorithms/dynamic_programming/dynamic.cpp
-        monitors/rv_algorithms/dynamic_programming/dynamic_future.cpp
-        monitors/rv_algorithms/dynamic_programming/dynamic_past.cpp
         monitors/rv_algorithms/event_consuming/event_consuming.cpp
         monitors/rv_algorithms/event_consuming/event_consuming_visitor.cpp
         monitors/rv_algorithms/mt_fsm/mt_fsm.cpp

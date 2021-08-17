@@ -1,9 +1,10 @@
 //
-// Created by Sebastian Maierhofer on 20.01.21.
+// Created by Sebastian Maierhofer.
+// Technical University of Munich - Cyber-Physical Systems Group
+// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
+// Credits: BMW Car@TUM
 //
-
 #include "rv_monitor.h"
-#include "monitors/rv_algorithms/dynamic_programming/dynamic.h"
 #include "monitors/rv_algorithms/event_consuming/event_consuming.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm_creation.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm_evaluation.h"
@@ -19,7 +20,7 @@
  * @param consoleOutput True if console output is desired.
  */
 bool RVMonitor::verify(Trace trace) {
-    if (algorithm > eventconsuming_mtl) {
+    if (algorithm > event_consuming_mtl) {
         throw std::runtime_error("main::verify() No valid argument for algorithm given. Try MT_FSM, BTT_FSM, DYNAMIC, "
                                  "or EVENTCONSUMING-LTL, EVENTCONSUMING-MTL.)");
     }
@@ -37,16 +38,16 @@ bool RVMonitor::verify(Trace trace) {
         verdict = bttFSM->evaluate(trace).at(0).b;
         break;
     }
-    case dynamic: {
-        verdict = Dynamic::dynamic(formula, trace, past);
+    case dynamic_programming_ltl: {
+        verdict = dynamic_programming->evaluate(trace).at(0).b;
         break;
     }
-    case eventconsuming_ltl: {
+    case event_consuming_ltl: {
         auto formulaCopy = formula.deepCopy();
         verdict = EventConsuming::eventConsuming(formulaCopy, trace, past);
         break;
     }
-    case eventconsuming_mtl:
+    case event_consuming_mtl:
         auto formulaCopy = formula.deepCopy();
         verdict = MTLEventConsuming::eventConsuming(formulaCopy, trace);
         break;
@@ -63,10 +64,10 @@ bool RVMonitor::verify(Trace trace) {
  */
 std::ostream &operator<<(std::ostream &os, const AlgorithmType &algorithm) {
     switch (algorithm) {
-    case dynamic:
+    case dynamic_programming_ltl:
         os << "DynamicProgramming";
         break;
-    case eventconsuming_ltl:
+    case event_consuming_ltl:
         os << "EventConsuming-LTL";
         break;
     case mt_fsm:
@@ -75,7 +76,7 @@ std::ostream &operator<<(std::ostream &os, const AlgorithmType &algorithm) {
     case btt_fsm:
         os << "BTT-FSM*";
         break;
-    case eventconsuming_mtl:
+    case event_consuming_mtl:
         os << "EventConsuming-MTL";
         break;
     }
@@ -84,11 +85,11 @@ std::ostream &operator<<(std::ostream &os, const AlgorithmType &algorithm) {
 
 AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
     if (algorithmString == "dynamicprogramming") {
-        return dynamic;
+        return dynamic_programming_ltl;
     } else if (algorithmString == "eventconsuming-ltl") {
-        return eventconsuming_ltl;
+        return event_consuming_ltl;
     } else if (algorithmString == "eventconsuming-mtl") {
-        return eventconsuming_mtl;
+        return event_consuming_mtl;
     } else if (algorithmString == "mt-fsm*") {
         return mt_fsm;
     } else if (algorithmString == "btt-fsm*") {
@@ -106,6 +107,8 @@ RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past,
     if (algorithm == mt_fsm)
         mtFSM = std::make_unique<MtFsm>(MT_FSMCreation::formulaToMT_FSM(formula, past));
     else if (algorithm == btt_fsm)
-        bttFSM = std::make_unique<BttFsm>(formula);
+        bttFSM = std::make_unique<BttFsm>(formula, past);
+    else if (algorithm == dynamic_programming_ltl)
+        dynamic_programming = std::make_unique<DynamicProgrammingLTL>(formula, past);
 }
 const ExecutionStatistic &RVMonitor::getExecutionStatistic() const { return executionStatistic; }
