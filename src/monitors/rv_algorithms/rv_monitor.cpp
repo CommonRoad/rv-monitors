@@ -44,7 +44,7 @@ bool RVMonitor::verify(Trace trace) {
     }
     case event_consuming_ltl: {
         auto formulaCopy = formula.deepCopy();
-        verdict = EventConsuming::eventConsuming(formulaCopy, trace, past);
+        verdict = ltl_event_consuming->evaluate(trace).at(0).b;
         break;
     }
     case event_consuming_mtl:
@@ -110,5 +110,7 @@ RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past,
         bttFSM = std::make_unique<BttFsm>(formula, past);
     else if (algorithm == dynamic_programming_ltl)
         dynamic_programming = std::make_unique<DynamicProgrammingLTL>(formula, past);
+    else if (algorithm == event_consuming_mtl)
+        ltl_event_consuming = std::make_unique<EventConsumingLTL>(formula, past);
 }
 const ExecutionStatistic &RVMonitor::getExecutionStatistic() const { return executionStatistic; }

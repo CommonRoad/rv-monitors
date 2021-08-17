@@ -9,6 +9,7 @@
 #include "monitors/formula/formula.h"
 #include "monitors/rv_algorithms/btt_fsm/btt_fsm.h"
 #include "monitors/rv_algorithms/dynamic_programming/dynamic.h"
+#include "monitors/rv_algorithms/event_consuming/event_consuming.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
 #include "monitors/trace/trace.h"
 #include "monitors/utils/execution_statistic.h"
@@ -39,6 +40,7 @@ class RVMonitor {
     std::unique_ptr<MtFsm> mtFSM;
     std::unique_ptr<BttFsm> bttFSM;
     std::unique_ptr<DynamicProgrammingLTL> dynamic_programming;
+    std::unique_ptr<EventConsumingLTL> ltl_event_consuming;
     Formula formula;
     ExecutionStatistic executionStatistic;
     bool performanceMeasurement;

@@ -6,7 +6,10 @@
 #include <iostream>
 #include <memory>
 
-Formula EventConsuming::eventConsumingFuture(const Formula &formula, Trace &trace) {
+EventConsumingLTL::EventConsumingLTL(const Formula &formula, bool pastEvaluation)
+    : Monitor((formula)), pastEvaluation(pastEvaluation) {}
+
+Formula EventConsumingLTL::eventConsumingFuture(Trace &trace) {
     // Empty trace
     if (trace.getTrace().empty()) {
         std::cout << "Trace is empty" << std::endl;
@@ -34,7 +37,7 @@ Formula EventConsuming::eventConsumingFuture(const Formula &formula, Trace &trac
     return formulaCopy;
 }
 
-Formula EventConsuming::eventConsumingPast(const Formula &formula, Trace &trace) {
+Formula EventConsumingLTL::eventConsumingPast(Trace &trace) {
     // Empty trace
     if (trace.getTrace().empty()) {
         std::cout << "Trace is empty" << std::endl;
@@ -55,20 +58,19 @@ Formula EventConsuming::eventConsumingPast(const Formula &formula, Trace &trace)
         ec.consumeEvent(formulaCopy, trace, i);
         rw.rewrite(formulaCopy);
         if (formulaCopy.to_string() == "false") {
-            // std::cout << "Formula violated in event " << i << std::endl;
             break;
         }
         if (formulaCopy.to_string() == "true") {
-            // std::cout << "Formula became true in event " << i << std::endl;
             break;
         }
     }
     return formulaCopy;
 }
 
-bool EventConsuming::eventConsuming(const Formula &formula, Trace &trace, bool past) {
-    if (!past) {
-        return eventConsumingFuture(formula, trace).to_string() == "true";
+std::vector<Verdict> EventConsumingLTL::evaluate(Trace &trace) {
+    if (!pastEvaluation) {
+        return {Verdict{0, eventConsumingFuture(trace).to_string() == "true"}};
     }
-    return eventConsumingPast(formula, trace).to_string() == "true";
+    return {Verdict{0, eventConsumingPast(trace).to_string() == "true"}};
 }
+std::string EventConsumingLTL::to_string() const { return "TODO"; }
