@@ -11,11 +11,6 @@
 #include "monitors/utils/utils.h"
 
 std::vector<Verdict> RVMonitor::verify(Trace trace) {
-    if (algorithm > event_consuming_mtl) {
-        throw std::runtime_error("main::verify() No valid argument for algorithm given. Try MT_FSM, BTT_FSM, DYNAMIC, "
-                                 "or EVENT-CONSUMING-LTL, EVENT-CONSUMING-MTL.)");
-    }
-
     std::chrono::high_resolution_clock::time_point startTime;
     if (performanceMeasurement)
         startTime = ExecutionStatistic::start();
@@ -49,25 +44,26 @@ std::ostream &operator<<(std::ostream &os, const AlgorithmType &algorithm) {
 }
 
 AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
-    if (algorithmString == "dynamicprogramming") {
+    if (algorithmString == "dynamic-programming-ltl") {
         return dynamic_programming_ltl;
-    } else if (algorithmString == "eventconsuming-ltl") {
+    } else if (algorithmString == "event-consuming-ltl") {
         return event_consuming_ltl;
-    } else if (algorithmString == "eventconsuming-mtl") {
+    } else if (algorithmString == "event-consuming-mtl") {
         return event_consuming_mtl;
     } else if (algorithmString == "mt-fsm*") {
         return mt_fsm;
     } else if (algorithmString == "btt-fsm*") {
         return btt_fsm;
     } else {
-        throw std::runtime_error("Algorithm::stringToAlgorithm Command line argument " + algorithmString +
-                                 " is not a valid algorithm.\n Options are: dynamicprogramming, eventconsuming-ltl, "
-                                 "eventconsuming-mtl, mt-fsm*, btt-fsm*");
+        throw std::runtime_error(
+            "Algorithm::stringToAlgorithm Command line argument " + algorithmString +
+            " is not a valid algorithm.\n Options are: dynamic-programming-ltl, event-consuming-ltl, "
+            "event-consuming-mtl, mt-fsm*, btt-fsm*");
     }
 }
 
 RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement)
-    : algorithm(algorithm), performanceMeasurement(measurement) {
+    : performanceMeasurement(measurement) {
     switch (algorithm) {
     case dynamic_programming_ltl:
         monitor = std::make_unique<DynamicProgrammingLTL>(formula, past);
@@ -82,6 +78,9 @@ RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past,
         monitor = std::make_unique<BttFsm>(formula, past);
         break;
     case event_consuming_mtl:
+        monitor = std::make_unique<MTLEventConsuming>(formula);
+        break;
+    default:
         monitor = std::make_unique<MTLEventConsuming>(formula);
         break;
     }

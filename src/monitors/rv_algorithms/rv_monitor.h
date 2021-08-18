@@ -47,9 +47,8 @@ class RVMonitor {
     const ExecutionStatistic &getExecutionStatistic() const;
 
   private:
-    AlgorithmType algorithm{event_consuming_mtl}; //**< Algorithm type, e.g., event-consuming LTL, BTT-FSM, etc. */
-    std::unique_ptr<MonitorInterface> monitor;    //**< Pointer to monitoring algorithm */
-    ExecutionStatistic executionStatistic;        //**< Execution statistic object */
+    std::unique_ptr<MonitorInterface> monitor; //**< Pointer to monitoring algorithm */
+    ExecutionStatistic executionStatistic;     //**< Execution statistic object */
     bool performanceMeasurement; //**< Boolean indicating whether performance evaluation should be performed. */
 };
 
