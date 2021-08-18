@@ -54,8 +54,6 @@ set(RV_MONITOR_SRC_FILES
         monitors/rv_algorithms/event_consuming/event_consuming.cpp
         monitors/rv_algorithms/event_consuming/event_consuming_visitor.cpp
         monitors/rv_algorithms/mt_fsm/mt_fsm.cpp
-        monitors/rv_algorithms/mt_fsm/mt_fsm_evaluation.cpp
-        monitors/rv_algorithms/mt_fsm/mt_fsm_creation.cpp
         monitors/rv_algorithms/mt_fsm/multi_transition.cpp
         monitors/rv_algorithms/mt_fsm/state_mt_fsm.cpp
         monitors/rv_algorithms/mtl/mtl_event_consuming.cpp

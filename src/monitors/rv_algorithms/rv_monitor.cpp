@@ -6,8 +6,7 @@
 //
 #include "rv_monitor.h"
 #include "monitors/rv_algorithms/event_consuming/event_consuming.h"
-#include "monitors/rv_algorithms/mt_fsm/mt_fsm_creation.h"
-#include "monitors/rv_algorithms/mt_fsm/mt_fsm_evaluation.h"
+#include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
 #include "monitors/rv_algorithms/mtl/mtl_event_consuming.h"
 #include "monitors/utils/utils.h"
 
@@ -31,7 +30,7 @@ bool RVMonitor::verify(Trace trace) {
         startTime = ExecutionStatistic::start();
     switch (algorithm) {
     case mt_fsm: {
-        verdict = MT_FSMEvaluation::evaluateMT_FSM(*mtFSM, trace, past);
+        verdict = mtFSM->evaluate(trace).at(0).b;
         break;
     }
     case btt_fsm: {
@@ -101,11 +100,10 @@ AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
     }
 }
 
-RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement)
-    : past(past), algorithm(algorithm), formula(formula), performanceMeasurement(measurement) {
+RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement): algorithm(algorithm), formula(formula), performanceMeasurement(measurement) {
 
     if (algorithm == mt_fsm)
-        mtFSM = std::make_unique<MtFsm>(MT_FSMCreation::formulaToMT_FSM(formula, past));
+        mtFSM = std::make_unique<MtFsm>(formula, past);
     else if (algorithm == btt_fsm)
         bttFSM = std::make_unique<BttFsm>(formula, past);
     else if (algorithm == dynamic_programming_ltl)

@@ -1,7 +1,7 @@
 #include "btt_fsm.h"
 #include "btt_fsm_utils_creation.h"
 #include "monitors/expression_tree/atomic/constant.h"
-#include "monitors/rv_algorithms/mt_fsm/mt_fsm_creation.h"
+#include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
 
 BttFsm::BttFsm(const Formula &formula, bool pastEvaluation)
     : Monitor((formula)), states(formulaToBTT_FSM()), pastEvaluation(pastEvaluation) {}
@@ -46,9 +46,8 @@ std::vector<StateBttFsm> BttFsm::formulaToBTT_FSM() {
         StateBttFsm singleState(static_cast<size_t>(constant->getValue()), {}, {});
         return {singleState};
     }
-    // Get corresponding MT-FSM
-    auto mtFsm = MT_FSMCreation::formulaToMT_FSM(formula, pastEvaluation);
-    const auto &mtFsmStates = mtFsm.getStates();
+    // Get corresponding MT-FSM states
+    auto mtFsmStates{MtFsm::formulaToMT_FSM(formula, pastEvaluation)};
 
     // States of BTT-FSM
     std::vector<StateBttFsm> bttStates;
