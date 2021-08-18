@@ -100,7 +100,8 @@ AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
     }
 }
 
-RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement): algorithm(algorithm), formula(formula), performanceMeasurement(measurement) {
+RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement)
+    : algorithm(algorithm), formula(formula), performanceMeasurement(measurement) {
 
     if (algorithm == mt_fsm)
         mtFSM = std::make_unique<MtFsm>(formula, past);
