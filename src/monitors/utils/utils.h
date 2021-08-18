@@ -1,8 +1,6 @@
 #pragma once
 
 #include "monitors/formula/formula.h"
-#include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
-#include "monitors/rv_algorithms/mt_fsm/multi_transition.h"
 #include "monitors/trace/trace.h"
 #include <vector>
 

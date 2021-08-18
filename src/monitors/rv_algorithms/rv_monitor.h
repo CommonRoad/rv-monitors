@@ -35,7 +35,6 @@ class RVMonitor {
     const ExecutionStatistic &getExecutionStatistic() const;
 
   private:
-    bool past{false};
     AlgorithmType algorithm{event_consuming_ltl};
     std::unique_ptr<MtFsm> mtFSM;
     std::unique_ptr<BttFsm> bttFSM;

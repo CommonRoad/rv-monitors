@@ -26,11 +26,9 @@ Formula EventConsumingLTL::eventConsumingFuture(Trace &trace) {
         ec.consumeEvent(formulaCopy, trace, i);
         rw.rewrite(formulaCopy);
         if (formulaCopy.to_string() == "false") {
-            //            std::cout << "Formula violated in event " << i << std::endl;
             break;
         }
         if (formulaCopy.to_string() == "true") {
-            // std::cout << "Formula became true in event " << i << std::endl;
             break;
         }
     }
