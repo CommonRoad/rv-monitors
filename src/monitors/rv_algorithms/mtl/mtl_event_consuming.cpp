@@ -2,13 +2,14 @@
 #include "mtl_event_consuming_visitor.h"
 #include "mtl_rewrite_visitor.h"
 #include <iostream>
-#include <memory>
 
-bool MTLEventConsuming::eventConsuming(const Formula &formula, Trace &trace) {
+MTLEventConsuming::MTLEventConsuming(const Formula &formula) : MonitorInterface((formula)) {}
+
+std::vector<Verdict> MTLEventConsuming::evaluate(Trace &trace) {
     // Empty trace
     if (trace.getTrace().empty()) {
         std::cout << "Trace is empty" << std::endl;
-        return false;
+        return {Verdict{0, false}};
     }
     // Copy formula before working on it
     auto formulaCopy = formula.deepCopy();
@@ -26,5 +27,6 @@ bool MTLEventConsuming::eventConsuming(const Formula &formula, Trace &trace) {
             break;
         }
     }
-    return formulaCopy.to_string() == "true";
+    return {Verdict{0, formulaCopy.to_string() == "true"}};
 }
+std::string MTLEventConsuming::to_string() const { return "TODO"; }

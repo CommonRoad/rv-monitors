@@ -1,27 +1,33 @@
-#include "test_event_consuming_past.h"
+#include "test_btt_fsm_evaluation_past.h"
 #include "monitors/parser/parser.h"
-#include "monitors/rv_algorithms/event_consuming/event_consuming.h"
+#include "monitors/rv_algorithms/btt_fsm/btt_fsm.h"
 #include "monitors/trace/trace.h"
 #include "monitors/utils/utils.h"
 
-TEST(TestECPast, violatedEnd) {
+TEST(TestBTT_FSMPast, violatedEnd) {
     Trace trace =
         Utils::createTrace({"green", "yellow", "red"}, {{"green"}, {"red"}, {"yellow"}, {"green"}, {"red"}, {"green"}});
     Formula formula = Parser::parse("G(green -> P(yellow))");
-    EXPECT_EQ(EventConsuming::eventConsumingPast(formula, trace).to_string(), "false");
+    auto btt = BttFsm(formula, true);
+
+    EXPECT_FALSE(btt.evaluate(trace).at(0).b);
 }
 
-TEST(TestECPast, violatedBeginning) {
+TEST(TestBTT_FSMPast, violatedBeginning) {
     Trace trace = Utils::createTrace({"green", "yellow", "red"},
                                      {{"red"}, {"green"}, {"red"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}});
     Formula formula = Parser::parse("G(green -> P(yellow))");
-    EXPECT_EQ(EventConsuming::eventConsumingPast(formula, trace).to_string(), "false");
+    auto btt = BttFsm(formula, true);
+
+    EXPECT_FALSE(btt.evaluate(trace).at(0).b);
 }
 
-TEST(TestECPast, satisfied) {
+TEST(TestBTT_FSMPast, satisfied) {
     Trace trace =
         Utils::createTrace({"green", "yellow", "red"},
                            {{"yellow"}, {"green"}, {"red"}, {"yellow"}, {"green"}, {"red"}, {"yellow"}, {"green"}});
     Formula formula = Parser::parse("G(green -> P(yellow))");
-    EXPECT_EQ(EventConsuming::eventConsumingPast(formula, trace).to_string(), "true");
+    auto btt = BttFsm(formula, true);
+
+    EXPECT_TRUE(btt.evaluate(trace).at(0).b);
 }
