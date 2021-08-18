@@ -81,5 +81,5 @@ RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past,
         monitor = std::make_unique<MTLEventConsuming>(formula);
         break;
     }
-
-    const ExecutionStatistic &RVMonitor::getExecutionStatistic() const { return executionStatistic; }
+}
+const ExecutionStatistic &RVMonitor::getExecutionStatistic() const { return executionStatistic; }
