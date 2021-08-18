@@ -1,13 +1,13 @@
 #pragma once
 
 #include "monitors/formula/formula.h"
-#include "monitors/rv_algorithms/monitor.h"
+#include "monitors/rv_algorithms/monitor_interface.h"
 #include <monitors/trace/trace.h>
 
 /**
  * Functions for monitoring a trace using the MTL event consuming algorithm.
  */
-class MTLEventConsuming : public Monitor {
+class MTLEventConsuming : public MonitorInterface {
   public:
     MTLEventConsuming(const Formula &formula);
     /**

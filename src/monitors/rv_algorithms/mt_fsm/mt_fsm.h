@@ -1,7 +1,7 @@
 #pragma once
 
 #include "monitors/formula/formula.h"
-#include "monitors/rv_algorithms/monitor.h"
+#include "monitors/rv_algorithms/monitor_interface.h"
 #include "monitors/trace/trace.h"
 #include "state_mt_fsm.h"
 #include <memory>
@@ -11,7 +11,7 @@
 /**
  * Class to manage an MT-FSM*.
  */
-class MtFsm : public Monitor {
+class MtFsm : public MonitorInterface {
   private:
     std::vector<StateMT_FSM> states;
     bool pastEvaluation;

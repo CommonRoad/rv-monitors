@@ -3,7 +3,7 @@
 #include "mtl_rewrite_visitor.h"
 #include <iostream>
 
-MTLEventConsuming::MTLEventConsuming(const Formula &formula) : Monitor((formula)) {}
+MTLEventConsuming::MTLEventConsuming(const Formula &formula) : MonitorInterface((formula)) {}
 
 std::vector<Verdict> MTLEventConsuming::evaluate(Trace &trace) {
     // Empty trace

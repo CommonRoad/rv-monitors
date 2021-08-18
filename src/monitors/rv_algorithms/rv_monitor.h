@@ -20,38 +20,52 @@ enum AlgorithmType { dynamic_programming_ltl, event_consuming_ltl, mt_fsm, btt_f
 
 class RVMonitor {
   public:
+    /**
+     * Constructor
+     *
+     * @param algorithm Algorithm type, e.g., event-consuming LTL, BTT-FSM, etc.
+     * @param formula Temporal logic formula.
+     * @param past Boolean indicating whether formula specifies only future or past properties (true if formula is in
+     * PLTLf).
+     * @param measurement Boolean indicating whether performance evaluation should be performed.
+     */
     RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement);
 
     /**
-     * Executes algorithm on a given trace and with given parameters.
-     * @param formula Formula.
-     * @param algorithm Monitoring algorithm.
-     * @param trace Trace.
-     * @param past True if formula is in PLTLf.
-     * @param consoleOutput True if console output is desired.
+     * Evaluates trace based on temporal logic formula.
+     *
+     * @param trace Trace of predicates/atomic prepositions.
+     * @return Verdict for each time step of trace.
      */
-    bool verify(Trace trace);
+    std::vector<Verdict> verify(Trace trace);
 
+    /**
+     * Getter for execution statistics.
+     *
+     * @return Execution statistic object.
+     */
     const ExecutionStatistic &getExecutionStatistic() const;
 
   private:
-    AlgorithmType algorithm{event_consuming_ltl};
-    std::unique_ptr<Monitor> monitor;
-    ExecutionStatistic executionStatistic;
-    bool performanceMeasurement;
+    AlgorithmType algorithm{event_consuming_mtl}; //**< Algorithm type, e.g., event-consuming LTL, BTT-FSM, etc. */
+    std::unique_ptr<MonitorInterface> monitor;    //**< Pointer to monitoring algorithm */
+    ExecutionStatistic executionStatistic;        //**< Execution statistic object */
+    bool performanceMeasurement; //**< Boolean indicating whether performance evaluation should be performed. */
 };
 
 /**
- * Easier output for algorithms.
- * @param os
- * @param algorithm
- * @return osstream for algorithm.
+ * Overridden << operator for console output of algorithm type.
+ *
+ * @param os Reference to OS stream
+ * @param algorithm Algorithm type which should be outputted to terminal.
+ * @return osstream for algorithm type.
  */
 std::ostream &operator<<(std::ostream &os, const AlgorithmType &algorithm);
 
 /**
- * Converts a string into the corresponding algorithm.
- * @param algorithmString
- * @return
+ * Converts a string into the corresponding algorithm type enum element.
+ *
+ * @param algorithmString String which should be converted
+ * @return AlgorithmType enum element.
  */
 AlgorithmType stringToAlgorithm(const std::string &algorithmString);

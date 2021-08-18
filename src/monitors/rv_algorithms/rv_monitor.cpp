@@ -10,36 +10,23 @@
 #include "monitors/rv_algorithms/mtl/mtl_event_consuming.h"
 #include "monitors/utils/utils.h"
 
-/**
- * Executes algorithm on a given trace and with given parameters.
- * @param formula Formula.
- * @param algorithm Monitoring algorithm.
- * @param trace Trace.
- * @param past True if formula is in PLTLf.
- * @param consoleOutput True if console output is desired.
- */
-bool RVMonitor::verify(Trace trace) {
+std::vector<Verdict> RVMonitor::verify(Trace trace) {
     if (algorithm > event_consuming_mtl) {
         throw std::runtime_error("main::verify() No valid argument for algorithm given. Try MT_FSM, BTT_FSM, DYNAMIC, "
-                                 "or EVENTCONSUMING-LTL, EVENTCONSUMING-MTL.)");
+                                 "or EVENT-CONSUMING-LTL, EVENT-CONSUMING-MTL.)");
     }
 
     std::chrono::high_resolution_clock::time_point startTime;
     if (performanceMeasurement)
         startTime = ExecutionStatistic::start();
 
-    auto verdict{monitor->evaluate(trace).at(0).b};
+    auto verdict{monitor->evaluate(trace)};
 
     if (performanceMeasurement)
         executionStatistic.stop(startTime, trace.getLength());
     return verdict;
 }
-/**
- * Easier output for algorithms.
- * @param os
- * @param algorithm
- * @return osstream for algorithm.
- */
+
 std::ostream &operator<<(std::ostream &os, const AlgorithmType &algorithm) {
     switch (algorithm) {
     case dynamic_programming_ltl:

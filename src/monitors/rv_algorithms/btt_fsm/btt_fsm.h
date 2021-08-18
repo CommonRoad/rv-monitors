@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../monitor.h"
+#include "../monitor_interface.h"
 #include "monitors/formula/formula.h"
 #include "state_btt_fsm.h"
 #include <set>
@@ -9,7 +9,7 @@
 /**
  * Class representing a Binary Transition Tree Finite State Machine (BTT-FSM).
  */
-class BttFsm : public Monitor {
+class BttFsm : public MonitorInterface {
   private:
     std::vector<StateBttFsm> states;
     bool pastEvaluation;

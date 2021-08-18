@@ -5,9 +5,10 @@
 #include "monitors/rewriting/rewrite_visitor.h"
 #include <iostream>
 #include <memory>
+#include <utility>
 
-EventConsumingLTL::EventConsumingLTL(const Formula &formula, bool pastEvaluation)
-    : Monitor((formula)), pastEvaluation(pastEvaluation) {}
+EventConsumingLTL::EventConsumingLTL(Formula formula, bool pastEvaluation)
+    : MonitorInterface((std::move(formula))), pastEvaluation(pastEvaluation) {}
 
 Formula EventConsumingLTL::eventConsumingFuture(Trace &trace) {
     // Empty trace

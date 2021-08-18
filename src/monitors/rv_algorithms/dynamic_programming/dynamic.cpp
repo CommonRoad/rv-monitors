@@ -16,7 +16,7 @@
 #include <monitors/utils/lazy_bool.h>
 
 DynamicProgrammingLTL::DynamicProgrammingLTL(const Formula &formula, bool pastEvaluation)
-    : Monitor((formula)), pastEvaluation(pastEvaluation) {}
+    : MonitorInterface((formula)), pastEvaluation(pastEvaluation) {}
 
 void DynamicProgrammingLTL::initialize(size_t j, std::vector<bool> &initVector,
                                        std::map<std::string, lazy_bool> &eventMap,

@@ -11,7 +11,7 @@
 /**
  * Interface for runtime verification algorithms/monitors.
  */
-class Monitor {
+class MonitorInterface {
   public:
     /**
      * Constructor for monitor.
@@ -19,7 +19,7 @@ class Monitor {
      * @param formula Temporal logic formula.
      * @param timeProperty  Specification whether formula is/can be specified with future/past operators.
      */
-    Monitor(Formula formula);
+    MonitorInterface(Formula formula);
 
     /**
      * Evaluation function for monitor algorithms.
@@ -45,5 +45,5 @@ class Monitor {
     virtual std::string to_string() const = 0;
 
   protected:
-    Formula formula; //**< Formula which is evaluated by monitor */
+    Formula formula; //**< Temporal logic formula which is evaluated by monitor */
 };

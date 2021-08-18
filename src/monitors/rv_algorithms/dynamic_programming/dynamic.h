@@ -4,7 +4,7 @@
 #include "monitors/expression_tree/expression.h"
 #include "monitors/expression_tree/nary/nary_interface.h"
 #include "monitors/formula/formula.h"
-#include "monitors/rv_algorithms/monitor.h"
+#include "monitors/rv_algorithms/monitor_interface.h"
 #include "monitors/trace/trace.h"
 #include <algorithm>
 #include <map>
@@ -15,7 +15,7 @@
 /**
  * Dynamic Encapsulates functions needed by both DynamicFuture and DynamicPast for dynamic programming approach.
  */
-class DynamicProgrammingLTL : public Monitor {
+class DynamicProgrammingLTL : public MonitorInterface {
   public:
     DynamicProgrammingLTL(const Formula &formula, bool pastEvaluation = false);
     std::vector<Verdict> evaluate(Trace &trace) override;
