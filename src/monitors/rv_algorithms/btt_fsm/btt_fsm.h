@@ -9,7 +9,7 @@
 /**
  * Class representing a Binary Transition Tree Finite State Machine (BTT-FSM).
  */
-class BttFsm : private Monitor {
+class BttFsm : public Monitor {
   private:
     std::vector<StateBttFsm> states;
     bool pastEvaluation;

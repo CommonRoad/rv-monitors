@@ -1,18 +1,27 @@
 #pragma once
 
 #include "monitors/formula/formula.h"
+#include "monitors/rv_algorithms/monitor.h"
 #include <monitors/trace/trace.h>
 
 /**
  * Functions for monitoring a trace using the MTL event consuming algorithm.
  */
-namespace MTLEventConsuming {
-/**
- * Monitors a formula in MTL or LTL on a trace. The formula can have future and past operators.
- * @param formula Formula.
- * @param trace Trace.
- * @return Formula changed by the event consuming algorithm, should be true or false at the end.
- */
-[[nodiscard]] bool eventConsuming(const Formula &formula, Trace &trace);
+class MTLEventConsuming : public Monitor {
+  public:
+    MTLEventConsuming(const Formula &formula);
+    /**
+     * Evaluation function for monitor algorithms.
+     *
+     * @param trace Trace which should be evaluated.
+     * @return List of verdicts for each time step of the trace. If the length of the vector is 1,
+     * the runtime verification algorithm can only provide a global verdict for the complete trace.
+     */
+    std::vector<Verdict> evaluate(Trace &trace) override;
 
-}; // namespace MTLEventConsuming
+    /**
+     * to_string() function.
+     * @return String representation of the BTT-FSM.
+     */
+    [[nodiscard]] std::string to_string() const override;
+};
