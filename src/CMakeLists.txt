@@ -44,20 +44,16 @@ set(RV_MONITOR_SRC_FILES
         monitors/rewriting/basic_rewrite_visitor.cpp
         monitors/rewriting/expression_visitor.cpp
         monitors/rewriting/rewrite_visitor.cpp
+        monitors/rv_algorithms/monitor_interface.cpp
         monitors/rv_algorithms/rv_monitor.cpp
         monitors/rv_algorithms/btt_fsm/btt_fsm.cpp
-        monitors/rv_algorithms/btt_fsm/btt_fsm_creation.cpp
-        monitors/rv_algorithms/btt_fsm/btt_fsm_evaluation.cpp
+        monitors/rv_algorithms/btt_fsm/btt_fsm_utils_creation.cpp
         monitors/rv_algorithms/btt_fsm/decision.cpp
         monitors/rv_algorithms/btt_fsm/state_btt_fsm.cpp
         monitors/rv_algorithms/dynamic_programming/dynamic.cpp
-        monitors/rv_algorithms/dynamic_programming/dynamic_future.cpp
-        monitors/rv_algorithms/dynamic_programming/dynamic_past.cpp
         monitors/rv_algorithms/event_consuming/event_consuming.cpp
         monitors/rv_algorithms/event_consuming/event_consuming_visitor.cpp
         monitors/rv_algorithms/mt_fsm/mt_fsm.cpp
-        monitors/rv_algorithms/mt_fsm/mt_fsm_evaluation.cpp
-        monitors/rv_algorithms/mt_fsm/mt_fsm_creation.cpp
         monitors/rv_algorithms/mt_fsm/multi_transition.cpp
         monitors/rv_algorithms/mt_fsm/state_mt_fsm.cpp
         monitors/rv_algorithms/mtl/mtl_event_consuming.cpp
