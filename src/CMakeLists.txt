@@ -44,7 +44,7 @@ set(RV_MONITOR_SRC_FILES
         monitors/rewriting/basic_rewrite_visitor.cpp
         monitors/rewriting/expression_visitor.cpp
         monitors/rewriting/rewrite_visitor.cpp
-        monitors/rv_algorithms/monitor.cpp
+        monitors/rv_algorithms/monitor_interface.cpp
         monitors/rv_algorithms/rv_monitor.cpp
         monitors/rv_algorithms/btt_fsm/btt_fsm.cpp
         monitors/rv_algorithms/btt_fsm/btt_fsm_utils_creation.cpp

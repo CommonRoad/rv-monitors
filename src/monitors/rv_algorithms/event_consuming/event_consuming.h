@@ -1,18 +1,18 @@
 #pragma once
 
 #include "monitors/formula/formula.h"
-#include "monitors/rv_algorithms/monitor.h"
+#include "monitors/rv_algorithms/monitor_interface.h"
 #include "monitors/trace/trace.h"
 
 /**
  * Functions for monitoring a trace using the event consuming algorithm.
  */
-class EventConsumingLTL : public Monitor {
+class EventConsumingLTL : public MonitorInterface {
   private:
     bool pastEvaluation;
 
   public:
-    EventConsumingLTL(const Formula &formula, bool pastEvaluation = false);
+    EventConsumingLTL(Formula formula, bool pastEvaluation = false);
     /**
      * Monitors a formula in LTLf on a trace.
      * @param formula Formula.

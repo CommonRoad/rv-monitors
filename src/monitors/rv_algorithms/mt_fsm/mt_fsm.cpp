@@ -9,7 +9,7 @@
 #include "monitors/trace/event_generator.h"
 
 MtFsm::MtFsm(const Formula &formula, bool pastEvaluation)
-    : Monitor((formula)), states(formulaToMT_FSM(formula, pastEvaluation)), pastEvaluation(pastEvaluation) {}
+    : MonitorInterface((formula)), states(formulaToMT_FSM(formula, pastEvaluation)), pastEvaluation(pastEvaluation) {}
 
 // TODO check if empty
 std::string MtFsm::to_string() const {

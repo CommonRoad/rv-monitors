@@ -4,7 +4,7 @@
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
 
 BttFsm::BttFsm(const Formula &formula, bool pastEvaluation)
-    : Monitor((formula)), states(formulaToBTT_FSM()), pastEvaluation(pastEvaluation) {}
+    : MonitorInterface((formula)), states(formulaToBTT_FSM()), pastEvaluation(pastEvaluation) {}
 
 const std::vector<StateBttFsm> &BttFsm::getStates() const { return states; }
 
