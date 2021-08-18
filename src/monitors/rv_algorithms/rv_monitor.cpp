@@ -23,34 +23,13 @@ bool RVMonitor::verify(Trace trace) {
         throw std::runtime_error("main::verify() No valid argument for algorithm given. Try MT_FSM, BTT_FSM, DYNAMIC, "
                                  "or EVENTCONSUMING-LTL, EVENTCONSUMING-MTL.)");
     }
-    auto predicates = Utils::getAtomics(formula);
-    bool verdict = false;
+
     std::chrono::high_resolution_clock::time_point startTime;
     if (performanceMeasurement)
         startTime = ExecutionStatistic::start();
-    switch (algorithm) {
-    case mt_fsm: {
-        verdict = mtFSM->evaluate(trace).at(0).b;
-        break;
-    }
-    case btt_fsm: {
-        verdict = bttFSM->evaluate(trace).at(0).b;
-        break;
-    }
-    case dynamic_programming_ltl: {
-        verdict = dynamic_programming->evaluate(trace).at(0).b;
-        break;
-    }
-    case event_consuming_ltl: {
-        auto formulaCopy = formula.deepCopy();
-        verdict = ltl_event_consuming->evaluate(trace).at(0).b;
-        break;
-    }
-    case event_consuming_mtl:
-        auto formulaCopy = formula.deepCopy();
-        verdict = MTLEventConsuming::eventConsuming(formulaCopy, trace);
-        break;
-    }
+
+    auto verdict{monitor->evaluate(trace).at(0).b};
+
     if (performanceMeasurement)
         executionStatistic.stop(startTime, trace.getLength());
     return verdict;
@@ -101,15 +80,24 @@ AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
 }
 
 RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement)
-    : algorithm(algorithm), formula(formula), performanceMeasurement(measurement) {
-
-    if (algorithm == mt_fsm)
-        mtFSM = std::make_unique<MtFsm>(formula, past);
-    else if (algorithm == btt_fsm)
-        bttFSM = std::make_unique<BttFsm>(formula, past);
-    else if (algorithm == dynamic_programming_ltl)
-        dynamic_programming = std::make_unique<DynamicProgrammingLTL>(formula, past);
-    else if (algorithm == event_consuming_mtl)
-        ltl_event_consuming = std::make_unique<EventConsumingLTL>(formula, past);
+    : algorithm(algorithm), performanceMeasurement(measurement) {
+    switch (algorithm) {
+    case dynamic_programming_ltl:
+        monitor = std::make_unique<DynamicProgrammingLTL>(formula, past);
+        break;
+    case event_consuming_ltl:
+        monitor = std::make_unique<EventConsumingLTL>(formula, past);
+        break;
+    case mt_fsm:
+        monitor = std::make_unique<MtFsm>(formula, past);
+        break;
+    case btt_fsm:
+        monitor = std::make_unique<BttFsm>(formula, past);
+        break;
+    case event_consuming_mtl:
+        monitor = std::make_unique<MTLEventConsuming>(formula);
+        break;
+    }
 }
+
 const ExecutionStatistic &RVMonitor::getExecutionStatistic() const { return executionStatistic; }

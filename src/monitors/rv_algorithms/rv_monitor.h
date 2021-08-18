@@ -36,11 +36,7 @@ class RVMonitor {
 
   private:
     AlgorithmType algorithm{event_consuming_ltl};
-    std::unique_ptr<MtFsm> mtFSM;
-    std::unique_ptr<BttFsm> bttFSM;
-    std::unique_ptr<DynamicProgrammingLTL> dynamic_programming;
-    std::unique_ptr<EventConsumingLTL> ltl_event_consuming;
-    Formula formula;
+    std::unique_ptr<Monitor> monitor;
     ExecutionStatistic executionStatistic;
     bool performanceMeasurement;
 };
