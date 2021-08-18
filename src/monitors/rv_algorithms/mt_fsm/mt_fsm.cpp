@@ -1,13 +1,12 @@
 #include "mt_fsm.h"
-#include "monitors/qmc/qmc.h"
-#include "monitors/rewriting/basic_rewrite_visitor.h"
-#include "monitors/expression_tree/nary/bool/or.h"
 #include "monitors/expression_tree/atomic/atomic.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/binary/bool/equivalence.h"
+#include "monitors/expression_tree/nary/bool/or.h"
+#include "monitors/qmc/qmc.h"
+#include "monitors/rewriting/basic_rewrite_visitor.h"
 #include "monitors/rv_algorithms/event_consuming/event_consuming.h"
 #include "monitors/trace/event_generator.h"
-
 
 MtFsm::MtFsm(const Formula &formula, bool pastEvaluation)
     : Monitor((formula)), states(formulaToMT_FSM(formula, pastEvaluation)), pastEvaluation(pastEvaluation) {}
@@ -95,10 +94,10 @@ void MtFsm::formulaToMT_FSM(Formula &currentFormula, std::vector<StateMT_FSM> &c
         bool eqFormulaExists = false;
 
         for (size_t stateId = 0; stateId < currentStates.size(); ++stateId) {
-            auto equivalence = Formula(
-                std::make_shared<Equivalence>(formulaEventConsuming.getExpr(), currentStates[stateId].getFormula().getExpr()));
-            // TODO: add shortcut: if string representation of formulaEventConsuming and currentStates[i] is equal then the
-            // equivalence is valid (inverse obviously not)
+            auto equivalence = Formula(std::make_shared<Equivalence>(formulaEventConsuming.getExpr(),
+                                                                     currentStates[stateId].getFormula().getExpr()));
+            // TODO: add shortcut: if string representation of formulaEventConsuming and currentStates[i] is equal then
+            // the equivalence is valid (inverse obviously not)
             if (valid(equivalence)) {
                 currentMT = MultiTransition({{conjunction, stateId}});
                 mtNonTerminal = merge(currentMT, mtNonTerminal);
@@ -148,8 +147,8 @@ void MtFsm::formulaToMT_FSM(Formula &currentFormula, std::vector<StateMT_FSM> &c
         }
     }
 
-    auto currentStateIter =
-        std::find_if(currentStates.begin(), currentStates.end(), [&](const StateMT_FSM &s) { return s.getFormula() == currentFormula; });
+    auto currentStateIter = std::find_if(currentStates.begin(), currentStates.end(),
+                                         [&](const StateMT_FSM &s) { return s.getFormula() == currentFormula; });
     auto &currentState = currentStates[static_cast<size_t>(std::distance(currentStates.begin(), currentStateIter))];
     currentState.setTerminal(mtTerminal);
     currentState.setNonTerminal(mtNonTerminal);
@@ -193,8 +192,9 @@ bool MtFsm::valid(Formula &formulaToCheck, std::set<Formula> &statesToCheck) {
             if ((*(eq->getLeft()) == *(eq->getRight()))) {
                 return true;
             }
-                // TODO: better way: resolve the formula end return the result
-            else if (formulaToCheck.to_string() == "(false <-> true)" or formulaToCheck.to_string() == "(true <-> false)") {
+            // TODO: better way: resolve the formula end return the result
+            else if (formulaToCheck.to_string() == "(false <-> true)" or
+                     formulaToCheck.to_string() == "(true <-> false)") {
                 return false;
             }
         }
