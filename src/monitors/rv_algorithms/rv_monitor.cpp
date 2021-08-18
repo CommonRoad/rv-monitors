@@ -80,10 +80,6 @@ RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past,
     case event_consuming_mtl:
         monitor = std::make_unique<MTLEventConsuming>(formula);
         break;
-    default:
-        monitor = std::make_unique<MTLEventConsuming>(formula);
-        break;
-    }
 }
 
 const ExecutionStatistic &RVMonitor::getExecutionStatistic() const { return executionStatistic; }
