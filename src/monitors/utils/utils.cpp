@@ -16,7 +16,7 @@
 #include "monitors/trace/trace.h"
 #include "utils.h"
 
-//Boolean BooleanAnd(Boolean b1, Boolean b2) {
+// Boolean BooleanAnd(Boolean b1, Boolean b2) {
 //    if (b1 == UNRESOLVED || b2 == UNRESOLVED)
 //        return UNRESOLVED;
 //    else if (b1 == FALSE || b2 == FALSE)
@@ -24,7 +24,7 @@
 //    else
 //        return TRUE;
 //}
-//Boolean BooleanOr(Boolean b1, Boolean b2) {
+// Boolean BooleanOr(Boolean b1, Boolean b2) {
 //    if (b1 == UNRESOLVED || b2 == UNRESOLVED)
 //        return UNRESOLVED;
 //    else if (b1 == TRUE || b2 == TRUE)
@@ -32,7 +32,7 @@
 //    else
 //        return FALSE;
 //}
-//Boolean BooleanImp(Boolean b1, Boolean b2) {
+// Boolean BooleanImp(Boolean b1, Boolean b2) {
 //    if (b1 == UNRESOLVED || b2 == UNRESOLVED)
 //        return UNRESOLVED;
 //    else if (b1 == FALSE || (b1 == TRUE && b2 == TRUE))
@@ -40,13 +40,13 @@
 //    else
 //        return FALSE;
 //}
-//Boolean BooleanEq(Boolean b1, Boolean b2) {
+// Boolean BooleanEq(Boolean b1, Boolean b2) {
 //    if (b1 == UNRESOLVED || b2 == UNRESOLVED)
 //        return UNRESOLVED;
 //    else
 //        return (b1 == b2 ? TRUE : FALSE);
 //}
-//Boolean BooleanNot(Boolean b) {
+// Boolean BooleanNot(Boolean b) {
 //    if (b == TRUE)
 //        return FALSE;
 //    else if (b == FALSE)

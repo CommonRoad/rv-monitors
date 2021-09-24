@@ -471,7 +471,8 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitEventOperator(EventOperator 
     return std::make_shared<EventOperator>(op);
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitResolvingOperator(ResolvingOperator &op, Trace &trace, size_t index) {
+std::shared_ptr<Expression> MtlRewriteVisitor::visitResolvingOperator(ResolvingOperator &op, Trace &trace,
+                                                                      size_t index) {
     return std::make_shared<ResolvingOperator>(op);
 }
 

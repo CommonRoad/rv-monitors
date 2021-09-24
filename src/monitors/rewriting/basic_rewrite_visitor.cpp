@@ -393,7 +393,8 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitResolvingOperator(Resolvin
     return std::make_shared<ResolvingOperator>(op);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace, size_t index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace,
+                                                                       size_t index) {
     return std::make_shared<DerivingOperator>(op);
 }
 

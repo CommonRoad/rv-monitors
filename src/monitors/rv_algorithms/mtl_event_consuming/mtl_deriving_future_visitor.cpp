@@ -310,6 +310,7 @@ std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitResolvingOperator(Res
     return ret->accept(*this, trace, index);
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitEventOperator(EventOperator &op, Trace &trace, size_t index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitEventOperator(EventOperator &op, Trace &trace,
+                                                                         size_t index) {
     return std::make_shared<EventOperator>(op);
 }
