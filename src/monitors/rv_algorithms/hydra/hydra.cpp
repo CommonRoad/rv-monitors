@@ -1,7 +1,7 @@
 #include "hydra.h"
 //#include "visitors.h"
-#include <iostream>
 #include "../../rewriting/mtl_rewrite_visitor.h"
+#include <iostream>
 
 std::vector<Verdict> Hydra::evaluate(Trace &trace) {
     // Empty trace
@@ -15,19 +15,19 @@ std::vector<Verdict> Hydra::evaluate(Trace &trace) {
     result.reserve(trace.getLength());
 
     MtlRewriteVisitor rw;
-  //  MonitorVisitor mv;
+    //  MonitorVisitor mv;
     // fmla->accept(mv);
     rw.rewrite(formulaCopy);
-  //  Monitor *mon = mv.get_mon();
-  //  TimePoint tp;
+    //  Monitor *mon = mv.get_mon();
+    //  TimePoint tp;
 
     for (size_t i{0}; i < trace.getLength(); ++i) {
- //       BooleanVerdict v = mon->step();
- //       tp.update(v.ts);
-//        if (v.b == TRUE)
-//            printf("%d\n", tp.tp);
-//        else if (v.b != UNRESOLVED)
-//            printf("%d:%d %s\n", tp.ts, tp.off, (v.b == FALSE ? "false" : "true"));
+        //       BooleanVerdict v = mon->step();
+        //       tp.update(v.ts);
+        //        if (v.b == TRUE)
+        //            printf("%d\n", tp.tp);
+        //        else if (v.b != UNRESOLVED)
+        //            printf("%d:%d %s\n", tp.ts, tp.off, (v.b == FALSE ? "false" : "true"));
     }
 }
 std::string Hydra::to_string() const { "TODO"; }

@@ -47,7 +47,8 @@ class MtlRewriteVisitor : public ExpressionVisitor {
 
     [[nodiscard]] std::shared_ptr<Expression> visitSince(Since &op, Trace &trace, size_t index) override;
 
-    [[nodiscard]] std::shared_ptr<Expression> visitEventOperator(EventOperator &op, Trace &trace, size_t index) override;
+    [[nodiscard]] std::shared_ptr<Expression> visitEventOperator(EventOperator &op, Trace &trace,
+                                                                 size_t index) override;
 
     [[nodiscard]] std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &op, Trace &trace,
                                                                     size_t index) override;

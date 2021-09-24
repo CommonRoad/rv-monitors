@@ -47,7 +47,8 @@ class BasicRewriteVisitor : public ExpressionVisitor {
 
     [[nodiscard]] std::shared_ptr<Expression> visitSince(Since &op, Trace &trace, size_t index) override;
 
-    [[nodiscard]] std::shared_ptr<Expression> visitEventOperator(EventOperator &op, Trace &trace, size_t index) override;
+    [[nodiscard]] std::shared_ptr<Expression> visitEventOperator(EventOperator &op, Trace &trace,
+                                                                 size_t index) override;
 
     [[nodiscard]] std::shared_ptr<Expression> visitResolvingOperator(ResolvingOperator &op, Trace &trace,
                                                                      size_t index) override;

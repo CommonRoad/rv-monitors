@@ -1,6 +1,6 @@
 #include "mtl_event_consuming.h"
-#include "mtl_event_consuming_visitor.h"
 #include "../../rewriting/mtl_rewrite_visitor.h"
+#include "mtl_event_consuming_visitor.h"
 #include <iostream>
 
 MTLEventConsuming::MTLEventConsuming(const Formula &formula) : MonitorInterface((formula)) {}

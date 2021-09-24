@@ -77,7 +77,8 @@ std::shared_ptr<Expression> mtl_resolving_past_visitor::visitGlobally(Globally &
     return std::make_shared<Globally>(op);
 }
 
-std::shared_ptr<Expression> mtl_resolving_past_visitor::visitHistorically(Historically &op, Trace &trace, size_t index) {
+std::shared_ptr<Expression> mtl_resolving_past_visitor::visitHistorically(Historically &op, Trace &trace,
+                                                                          size_t index) {
     visitExpression(op, trace, index);
     visitExpression(op, trace, index);
     return std::make_shared<Historically>(op);
@@ -309,6 +310,7 @@ std::shared_ptr<Expression> mtl_resolving_past_visitor::visitDerivingOperator(De
     return ret->accept(*this, trace, index);
 }
 
-std::shared_ptr<Expression> mtl_resolving_past_visitor::visitEventOperator(EventOperator &op, Trace &trace, size_t index) {
+std::shared_ptr<Expression> mtl_resolving_past_visitor::visitEventOperator(EventOperator &op, Trace &trace,
+                                                                           size_t index) {
     return std::make_shared<EventOperator>(op);
 }

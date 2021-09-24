@@ -134,7 +134,8 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitResolvingOperator(Res
     return std::make_shared<ResolvingOperator>(op);
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOperator &op, Trace &trace, size_t index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOperator &op, Trace &trace,
+                                                                         size_t index) {
     std::shared_ptr<Expression> ret;
     // Apply eventMap to atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(op.getLeft())) {

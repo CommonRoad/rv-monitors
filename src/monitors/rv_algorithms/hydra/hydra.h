@@ -8,8 +8,8 @@
 
 #include "../../utils/utils.h"
 #include "monitors/formula/formula.h"
-#include <monitors/trace/trace.h>
 #include "monitors/rv_algorithms/monitor_interface.h"
+#include <monitors/trace/trace.h>
 
 /**
  * Class for monitoring a trace using the Hydra MTL monitor.
@@ -29,5 +29,4 @@ class Hydra : public MonitorInterface {
      * @return String representation of the BTT-FSM.
      */
     [[nodiscard]] std::string to_string() const override;
-
 };
