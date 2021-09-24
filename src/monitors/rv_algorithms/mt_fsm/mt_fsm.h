@@ -1,6 +1,7 @@
 #pragma once
 
 #include "monitors/formula/formula.h"
+#include "monitors/rv_algorithms/monitor_interface.h"
 #include "monitors/trace/trace.h"
 #include "state_mt_fsm.h"
 #include <memory>
@@ -10,44 +11,18 @@
 /**
  * Class to manage an MT-FSM*.
  */
-class MtFsm {
+class MtFsm : public MonitorInterface {
   private:
-    std::set<std::string> atomics;
-    Formula formula;
     std::vector<StateMT_FSM> states;
+    bool pastEvaluation;
 
   public:
     /**
-     * Constructor.
-     * @param atomics Predicates.
-     * @param formula Formula.
-     * @param states Vector of states.
+     * Constructor for a MT-FSM.
+     * @param formula Formula that we want the BTT-FSM for.
+     * @param pastEvaluation Boolean indicating whether past-based evaluation should be applied.
      */
-    MtFsm(std::set<std::string> &atomics, Formula &formula, std::vector<StateMT_FSM> &states);
-
-    /**
-     * Getter for atomics.
-     * @return atomics.
-     */
-    [[nodiscard]] const std::set<std::string> &getAtomics() const;
-
-    /**
-     * Setter for atomics.
-     * @param atomics
-     */
-    void setAtomics(const std::set<std::string> &atomics);
-
-    /**
-     * Getter for formula.
-     * @return formula.
-     */
-    [[nodiscard]] const Formula &getFormula() const;
-
-    /**
-     * Setter for formula.
-     * @param formula
-     */
-    void setFormula(const Formula &formula);
+    MtFsm(const Formula &formula, bool pastEvaluation = false);
 
     /**
      * Getter for states.
@@ -56,14 +31,56 @@ class MtFsm {
     [[nodiscard]] const std::vector<StateMT_FSM> &getStates() const;
 
     /**
-     * Setter for states.
-     * @param states
-     */
-    void setStates(const std::vector<StateMT_FSM> &states);
-
-    /**
      * String representation of the MT-FSM*.
      * @return String representation of the MT-FSM*.
      */
-    [[nodiscard]] std::string to_string() const;
+    [[nodiscard]] std::string to_string() const override;
+
+    /**
+     * Checks if a trace satisfies a specification by traversing an MT-FSM*.
+     * @param mtFsm
+     * @param trace
+     * @param past True if formula is in PLTLf.
+     * @return True if satisfied, false otherwise.
+     */
+    [[nodiscard]] std::vector<Verdict> evaluate(Trace &trace) override;
+
+    /**
+     * Helper for formulaToMT_FSM().
+     * @param formula
+     * @param states
+     * @param past True if formula is in PLTLf.
+     */
+    static void formulaToMT_FSM(Formula &formula, std::vector<StateMT_FSM> &states, bool past);
+
+    /**
+     * Constructs an MT-FSM* from a given formula.
+     * @param formula
+     * @param past True if formula is in PLTLf.
+     * @return MT-FSM*.
+     */
+    static std::vector<StateMT_FSM> formulaToMT_FSM(const Formula &ltlFormula, bool past);
+
+    /**
+     * Checks for a given formula and a set of states if formula returns true for every form it can evolve into.
+     * @param formula
+     * @return
+     */
+    [[nodiscard]] static bool valid(Formula &formula);
+
+    /**
+     * Helper for recursion with additional argument.
+     * @param formula
+     * @param states
+     * @return True if valid, false otherwise.
+     */
+    [[nodiscard]] static bool valid(Formula &formula, std::set<Formula> &states);
+
+    /**
+     * Merges two multi-transistions if possible.
+     * @param mt_1 First multi-transistion.
+     * @param mt_2 Second multi_transition.
+     * @return New merged MT.
+     */
+    [[nodiscard]] static MultiTransition merge(MultiTransition &mt_1, MultiTransition mt_2);
 };

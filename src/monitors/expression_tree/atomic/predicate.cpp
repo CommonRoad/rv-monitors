@@ -8,7 +8,7 @@ std::string Predicate::to_string() const { return this->getSymbol(); }
 
 std::shared_ptr<Expression> Predicate::clone() { return std::make_shared<Predicate>(*this); }
 
-std::shared_ptr<Expression> Predicate::accept(ExpressionVisitor &visitor, Trace &trace, int index) {
+std::shared_ptr<Expression> Predicate::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
     return visitor.visitPredicate(*this, trace, index);
 }
 const std::string &Predicate::getName() const { return name; }

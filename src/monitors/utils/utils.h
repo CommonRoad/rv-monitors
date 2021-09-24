@@ -1,62 +1,13 @@
 #pragma once
 
 #include "monitors/formula/formula.h"
-#include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
-#include "monitors/rv_algorithms/mt_fsm/multi_transition.h"
 #include "monitors/trace/trace.h"
-#include <cassert>
-#include <cstdint>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
 #include <vector>
 
-#define CHECK(x) assert(x);
-
-typedef int32_t timestamp;
-typedef int32_t timestamp_delta;
-const timestamp MAX_TIMESTAMP = 0x7FFFFFFF;
-
-enum Boolean { FALSE, TRUE, UNRESOLVED };
-
-Boolean BooleanAnd(Boolean b1, Boolean b2);
-Boolean BooleanOr(Boolean b1, Boolean b2);
-Boolean BooleanImp(Boolean b1, Boolean b2);
-Boolean BooleanEq(Boolean b1, Boolean b2);
-Boolean BooleanNot(Boolean b);
-
-struct BoolVerdict {
-    timestamp ts;
+struct Verdict {
+    size_t ts;
     bool b;
-
-    BoolVerdict() = default;
-    BoolVerdict(timestamp ts, bool b) : ts(ts), b(b) {}
-    bool operator==(const BoolVerdict &bv) const { return ts == bv.ts && b == bv.b; }
-};
-
-struct BooleanVerdict {
-    timestamp ts;
-    Boolean b;
-
-    BooleanVerdict(timestamp ts, Boolean b) : ts(ts), b(b) {}
-    bool operator==(const BooleanVerdict &bv) const { return ts == bv.ts && b == bv.b; }
-    BooleanVerdict operator!() const { return BooleanVerdict(this->ts, BooleanNot(this->b)); }
-    BooleanVerdict operator&&(const BooleanVerdict &w) const {
-        CHECK(this->ts == w.ts);
-        return BooleanVerdict(this->ts, BooleanAnd(this->b, w.b));
-    }
-    BooleanVerdict operator||(const BooleanVerdict &w) const {
-        CHECK(this->ts == w.ts);
-        return BooleanVerdict(this->ts, BooleanOr(this->b, w.b));
-    }
-    BooleanVerdict imp(const BooleanVerdict &w) const {
-        CHECK(this->ts == w.ts);
-        return BooleanVerdict(this->ts, BooleanImp(this->b, w.b));
-    }
-    BooleanVerdict eq(const BooleanVerdict &w) const {
-        CHECK(this->ts == w.ts);
-        return BooleanVerdict(this->ts, BooleanEq(this->b, w.b));
-    }
+    bool operator==(const Verdict &bv) const { return ts == bv.ts && b == bv.b; }
 };
 
 /**
@@ -249,7 +200,7 @@ std::map<std::string, std::tuple<std::string, std::vector<std::string>>> getPred
 template <class T, class F>
 [[nodiscard]] std::string iterableToString(const T &arr, F f,
                                            const std::pair<std::string, std::string> &delimiter = {"[", "]"},
-                                           std::string separator = ", ") {
+                                           const std::string &separator = ", ") {
     auto it = std::begin(arr);
     const auto end = std::end(arr);
     if (it == end) {
@@ -283,4 +234,32 @@ template <class T>[[nodiscard]] std::string iterableToString(const T &arr) {
  * @return Set of substrings.
  */
 std::vector<std::string> splitString(const std::string &stringOriginal, const std::string &delimiters);
+
+/**
+ * Flips a pair pair.
+ * @tparam A First type.
+ * @tparam B Second type.
+ * @param pair Pair to be flipped.
+ * @return Flipped pair.
+ */
+template <typename A, typename B> std::pair<B, A> flip_pair(const std::pair<A, B> &pair) {
+    return std::pair<B, A>(pair.second, pair.first);
+}
+
+/**
+ * Flips a map.
+ * @tparam A Key type.
+ * @tparam B Value type.
+ * @tparam Map Map type.
+ * @tparam Args Additional arguments, optional.
+ * @param map Map to be flipped.
+ * @return Multimap with flipped key value pairs.
+ */
+template <typename A, typename B, template <class, class, class...> class Map, class... Args>
+std::multimap<B, A> flip_map(const Map<A, B, Args...> &map) {
+    std::multimap<B, A> flippedMap;
+    std::transform(map.begin(), map.end(), std::inserter(flippedMap, flippedMap.begin()), flip_pair<A, B>);
+    return flippedMap;
+}
+
 } // namespace Utils

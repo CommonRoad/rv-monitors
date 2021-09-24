@@ -6,22 +6,28 @@
 //
 #pragma once
 
-#pragma once
-
 #include "../../utils/utils.h"
 #include "monitors/formula/formula.h"
 #include <monitors/trace/trace.h>
+#include "monitors/rv_algorithms/monitor_interface.h"
 
 /**
- * Functions for monitoring a trace using the Hydra MTL monitor.
+ * Class for monitoring a trace using the Hydra MTL monitor.
  */
-namespace Hydra {
-/**
- * Monitors a formula in MTL or LTL on a trace. The formula can have future and past operators.
- * @param formula Formula.
- * @param trace Trace.
- * @return Boolean value for each time step.
- */
-[[nodiscard]] std::vector<BooleanVerdict> evaluate(const Formula &formula, Trace &trace);
+class Hydra : public MonitorInterface {
+    /**
+     * Evaluation function for monitor algorithms.
+     *
+     * @param trace Trace which should be evaluated.
+     * @return List of verdicts for each time step of the trace. If the length of the vector is 1,
+     * the runtime verification algorithm can only provide a global verdict for the complete trace.
+     */
+    std::vector<Verdict> evaluate(Trace &trace) override;
 
-}; // namespace Hydra
+    /**
+     * to_string() function.
+     * @return String representation of the BTT-FSM.
+     */
+    [[nodiscard]] std::string to_string() const override;
+
+};

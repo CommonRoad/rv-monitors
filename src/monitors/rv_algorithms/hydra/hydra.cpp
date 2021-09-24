@@ -1,43 +1,33 @@
 #include "hydra.h"
-#include "visitors.h"
+//#include "visitors.h"
 #include <iostream>
+#include "../../rewriting/mtl_rewrite_visitor.h"
 
-struct TimePoint {
-    timestamp ts;
-    int tp{-1};
-    int off;
-
-    void update(timestamp new_ts) {
-        if (new_ts > ts || tp == -1) {
-            off = 0;
-        } else {
-            off++;
-        }
-        ts = new_ts;
-        tp++;
-    }
-};
-
-std::vector<BooleanVerdict> Hydra::evaluate(const Formula &formula, Trace &trace) {
+std::vector<Verdict> Hydra::evaluate(Trace &trace) {
     // Empty trace
     if (trace.getTrace().empty()) {
         std::cout << "Trace is empty" << std::endl;
-        return {BooleanVerdict(-1, Boolean::FALSE)};
+        return {Verdict{0, false}};
     }
     // Copy formula before working on it
     auto formulaCopy = formula.deepCopy();
+    std::vector<Verdict> result;
+    result.reserve(trace.getLength());
 
-    MonitorVisitor mv;
+    MtlRewriteVisitor rw;
+  //  MonitorVisitor mv;
     // fmla->accept(mv);
-    Monitor *mon = mv.get_mon();
-    TimePoint tp;
+    rw.rewrite(formulaCopy);
+  //  Monitor *mon = mv.get_mon();
+  //  TimePoint tp;
 
     for (size_t i{0}; i < trace.getLength(); ++i) {
-        BooleanVerdict v = mon->step();
-        tp.update(v.ts);
-        if (v.b == TRUE)
-            printf("%d\n", tp.tp);
-        else if (v.b != UNRESOLVED)
-            printf("%d:%d %s\n", tp.ts, tp.off, (v.b == FALSE ? "false" : "true"));
+ //       BooleanVerdict v = mon->step();
+ //       tp.update(v.ts);
+//        if (v.b == TRUE)
+//            printf("%d\n", tp.tp);
+//        else if (v.b != UNRESOLVED)
+//            printf("%d:%d %s\n", tp.ts, tp.off, (v.b == FALSE ? "false" : "true"));
     }
 }
+std::string Hydra::to_string() const { "TODO"; }

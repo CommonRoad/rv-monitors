@@ -1,84 +1,15 @@
-#include "btt_fsm_creation.h"
+#include "btt_fsm_utils_creation.h"
 #include "decision.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/nary/nary_interface.h"
 #include "monitors/expression_tree/unary/bool/not.h"
 #include "monitors/rewriting/basic_rewrite_visitor.h"
-#include "monitors/rv_algorithms/mt_fsm/mt_fsm_creation.h"
 #include "monitors/utils/utils.h"
 #include <iostream>
 
-BttFsm BTT_FSMCreation::formulaToBTT_FSM(const Formula &formula, bool past) {
-    // Only a constant
-    if (auto constant = std::dynamic_pointer_cast<Constant>(formula.getExpr())) {
-        StateBttFsm singleState(static_cast<size_t>(constant->getValue()), {}, {});
-        return BttFsm(formula, {singleState});
-    }
-    // Get corresponding MT-FSM
-    auto mtFsm = MT_FSMCreation::formulaToMT_FSM(formula, past);
-    // std::cout << mtFsm.to_string();
-    const auto &mtFsmStates = mtFsm.getStates();
-
-    // States of BTT-FSM
-    std::vector<StateBttFsm> bttStates;
-
-    // Add states true and false
-    for (const auto &mtFsmState : mtFsmStates) {
-        size_t id = mtFsmState.getId();
-        // States false (0) and true (1)
-        if ((id == 0u) or id == 1) {
-            bttStates.emplace_back(id);
-            continue;
-        }
-        // Other state
-        // Get precedences
-        auto precedencesNonTerminal = getAtomicAndPredicateWeight(mtFsmState.getNonTerminal());
-        auto precedencesTerminal = getAtomicAndPredicateWeight(mtFsmState.getTerminal());
-
-        // Create BTT for terminal and non-terminal multitransition
-        auto bttNonTerminal = findNextNode(mtFsmState.getNonTerminal(), precedencesNonTerminal);
-        auto bttTerminal = findNextNode(mtFsmState.getTerminal(), precedencesTerminal);
-
-        // Create new state and add it
-        auto newState = StateBttFsm(id, bttNonTerminal, bttTerminal);
-        bttStates.push_back(newState);
-    }
-
-    //    auto btt = BttFsm (mtFsm.getFormula(), bttStates);
-    //    std::cout << btt.to_string() << std::endl;
-    return BttFsm(mtFsm.getFormula(), bttStates);
-}
-
-std::map<std::string, size_t>
-BTT_FSMCreation::getAtomicAndPredicateFrequencies(const MultiTransition &multiTransition) {
-    std::map<std::string, size_t> frequencies;
-    const auto &transitions = multiTransition.getTransitions();
-    for (const auto &[formula, state] : transitions) {
-        // Formula of transition
-        auto predicates = Utils::getAtomicsAndPredicates(formula);
-        for (const auto &predicate : predicates) {
-            // Adds key if it is not yet in map
-            frequencies[predicate]++;
-        }
-    }
-    return frequencies;
-}
-
-// TODO use Predicates.h for costs
-std::multimap<double, std::shared_ptr<Atomic>>
-BTT_FSMCreation::getAtomicAndPredicateWeight(const MultiTransition &multiTransition) {
-    std::map<std::shared_ptr<Atomic>, double> precedences;
-    auto numberOfTransitions = multiTransition.getTransitions().size();
-    auto frequencies = getAtomicAndPredicateFrequencies(multiTransition);
-    for (const auto &[predicateString, freq] : frequencies) {
-        auto predicate = std::make_shared<Atomic>(predicateString);
-        precedences[predicate] = 1 / (double(freq) / numberOfTransitions);
-    }
-    return createWeightMultimap(precedences);
-}
-
-std::shared_ptr<Expression>
-BTT_FSMCreation::replaceAtomicByConstant(const Formula &formula, const std::shared_ptr<Atomic> &atomic, bool constant) {
+std::shared_ptr<Expression> BTT_FSMUtilsCreation::replaceAtomicByConstant(const Formula &formula,
+                                                                          const std::shared_ptr<Atomic> &atomic,
+                                                                          bool constant) {
     auto expression = formula.getExpr();
 
     // Single atomic
@@ -129,15 +60,8 @@ BTT_FSMCreation::replaceAtomicByConstant(const Formula &formula, const std::shar
     return newFormula.getExpr();
 }
 
-std::multimap<double, std::shared_ptr<Atomic>>
-BTT_FSMCreation::createWeightMultimap(const std::map<std::shared_ptr<Atomic>, double> &weights) {
-    std::vector<std::shared_ptr<Atomic>> atomics;
-    // Is now ordered by weights
-    return flip_map(weights);
-}
-
-MultiTransition BTT_FSMCreation::eraseAtomicFromFormula(const MultiTransition &multiTransition,
-                                                        const std::shared_ptr<Atomic> &atomic) {
+MultiTransition BTT_FSMUtilsCreation::eraseAtomicFromFormula(const MultiTransition &multiTransition,
+                                                             const std::shared_ptr<Atomic> &atomic) {
 
     std::map<Formula, size_t> newTransitions;
     // To search for negated atomic
@@ -176,8 +100,9 @@ MultiTransition BTT_FSMCreation::eraseAtomicFromFormula(const MultiTransition &m
     return MultiTransition(newTransitions);
 }
 
-MultiTransition BTT_FSMCreation::replaceAtomicInMultiTransition(const MultiTransition &multiTransition,
-                                                                const std::shared_ptr<Atomic> &atomic, bool constant) {
+MultiTransition BTT_FSMUtilsCreation::replaceAtomicInMultiTransition(const MultiTransition &multiTransition,
+                                                                     const std::shared_ptr<Atomic> &atomic,
+                                                                     bool constant) {
 
     std::map<Formula, size_t> newTransitions;
     for (const auto &[formula, state] : multiTransition.getTransitions()) {
@@ -188,8 +113,8 @@ MultiTransition BTT_FSMCreation::replaceAtomicInMultiTransition(const MultiTrans
     return MultiTransition(newTransitions);
 }
 
-std::shared_ptr<node> BTT_FSMCreation::findNextNode(const MultiTransition &multiTransition,
-                                                    std::multimap<double, std::shared_ptr<Atomic>> &weights) {
+std::shared_ptr<node> BTT_FSMUtilsCreation::findNextNode(const MultiTransition &multiTransition,
+                                                         std::multimap<double, std::shared_ptr<Atomic>> &weights) {
     // Constant
     if (multiTransition.getTransitions().size() == 1) {
         if (auto constantExpr =

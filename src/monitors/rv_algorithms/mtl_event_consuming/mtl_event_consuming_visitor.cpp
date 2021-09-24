@@ -23,118 +23,118 @@
 #include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
 #include <iostream>
 
-void MTLEventConsumingVisitor::consumeEvent(Formula &formula, Trace &trace, int index) {
+void MTLEventConsumingVisitor::consumeEvent(Formula &formula, Trace &trace, size_t index) {
     std::shared_ptr<EventOperator> eventOperator = std::make_shared<EventOperator>(formula.getExpr(), trace, index);
     formula.setExpr(eventOperator->accept(*this, trace, index));
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitAtomic(Atomic &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitAtomic(Atomic &op, Trace &trace, size_t index) {
     return std::make_shared<Atomic>(op);
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitConstant(Constant &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitConstant(Constant &op, Trace &trace, size_t index) {
     return std::make_shared<Constant>(op);
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitAnd(And &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitAnd(And &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<And>(op);
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitOr(Or &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitOr(Or &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Or>(op);
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitXor(Xor &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitXor(Xor &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Xor>(op);
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitImplication(Implication &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitImplication(Implication &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Implication>(op);
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEquivalence(Equivalence &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEquivalence(Equivalence &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Equivalence>(op);
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitNot(Not &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitNot(Not &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Not>(op);
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitFuture(Future &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitFuture(Future &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Future>(op);
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitGlobally(Globally &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitGlobally(Globally &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     visitExpression(op, trace, index);
     return std::make_shared<Globally>(op);
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitHistorically(Historically &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitHistorically(Historically &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     visitExpression(op, trace, index);
     return std::make_shared<Historically>(op);
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitNextStrong(NextStrong &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitNextStrong(NextStrong &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<NextStrong>(op);
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitNextWeak(NextWeak &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitNextWeak(NextWeak &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<NextWeak>(op);
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitOnce(Once &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitOnce(Once &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     auto ret = std::make_shared<Once>(op);
     visitExpression(op, trace, index);
     return ret;
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitPreviously(Previously &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitPreviously(Previously &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     auto ret = std::make_shared<Previously>(op);
     visitExpression(op, trace, index);
     return ret;
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitRelease(Release &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitRelease(Release &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     auto ret = std::make_shared<Release>(op);
     visitExpression(op, trace, index);
     return ret;
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitUntil(Until &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitUntil(Until &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Until>(op.getLeft(), op.getRight(), op.getInterval());
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitSince(Since &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitSince(Since &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Since>(op.getLeft(), op.getRight(), op.getInterval());
 }
 
 std::shared_ptr<Expression> MTLEventConsumingVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace,
-                                                                            int index) {
+                                                                            size_t index) {
     return std::make_shared<DerivingOperator>(op);
 }
 
 std::shared_ptr<Expression> MTLEventConsumingVisitor::visitResolvingOperator(ResolvingOperator &op, Trace &trace,
-                                                                             int index) {
+                                                                             size_t index) {
     return std::make_shared<ResolvingOperator>(op);
 }
 
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOperator &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOperator &op, Trace &trace, size_t index) {
     std::shared_ptr<Expression> ret;
     // Apply eventMap to atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(op.getLeft())) {
@@ -289,6 +289,6 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
     }
     return ret->accept(*this, trace, index);
 }
-std::shared_ptr<Expression> MTLEventConsumingVisitor::visitPredicate(Predicate &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitPredicate(Predicate &op, Trace &trace, size_t index) {
     return std::shared_ptr<Predicate>();
 }
