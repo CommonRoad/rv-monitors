@@ -22,110 +22,110 @@
 #include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
 #include <iostream>
 
-void MTLDerivingFutureVisitor::consumeEvent(Formula &formula, Trace &trace, int index) {
+void MTLDerivingFutureVisitor::consumeEvent(Formula &formula, Trace &trace, size_t index) {
     std::shared_ptr<DerivingOperator> derivingOperator =
         std::make_shared<DerivingOperator>(formula.getExpr(), trace, index);
     formula.setExpr(derivingOperator->accept(*this, trace, index));
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitAtomic(Atomic &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitAtomic(Atomic &op, Trace &trace, size_t index) {
     return std::make_shared<Atomic>(op);
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitConstant(Constant &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitConstant(Constant &op, Trace &trace, size_t index) {
     return std::make_shared<Constant>(op);
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitAnd(And &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitAnd(And &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<And>(op);
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitOr(Or &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitOr(Or &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Or>(op);
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitXor(Xor &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitXor(Xor &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Xor>(op);
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitImplication(Implication &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitImplication(Implication &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Implication>(op);
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitEquivalence(Equivalence &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitEquivalence(Equivalence &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Equivalence>(op);
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitNot(Not &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitNot(Not &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Not>(op);
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitFuture(Future &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitFuture(Future &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Future>(op);
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitGlobally(Globally &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitGlobally(Globally &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     visitExpression(op, trace, index);
     return std::make_shared<Globally>(op);
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitHistorically(Historically &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitHistorically(Historically &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     visitExpression(op, trace, index);
     return std::make_shared<Historically>(op);
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitNextStrong(NextStrong &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitNextStrong(NextStrong &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<NextStrong>(op);
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitNextWeak(NextWeak &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitNextWeak(NextWeak &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<NextWeak>(op);
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitOnce(Once &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitOnce(Once &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     auto ret = std::make_shared<Once>(op);
     visitExpression(op, trace, index);
     return ret;
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitPreviously(Previously &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitPreviously(Previously &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     auto ret = std::make_shared<Previously>(op);
     visitExpression(op, trace, index);
     return ret;
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitRelease(Release &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitRelease(Release &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     auto ret = std::make_shared<Release>(op);
     visitExpression(op, trace, index);
     return ret;
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitUntil(Until &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitUntil(Until &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Until>(op.getLeft(), op.getRight(), op.getInterval());
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitSince(Since &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitSince(Since &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Since>(op.getLeft(), op.getRight(), op.getInterval());
 }
 
 std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace,
-                                                                            int index) {
+                                                                            size_t index) {
     std::shared_ptr<Expression> ret;
 
     // resolving
@@ -223,7 +223,7 @@ std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitDerivingOperator(Deri
 }
 
 std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitResolvingOperator(ResolvingOperator &op, Trace &trace,
-                                                                             int index) {
+                                                                             size_t index) {
 
     std::shared_ptr<Expression> ret;
 
@@ -310,6 +310,6 @@ std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitResolvingOperator(Res
     return ret->accept(*this, trace, index);
 }
 
-std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitEventOperator(EventOperator &op, Trace &trace, int index) {
+std::shared_ptr<Expression> MTLDerivingFutureVisitor::visitEventOperator(EventOperator &op, Trace &trace, size_t index) {
     return std::make_shared<EventOperator>(op);
 }

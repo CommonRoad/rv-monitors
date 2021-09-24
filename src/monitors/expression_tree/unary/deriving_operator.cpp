@@ -6,7 +6,7 @@
 
 std::shared_ptr<Expression> DerivingOperator::clone() { return std::make_shared<DerivingOperator>(*this); }
 
-std::shared_ptr<Expression> DerivingOperator::accept(ExpressionVisitor &visitor, Trace &tr, int idx) {
+std::shared_ptr<Expression> DerivingOperator::accept(ExpressionVisitor &visitor, Trace &tr, size_t idx) {
     return visitor.visitDerivingOperator(*this, tr, idx);
 }
 

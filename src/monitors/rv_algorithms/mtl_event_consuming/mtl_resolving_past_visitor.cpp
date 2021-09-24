@@ -22,110 +22,110 @@
 #include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
 #include "monitors/trace/event.h"
 
-void mtl_resolving_past_visitor::consumeEvent(Formula &formula, Trace &trace, int index) {
+void mtl_resolving_past_visitor::consumeEvent(Formula &formula, Trace &trace, size_t index) {
     std::shared_ptr<ResolvingOperator> resolvingOperator =
         std::make_shared<ResolvingOperator>(formula.getExpr(), trace, index);
     formula.setExpr(resolvingOperator->accept(*this, trace, index));
 }
 
-std::shared_ptr<Expression> mtl_resolving_past_visitor::visitAtomic(Atomic &op, Trace &trace, int index) {
+std::shared_ptr<Expression> mtl_resolving_past_visitor::visitAtomic(Atomic &op, Trace &trace, size_t index) {
     return std::make_shared<Atomic>(op);
 }
 
-std::shared_ptr<Expression> mtl_resolving_past_visitor::visitConstant(Constant &op, Trace &trace, int index) {
+std::shared_ptr<Expression> mtl_resolving_past_visitor::visitConstant(Constant &op, Trace &trace, size_t index) {
     return std::make_shared<Constant>(op);
 }
 
-std::shared_ptr<Expression> mtl_resolving_past_visitor::visitAnd(And &op, Trace &trace, int index) {
+std::shared_ptr<Expression> mtl_resolving_past_visitor::visitAnd(And &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<And>(op);
 }
 
-std::shared_ptr<Expression> mtl_resolving_past_visitor::visitOr(Or &op, Trace &trace, int index) {
+std::shared_ptr<Expression> mtl_resolving_past_visitor::visitOr(Or &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Or>(op);
 }
 
-std::shared_ptr<Expression> mtl_resolving_past_visitor::visitXor(Xor &op, Trace &trace, int index) {
+std::shared_ptr<Expression> mtl_resolving_past_visitor::visitXor(Xor &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Xor>(op);
 }
 
-std::shared_ptr<Expression> mtl_resolving_past_visitor::visitImplication(Implication &op, Trace &trace, int index) {
+std::shared_ptr<Expression> mtl_resolving_past_visitor::visitImplication(Implication &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Implication>(op);
 }
 
-std::shared_ptr<Expression> mtl_resolving_past_visitor::visitEquivalence(Equivalence &op, Trace &trace, int index) {
+std::shared_ptr<Expression> mtl_resolving_past_visitor::visitEquivalence(Equivalence &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Equivalence>(op);
 }
 
-std::shared_ptr<Expression> mtl_resolving_past_visitor::visitNot(Not &op, Trace &trace, int index) {
+std::shared_ptr<Expression> mtl_resolving_past_visitor::visitNot(Not &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Not>(op);
 }
 
-std::shared_ptr<Expression> mtl_resolving_past_visitor::visitFuture(Future &op, Trace &trace, int index) {
+std::shared_ptr<Expression> mtl_resolving_past_visitor::visitFuture(Future &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Future>(op);
 }
 
-std::shared_ptr<Expression> mtl_resolving_past_visitor::visitGlobally(Globally &op, Trace &trace, int index) {
+std::shared_ptr<Expression> mtl_resolving_past_visitor::visitGlobally(Globally &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     visitExpression(op, trace, index);
     return std::make_shared<Globally>(op);
 }
 
-std::shared_ptr<Expression> mtl_resolving_past_visitor::visitHistorically(Historically &op, Trace &trace, int index) {
+std::shared_ptr<Expression> mtl_resolving_past_visitor::visitHistorically(Historically &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     visitExpression(op, trace, index);
     return std::make_shared<Historically>(op);
 }
 
-std::shared_ptr<Expression> mtl_resolving_past_visitor::visitNextStrong(NextStrong &op, Trace &trace, int index) {
+std::shared_ptr<Expression> mtl_resolving_past_visitor::visitNextStrong(NextStrong &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<NextStrong>(op);
 }
 
-std::shared_ptr<Expression> mtl_resolving_past_visitor::visitNextWeak(NextWeak &op, Trace &trace, int index) {
+std::shared_ptr<Expression> mtl_resolving_past_visitor::visitNextWeak(NextWeak &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<NextWeak>(op);
 }
 
-std::shared_ptr<Expression> mtl_resolving_past_visitor::visitOnce(Once &op, Trace &trace, int index) {
+std::shared_ptr<Expression> mtl_resolving_past_visitor::visitOnce(Once &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     auto ret = std::make_shared<Once>(op);
     visitExpression(op, trace, index);
     return ret;
 }
 
-std::shared_ptr<Expression> mtl_resolving_past_visitor::visitPreviously(Previously &op, Trace &trace, int index) {
+std::shared_ptr<Expression> mtl_resolving_past_visitor::visitPreviously(Previously &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     auto ret = std::make_shared<Previously>(op);
     visitExpression(op, trace, index);
     return ret;
 }
 
-std::shared_ptr<Expression> mtl_resolving_past_visitor::visitRelease(Release &op, Trace &trace, int index) {
+std::shared_ptr<Expression> mtl_resolving_past_visitor::visitRelease(Release &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     auto ret = std::make_shared<Release>(op);
     visitExpression(op, trace, index);
     return ret;
 }
 
-std::shared_ptr<Expression> mtl_resolving_past_visitor::visitUntil(Until &op, Trace &trace, int index) {
+std::shared_ptr<Expression> mtl_resolving_past_visitor::visitUntil(Until &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Until>(op.getLeft(), op.getRight(), op.getInterval());
 }
 
-std::shared_ptr<Expression> mtl_resolving_past_visitor::visitSince(Since &op, Trace &trace, int index) {
+std::shared_ptr<Expression> mtl_resolving_past_visitor::visitSince(Since &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<Since>(op.getLeft(), op.getRight(), op.getInterval());
 }
 
 std::shared_ptr<Expression> mtl_resolving_past_visitor::visitResolvingOperator(ResolvingOperator &op, Trace &trace,
-                                                                               int index) {
+                                                                               size_t index) {
 
     std::shared_ptr<Expression> ret;
     // Deriving
@@ -217,7 +217,7 @@ std::shared_ptr<Expression> mtl_resolving_past_visitor::visitResolvingOperator(R
 }
 
 std::shared_ptr<Expression> mtl_resolving_past_visitor::visitDerivingOperator(DerivingOperator &op, Trace &trace,
-                                                                              int index) {
+                                                                              size_t index) {
     std::shared_ptr<Expression> ret;
 
     // resolving
@@ -309,6 +309,6 @@ std::shared_ptr<Expression> mtl_resolving_past_visitor::visitDerivingOperator(De
     return ret->accept(*this, trace, index);
 }
 
-std::shared_ptr<Expression> mtl_resolving_past_visitor::visitEventOperator(EventOperator &op, Trace &trace, int index) {
+std::shared_ptr<Expression> mtl_resolving_past_visitor::visitEventOperator(EventOperator &op, Trace &trace, size_t index) {
     return std::make_shared<EventOperator>(op);
 }

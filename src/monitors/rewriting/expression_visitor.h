@@ -62,7 +62,7 @@ class Predicate;
  */
 class ExpressionVisitor {
   public:
-    void visitExpression(Expression &expr, Trace &trace, int index);
+    void visitExpression(Expression &expr, Trace &trace, size_t index);
 
     /**
      * Visits an Atomic.
@@ -70,7 +70,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed Atomic as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitAtomic(Atomic &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitAtomic(Atomic &expr, Trace &trace, size_t index) = 0;
 
     /**
      * Visits an Constant.
@@ -78,7 +78,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed Constant as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitConstant(Constant &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitConstant(Constant &expr, Trace &trace, size_t index) = 0;
 
     /**
      * Visits an And.
@@ -86,7 +86,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed And as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitAnd(And &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitAnd(And &expr, Trace &trace, size_t index) = 0;
 
     /**
      * Visits an Or.
@@ -94,7 +94,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed Or as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitOr(Or &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitOr(Or &expr, Trace &trace, size_t index) = 0;
 
     /**
      * Visits an Xor.
@@ -102,7 +102,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed Xor as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitXor(Xor &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitXor(Xor &expr, Trace &trace, size_t index) = 0;
 
     /**
      * Visits an Implication.
@@ -110,7 +110,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed Implication as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitImplication(Implication &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitImplication(Implication &expr, Trace &trace, size_t index) = 0;
 
     /**
      * Visits an Equivalence.
@@ -118,7 +118,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed Equivalence as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitEquivalence(Equivalence &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitEquivalence(Equivalence &expr, Trace &trace, size_t index) = 0;
 
     /**
      * Visits an Not.
@@ -126,7 +126,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed Not as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitNot(Not &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitNot(Not &expr, Trace &trace, size_t index) = 0;
 
     /**
      * Visits an Future.
@@ -134,7 +134,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed Future as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitFuture(Future &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitFuture(Future &expr, Trace &trace, size_t index) = 0;
 
     /**
      * Visits an Globally.
@@ -142,7 +142,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed Globally as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitGlobally(Globally &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitGlobally(Globally &expr, Trace &trace, size_t index) = 0;
 
     /**
      * Visits an NextStrong.
@@ -150,7 +150,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed NextStrong as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitNextStrong(NextStrong &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitNextStrong(NextStrong &expr, Trace &trace, size_t index) = 0;
 
     /**
      * Visits an NextWeak.
@@ -158,7 +158,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed NextWeak as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitNextWeak(NextWeak &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitNextWeak(NextWeak &expr, Trace &trace, size_t index) = 0;
 
     /**
      * Visits an Once.
@@ -166,7 +166,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed Once as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitOnce(Once &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitOnce(Once &expr, Trace &trace, size_t index) = 0;
 
     /**
      * Visits an Previously.
@@ -174,7 +174,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed Previously as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitPreviously(Previously &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitPreviously(Previously &expr, Trace &trace, size_t index) = 0;
 
     /**
      * Visits an Release.
@@ -182,7 +182,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed Release as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitRelease(Release &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitRelease(Release &expr, Trace &trace, size_t index) = 0;
 
     /**
      * Visits an Until.
@@ -190,7 +190,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed Until as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitUntil(Until &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitUntil(Until &expr, Trace &trace, size_t index) = 0;
 
     /**
      * Visits a Since.
@@ -198,7 +198,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed Since as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitSince(Since &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitSince(Since &expr, Trace &trace, size_t index) = 0;
 
     /**
      * Visits a Historically.
@@ -206,7 +206,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed Historically as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitHistorically(Historically &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitHistorically(Historically &expr, Trace &trace, size_t index) = 0;
 
     /**
      * Visits an EventOperator.
@@ -214,7 +214,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed EventOperator as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitEventOperator(EventOperator &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitEventOperator(EventOperator &expr, Trace &trace, size_t index) = 0;
 
     /**
      * Visits a ResolvingOperator.
@@ -222,7 +222,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed EventOperator as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitResolvingOperator(ResolvingOperator &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitResolvingOperator(ResolvingOperator &expr, Trace &trace, size_t index) = 0;
 
     /**
      * Visits a DerivingOperator.
@@ -230,7 +230,7 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed EventOperator as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &expr, Trace &trace, size_t index) = 0;
 
     /**
      * Visits a Predicate.
@@ -238,5 +238,5 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed EventOperator as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitPredicate(Predicate &expr, Trace &trace, int index) = 0;
+    virtual std::shared_ptr<Expression> visitPredicate(Predicate &expr, Trace &trace, size_t index) = 0;
 };

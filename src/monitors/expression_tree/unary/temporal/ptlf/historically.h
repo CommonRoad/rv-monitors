@@ -20,7 +20,7 @@ class Historically : public Unary, public TemporalOperator {
 
     [[nodiscard]] std::shared_ptr<Expression> clone() override { return std::make_shared<Historically>(*this); }
 
-    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, int index) override {
+    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override {
         return visitor.visitHistorically(*this, trace, index);
     }
 };

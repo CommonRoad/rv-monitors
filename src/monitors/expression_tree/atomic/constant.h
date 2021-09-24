@@ -26,5 +26,5 @@ class Constant : public Expression {
 
     std::shared_ptr<Expression> clone() override;
 
-    std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, int index) override;
+    std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override;
 };

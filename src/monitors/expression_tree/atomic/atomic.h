@@ -17,5 +17,5 @@ class Atomic : public Expression {
 
     [[nodiscard]] std::shared_ptr<Expression> clone() override;
 
-    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, int index) override;
+    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override;
 };
