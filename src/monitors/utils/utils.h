@@ -5,6 +5,7 @@
 #include <vector>
 
 struct Verdict {
+    Verdict(size_t ts, bool b) : ts(ts), b(b) {}
     size_t ts;
     bool b;
     bool operator==(const Verdict &bv) const { return ts == bv.ts && b == bv.b; }
@@ -14,6 +15,19 @@ struct Verdict {
  * Utils Several functions for working with formulas, traces, and events.
  */
 namespace Utils {
+
+/**
+ * Checks whether a value is within an interval.
+ *
+ * @param value Value which should be evaluated.
+ * @param low Lower bound.
+ * @param high Upper bound.
+ * @return True if low <= value <= high.
+ */
+template <typename T>
+bool isInInterval(const T& value, const T& low, const T& high) {
+    return !(value < low) && !(high < value);
+}
 
 /**
  * Computes how a boolean @param expr (containing only n-ary operators and not) evaluates on a given @param eventMap

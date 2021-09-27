@@ -4,7 +4,6 @@
 #include "monitors/expression_tree/nary/nary_interface.h"
 #include "monitors/expression_tree/unary/unary.h"
 #include "monitors/trace/event.h"
-#include <monitors/expression_tree/expression.h>
 
 /**
  * Class representing a formula specified in temporal logic.

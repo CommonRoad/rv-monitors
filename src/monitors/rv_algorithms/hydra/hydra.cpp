@@ -1,7 +1,8 @@
 #include "hydra.h"
-//#include "visitors.h"
 #include "../../rewriting/mtl_rewrite_visitor.h"
+#include "hydra_monitors/hydra_creation_visitor.h"
 #include <iostream>
+
 
 std::vector<Verdict> Hydra::evaluate(Trace &trace) {
     // Empty trace
@@ -9,25 +10,32 @@ std::vector<Verdict> Hydra::evaluate(Trace &trace) {
         std::cout << "Trace is empty" << std::endl;
         return {Verdict{0, false}};
     }
-    // Copy formula before working on it
-    auto formulaCopy = formula.deepCopy();
+
     std::vector<Verdict> result;
     result.reserve(trace.getLength());
 
-    MtlRewriteVisitor rw;
-    //  MonitorVisitor mv;
-    // fmla->accept(mv);
-    rw.rewrite(formulaCopy);
-    //  Monitor *mon = mv.get_mon();
-    //  TimePoint tp;
+    monitor->setTrace(trace);
 
-    for (size_t i{0}; i < trace.getLength(); ++i) {
-        //       BooleanVerdict v = mon->step();
-        //       tp.update(v.ts);
-        //        if (v.b == TRUE)
-        //            printf("%d\n", tp.tp);
-        //        else if (v.b != UNRESOLVED)
-        //            printf("%d:%d %s\n", tp.ts, tp.off, (v.b == FALSE ? "false" : "true"));
-    }
+    for (size_t i{0}; i < trace.getLength(); ++i)
+        result.emplace_back(monitor->step());
+
+    return result;
+
 }
-std::string Hydra::to_string() const { "TODO"; }
+std::string Hydra::to_string() const { return "TODO"; }
+
+void Hydra::createMonitor(const Formula& formula) {
+    // Copy formula before working on it
+    auto formulaCopy = formula.deepCopy();
+
+
+    MtlRewriteVisitor rw;
+    rw.rewrite(formulaCopy);
+
+    HydraCreationVisitor hc;
+    monitor = hc.createMonitor(formulaCopy);
+}
+
+Hydra::Hydra(const Formula &formula) : MonitorInterface(formula) {
+    createMonitor(formula);
+}

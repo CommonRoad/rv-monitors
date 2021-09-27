@@ -20,6 +20,8 @@ class Predicate : public Expression {
 
     [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override;
 
+    [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override;
+
     const std::string &getName() const;
 
     const std::vector<std::string> &getParameters() const;

@@ -23,4 +23,8 @@ class Globally : public Unary, public TemporalOperator {
     [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override {
         return visitor.visitGlobally(*this, trace, index);
     }
+
+    [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override {
+        return nullptr;
+    }
 };

@@ -6,6 +6,7 @@
 #include <utility>
 
 #include "monitors/rewriting/expression_visitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/hydra_creation_visitor.h"
 #include "monitors/symbols/symbols.h"
 
 class Trace;
@@ -61,6 +62,13 @@ class Expression {
      * @return Result of visit function of respective expression.
      */
     virtual std::shared_ptr<Expression> accept(ExpressionVisitor &, Trace &, size_t index) = 0;
+
+    /**
+     * Accept function for visitor pattern.
+     * @param visitor Visitor.
+     * @return Result of visit function of respective expression.
+     */
+    virtual std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &) = 0;
 
     /**
      * Checks if expression is a specific Constant.
