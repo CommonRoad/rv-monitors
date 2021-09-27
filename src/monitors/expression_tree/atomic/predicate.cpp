@@ -11,6 +11,13 @@ std::shared_ptr<Expression> Predicate::clone() { return std::make_shared<Predica
 std::shared_ptr<Expression> Predicate::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
     return visitor.visitPredicate(*this, trace, index);
 }
+
+std::shared_ptr<HydraMonitor> Predicate::accept(HydraCreationVisitor &visitor) {
+    return visitor.visitPredicate(*this);
+}
+
 const std::string &Predicate::getName() const { return name; }
 
 const std::vector<std::string> &Predicate::getParameters() const { return parameters; }
+
+

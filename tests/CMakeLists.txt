@@ -21,6 +21,7 @@ set(RV_MONITOR_TEST_SRC_FILES
         rv_algorithms/event_consuming/test_event_consuming_past.cpp
         rv_algorithms/mt_fsm/test_mt_fsm_evaluation_future.cpp
         rv_algorithms/mt_fsm/test_mt_fsm_evaluation_past.cpp
+        rv_algorithms/hydra/test_hydra.cpp
         rv_algorithms/mtl/test_mtl.cpp
         rv_algorithms/test_rv_monitors.cpp
         parser/test_parser.cpp

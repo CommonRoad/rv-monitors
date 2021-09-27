@@ -7,3 +7,7 @@ std::shared_ptr<Expression> Atomic::clone() { return std::make_shared<Atomic>(*t
 std::shared_ptr<Expression> Atomic::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
     return visitor.visitAtomic(*this, trace, index);
 }
+
+std::shared_ptr<HydraMonitor> Atomic::accept(HydraCreationVisitor &visitor) {
+    return visitor.visitAtomic(*this);
+}

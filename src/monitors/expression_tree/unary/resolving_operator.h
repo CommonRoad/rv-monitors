@@ -37,7 +37,10 @@ class ResolvingOperator : public Unary {
 
     [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override;
 
+    [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override;
+
     [[nodiscard]] std::string to_string() const override;
+
 };
 
 #endif // RV_MONITORS_RESOLVING_OPERATOR_H

@@ -2,6 +2,8 @@
 
 #include "monitors/expression_tree/temporal_operator.h"
 #include "monitors/expression_tree/unary/unary.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/hydra_creation_visitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.h"
 
 /**
  * Class representing the previously operator.
@@ -22,5 +24,9 @@ class Previously : public Unary, public TemporalOperator {
 
     [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override {
         return visitor.visitPreviously(*this, trace, index);
+    }
+
+    [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override {
+        return visitor.visitPreviously(*this);
     }
 };

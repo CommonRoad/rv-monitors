@@ -38,6 +38,8 @@ class DerivingOperator : public Unary {
     [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override;
 
     [[nodiscard]] std::string to_string() const override;
+
+    [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override;
 };
 
 #endif // RV_MONITORS_DERIVING_OPERATOR_H

@@ -7,6 +7,7 @@
 #pragma once
 
 #include "../../utils/utils.h"
+#include "hydra_monitors/hydra_monitor.h"
 #include "monitors/formula/formula.h"
 #include "monitors/rv_algorithms/monitor_interface.h"
 #include <monitors/trace/trace.h>
@@ -15,6 +16,9 @@
  * Class for monitoring a trace using the Hydra MTL monitor.
  */
 class Hydra : public MonitorInterface {
+  public:
+    Hydra(const Formula &formula);
+
     /**
      * Evaluation function for monitor algorithms.
      *
@@ -26,7 +30,12 @@ class Hydra : public MonitorInterface {
 
     /**
      * to_string() function.
-     * @return String representation of the BTT-FSM.
+     * @return String representation of Hydra.
      */
     [[nodiscard]] std::string to_string() const override;
+
+  private:
+    void createMonitor(const Formula& formula);
+
+    std::shared_ptr<HydraMonitor> monitor;
 };
