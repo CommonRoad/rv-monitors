@@ -414,7 +414,7 @@ class Visitor : public FormulaBaseVisitor {
     antlrcpp::Any visitPreviouslyInterval(FormulaParser::PreviouslyIntervalContext *ctx) override {
         auto right = getType(visit(ctx->right));
         auto iv = visit(ctx->iv).as<std::shared_ptr<Interval>>();
-        return std::make_shared<Previously>(right);
+        return std::make_shared<Previously>(right, iv);
     }
 
     /**
@@ -425,7 +425,7 @@ class Visitor : public FormulaBaseVisitor {
     antlrcpp::Any visitNextWeakInterval(FormulaParser::NextWeakIntervalContext *ctx) override {
         auto right = getType(visit(ctx->right));
         auto iv = visit(ctx->iv).as<std::shared_ptr<Interval>>();
-        return std::make_shared<NextWeak>(right);
+        return std::make_shared<NextWeak>(right, iv);
     }
 
     /**
@@ -436,7 +436,7 @@ class Visitor : public FormulaBaseVisitor {
     antlrcpp::Any visitNextStrongInterval(FormulaParser::NextStrongIntervalContext *ctx) override {
         auto right = getType(visit(ctx->right));
         auto iv = visit(ctx->iv).as<std::shared_ptr<Interval>>();
-        return std::make_shared<NextStrong>(right);
+        return std::make_shared<NextStrong>(right, iv);
     }
 
     /**

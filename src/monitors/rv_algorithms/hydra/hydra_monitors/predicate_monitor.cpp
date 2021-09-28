@@ -5,13 +5,16 @@
 // Credits: BMW Car@TUM
 //
 #include "predicate_monitor.h"
-#include "monitors/utils/utils.h"
 
-Verdict PredicateMonitor::step() {
-    auto event{trace->getEvent(traceIdx)};
-    auto verd{Verdict(event.getTimeStep(), event.getValue(*std::dynamic_pointer_cast<Atomic>(formula.getExpr())))};
-    ++traceIdx;
-    return verd;
+std::optional<Verdict> PredicateMonitor::step() {
+    if(traceIdx < trace.value().getLength()) {
+        auto event{trace.value().getEvent(traceIdx)};
+        auto verdict{Verdict(event.getTimeStep(),
+                          event.getValue(*std::dynamic_pointer_cast<Predicate>(formula.getExpr())))};
+        ++traceIdx;
+        return verdict;
+    } else
+        return {};
 }
 
 void PredicateMonitor::setTrace(const Trace &tr) { trace = tr; }
