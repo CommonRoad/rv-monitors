@@ -21,7 +21,19 @@ struct Verdict {
     Verdict(bool b) : b(b) {}
     std::optional<size_t> ts;
     bool b;
+
     bool operator==(const Verdict &bv) const { return ts == bv.ts && b == bv.b; }
+    Verdict operator!() const { return Verdict(this->ts.value(), !this->b); }
+    Verdict operator&&(const Verdict &w) const {
+        if (this->ts != w.ts)
+            throw std::runtime_error("Verdict logical and time steps do not match.");
+        return Verdict(this->ts.value(), this->b && w.b);
+    }
+    Verdict operator||(const Verdict &w) const {
+        if (this->ts != w.ts)
+            throw std::runtime_error("Verdict logical or time steps do not match.");
+        return Verdict(this->ts.value(), this->b || w.b);
+    }
 };
 
 /**

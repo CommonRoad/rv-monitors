@@ -157,30 +157,31 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitOr(Or &op, Trace &trace, siz
     }
 
     // a | b = a & b ^ a ^ b
-    And::SetType_T andSet;
-    Xor::SetType_T xorSet;
-
-    auto iter = expressions.begin();
-    andSet.emplace(*iter);
-    xorSet.emplace(*iter++);
-    andSet.emplace(*iter);
-    xorSet.emplace(*iter);
-
-    // Remove a and b
-    expressions.erase(expressions.begin());
-    expressions.erase(expressions.begin());
-
-    auto andExpr = std::make_shared<And>(andSet);
-    xorSet.emplace(andExpr);
-    auto xorExpr = std::make_shared<Xor>(xorSet);
+    //    And::SetType_T andSet;
+    //    Xor::SetType_T xorSet;
+    //
+    //    auto iter = expressions.begin();
+    //    andSet.emplace(*iter);
+    //    xorSet.emplace(*iter++);
+    //    andSet.emplace(*iter);
+    //    xorSet.emplace(*iter);
+    //
+    //    // Remove a and b
+    //    expressions.erase(expressions.begin());
+    //    expressions.erase(expressions.begin());
+    //
+    //    auto andExpr = std::make_shared<And>(andSet);
+    //    xorSet.emplace(andExpr);
+    //    auto xorExpr = std::make_shared<Xor>(xorSet);
 
     // At least one element left
-    if (!expressions.empty()) {
-        expressions.emplace(xorExpr);
-        return std::make_shared<Or>(expressions);
-    }
+    //    if (!expressions.empty()) {
+    //        expressions.emplace(xorExpr);
+    //        return std::make_shared<Or>(expressions);
+    //    }
 
-    return xorExpr;
+    //    return xorExpr;
+    return std::make_shared<Or>(expressions);
 }
 
 std::shared_ptr<Expression> MtlRewriteVisitor::visitXor(Xor &op, Trace &trace, size_t index) {

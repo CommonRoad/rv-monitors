@@ -8,6 +8,7 @@
 #include "hydra_monitors/atomic_monitor.h"
 #include "hydra_monitors/constant_monitor.h"
 #include "hydra_monitors/next_monitor.h"
+#include "hydra_monitors/or_monitor.h"
 #include "hydra_monitors/predicate_monitor.h"
 #include "hydra_monitors/previous_monitor.h"
 #include "hydra_monitors/since_monitor.h"
@@ -15,6 +16,7 @@
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/binary//temporal/ltlf/until.h"
 #include "monitors/expression_tree/binary//temporal/ptlf/since.h"
+#include "monitors/expression_tree/nary/bool/or.h"
 #include "monitors/expression_tree/unary/temporal/ltlf/next_strong.h"
 #include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
 #include "monitors/formula/formula.h"
@@ -56,4 +58,11 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitUntil(Until &op) {
                                           op.getRight()->accept(*this),
                                           std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(true))),
                                           op.getInterval()->getStart(), op.getInterval()->getEnd());
+}
+
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitOr(Or &op) {
+    std::vector<std::shared_ptr<HydraMonitor>> monitors;
+    for (const auto &expr : op.getExpressions())
+        monitors.push_back(expr->accept(*this));
+    return std::make_shared<OrMonitor>(Formula(std::make_shared<Or>(op)), monitors);
 }
