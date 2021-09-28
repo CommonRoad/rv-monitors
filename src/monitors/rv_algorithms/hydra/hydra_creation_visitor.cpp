@@ -11,8 +11,10 @@
 #include "hydra_monitors/predicate_monitor.h"
 #include "hydra_monitors/previous_monitor.h"
 #include "hydra_monitors/since_monitor.h"
+#include "hydra_monitors/until_monitor.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/binary//temporal/ptlf/since.h"
+#include "monitors/expression_tree/binary//temporal/ltlf/until.h"
 #include "monitors/expression_tree/unary/temporal/ltlf/next_strong.h"
 #include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
 #include "monitors/formula/formula.h"
@@ -47,4 +49,11 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitSince(Since &op) {
     return std::make_shared<SinceMonitor>(Formula(std::make_shared<Since>(op)), op.getLeft()->accept(*this),
                                           op.getRight()->accept(*this), op.getInterval()->getStart(),
                                           op.getInterval()->getEnd());
+}
+
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitUntil(Until &op) {
+    return std::make_shared<UntilMonitor>(Formula(std::make_shared<Until>(op)), op.getLeft()->accept(*this),
+                                          op.getRight()->accept(*this),
+                                          std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(true))),
+                                          op.getInterval()->getStart(), op.getInterval()->getEnd());
 }

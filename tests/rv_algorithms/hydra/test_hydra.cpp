@@ -16,7 +16,7 @@ void TestHydra::evalHydra(Trace &trace, const Formula &formula, const std::vecto
         EXPECT_TRUE(expSolution[i] == solution[i]) << "Mismatch at time step: " << i;
 }
 
-TEST(TestHydra, testPreviousSingle) {
+TEST(TestHydra, testSinglePrevious) {
     Trace trace =
         Utils::createTrace({"a", "b", "c"}, {{"b", "c"}, {"a", "c"}, {}, {"a", "b", "c"}, {"b", "c"}, {"a", "b", "c"}},
                            std::vector<size_t>{0, 0, 1, 4, 4, 5});
@@ -26,7 +26,7 @@ TEST(TestHydra, testPreviousSingle) {
     TestHydra::evalHydra(trace, formula, expSolution);
 }
 
-TEST(TestHydra, testNextSingle) {
+TEST(TestHydra, testSingleNext) {
     Trace trace =
         Utils::createTrace({"a", "b", "c"}, {{"b", "c"}, {"a", "c"}, {}, {"a", "b", "c"}, {"b", "c"}, {"a", "b", "c"}},
                            std::vector<size_t>{0, 0, 1, 4, 4, 5});
@@ -37,11 +37,20 @@ TEST(TestHydra, testNextSingle) {
     TestHydra::evalHydra(trace, formula, expSolution);
 }
 
-TEST(TestHydra, testSinceSingle) {
+TEST(TestHydra, testSingleSince) {
     Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"a"}, {"a"}, {"a", "b"}, {"a"}, {"b"}},
                                      std::vector<size_t>{0, 0, 2, 4, 5, 10});
     Formula formula = Parser::parse("(a)S[0, 4](b)");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{0, false}, Verdict{2, false},
                                      Verdict{4, true},  Verdict{5, true},  Verdict{10, true}};
+    TestHydra::evalHydra(trace, formula, expSolution);
+}
+
+TEST(TestHydra, testSingleUntil) {
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"a"}, {"a"}, {"a", "b"}, {"a"}, {"b"}},
+                                     std::vector<size_t>{0, 0, 2, 4, 5, 10});
+    Formula formula = Parser::parse("(a)U[0, 4](b)");
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{0, true}, Verdict{2, true},
+                                     Verdict{4, true},  Verdict{5, false},  Verdict{10, true}};
     TestHydra::evalHydra(trace, formula, expSolution);
 }

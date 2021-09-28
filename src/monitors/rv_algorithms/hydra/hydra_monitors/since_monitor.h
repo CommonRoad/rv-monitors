@@ -26,7 +26,6 @@ class SinceMonitor : public HydraMonitor {
     std::optional<Verdict> subVerdictF, subVerdictG;
     size_t from, to;
     HeadPos positionMonitorF, positionMonitorG;
-    bool unresolved{false};
     std::optional<std::pair<size_t, int>> last_sat;
     std::optional<std::pair<size_t, int>> last_viol;
 };
