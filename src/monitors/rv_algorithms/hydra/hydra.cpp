@@ -29,6 +29,8 @@ void Hydra::createMonitor(const Formula &formula) {
     MtlRewriteVisitor rw;
     rw.rewrite(formulaCopy);
 
+    //   formula = formulaCopy;
+
     HydraCreationVisitor hc;
     monitor = hc.createMonitor(formulaCopy);
 }

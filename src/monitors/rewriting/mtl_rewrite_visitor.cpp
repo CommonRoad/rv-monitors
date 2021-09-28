@@ -250,8 +250,8 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitImplication(Implication &op,
     //    return std::make_shared<Xor>(xorSet);
 
     // a -> b = a v !b
-    auto negExpr{std::make_shared<Not>(op.getRight())};
-    Or::SetType_T orSet{op.getLeft(), negExpr};
+    auto negExpr{std::make_shared<Not>(op.getLeft())};
+    Or::SetType_T orSet{op.getRight(), negExpr};
     auto orExpr{std::make_shared<Or>(orSet)};
     return orExpr;
 }
@@ -336,7 +336,7 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitGlobally(Globally &op, Trace
     //
     //    return std::make_shared<Xor>(xorSetTwo);
 
-    // G(a) = not F(not a)
+    // G(a) = not F(not a) = ! (true U ! a)
     auto future{std::make_shared<Future>(std::make_shared<Not>(op.getLeft()), op.getInterval())};
 
     return std::make_shared<Not>(future);
