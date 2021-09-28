@@ -5,8 +5,10 @@
 // Credits: BMW Car@TUM
 //
 #include "hydra_creation_visitor.h"
+#include "hydra_monitors/and_monitor.h"
 #include "hydra_monitors/atomic_monitor.h"
 #include "hydra_monitors/constant_monitor.h"
+#include "hydra_monitors/negation_monitor.h"
 #include "hydra_monitors/next_monitor.h"
 #include "hydra_monitors/or_monitor.h"
 #include "hydra_monitors/predicate_monitor.h"
@@ -16,7 +18,9 @@
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/binary//temporal/ltlf/until.h"
 #include "monitors/expression_tree/binary//temporal/ptlf/since.h"
+#include "monitors/expression_tree/nary/bool/and.h"
 #include "monitors/expression_tree/nary/bool/or.h"
+#include "monitors/expression_tree/unary/bool/not.h"
 #include "monitors/expression_tree/unary/temporal/ltlf/next_strong.h"
 #include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
 #include "monitors/formula/formula.h"
@@ -65,4 +69,15 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitOr(Or &op) {
     for (const auto &expr : op.getExpressions())
         monitors.push_back(expr->accept(*this));
     return std::make_shared<OrMonitor>(Formula(std::make_shared<Or>(op)), monitors);
+}
+
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitAnd(And &op) {
+    std::vector<std::shared_ptr<HydraMonitor>> monitors;
+    for (const auto &expr : op.getExpressions())
+        monitors.push_back(expr->accept(*this));
+    return std::make_shared<AndMonitor>(Formula(std::make_shared<And>(op)), monitors);
+}
+
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitNot(Not &op) {
+    return std::make_shared<NegationMonitor>(Formula(std::make_shared<Not>(op)), op.getLeft()->accept(*this));
 }

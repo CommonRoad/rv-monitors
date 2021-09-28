@@ -29,12 +29,12 @@ TEST_F(TestRVMonitors, EventConsumingLTL) {
     EXPECT_EQ(consoleOutputAlgorithmType, "EventConsuming-LTL");
 }
 
-TEST_F(TestRVMonitors, EventConsumingMTL) {
-    testing::internal::CaptureStdout();
-    EXPECT_FALSE(executeRVMonitor(AlgorithmType::event_consuming_mtl));
-    auto consoleOutputAlgorithmType{testing::internal::GetCapturedStdout()};
-    EXPECT_EQ(consoleOutputAlgorithmType, "EventConsuming-MTL");
-}
+// TEST_F(TestRVMonitors, EventConsumingMTL) {
+//    testing::internal::CaptureStdout();
+//    EXPECT_FALSE(executeRVMonitor(AlgorithmType::event_consuming_mtl));
+//    auto consoleOutputAlgorithmType{testing::internal::GetCapturedStdout()};
+//    EXPECT_EQ(consoleOutputAlgorithmType, "EventConsuming-MTL");
+//}
 
 TEST_F(TestRVMonitors, BTT_FSM_LTL) {
     testing::internal::CaptureStdout();

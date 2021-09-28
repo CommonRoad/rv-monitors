@@ -72,6 +72,8 @@ set(RV_MONITOR_SRC_FILES
         monitors/rv_algorithms/hydra/hydra_monitors/since_monitor.cpp
         monitors/rv_algorithms/hydra/hydra_monitors/until_monitor.cpp
         monitors/rv_algorithms/hydra/hydra_monitors/or_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/and_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/negation_monitor.cpp
         monitors/trace/event.cpp
         monitors/trace/event_generator.cpp
         monitors/utils/lazy_bool.cpp
