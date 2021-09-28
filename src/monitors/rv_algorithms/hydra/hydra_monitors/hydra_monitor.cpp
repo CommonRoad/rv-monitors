@@ -10,4 +10,3 @@
 const Formula &HydraMonitor::getFormula() const { return formula; }
 
 HydraMonitor::HydraMonitor(Formula formula) : formula(std::move(formula)) {}
-

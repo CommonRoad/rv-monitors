@@ -11,7 +11,7 @@
 class NextMonitor : public HydraMonitor {
   public:
     NextMonitor(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitor, size_t from, size_t to)
-        : HydraMonitor(formula), subMonitor(subMonitor), from(from), to(to) {};
+        : HydraMonitor(formula), subMonitor(subMonitor), from(from), to(to){};
 
     std::optional<Verdict> step() override;
 

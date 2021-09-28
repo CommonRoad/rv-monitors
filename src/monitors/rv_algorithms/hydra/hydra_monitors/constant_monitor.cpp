@@ -8,9 +8,10 @@
 #include <monitors/expression_tree/atomic/constant.h>
 
 std::optional<Verdict> ConstantMonitor::step() {
-    if(traceIdx < trace.value().getLength()) {
+    if (traceIdx < trace.value().getLength()) {
         auto event{trace.value().getEvent(traceIdx)};
-        auto verdict{Verdict(event.getTimeStep(), (*std::dynamic_pointer_cast<Constant>(formula.getExpr())).getValue())};
+        auto verdict{
+            Verdict(event.getTimeStep(), (*std::dynamic_pointer_cast<Constant>(formula.getExpr())).getValue())};
         ++traceIdx;
         return verdict;
     } else
