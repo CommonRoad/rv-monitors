@@ -15,6 +15,31 @@
 #include "monitors/trace/trace.h"
 #include "utils.h"
 
+// Boolean BooleanAnd(Boolean b1, Boolean b2) {
+//    if (b1 == UNRESOLVED || b2 == UNRESOLVED) return UNRESOLVED;
+//    else if (b1 == FALSE || b2 == FALSE) return FALSE;
+//    else return TRUE;
+//}
+// Boolean BooleanOr(Boolean b1, Boolean b2) {
+//    if (b1 == UNRESOLVED || b2 == UNRESOLVED) return UNRESOLVED;
+//    else if (b1 == TRUE || b2 == TRUE) return TRUE;
+//    else return FALSE;
+//}
+// Boolean BooleanImp(Boolean b1, Boolean b2) {
+//    if (b1 == UNRESOLVED || b2 == UNRESOLVED) return UNRESOLVED;
+//    else if (b1 == FALSE || (b1 == TRUE && b2 == TRUE)) return TRUE;
+//    else return FALSE;
+//}
+// Boolean BooleanEq(Boolean b1, Boolean b2) {
+//    if (b1 == UNRESOLVED || b2 == UNRESOLVED) return UNRESOLVED;
+//    else return (b1 == b2 ? TRUE : FALSE);
+//}
+// Boolean BooleanNot(Boolean b) {
+//    if (b == TRUE) return FALSE;
+//    else if (b == FALSE) return TRUE;
+//    else return UNRESOLVED;
+//}
+
 bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr,
                                       std::map<std::string, lazy_bool> &eventMap) {
     // Atomic

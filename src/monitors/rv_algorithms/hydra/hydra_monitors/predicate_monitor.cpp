@@ -6,7 +6,7 @@
 //
 #include "predicate_monitor.h"
 
-std::optional<Verdict> PredicateMonitor::step() {
+Verdict PredicateMonitor::step() {
     if (traceIdx < trace.value().getLength()) {
         auto event{trace.value().getEvent(traceIdx)};
         auto verdict{
@@ -14,7 +14,7 @@ std::optional<Verdict> PredicateMonitor::step() {
         ++traceIdx;
         return verdict;
     } else
-        return {};
+        return Verdict(false);
 }
 
 void PredicateMonitor::setTrace(const Trace &tr) { trace = tr; }

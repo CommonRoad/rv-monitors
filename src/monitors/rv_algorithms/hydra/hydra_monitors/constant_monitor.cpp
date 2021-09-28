@@ -7,7 +7,7 @@
 #include "constant_monitor.h"
 #include <monitors/expression_tree/atomic/constant.h>
 
-std::optional<Verdict> ConstantMonitor::step() {
+Verdict ConstantMonitor::step() {
     if (traceIdx < trace.value().getLength()) {
         auto event{trace.value().getEvent(traceIdx)};
         auto verdict{
@@ -15,7 +15,7 @@ std::optional<Verdict> ConstantMonitor::step() {
         ++traceIdx;
         return verdict;
     } else
-        return {};
+        return Verdict(false);
 }
 
 void ConstantMonitor::setTrace(const Trace &tr) { trace = tr; }

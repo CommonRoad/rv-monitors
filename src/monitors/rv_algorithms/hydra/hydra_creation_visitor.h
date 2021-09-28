@@ -79,4 +79,6 @@ class HydraCreationVisitor {
     [[nodiscard]] static std::shared_ptr<HydraMonitor> visitPredicate(Predicate &op);
 
     [[nodiscard]] std::shared_ptr<HydraMonitor> visitNext(NextStrong &op);
+
+    [[nodiscard]] std::shared_ptr<HydraMonitor> visitSince(Since &op);
 };

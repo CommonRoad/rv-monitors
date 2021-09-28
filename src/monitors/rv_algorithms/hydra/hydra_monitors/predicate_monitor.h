@@ -12,11 +12,11 @@ class PredicateMonitor : public HydraMonitor {
   public:
     PredicateMonitor(Formula formula) : HydraMonitor(std::move(formula)){};
 
-    std::optional<Verdict> step() override;
+    Verdict step() override;
 
-    void setTrace(const Trace &trace);
+    void setTrace(const Trace &trace) override;
 
   private:
-    size_t traceIdx;
+    size_t traceIdx{0};
     std::optional<Trace> trace;
 };
