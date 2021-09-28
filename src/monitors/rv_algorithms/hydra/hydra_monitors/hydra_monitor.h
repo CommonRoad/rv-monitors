@@ -10,7 +10,6 @@
 
 class HydraMonitor {
   public:
-
     HydraMonitor(Formula formula);
 
     virtual std::optional<Verdict> step() = 0;

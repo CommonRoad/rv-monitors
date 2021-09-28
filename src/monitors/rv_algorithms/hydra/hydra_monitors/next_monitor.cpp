@@ -8,7 +8,7 @@
 #include <iostream>
 
 std::optional<Verdict> NextMonitor::step() {
-    do{
+    do {
         std::optional<Verdict> subVerdict = subMonitor->get()->step();
         if (subVerdict and currentTime) {
             size_t lastTime = *currentTime;
@@ -17,12 +17,12 @@ std::optional<Verdict> NextMonitor::step() {
                 return Verdict(lastTime, subVerdict.value().b);
             else
                 return Verdict(lastTime, false);
-        }else if(!subVerdict){
+        } else if (!subVerdict) {
             return Verdict(*currentTime, false);
         } else {
             currentTime = subVerdict.value().ts;
         }
-    } while(true);
+    } while (true);
 }
 
 void NextMonitor::setTrace(const Trace &tr) { subMonitor.value()->setTrace(tr); }

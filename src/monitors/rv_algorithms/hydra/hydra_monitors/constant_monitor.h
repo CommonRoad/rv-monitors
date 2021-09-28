@@ -13,7 +13,6 @@
 
 class ConstantMonitor : public HydraMonitor {
   public:
-
     ConstantMonitor(Formula formula) : HydraMonitor(std::move(formula)){};
 
     std::optional<Verdict> step() override;

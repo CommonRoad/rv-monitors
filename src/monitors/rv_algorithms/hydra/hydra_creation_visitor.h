@@ -68,7 +68,6 @@ class Predicate;
 
 class HydraCreationVisitor {
   public:
-
     std::shared_ptr<HydraMonitor> createMonitor(Formula &formula);
 
     [[nodiscard]] static std::shared_ptr<HydraMonitor> visitAtomic(Atomic &op);
