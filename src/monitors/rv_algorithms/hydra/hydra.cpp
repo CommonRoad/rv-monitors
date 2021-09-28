@@ -1,6 +1,7 @@
 #include "hydra.h"
 #include "../../rewriting/mtl_rewrite_visitor.h"
 #include "hydra_creation_visitor.h"
+#include "monitors/expression_tree/unary/temporal/ltlf/globally.h"
 #include <iostream>
 
 std::vector<Verdict> Hydra::evaluate(Trace &trace) {
@@ -24,7 +25,9 @@ std::string Hydra::to_string() const { return "TODO"; }
 
 void Hydra::createMonitor(const Formula &formula) {
     // Copy formula before working on it
-    auto formulaCopy = formula.deepCopy();
+    auto formulaCopy{formula.deepCopy()};
+    if (auto globally = std::dynamic_pointer_cast<Globally>(formulaCopy.getExpr()))
+        formulaCopy = Formula(globally->getLeft());
 
     MtlRewriteVisitor rw;
     rw.rewrite(formulaCopy);
