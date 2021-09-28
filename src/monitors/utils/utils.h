@@ -5,9 +5,21 @@
 #include <optional>
 #include <vector>
 
+// enum Boolean {
+//    FALSE, TRUE, UNRESOLVED
+//};
+//
+// Boolean BooleanAnd(Boolean b1, Boolean b2);
+// Boolean BooleanOr(Boolean b1, Boolean b2);
+// Boolean BooleanImp(Boolean b1, Boolean b2);
+// Boolean BooleanEq(Boolean b1, Boolean b2);
+// Boolean BooleanNot(Boolean b);
+
 struct Verdict {
+    // Verdict(size_t ts, Boolean b) : ts(ts), b(b) {}
     Verdict(size_t ts, bool b) : ts(ts), b(b) {}
-    size_t ts;
+    Verdict(bool b) : b(b) {}
+    std::optional<size_t> ts;
     bool b;
     bool operator==(const Verdict &bv) const { return ts == bv.ts && b == bv.b; }
 };

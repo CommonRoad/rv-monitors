@@ -16,7 +16,7 @@ std::vector<Verdict> Hydra::evaluate(Trace &trace) {
     monitor->setTrace(trace);
 
     for (size_t i{0}; i < trace.getLength(); ++i)
-        result.emplace_back(monitor->step().value());
+        result.emplace_back(monitor->step());
 
     return result;
 }

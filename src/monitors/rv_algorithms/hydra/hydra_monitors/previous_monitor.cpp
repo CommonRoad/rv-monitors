@@ -6,19 +6,19 @@
 //
 #include "previous_monitor.h"
 
-std::optional<Verdict> PreviousMonitor::step() {
-    std::optional<Verdict> subVerdict = subMonitor->get()->step();
+Verdict PreviousMonitor::step() {
+    Verdict subVerdict = subMonitor->step();
 
-    if (currentVerdict) {
+    if (currentVerdict->ts) {
         Verdict lastSubVerdict = *currentVerdict;
         currentVerdict = subVerdict;
-        if (Utils::isInInterval(subVerdict.value().ts - lastSubVerdict.ts, from.value(), to.value()))
-            return Verdict(subVerdict.value().ts, lastSubVerdict.b);
+        if (Utils::isInInterval(subVerdict.ts.value() - lastSubVerdict.ts.value(), from, to))
+            return Verdict(subVerdict.ts.value(), lastSubVerdict.b);
         else
-            return Verdict(subVerdict.value().ts, false);
+            return Verdict(subVerdict.ts.value(), false);
     } else {
         currentVerdict = subVerdict;
-        return Verdict(subVerdict.value().ts, false);
+        return Verdict(subVerdict.ts.value(), false);
     }
 }
-void PreviousMonitor::setTrace(const Trace &tr) { subMonitor.value()->setTrace(tr); }
+void PreviousMonitor::setTrace(const Trace &tr) { subMonitor->setTrace(tr); }

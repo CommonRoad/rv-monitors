@@ -6,13 +6,23 @@
 //
 #pragma once
 #include "monitors/utils/utils.h"
-#include <optional>
+
+struct HeadPos {
+    size_t ts;
+    int tp = -1;
+    bool eof{false};
+
+    void update(size_t new_ts) {
+        ts = new_ts;
+        tp++;
+    }
+};
 
 class HydraMonitor {
   public:
     HydraMonitor(Formula formula);
 
-    virtual std::optional<Verdict> step() = 0;
+    virtual Verdict step() = 0;
 
     const Formula &getFormula() const;
 

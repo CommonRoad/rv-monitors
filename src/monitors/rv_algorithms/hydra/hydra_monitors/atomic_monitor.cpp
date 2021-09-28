@@ -6,7 +6,7 @@
 //
 #include "atomic_monitor.h"
 
-std::optional<Verdict> AtomicMonitor::step() {
+Verdict AtomicMonitor::step() {
     if (traceIdx < trace.value().getLength()) {
         auto event{trace.value().getEvent(traceIdx)};
         auto verdict{
@@ -14,7 +14,7 @@ std::optional<Verdict> AtomicMonitor::step() {
         ++traceIdx;
         return verdict;
     } else
-        return {};
+        return Verdict(false);
 }
 
 void AtomicMonitor::setTrace(const Trace &tr) { trace = tr; }
