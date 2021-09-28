@@ -6,10 +6,10 @@
 //
 #pragma once
 
+#include "monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.h"
 #include <memory>
 #include <optional>
 #include <utility>
-#include "monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.h"
 
 class PreviousMonitor : public HydraMonitor {
   public:
@@ -20,8 +20,8 @@ class PreviousMonitor : public HydraMonitor {
      * @param from
      * @param to
      */
-    PreviousMonitor(const Formula& formula, const std::shared_ptr<HydraMonitor>& subMonitor,
-                    size_t from, size_t to) : HydraMonitor(formula, from, to, subMonitor) {};
+    PreviousMonitor(const Formula &formula, const std::shared_ptr<HydraMonitor> &subMonitor, size_t from, size_t to)
+        : HydraMonitor(formula, from, to, subMonitor){};
 
     /**
      *
@@ -29,5 +29,5 @@ class PreviousMonitor : public HydraMonitor {
      */
     Verdict step() override;
 
-    void setTrace(const Trace& tr) override;
+    void setTrace(const Trace &tr) override;
 };

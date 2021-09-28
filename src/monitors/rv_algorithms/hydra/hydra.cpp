@@ -3,7 +3,6 @@
 #include "hydra_monitors/hydra_creation_visitor.h"
 #include <iostream>
 
-
 std::vector<Verdict> Hydra::evaluate(Trace &trace) {
     // Empty trace
     if (trace.getTrace().empty()) {
@@ -20,14 +19,12 @@ std::vector<Verdict> Hydra::evaluate(Trace &trace) {
         result.emplace_back(monitor->step());
 
     return result;
-
 }
 std::string Hydra::to_string() const { return "TODO"; }
 
-void Hydra::createMonitor(const Formula& formula) {
+void Hydra::createMonitor(const Formula &formula) {
     // Copy formula before working on it
     auto formulaCopy = formula.deepCopy();
-
 
     MtlRewriteVisitor rw;
     rw.rewrite(formulaCopy);
@@ -36,6 +33,4 @@ void Hydra::createMonitor(const Formula& formula) {
     monitor = hc.createMonitor(formulaCopy);
 }
 
-Hydra::Hydra(const Formula &formula) : MonitorInterface(formula) {
-    createMonitor(formula);
-}
+Hydra::Hydra(const Formula &formula) : MonitorInterface(formula) { createMonitor(formula); }

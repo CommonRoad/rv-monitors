@@ -2,6 +2,7 @@
 
 #include "monitors/formula/formula.h"
 #include "monitors/trace/trace.h"
+#include <optional>
 #include <vector>
 
 struct Verdict {
@@ -24,8 +25,7 @@ namespace Utils {
  * @param high Upper bound.
  * @return True if low <= value <= high.
  */
-template <typename T>
-bool isInInterval(const T& value, const T& low, const T& high) {
+template <typename T> bool isInInterval(const T &value, const T &low, const T &high) {
     return !(value < low) && !(high < value);
 }
 
@@ -46,8 +46,9 @@ bool isInInterval(const T& value, const T& low, const T& high) {
  * @param trueAtomics Vector of vectors containing predicates that are true in each event.
  * @return Trace.
  */
-[[nodiscard]] Trace createTrace(const std::set<std::string> &atomics,
-                                std::vector<std::vector<std::string>> trueAtomics);
+[[nodiscard]] Trace
+createTrace(const std::set<std::string> &atomics, const std::vector<std::vector<std::string>> &trueAtomics,
+            const std::optional<std::vector<size_t>> &timeSteps = std::optional<std::vector<size_t>>{});
 
 /**
  * Creates a Trace with lazy evaluation of the predicates.

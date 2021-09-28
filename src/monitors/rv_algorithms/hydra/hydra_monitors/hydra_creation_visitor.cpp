@@ -17,9 +17,9 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::createMonitor(Formula &formu
 
 void HydraCreationVisitor::visitMonitor(HydraMonitor &mon) {
     // Unary
-  //  if (auto *unary = dynamic_cast<Unary *>(mon.getSubMonitor()->get()->getFormula().getExpr())) {
-  //      unary->setLeft(unary->getLeft()->accept(*this));
-  //  }
+    //  if (auto *unary = dynamic_cast<Unary *>(mon.getSubMonitor()->get()->getFormula().getExpr())) {
+    //      unary->setLeft(unary->getLeft()->accept(*this));
+    //  }
 }
 
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitAtomic(Atomic &op) {

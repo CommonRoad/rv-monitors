@@ -15,7 +15,8 @@ Verdict PreviousMonitor::step() {
         currentVerdict = subVerdict;
         if (Utils::isInInterval(subVerdict.ts - lastSubVerdict.ts, from.value(), to.value()))
             return Verdict(subVerdict.ts, lastSubVerdict.b);
-        else return Verdict(subVerdict.ts, false);
+        else
+            return Verdict(subVerdict.ts, false);
     } else {
         currentVerdict = subVerdict;
         return Verdict(subVerdict.ts, false);

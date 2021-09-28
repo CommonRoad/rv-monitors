@@ -8,6 +8,4 @@ std::shared_ptr<Expression> Atomic::accept(ExpressionVisitor &visitor, Trace &tr
     return visitor.visitAtomic(*this, trace, index);
 }
 
-std::shared_ptr<HydraMonitor> Atomic::accept(HydraCreationVisitor &visitor) {
-    return visitor.visitAtomic(*this);
-}
+std::shared_ptr<HydraMonitor> Atomic::accept(HydraCreationVisitor &visitor) { return visitor.visitAtomic(*this); }
