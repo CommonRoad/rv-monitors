@@ -64,8 +64,11 @@ set(RV_MONITOR_SRC_FILES
         monitors/rv_algorithms/hydra/hydra.cpp
         monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.cpp
         monitors/rv_algorithms/hydra/hydra_monitors/previous_monitor.cpp
-        monitors/rv_algorithms/hydra/hydra_monitors/hydra_creation_visitor.cpp
+        monitors/rv_algorithms/hydra/hydra_creation_visitor.cpp
         monitors/rv_algorithms/hydra/hydra_monitors/predicate_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/constant_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/atomic_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/next_monitor.cpp
         monitors/trace/event.cpp
         monitors/trace/event_generator.cpp
         monitors/utils/lazy_bool.cpp

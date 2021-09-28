@@ -68,15 +68,16 @@ class Predicate;
 
 class HydraCreationVisitor {
   public:
-    void visitMonitor(HydraMonitor &mon);
 
     std::shared_ptr<HydraMonitor> createMonitor(Formula &formula);
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> visitAtomic(Atomic &op);
+    [[nodiscard]] static std::shared_ptr<HydraMonitor> visitAtomic(Atomic &op);
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> visitConstant(Constant &op);
+    [[nodiscard]] static std::shared_ptr<HydraMonitor> visitConstant(Constant &op);
 
     [[nodiscard]] std::shared_ptr<HydraMonitor> visitPreviously(Previously &op);
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> visitPredicate(Predicate &op);
+    [[nodiscard]] static std::shared_ptr<HydraMonitor> visitPredicate(Predicate &op);
+
+    [[nodiscard]] std::shared_ptr<HydraMonitor> visitNext(NextStrong &op);
 };

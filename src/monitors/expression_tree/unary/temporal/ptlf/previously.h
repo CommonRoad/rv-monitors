@@ -2,7 +2,6 @@
 
 #include "monitors/expression_tree/temporal_operator.h"
 #include "monitors/expression_tree/unary/unary.h"
-#include "monitors/rv_algorithms/hydra/hydra_monitors/hydra_creation_visitor.h"
 #include "monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.h"
 
 /**

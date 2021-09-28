@@ -5,24 +5,20 @@
 // Credits: BMW Car@TUM
 //
 #include "previous_monitor.h"
-#include "monitors/utils/utils.h"
 
-Verdict PreviousMonitor::step() {
-    Verdict subVerdict = subMonitor->get()->step();
+std::optional<Verdict> PreviousMonitor::step() {
+    std::optional<Verdict> subVerdict = subMonitor->get()->step();
 
     if (currentVerdict) {
         Verdict lastSubVerdict = *currentVerdict;
         currentVerdict = subVerdict;
-        if (Utils::isInInterval(subVerdict.ts - lastSubVerdict.ts, from.value(), to.value()))
-            return Verdict(subVerdict.ts, lastSubVerdict.b);
+        if (Utils::isInInterval(subVerdict.value().ts - lastSubVerdict.ts, from.value(), to.value()))
+            return Verdict(subVerdict.value().ts, lastSubVerdict.b);
         else
-            return Verdict(subVerdict.ts, false);
+            return Verdict(subVerdict.value().ts, false);
     } else {
         currentVerdict = subVerdict;
-        return Verdict(subVerdict.ts, false);
+        return Verdict(subVerdict.value().ts, false);
     }
 }
-void PreviousMonitor::setTrace(const Trace &tr) {
-    trace = tr;
-    subMonitor.value()->setTrace(tr);
-}
+void PreviousMonitor::setTrace(const Trace &tr) { subMonitor.value()->setTrace(tr); }
