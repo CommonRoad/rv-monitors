@@ -85,4 +85,8 @@ class HydraCreationVisitor {
     [[nodiscard]] std::shared_ptr<HydraMonitor> visitUntil(Until &op);
 
     [[nodiscard]] std::shared_ptr<HydraMonitor> visitOr(Or &op);
+
+    [[nodiscard]] std::shared_ptr<HydraMonitor> visitAnd(And &op);
+
+    [[nodiscard]] std::shared_ptr<HydraMonitor> visitNot(Not &op);
 };

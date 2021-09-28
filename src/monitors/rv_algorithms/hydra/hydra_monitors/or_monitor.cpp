@@ -8,13 +8,8 @@
 
 Verdict OrMonitor::step() {
     Verdict verdict{subMonitors.at(0)->step()};
-    if (verdict.b)
-        return verdict;
-    for (size_t i{1}; i < subMonitors.size(); ++i) {
-        verdict = subMonitors.at(i)->step();
-        if (verdict.b)
-            return verdict;
-    }
+    for (size_t i{1}; i < subMonitors.size(); ++i)
+        verdict = verdict || subMonitors.at(i)->step();
     return verdict;
 }
 
