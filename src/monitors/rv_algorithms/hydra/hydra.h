@@ -35,7 +35,7 @@ class Hydra : public MonitorInterface {
     [[nodiscard]] std::string to_string() const override;
 
   private:
-    void createMonitor(const Formula& formula);
+    void createMonitor(const Formula &formula);
 
     std::shared_ptr<HydraMonitor> monitor;
 };

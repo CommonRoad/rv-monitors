@@ -6,10 +6,10 @@
 //
 #pragma once
 
+#include "monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.h"
 #include <memory>
 #include <optional>
 #include <utility>
-#include "monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.h"
 
 class PredicateMonitor : public HydraMonitor {
   public:
@@ -17,7 +17,7 @@ class PredicateMonitor : public HydraMonitor {
      *
      * @param formula
      */
-    PredicateMonitor(Formula formula) : HydraMonitor(std::move(formula)) {};
+    PredicateMonitor(Formula formula) : HydraMonitor(std::move(formula)){};
 
     /**
      *
@@ -25,7 +25,7 @@ class PredicateMonitor : public HydraMonitor {
      */
     Verdict step() override;
 
-    void setTrace(const Trace& trace) override;
+    void setTrace(const Trace &trace) override;
 
   private:
     size_t traceIdx;

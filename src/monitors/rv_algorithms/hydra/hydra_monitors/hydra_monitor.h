@@ -5,8 +5,8 @@
 // Credits: BMW Car@TUM
 //
 #pragma once
-#include <optional>
 #include "monitors/utils/utils.h"
+#include <optional>
 
 class HydraMonitor {
   public:
@@ -16,7 +16,8 @@ class HydraMonitor {
      */
     HydraMonitor(Formula formula);
 
-    HydraMonitor(Formula formula, const size_t &from, const size_t &to, const std::shared_ptr<HydraMonitor> &sub_monitor);
+    HydraMonitor(Formula formula, const size_t &from, const size_t &to,
+                 const std::shared_ptr<HydraMonitor> &sub_monitor);
 
     /**
      *
@@ -25,7 +26,7 @@ class HydraMonitor {
 
     virtual Verdict step() = 0;
 
-    virtual void setTrace(const Trace& tr) = 0;
+    virtual void setTrace(const Trace &tr) = 0;
 
     /**
      *

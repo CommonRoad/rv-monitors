@@ -3,7 +3,6 @@
 #include <queue>
 #include <set>
 
-#include "execution_statistic.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/binary/binary.h"
 #include "monitors/expression_tree/nary/bool/and.h"
@@ -15,7 +14,6 @@
 #include "monitors/parser/parser.h"
 #include "monitors/trace/trace.h"
 #include "utils.h"
-
 
 bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr,
                                       std::map<std::string, lazy_bool> &eventMap) {
@@ -74,19 +72,25 @@ bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr,
     return false;
 }
 
-Trace Utils::createTrace(const std::set<std::string> &atomics, std::vector<std::vector<std::string>> trueAtomics) {
+Trace Utils::createTrace(const std::set<std::string> &atomics, const std::vector<std::vector<std::string>> &trueAtomics,
+                         const std::optional<std::vector<size_t>> &timeSteps) {
+    if (timeSteps and trueAtomics.size() != timeSteps.value().size())
+        throw std::runtime_error("Utils::createTrace: Number time steps does not correspond to number of atomics.");
     std::vector<Event> finalTrace;
     std::map<std::string, lazy_bool> event;
-    size_t timeStep{0};
+    size_t timeStepIdx{0};
     for (auto const &trueAtomic : trueAtomics) {
         for (auto const &atomic : atomics) {
             // Check if atomic exists in vector at current position
             bool atomicValue = trueAtomic.end() != std::find(trueAtomic.begin(), trueAtomic.end(), atomic);
             event[atomic] = lazy_bool(atomicValue);
         }
-        finalTrace.emplace_back(Event(event, timeStep, &trueAtomic == &trueAtomics.back()));
+        if (timeSteps)
+            finalTrace.emplace_back(Event(event, timeSteps.value()[timeStepIdx], &trueAtomic == &trueAtomics.back()));
+        else
+            finalTrace.emplace_back(Event(event, timeStepIdx, &trueAtomic == &trueAtomics.back()));
         event.clear();
-        ++timeStep;
+        ++timeStepIdx;
     }
     return Trace{finalTrace};
 }

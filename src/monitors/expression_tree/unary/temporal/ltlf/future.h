@@ -26,7 +26,5 @@ class Future : public Unary, public TemporalOperator {
         return visitor.visitFuture(*this, trace, index);
     }
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override {
-        return nullptr;
-    }
+    [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override { return nullptr; }
 };
