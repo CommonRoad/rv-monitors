@@ -7,8 +7,8 @@
 #include "until_monitor.h"
 
 void UntilMonitor::handleEof() {
-    if (!positionMonitorF.eof && !positionMonitorG.eof)
-        std::runtime_error("Hydra UntilMonitor readFG error in end of line");
+    if (!(!positionMonitorF.eof && !positionMonitorG.eof))
+        throw std::runtime_error("Hydra UntilMonitor readFG error in end of line");
     positionMonitorF.tp++;
     positionMonitorF.eof = true;
     positionMonitorG.tp++;
@@ -16,9 +16,9 @@ void UntilMonitor::handleEof() {
 }
 
 void UntilMonitor::readFG() {
-    if (positionMonitorF.tp == -1 || positionMonitorF.ts == positionMonitorG.ts ||
-        positionMonitorF.tp == positionMonitorG.tp)
-        std::runtime_error("Hydra UntilMonitor readFG error");
+    if (!(positionMonitorF.tp == -1 || positionMonitorF.ts == positionMonitorG.ts ||
+          positionMonitorF.tp == positionMonitorG.tp))
+        throw std::runtime_error("Hydra UntilMonitor readFG error");
 
     subVerdictF = subMonitorF->step();
     if (subVerdictF->ts)
