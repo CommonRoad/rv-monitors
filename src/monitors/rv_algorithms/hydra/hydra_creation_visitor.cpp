@@ -5,15 +5,15 @@
 // Credits: BMW Car@TUM
 //
 #include "hydra_creation_visitor.h"
-#include "monitors/expression_tree/atomic/constant.h"
-#include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/next_strong.h"
-#include "monitors/formula/formula.h"
-#include "hydra_monitors/predicate_monitor.h"
-#include "hydra_monitors/previous_monitor.h"
-#include "hydra_monitors/next_monitor.h"
 #include "hydra_monitors/atomic_monitor.h"
 #include "hydra_monitors/constant_monitor.h"
+#include "hydra_monitors/next_monitor.h"
+#include "hydra_monitors/predicate_monitor.h"
+#include "hydra_monitors/previous_monitor.h"
+#include "monitors/expression_tree/atomic/constant.h"
+#include "monitors/expression_tree/unary/temporal/ltlf/next_strong.h"
+#include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
+#include "monitors/formula/formula.h"
 
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::createMonitor(Formula &formula) {
     return formula.getExpr()->accept(*this);
@@ -37,5 +37,5 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitPreviously(Previously &
 }
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitNext(NextStrong &op) {
     return std::make_shared<NextMonitor>(Formula(std::make_shared<NextStrong>(op)), op.getLeft()->accept(*this),
-                                             op.getInterval()->getStart(), op.getInterval()->getEnd());
+                                         op.getInterval()->getStart(), op.getInterval()->getEnd());
 }

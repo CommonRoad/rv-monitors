@@ -13,8 +13,7 @@
 
 TEST(TestHydra, testPreviousSingle) {
     Trace trace =
-        Utils::createTrace({"a", "b", "c"},
-                           {{"b", "c"}, {"a", "c"}, {}, {"a", "b", "c"}, {"b", "c"}, {"a", "b", "c"}},
+        Utils::createTrace({"a", "b", "c"}, {{"b", "c"}, {"a", "c"}, {}, {"a", "b", "c"}, {"b", "c"}, {"a", "b", "c"}},
                            std::vector<size_t>{0, 0, 1, 4, 4, 5});
     Formula formula = Parser::parse("P[0, 1](c)");
 
@@ -31,13 +30,12 @@ TEST(TestHydra, testPreviousSingle) {
 
 TEST(TestHydra, testNextSingle) {
     Trace trace =
-        Utils::createTrace({"a", "b", "c"},
-                           {{"b", "c"}, {"a", "c"}, {}, {"a", "b", "c"}, {"b", "c"}, {"a", "b", "c"}},
+        Utils::createTrace({"a", "b", "c"}, {{"b", "c"}, {"a", "c"}, {}, {"a", "b", "c"}, {"b", "c"}, {"a", "b", "c"}},
                            std::vector<size_t>{0, 0, 1, 4, 4, 5});
     Formula formula = Parser::parse("X[0, 1](c)");
 
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{0, false}, Verdict{1, false},
-                                     Verdict{4, true}, Verdict{4, true}, Verdict{5, false}};
+                                     Verdict{4, true}, Verdict{4, true},  Verdict{5, false}};
 
     auto monitor{Hydra(formula)};
 
