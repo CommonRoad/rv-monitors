@@ -115,7 +115,7 @@ TEST(TestMTL, testGloballyAsUntil) {
     TestHydra::evalHydra(trace, formula, expSolution);
 }
 
-TEST(TestMTL, testGlobally) {
+TEST(TestMTL, testGloballySatisfied) {
     Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"a"}, {"a"}, {"a"}, {"a"}, {"a"}, {"a"}});
     Formula formula = Parser::parse("G(a)");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
@@ -123,114 +123,125 @@ TEST(TestMTL, testGlobally) {
     TestHydra::evalHydra(trace, formula, expSolution);
 }
 
-// TEST(TestMTL, violated3) {
-//    Trace trace = Utils::createTrace({"a", "b"}, {{"b"}, {"a"}, {"a"}, {"a"}, {"a"}, {"a"}, {"a"}});
-//    Formula formula = Parser::parse("G(a)");
-//    auto monitor{MTLEventConsuming(formula)};
-//    EXPECT_FALSE(monitor.evaluate(trace).at(0).b);
-//}
-//
+TEST(TestMTL, testGloballyViolatedTwice) {
+    Trace trace = Utils::createTrace({"a", "b"}, {{"b"}, {"a"}, {"a"}, {"a"}, {"b"}, {"a"}, {"a"}});
+    Formula formula = Parser::parse("G(a)");
+    std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+                                     Verdict{4, false}, Verdict{5, true}, Verdict{6, true}};
+    TestHydra::evalHydra(trace, formula, expSolution);
+}
 
-// TEST(TestMTL, violated1) {
-//    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"b"}, {"b"}, {"b"}, {"a"}, {"b"}, {"b"}, {"b"}});
-//    Formula formula = Parser::parse("G(a -> F[0, 6](b & O[0, 6](c)))");
-//    std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{0, true}, Verdict{1, true},
-//                                     Verdict{4, false}, Verdict{4, true}, Verdict{5, true}};
-//    TestHydra::evalHydra(trace, formula, expSolution);
-//}
+TEST(TestMTL, testGloballyFutureOnceIntervalViolatedOnce) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"b"}, {"b"}, {"b"}, {"a"}, {"b"}, {"b"}, {"b"}});
+    Formula formula = Parser::parse("G(a -> F[0, 6](b & O[0, 6](c)))");
+    std::vector<Verdict> expSolution{Verdict{0, true},  Verdict{1, true}, Verdict{2, true},
+                                     Verdict{3, false}, Verdict{4, true}, Verdict{5, true}};
+    TestHydra::evalHydra(trace, formula, expSolution);
+}
 
-// TEST(TestMTL, satisfied1) {
-//    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"c"}, {"b"}, {"b"}, {"a"}, {"b"}, {"c"}, {"b"}});
-//    Formula formula = Parser::parse("G(a -> F[0, 6](b & O[0, 6](c)))");
-//    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true},
-//                                     Verdict{3, true}, Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-//    TestHydra::evalHydra(trace, formula, expSolution);
-//}
+TEST(TestMTL, testGloballyFutureOnceIntervalSatisfied) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"c"}, {"b"}, {"b"}, {"a"}, {"b"}, {"c"}, {"b"}});
+    Formula formula = Parser::parse("G(a -> F[0, 6](b & O[0, 6](c)))");
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true},
+                                     Verdict{3, true}, Verdict{4, true}, Verdict{5, true}};
+    TestHydra::evalHydra(trace, formula, expSolution);
+}
 
-// TEST(TestMTL, satisfied2) {
-//    Trace trace = Utils::createTrace({"a", "b"}, {{"b"}, {"a"}, {"a"}, {"a"}, {"a"}, {"a"}, {"b"}});
-//    Formula formula = Parser::parse("G(a -> F[0, 6](b))");
-//    auto monitor{MTLEventConsuming(formula)};
-//    EXPECT_TRUE(monitor.evaluate(trace).at(0).b);
-//}
-//
-// TEST(TestMTL, violated2) {
-//    Trace trace = Utils::createTrace({"a", "b"}, {{"b"}, {"a"}, {"a"}, {"a"}, {"a"}, {"a"}, {"a"}});
-//    Formula formula = Parser::parse("G(a -> F[0, 6](b))");
-//    auto monitor{MTLEventConsuming(formula)};
-//    EXPECT_FALSE(monitor.evaluate(trace).at(0).b);
-//}
+TEST(TestMTL, testGloballyFutureIntervalSatiesfied) {
+    Trace trace = Utils::createTrace({"a", "b"}, {{"b"}, {"a"}, {"a"}, {"a"}, {"a"}, {"a"}, {"b"}});
+    Formula formula = Parser::parse("G(a -> F[0, 6](b))");
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true},
+                                     Verdict{3, true}, Verdict{4, true}, Verdict{5, true}};
+    TestHydra::evalHydra(trace, formula, expSolution);
+}
 
-// TEST(TestMTL, violated4) {
-//    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"c"}, {"a"}, {"b"}, {"a"}, {"a"}});
-//    Formula formula = Parser::parse("G(a -> O[0, 4](b))");
-//    auto monitor{MTLEventConsuming(formula)};
-//    EXPECT_FALSE(monitor.evaluate(trace).at(0).b);
-//}
-//
-// TEST(TestMTL, satisfied4) {
-//    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"b"}, {"c"}, {"a"}, {"b"}, {"b"}, {"a"}, {"b"}});
-//    Formula formula = Parser::parse("G(a -> O[0, 6](b))");
-//    auto monitor{MTLEventConsuming(formula)};
-//    EXPECT_TRUE(monitor.evaluate(trace).at(0).b);
-//}
-//
-// TEST(TestMTL, satisfied5) {
-//    Trace trace = Utils::createTrace({"a"}, {{"a"}, {"a"}, {"a"}, {"a"}, {"a"}, {"a"}, {"a"}});
-//    Formula formula = Parser::parse("O[0, 6](a)");
-//    auto monitor{MTLEventConsuming(formula)};
-//    EXPECT_TRUE(monitor.evaluate(trace).at(0).b);
-//}
-//
-// TEST(TestMTL, violated5) {
-//    Trace trace = Utils::createTrace({"a"}, {{}, {"a"}, {"a"}, {"a"}, {"a"}, {"a"}, {"a"}});
-//    Formula formula = Parser::parse("O[0, 6](a)");
-//    auto monitor{MTLEventConsuming(formula)};
-//    EXPECT_FALSE(monitor.evaluate(trace).at(0).b);
-//}
-//
-// TEST(TestMTL, violated6) {
-//    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"c"}, {"a"}, {"b"}, {"a"}, {"a"}});
-//    Formula formula = Parser::parse("G(a -> P(b))");
-//    auto monitor{MTLEventConsuming(formula)};
-//    EXPECT_FALSE(monitor.evaluate(trace).at(0).b);
-//}
+TEST(TestMTL, testGloballyFutureIntervalViolated) {
+    Trace trace = Utils::createTrace({"a", "b"}, {{"b"}, {"a"}, {"a"}, {"a"}, {"a"}, {"a"}, {"a"}});
+    Formula formula = Parser::parse("G(a -> F[0, 6](b))");
+    std::vector<Verdict> expSolution{Verdict{0, true},  Verdict{1, false}, Verdict{2, false},
+                                     Verdict{3, false}, Verdict{4, false}, Verdict{5, false}};
+    TestHydra::evalHydra(trace, formula, expSolution);
+}
 
-// TEST(TestMTL, violated7) {
+TEST(TestMTL, testGloballyOnceIntervalViolated) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"c"}, {"a"}, {"b"}, {"a"}, {"a"}});
+    Formula formula = Parser::parse("G(a -> O[0, 4](b))");
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, false}, Verdict{2, true}, Verdict{3, true},
+                                     Verdict{4, true}};
+    TestHydra::evalHydra(trace, formula, expSolution);
+}
+
+TEST(TestMTL, testGloballyOnceIntervalSatisfied) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"b"}, {"c"}, {"a"}, {"b"}, {"b"}, {"a"}, {"b"}});
+    Formula formula = Parser::parse("G(a -> O[0, 6](b))");
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+                                     Verdict{4, true}};
+    TestHydra::evalHydra(trace, formula, expSolution);
+}
+
+TEST(TestMTL, testOnceIntervalSatisfied) {
+    Trace trace = Utils::createTrace({"a"}, {{"a"}, {"a"}, {"a"}, {"a"}, {"a"}, {"a"}, {"a"}});
+    Formula formula = Parser::parse("O[0, 6](a)");
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true},
+                                     Verdict{3, true}, Verdict{4, true}, Verdict{5, true}};
+    TestHydra::evalHydra(trace, formula, expSolution);
+}
+
+TEST(TestMTL, testOnceIntervalViolated) {
+    Trace trace = Utils::createTrace({"a"}, {{}, {"a"}, {"a"}, {"a"}, {"a"}, {"a"}, {"a"}});
+    Formula formula = Parser::parse("O[0, 6](a)");
+    std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, true}, Verdict{2, true},
+                                     Verdict{3, true},  Verdict{4, true}, Verdict{5, true}};
+    TestHydra::evalHydra(trace, formula, expSolution);
+}
+
+TEST(TestMTL, testGloballyPreviousViolated) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"c"}, {"a"}, {"b"}, {"a"}, {"a"}});
+    Formula formula = Parser::parse("G(a -> P(b))");
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, false}, Verdict{2, true}, Verdict{3, true},
+                                     Verdict{4, false}};
+    TestHydra::evalHydra(trace, formula, expSolution);
+}
+
+// TEST(TestMTL, testGloballyOncePreviousViolated) {
 //    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"b"}, {"b"}, {"b"}, {"c"}, {"a"}});
 //    Formula formula = Parser::parse("G(a -> O(b & P(!b)))");
-//    auto monitor{MTLEventConsuming(formula)};
-//    EXPECT_FALSE(monitor.evaluate(trace).at(0).b);
+//    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true},
+//                                     Verdict{3, true}, Verdict{4, false}};
+//    TestHydra::evalHydra(trace, formula, expSolution);
 //}
-//
+
 // TEST(TestMTL, satisfied7) {
 //    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"c"}, {"b"}, {"a", "b"}, {"c"}, {"a"}, {"b"}, {"a"}, {"a"}});
 //    Formula formula = Parser::parse("G(a -> O(b & P(!b)))");
-//    auto monitor{MTLEventConsuming(formula)};
-//    EXPECT_TRUE(monitor.evaluate(trace).at(0).b);
+//    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+//                                     Verdict{4, true}, Verdict{5, true}, Verdict{6, true}, Verdict{7, true}};
+//    TestHydra::evalHydra(trace, formula, expSolution);
 //}
-//
+
 // TEST(TestMTL, violated8) {
 //    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"c"}, {"b"}, {"b"}, {"a"}, {"c"}});
 //    Formula formula = Parser::parse("G((a & O(b & P(!b))) -> c)");
-//    auto monitor{MTLEventConsuming(formula)};
-//    EXPECT_FALSE(monitor.evaluate(trace).at(0).b);
+//    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true},
+//                                     Verdict{3, true}, Verdict{4, true}};
+//    TestHydra::evalHydra(trace, formula, expSolution);
 //}
 //
 // TEST(TestMTL, satisfied8) {
 //    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"c"}, {"b"}, {"b"}, {"c", "a"}, {"c"}});
 //    Formula formula = Parser::parse("G((a & O(b & P(!b))) -> c)");
-//    auto monitor{MTLEventConsuming(formula)};
-//    EXPECT_TRUE(monitor.evaluate(trace).at(0).b);
+//    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true},
+//                                     Verdict{3, true}, Verdict{4, true}};
+//    TestHydra::evalHydra(trace, formula, expSolution);
 //}
 //
 // TEST(TestMTL, satisfied9) {
 //    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a"}, {"a"}, {"a"}});
 //    Formula formula = Parser::parse("G((a & O(b & P(!b))) -> c)");
-//    auto monitor{MTLEventConsuming(formula)};
-//    EXPECT_TRUE(monitor.evaluate(trace).at(0).b);
+//    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}};
+//    TestHydra::evalHydra(trace, formula, expSolution);
 //}
-//
+
 // TEST(TestMTL, satisfied10) {
 //    Trace trace = Utils::createTrace(
 //        {"a", "b", "c"}, {{"c"}, {"a"}, {"a", "b"}, {"a", "b"}, {"a", "b"}, {"a", "b"}, {"a"}, {"a"}, {"c"}, {"c"}});
