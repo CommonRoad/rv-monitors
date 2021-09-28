@@ -9,8 +9,7 @@
 
 Verdict ConstantMonitor::step() {
     auto event{trace.value().getEvent(traceIdx)};
-    auto verdict{
-        Verdict(event.getTimeStep(), (*std::dynamic_pointer_cast<Constant>(formula.getExpr())).getValue())};
+    auto verdict{Verdict(event.getTimeStep(), (*std::dynamic_pointer_cast<Constant>(formula.getExpr())).getValue())};
     ++traceIdx;
     return verdict;
 }
