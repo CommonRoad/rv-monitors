@@ -13,8 +13,8 @@
 class UntilMonitor : public HydraMonitor {
   public:
     UntilMonitor(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitorF,
-                 std::shared_ptr<HydraMonitor> subMonitorG, std::shared_ptr<HydraMonitor> subMonitorH,
-                 size_t from, size_t to)
+                 std::shared_ptr<HydraMonitor> subMonitorG, std::shared_ptr<HydraMonitor> subMonitorH, size_t from,
+                 size_t to)
         : HydraMonitor(formula), subMonitorF(std::move(subMonitorF)), subMonitorG(std::move(subMonitorG)),
           subMonitorH(std::move(subMonitorH)), from(from), to(to){};
 

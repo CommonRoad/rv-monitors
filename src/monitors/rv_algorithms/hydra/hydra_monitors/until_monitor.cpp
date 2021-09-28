@@ -6,8 +6,8 @@
 //
 #include "until_monitor.h"
 
-void UntilMonitor::handleEof(){
-    if(!positionMonitorF.eof && !positionMonitorG.eof)
+void UntilMonitor::handleEof() {
+    if (!positionMonitorF.eof && !positionMonitorG.eof)
         std::runtime_error("Hydra UntilMonitor readFG error in end of line");
     positionMonitorF.tp++;
     positionMonitorF.eof = true;
@@ -16,19 +16,19 @@ void UntilMonitor::handleEof(){
 }
 
 void UntilMonitor::readFG() {
-    if(positionMonitorF.tp == -1 || positionMonitorF.ts == positionMonitorG.ts ||
+    if (positionMonitorF.tp == -1 || positionMonitorF.ts == positionMonitorG.ts ||
         positionMonitorF.tp == positionMonitorG.tp)
         std::runtime_error("Hydra UntilMonitor readFG error");
 
     subVerdictF = subMonitorF->step();
-    if(subVerdictF->ts)
+    if (subVerdictF->ts)
         positionMonitorF.update(subVerdictF->ts.value());
     else {
         handleEof();
         return;
     }
     subVerdictG = subMonitorG->step();
-    if(subVerdictG->ts)
+    if (subVerdictG->ts)
         positionMonitorG.update(subVerdictG->ts.value());
     else
         handleEof();
@@ -36,11 +36,13 @@ void UntilMonitor::readFG() {
 
 Verdict UntilMonitor::step() {
     subVerdictH = subMonitorH->step();
-    if(subVerdictH->ts)
+    if (subVerdictH->ts)
         positionMonitorH.update(subVerdictH->ts.value());
 
-    if (last_sat && last_sat->second < positionMonitorH.tp) last_sat = {};
-    if (last_viol && last_viol->second < positionMonitorH.tp) last_viol = {};
+    if (last_sat && last_sat->second < positionMonitorH.tp)
+        last_sat = {};
+    if (last_viol && last_viol->second < positionMonitorH.tp)
+        last_viol = {};
 
     if (positionMonitorF.tp == -1)
         readFG();
@@ -57,7 +59,6 @@ Verdict UntilMonitor::step() {
 
     int v = static_cast<int>(last_sat && last_sat->first - positionMonitorH.ts >= from);
     return Verdict(positionMonitorH.ts, v != 0);
-
 }
 void UntilMonitor::setTrace(const Trace &tr) {
     subMonitorF->setTrace(tr);
