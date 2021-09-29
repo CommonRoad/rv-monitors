@@ -26,3 +26,8 @@ Verdict NextMonitor::step() {
 }
 
 void NextMonitor::setTrace(const Trace &tr) { subMonitor->setTrace(tr); }
+
+void NextMonitor::reset() {
+    currentTime = {};
+    subMonitor->reset();
+}

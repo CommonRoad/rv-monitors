@@ -19,6 +19,8 @@ class PreviousMonitor : public HydraMonitor {
 
     void setTrace(const Trace &tr) override;
 
+    void reset() override;
+
   private:
     std::shared_ptr<HydraMonitor> subMonitor;
     std::optional<Verdict> currentVerdict;

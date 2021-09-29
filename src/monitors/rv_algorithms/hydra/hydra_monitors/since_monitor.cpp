@@ -41,3 +41,13 @@ void SinceMonitor::setTrace(const Trace &tr) {
     subMonitorF->setTrace(tr);
     subMonitorG->setTrace(tr);
 }
+void SinceMonitor::reset() {
+    subMonitorG->reset();
+    subMonitorF->reset();
+    subVerdictF = {};
+    subVerdictG = {};
+    last_sat = {};
+    last_viol = {};
+    positionMonitorG.reset();
+    positionMonitorF.reset();
+}

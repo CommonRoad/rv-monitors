@@ -22,6 +22,8 @@ class UntilMonitor : public HydraMonitor {
 
     void setTrace(const Trace &tr) override;
 
+    void reset() override;
+
   private:
     void readFG();
     void handleEof();

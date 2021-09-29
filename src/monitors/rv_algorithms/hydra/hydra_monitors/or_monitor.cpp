@@ -17,3 +17,7 @@ void OrMonitor::setTrace(const Trace &tr) {
     for (const auto &mon : subMonitors)
         mon->setTrace(tr);
 }
+void OrMonitor::reset() {
+    for (const auto &mon : subMonitors)
+        mon->reset();
+}

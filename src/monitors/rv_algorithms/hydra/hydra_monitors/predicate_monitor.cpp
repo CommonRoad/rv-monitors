@@ -18,3 +18,4 @@ Verdict PredicateMonitor::step() {
 }
 
 void PredicateMonitor::setTrace(const Trace &tr) { trace = tr; }
+void PredicateMonitor::reset() { traceIdx = 0; }

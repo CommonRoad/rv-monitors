@@ -17,6 +17,8 @@ class OrMonitor : public HydraMonitor {
 
     void setTrace(const Trace &trace) override;
 
+    void reset() override;
+
   private:
     std::vector<std::shared_ptr<HydraMonitor>> subMonitors;
 };

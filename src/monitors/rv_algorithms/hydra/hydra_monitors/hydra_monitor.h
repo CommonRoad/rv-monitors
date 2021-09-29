@@ -16,6 +16,12 @@ struct HeadPos {
         ts = new_ts;
         tp++;
     }
+
+    void reset() {
+        ts = 0;
+        tp = -1;
+        eof = false;
+    }
 };
 
 class HydraMonitor {
@@ -27,6 +33,8 @@ class HydraMonitor {
     const Formula &getFormula() const;
 
     virtual void setTrace(const Trace &tr) = 0;
+
+    virtual void reset() = 0;
 
   protected:
     Formula formula;

@@ -23,3 +23,7 @@ Verdict PreviousMonitor::step() {
         return Verdict(false);
 }
 void PreviousMonitor::setTrace(const Trace &tr) { subMonitor->setTrace(tr); }
+void PreviousMonitor::reset() {
+    subMonitor->reset();
+    currentVerdict = {};
+}

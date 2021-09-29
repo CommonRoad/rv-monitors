@@ -18,3 +18,4 @@ Verdict AtomicMonitor::step() {
 }
 
 void AtomicMonitor::setTrace(const Trace &tr) { trace = tr; }
+void AtomicMonitor::reset() { traceIdx = 0; }
