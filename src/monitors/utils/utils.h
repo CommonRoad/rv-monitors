@@ -5,18 +5,8 @@
 #include <optional>
 #include <vector>
 
-// enum Boolean {
-//    FALSE, TRUE, UNRESOLVED
-//};
-//
-// Boolean BooleanAnd(Boolean b1, Boolean b2);
-// Boolean BooleanOr(Boolean b1, Boolean b2);
-// Boolean BooleanImp(Boolean b1, Boolean b2);
-// Boolean BooleanEq(Boolean b1, Boolean b2);
-// Boolean BooleanNot(Boolean b);
-
 struct Verdict {
-    // Verdict(size_t ts, Boolean b) : ts(ts), b(b) {}
+
     Verdict(size_t ts, bool b) : ts(ts), b(b) {}
     Verdict(bool b) : b(b) {}
     std::optional<size_t> ts;
@@ -30,12 +20,16 @@ struct Verdict {
             return Verdict(!this->b);
     }
     Verdict operator&&(const Verdict &w) const {
-        if (this->ts != w.ts)
+        if (!this->ts or !w.ts)
+            return Verdict(false);
+        if (this->ts.value() != w.ts.value())
             throw std::runtime_error("Verdict logical and time steps do not match.");
         return Verdict(this->ts.value(), this->b && w.b);
     }
     Verdict operator||(const Verdict &w) const {
-        if (this->ts != w.ts)
+        if (!this->ts or !w.ts)
+            return Verdict(false);
+        if (this->ts.value() != w.ts.value())
             throw std::runtime_error("Verdict logical or time steps do not match.");
         return Verdict(this->ts.value(), this->b || w.b);
     }
