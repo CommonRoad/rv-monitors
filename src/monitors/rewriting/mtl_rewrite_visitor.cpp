@@ -495,5 +495,5 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitDerivingOperator(DerivingOpe
     return std::make_shared<DerivingOperator>(op);
 }
 std::shared_ptr<Expression> MtlRewriteVisitor::visitPredicate(Predicate &op, Trace &trace, size_t index) {
-    return std::shared_ptr<Predicate>();
+    return std::make_shared<Predicate>(op);
 }

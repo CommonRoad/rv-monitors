@@ -1,9 +1,10 @@
 //
-// Created by Sebastian Maierhofer on 08.06.21.
+// Created by Sebastian Maierhofer.
+// Technical University of Munich - Cyber-Physical Systems Group
+// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
+// Credits: BMW Car@TUM
 //
-
-#ifndef RV_MONITORS_SRC_MONITORS_EXPRESSION_TREE_ATOMIC_PREDICATE_H_
-#define RV_MONITORS_SRC_MONITORS_EXPRESSION_TREE_ATOMIC_PREDICATE_H_
+#pragma once
 
 #include "monitors/expression_tree/expression.h"
 #include <utility>
@@ -30,5 +31,3 @@ class Predicate : public Expression {
     std::string name;
     std::vector<std::string> parameters;
 };
-
-#endif // RV_MONITORS_SRC_MONITORS_EXPRESSION_TREE_ATOMIC_PREDICATE_H_
