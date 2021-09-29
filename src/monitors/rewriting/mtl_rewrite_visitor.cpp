@@ -338,7 +338,6 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitGlobally(Globally &op, Trace
 
     // G(a) = not F(not a) = ! (true U ! a)
     auto future{std::make_shared<Future>(std::make_shared<Not>(op.getLeft()), op.getInterval())};
-
     return std::make_shared<Not>(future);
 
     //   return std::make_shared<Globally>(op.getLeft(), op.getInterval());
@@ -371,7 +370,12 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitHistorically(Historically &o
     //    Xor::SetType_T xorSetTwo{std::make_shared<Constant>(true), once};
     //
     //    return std::make_shared<Xor>(xorSetTwo);
-    return std::make_shared<Historically>(op);
+
+    // H(a) = not O(not a)
+    auto once{std::make_shared<Once>(std::make_shared<Not>(op.getLeft()), op.getInterval())};
+    return std::make_shared<Not>(once);
+
+    //   return std::make_shared<Historically>(op);
 }
 
 std::shared_ptr<Expression> MtlRewriteVisitor::visitNextStrong(NextStrong &op, Trace &trace, size_t index) {
