@@ -39,25 +39,25 @@ Verdict UntilMonitor::step() {
     if (subVerdictH->ts)
         positionMonitorH.update(subVerdictH->ts.value());
 
-    if (last_sat && last_sat->second < positionMonitorH.tp)
-        last_sat = {};
-    if (last_viol && last_viol->second < positionMonitorH.tp)
-        last_viol = {};
+    if (lastSatisfaction && lastSatisfaction->second < positionMonitorH.tp)
+        lastSatisfaction = {};
+    if (lastViolation && lastViolation->second < positionMonitorH.tp)
+        lastViolation = {};
 
     if (positionMonitorF.tp == -1)
         readFG();
 
-    while (!positionMonitorF.eof && !last_viol && positionMonitorF.ts - positionMonitorH.ts <= to) {
+    while (!positionMonitorF.eof && !lastViolation && positionMonitorF.ts - positionMonitorH.ts <= to) {
         if (subVerdictG->b) {
-            last_sat = std::make_pair(positionMonitorF.ts, positionMonitorF.tp);
+            lastSatisfaction = std::make_pair(positionMonitorF.ts, positionMonitorF.tp);
         }
         if (!subVerdictF->b) {
-            last_viol = std::make_pair(positionMonitorF.ts, positionMonitorF.tp);
+            lastViolation = std::make_pair(positionMonitorF.ts, positionMonitorF.tp);
         }
         readFG();
     }
 
-    int v = static_cast<int>(last_sat && last_sat->first - positionMonitorH.ts >= from);
+    int v = static_cast<int>(lastSatisfaction && lastSatisfaction->first - positionMonitorH.ts >= from);
     return Verdict(positionMonitorH.ts, v != 0);
 }
 void UntilMonitor::setTrace(const Trace &tr) {
@@ -72,8 +72,8 @@ void UntilMonitor::reset() {
     subVerdictF = {};
     subVerdictG = {};
     subVerdictH = {};
-    last_sat = {};
-    last_viol = {};
+    lastSatisfaction = {};
+    lastViolation = {};
     positionMonitorG.reset();
     positionMonitorF.reset();
     positionMonitorH.reset();
