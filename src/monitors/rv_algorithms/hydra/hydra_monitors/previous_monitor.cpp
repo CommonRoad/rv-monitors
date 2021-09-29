@@ -9,16 +9,17 @@
 Verdict PreviousMonitor::step() {
     Verdict subVerdict = subMonitor->step();
 
-    if (currentVerdict->ts) {
+    if (currentVerdict and subVerdict.ts) {
         Verdict lastSubVerdict = *currentVerdict;
         currentVerdict = subVerdict;
         if (Utils::isInInterval(subVerdict.ts.value() - lastSubVerdict.ts.value(), from, to))
             return Verdict(subVerdict.ts.value(), lastSubVerdict.b);
         else
             return Verdict(subVerdict.ts.value(), false);
-    } else {
+    } else if (subVerdict.ts) {
         currentVerdict = subVerdict;
         return Verdict(subVerdict.ts.value(), false);
-    }
+    } else
+        return Verdict(false);
 }
 void PreviousMonitor::setTrace(const Trace &tr) { subMonitor->setTrace(tr); }
