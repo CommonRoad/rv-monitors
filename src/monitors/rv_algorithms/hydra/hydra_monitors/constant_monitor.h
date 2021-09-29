@@ -19,6 +19,8 @@ class ConstantMonitor : public HydraMonitor {
 
     void setTrace(const Trace &trace) override;
 
+    void reset() override;
+
   private:
     size_t traceIdx{0};
     std::optional<Trace> trace;

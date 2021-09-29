@@ -17,6 +17,8 @@ class NegationMonitor : public HydraMonitor {
 
     void setTrace(const Trace &trace) override;
 
+    void reset() override;
+
   private:
     std::shared_ptr<HydraMonitor> subMonitor;
 };

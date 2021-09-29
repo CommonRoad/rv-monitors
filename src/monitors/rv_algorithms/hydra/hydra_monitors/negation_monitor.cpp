@@ -9,3 +9,4 @@
 Verdict NegationMonitor::step() { return !subMonitor->step(); }
 
 void NegationMonitor::setTrace(const Trace &tr) { subMonitor->setTrace(tr); }
+void NegationMonitor::reset() { subMonitor->reset(); }

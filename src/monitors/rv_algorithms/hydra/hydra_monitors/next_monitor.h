@@ -19,6 +19,8 @@ class NextMonitor : public HydraMonitor {
 
     void setTrace(const Trace &tr) override;
 
+    void reset() override;
+
   private:
     std::shared_ptr<HydraMonitor> subMonitor;
     size_t from, to;

@@ -65,3 +65,16 @@ void UntilMonitor::setTrace(const Trace &tr) {
     subMonitorG->setTrace(tr);
     subMonitorH->setTrace(tr);
 }
+void UntilMonitor::reset() {
+    subMonitorG->reset();
+    subMonitorF->reset();
+    subMonitorH->reset();
+    subVerdictF = {};
+    subVerdictG = {};
+    subVerdictH = {};
+    last_sat = {};
+    last_viol = {};
+    positionMonitorG.reset();
+    positionMonitorF.reset();
+    positionMonitorH.reset();
+}

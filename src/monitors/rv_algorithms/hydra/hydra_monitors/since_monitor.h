@@ -21,6 +21,8 @@ class SinceMonitor : public HydraMonitor {
 
     void setTrace(const Trace &tr) override;
 
+    void reset() override;
+
   private:
     std::shared_ptr<HydraMonitor> subMonitorF, subMonitorG;
     std::optional<Verdict> subVerdictF, subVerdictG;

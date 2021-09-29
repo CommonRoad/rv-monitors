@@ -19,3 +19,4 @@ Verdict ConstantMonitor::step() {
 }
 
 void ConstantMonitor::setTrace(const Trace &tr) { trace = tr; }
+void ConstantMonitor::reset() { traceIdx = 0; }
