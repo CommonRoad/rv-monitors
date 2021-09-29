@@ -16,7 +16,7 @@
 #include <iostream>
 #include <vector>
 
-enum AlgorithmType { dynamic_programming_ltl, event_consuming_ltl, mt_fsm, btt_fsm, event_consuming_mtl };
+enum AlgorithmType { dynamic_programming_ltl, event_consuming_ltl, mt_fsm, btt_fsm, hydra_mtl };
 
 class RVMonitor {
   public:

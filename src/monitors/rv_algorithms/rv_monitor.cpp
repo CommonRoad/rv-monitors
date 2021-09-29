@@ -5,9 +5,9 @@
 // Credits: BMW Car@TUM
 //
 #include "rv_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra.h"
 #include "monitors/rv_algorithms/ltl_event_consuming/event_consuming.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
-#include "monitors/rv_algorithms/mtl_event_consuming/mtl_event_consuming.h"
 #include "monitors/utils/utils.h"
 
 std::vector<Verdict> RVMonitor::verify(Trace trace) {
@@ -36,8 +36,8 @@ std::ostream &operator<<(std::ostream &os, const AlgorithmType &algorithm) {
     case btt_fsm:
         os << "BTT-FSM*";
         break;
-    case event_consuming_mtl:
-        os << "EventConsuming-MTL";
+    case hydra_mtl:
+        os << "Hydra-MTL";
         break;
     }
     return os;
@@ -48,8 +48,8 @@ AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
         return dynamic_programming_ltl;
     } else if (algorithmString == "event-consuming-ltl") {
         return event_consuming_ltl;
-    } else if (algorithmString == "event-consuming-mtl") {
-        return event_consuming_mtl;
+    } else if (algorithmString == "hydra-mtl") {
+        return hydra_mtl;
     } else if (algorithmString == "mt-fsm*") {
         return mt_fsm;
     } else if (algorithmString == "btt-fsm*") {
@@ -77,8 +77,8 @@ RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past,
     case btt_fsm:
         monitor = std::make_unique<BttFsm>(formula, past);
         break;
-    case event_consuming_mtl:
-        monitor = std::make_unique<MTLEventConsuming>(formula);
+    case hydra_mtl:
+        monitor = std::make_unique<Hydra>(formula);
         break;
     }
 }

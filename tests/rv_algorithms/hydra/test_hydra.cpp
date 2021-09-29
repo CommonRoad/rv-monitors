@@ -343,3 +343,10 @@ TEST(TestHydra, testGloballyImplicationHistoricallyViolatedOnce) {
                                      Verdict{3, true}, Verdict{4, true}, Verdict{5, true}};
     TestHydra::evalHydra(trace, formula, expSolution);
 }
+
+TEST(TestHydra, testGloballyNext) {
+    Trace trace = Utils::createTrace({"a", "b"}, {{"b"}, {"a"}, {"b"}});
+    Formula formula = Parser::parse("G(b -> (X(a)))");
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, false}};
+    TestHydra::evalHydra(trace, formula, expSolution);
+}
