@@ -32,6 +32,6 @@ class UntilMonitor : public HydraMonitor {
     std::optional<Verdict> subVerdictF, subVerdictG, subVerdictH;
     size_t from, to;
     HeadPos positionMonitorF, positionMonitorG, positionMonitorH;
-    std::optional<std::pair<size_t, int>> last_sat;
-    std::optional<std::pair<size_t, int>> last_viol;
+    std::optional<std::pair<size_t, int>> lastSatisfaction;
+    std::optional<std::pair<size_t, int>> lastViolation;
 };
