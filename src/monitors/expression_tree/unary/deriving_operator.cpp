@@ -15,6 +15,6 @@ Event DerivingOperator::getEvent() { return trace.getEvent(index); }
 std::string DerivingOperator::to_string() const {
     return "D(" + getLeft()->to_string(); //+ trace.getTrace().at(index).to_string() + ")";
 }
-std::shared_ptr<HydraMonitor> DerivingOperator::accept(HydraCreationVisitor &visitor) {
+std::shared_ptr<HydraMonitor> DerivingOperator::accept(HydraCreationVisitor &visitor, size_t *maxId) {
     return std::shared_ptr<HydraMonitor>();
 }

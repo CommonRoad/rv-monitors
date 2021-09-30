@@ -9,4 +9,6 @@ std::shared_ptr<Expression> Since::clone() { return std::make_shared<Since>(*thi
 std::shared_ptr<Expression> Since::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
     return visitor.visitSince(*this, trace, index);
 }
-std::shared_ptr<HydraMonitor> Since::accept(HydraCreationVisitor &visitor) { return visitor.visitSince(*this); }
+std::shared_ptr<HydraMonitor> Since::accept(HydraCreationVisitor &visitor, size_t *maxId) {
+    return visitor.visitSince(*this, maxId);
+}

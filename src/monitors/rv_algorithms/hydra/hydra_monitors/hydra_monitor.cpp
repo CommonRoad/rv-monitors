@@ -9,4 +9,4 @@
 #include <utility>
 const Formula &HydraMonitor::getFormula() const { return formula; }
 
-HydraMonitor::HydraMonitor(Formula formula) : formula(std::move(formula)) {}
+HydraMonitor::HydraMonitor(Formula formula, size_t *id) : formula(std::move(formula)), id((*id)++) {}

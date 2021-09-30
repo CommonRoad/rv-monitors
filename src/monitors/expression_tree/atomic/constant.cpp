@@ -8,6 +8,8 @@ std::shared_ptr<Expression> Constant::accept(ExpressionVisitor &visitor, Trace &
     return visitor.visitConstant(*this, trace, index);
 }
 
-std::shared_ptr<HydraMonitor> Constant::accept(HydraCreationVisitor &visitor) { return visitor.visitConstant(*this); }
+std::shared_ptr<HydraMonitor> Constant::accept(HydraCreationVisitor &visitor, size_t *maxId) {
+    return HydraCreationVisitor::visitConstant(*this, maxId);
+}
 
 bool Constant::getValue() const { return value; }

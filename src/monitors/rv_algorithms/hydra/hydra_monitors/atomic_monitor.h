@@ -10,7 +10,7 @@
 
 class AtomicMonitor : public HydraMonitor {
   public:
-    AtomicMonitor(Formula formula) : HydraMonitor(std::move(formula)){};
+    AtomicMonitor(const Formula &formula, size_t *id) : HydraMonitor(formula, id){};
 
     Verdict step() override;
 
