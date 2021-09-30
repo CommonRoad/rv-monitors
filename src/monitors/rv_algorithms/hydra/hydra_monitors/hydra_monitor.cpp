@@ -10,3 +10,28 @@
 const Formula &HydraMonitor::getFormula() const { return formula; }
 
 HydraMonitor::HydraMonitor(Formula formula, size_t *id) : formula(std::move(formula)), id((*id)++) {}
+
+void HydraMonitor::reset() {
+    for (auto& [_, id] : traceIdx)
+        id = 0;
+}
+
+void HydraMonitor::registerParent(size_t parentId) { traceIdx[parentId] = 0; }
+
+size_t HydraMonitor::getMaxTraceIdx() {
+    if(traceIdx.empty())
+        return 0;
+    else
+        return std::max_element(traceIdx.begin(), traceIdx.end(),
+                                [](const std::pair<size_t ,size_t>& a, const std::pair<size_t ,size_t>& b)->bool
+                                { return a.second < b.second; } )->first;
+}
+
+Verdict HydraMonitor::step(size_t parentId) {
+    if(traceIdx[parentId] <= getMaxTraceIdx()) {
+        auto verdict{concreteStep(parentId)};
+        verdictHistory.push_back(verdict);
+        return verdict;
+    } else
+        return verdictHistory[traceIdx[parentId]];
+}

@@ -6,7 +6,7 @@
 //
 #include "and_monitor.h"
 
-Verdict AndMonitor::step(size_t parentId) {
+Verdict AndMonitor::concreteStep(size_t parentId) {
     Verdict verdict{subMonitors.at(0)->step(id)};
     for (size_t i{1}; i < subMonitors.size(); ++i)
         verdict = verdict && subMonitors.at(i)->step(id);
@@ -17,7 +17,9 @@ void AndMonitor::setTrace(const Trace &tr) {
     for (const auto &mon : subMonitors)
         mon->setTrace(tr);
 }
+
 void AndMonitor::reset() {
+    HydraMonitor::reset();
     for (const auto &mon : subMonitors)
         mon->reset();
 }

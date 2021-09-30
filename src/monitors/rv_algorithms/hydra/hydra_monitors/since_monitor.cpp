@@ -6,7 +6,7 @@
 //
 #include "since_monitor.h"
 
-Verdict SinceMonitor::step(size_t parentId) {
+Verdict SinceMonitor::concreteStep(size_t parentId) {
     subVerdictF = subMonitorF->step(id);
     if (subVerdictF->ts)
         positionMonitorF.update(subVerdictF->ts.value());
@@ -42,6 +42,7 @@ void SinceMonitor::setTrace(const Trace &tr) {
     subMonitorG->setTrace(tr);
 }
 void SinceMonitor::reset() {
+    HydraMonitor::reset();
     subMonitorG->reset();
     subMonitorF->reset();
     subVerdictF = {};
@@ -51,3 +52,4 @@ void SinceMonitor::reset() {
     positionMonitorG.reset();
     positionMonitorF.reset();
 }
+

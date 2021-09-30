@@ -36,11 +36,8 @@ class Hydra : public MonitorInterface {
 
   private:
     void createMonitor(const std::vector<Formula> &formulas);
-    void combineMonitors();
     void resetMonitors();
     void setTraceMonitors(const Trace &tr);
-    //    std::shared_ptr<HydraMonitor> traverseMonitor(std::map<std::string, std::shared_ptr<HydraMonitor>> baseline,
-    //                                                  const std::shared_ptr<HydraMonitor>& currentMonitor);
 
     std::vector<std::shared_ptr<HydraMonitor>> monitors;
     size_t maxID{1};

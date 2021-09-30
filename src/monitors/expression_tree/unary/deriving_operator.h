@@ -39,7 +39,7 @@ class DerivingOperator : public Unary {
 
     [[nodiscard]] std::string to_string() const override;
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor, size_t *maxId) override;
+    [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline, size_t parentId) override;
 };
 
 #endif // RV_MONITORS_DERIVING_OPERATOR_H

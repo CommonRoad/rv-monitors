@@ -7,7 +7,7 @@
 #include "next_monitor.h"
 #include <iostream>
 
-Verdict NextMonitor::step(size_t parentId) {
+Verdict NextMonitor::concreteStep(size_t parentId) {
     do {
         auto subVerdict = subMonitor->step(id);
         if (subVerdict.ts and currentTime) {
@@ -28,6 +28,7 @@ Verdict NextMonitor::step(size_t parentId) {
 void NextMonitor::setTrace(const Trace &tr) { subMonitor->setTrace(tr); }
 
 void NextMonitor::reset() {
+    HydraMonitor::reset();
     currentTime = {};
     subMonitor->reset();
 }

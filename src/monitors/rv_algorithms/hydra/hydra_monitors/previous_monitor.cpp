@@ -6,7 +6,7 @@
 //
 #include "previous_monitor.h"
 
-Verdict PreviousMonitor::step(size_t parentId) {
+Verdict PreviousMonitor::concreteStep(size_t parentId) {
     Verdict subVerdict = subMonitor->step(id);
 
     if (currentVerdict and subVerdict.ts) {
@@ -23,7 +23,9 @@ Verdict PreviousMonitor::step(size_t parentId) {
         return Verdict(false);
 }
 void PreviousMonitor::setTrace(const Trace &tr) { subMonitor->setTrace(tr); }
+
 void PreviousMonitor::reset() {
+    HydraMonitor::reset();
     subMonitor->reset();
     currentVerdict = {};
 }
