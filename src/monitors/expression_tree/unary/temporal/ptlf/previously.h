@@ -25,7 +25,7 @@ class Previously : public Unary, public TemporalOperator {
         return visitor.visitPreviously(*this, trace, index);
     }
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override {
-        return visitor.visitPreviously(*this);
+    [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor, size_t *maxId) override {
+        return visitor.visitPreviously(*this, maxId);
     }
 };

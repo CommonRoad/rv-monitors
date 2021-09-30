@@ -6,4 +6,6 @@ std::shared_ptr<Expression> Until::accept(ExpressionVisitor &visitor, Trace &tra
     return visitor.visitUntil(*this, trace, index);
 }
 
-std::shared_ptr<HydraMonitor> Until::accept(HydraCreationVisitor &visitor) { return visitor.visitUntil(*this); }
+std::shared_ptr<HydraMonitor> Until::accept(HydraCreationVisitor &visitor, size_t *maxId) {
+    return visitor.visitUntil(*this, maxId);
+}

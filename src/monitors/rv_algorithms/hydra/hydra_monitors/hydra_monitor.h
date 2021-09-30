@@ -26,7 +26,7 @@ struct HeadPos {
 
 class HydraMonitor {
   public:
-    HydraMonitor(Formula formula);
+    HydraMonitor(Formula formula, size_t *id);
 
     virtual Verdict step() = 0;
 
@@ -40,5 +40,5 @@ class HydraMonitor {
     Formula formula;
     std::map<std::string, size_t> parentHeads;
     std::vector<bool> verdictHistory;
-    std::optional<std::string> id;
+    size_t id;
 };

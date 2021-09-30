@@ -10,8 +10,8 @@
 
 class NegationMonitor : public HydraMonitor {
   public:
-    NegationMonitor(Formula formula, std::shared_ptr<HydraMonitor> subMonitor)
-        : HydraMonitor(std::move(formula)), subMonitor(std::move(subMonitor)){};
+    NegationMonitor(Formula formula, std::shared_ptr<HydraMonitor> subMonitor, size_t *maxId)
+        : HydraMonitor(std::move(formula), maxId), subMonitor(std::move(subMonitor)){};
 
     Verdict step() override;
 

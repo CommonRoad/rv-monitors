@@ -12,7 +12,9 @@ std::shared_ptr<Expression> Predicate::accept(ExpressionVisitor &visitor, Trace 
     return visitor.visitPredicate(*this, trace, index);
 }
 
-std::shared_ptr<HydraMonitor> Predicate::accept(HydraCreationVisitor &visitor) { return visitor.visitPredicate(*this); }
+std::shared_ptr<HydraMonitor> Predicate::accept(HydraCreationVisitor &visitor, size_t *maxId) {
+    return HydraCreationVisitor::visitPredicate(*this, maxId);
+}
 
 const std::string &Predicate::getName() const { return name; }
 

@@ -10,8 +10,8 @@
 
 class AndMonitor : public HydraMonitor {
   public:
-    AndMonitor(Formula formula, std::vector<std::shared_ptr<HydraMonitor>> subMonitors)
-        : HydraMonitor(std::move(formula)), subMonitors(std::move(subMonitors)){};
+    AndMonitor(Formula formula, std::vector<std::shared_ptr<HydraMonitor>> subMonitors, size_t *maxId)
+        : HydraMonitor(std::move(formula), maxId), subMonitors(std::move(subMonitors)){};
 
     Verdict step() override;
 

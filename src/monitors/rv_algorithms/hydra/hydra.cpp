@@ -45,7 +45,7 @@ void Hydra::createMonitor(const std::vector<Formula> &formulas) {
         MtlRewriteVisitor rw;
         rw.rewrite(formulaCopy);
         HydraCreationVisitor hc;
-        monitors.push_back(hc.createMonitor(formulaCopy));
+        monitors.push_back(hc.createMonitor(formulaCopy, &maxID));
     }
 
     // combineMonitors();
