@@ -8,6 +8,8 @@ std::shared_ptr<Expression> Atomic::accept(ExpressionVisitor &visitor, Trace &tr
     return visitor.visitAtomic(*this, trace, index);
 }
 
-std::shared_ptr<HydraMonitor> Atomic::accept(HydraCreationVisitor &visitor, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline, size_t parentId) {
+std::shared_ptr<HydraMonitor> Atomic::accept(HydraCreationVisitor &visitor, size_t *maxId,
+                                             std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline,
+                                             size_t parentId) {
     return HydraCreationVisitor::visitAtomic(*this, maxId, baseline, parentId);
 }

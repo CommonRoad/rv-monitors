@@ -52,4 +52,3 @@ void SinceMonitor::reset() {
     positionMonitorG.reset();
     positionMonitorF.reset();
 }
-

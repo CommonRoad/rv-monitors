@@ -5,6 +5,8 @@ std::shared_ptr<Expression> Not::clone() { return std::make_shared<Not>(*this); 
 std::shared_ptr<Expression> Not::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
     return visitor.visitNot(*this, trace, index);
 }
-std::shared_ptr<HydraMonitor> Not::accept(HydraCreationVisitor &visitor, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline, size_t parentId) {
+std::shared_ptr<HydraMonitor> Not::accept(HydraCreationVisitor &visitor, size_t *maxId,
+                                          std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline,
+                                          size_t parentId) {
     return visitor.visitNot(*this, maxId, baseline, parentId);
 }

@@ -18,5 +18,3 @@ Verdict PredicateMonitor::concreteStep(size_t parentId) {
 }
 
 void PredicateMonitor::setTrace(const Trace &tr) { trace = tr; }
-
-

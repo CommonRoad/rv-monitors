@@ -70,25 +70,43 @@ class Predicate;
 class HydraCreationVisitor {
   public:
     std::shared_ptr<HydraMonitor> createMonitor(Formula &formula, size_t *maxId,
-                                                std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline, size_t parentId);
+                                                std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline,
+                                                size_t parentId);
 
-    [[nodiscard]] static std::shared_ptr<HydraMonitor> visitAtomic(Atomic &op, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline, size_t parentId);
+    [[nodiscard]] static std::shared_ptr<HydraMonitor>
+    visitAtomic(Atomic &op, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline,
+                size_t parentId);
 
-    [[nodiscard]] static std::shared_ptr<HydraMonitor> visitConstant(Constant &op, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline, size_t parentId);
+    [[nodiscard]] static std::shared_ptr<HydraMonitor>
+    visitConstant(Constant &op, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline,
+                  size_t parentId);
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> visitPreviously(Previously &op, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline, size_t parentId);
+    [[nodiscard]] std::shared_ptr<HydraMonitor>
+    visitPreviously(Previously &op, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline,
+                    size_t parentId);
 
-    [[nodiscard]] static std::shared_ptr<HydraMonitor> visitPredicate(Predicate &op, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline, size_t parentId);
+    [[nodiscard]] static std::shared_ptr<HydraMonitor>
+    visitPredicate(Predicate &op, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline,
+                   size_t parentId);
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> visitNext(NextStrong &op, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline, size_t parentId);
+    [[nodiscard]] std::shared_ptr<HydraMonitor>
+    visitNext(NextStrong &op, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline,
+              size_t parentId);
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> visitSince(Since &op, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline, size_t parentId);
+    [[nodiscard]] std::shared_ptr<HydraMonitor>
+    visitSince(Since &op, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline,
+               size_t parentId);
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> visitUntil(Until &op, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline, size_t parentId);
+    [[nodiscard]] std::shared_ptr<HydraMonitor>
+    visitUntil(Until &op, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline,
+               size_t parentId);
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> visitOr(Or &op, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline, size_t parentId);
+    [[nodiscard]] std::shared_ptr<HydraMonitor>
+    visitOr(Or &op, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline, size_t parentId);
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> visitAnd(And &op, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline, size_t parentId);
+    [[nodiscard]] std::shared_ptr<HydraMonitor>
+    visitAnd(And &op, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline, size_t parentId);
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> visitNot(Not &op, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline, size_t parentId);
+    [[nodiscard]] std::shared_ptr<HydraMonitor>
+    visitNot(Not &op, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline, size_t parentId);
 };

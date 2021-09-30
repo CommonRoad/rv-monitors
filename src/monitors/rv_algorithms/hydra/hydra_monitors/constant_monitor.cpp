@@ -19,4 +19,3 @@ Verdict ConstantMonitor::concreteStep(size_t parentId) {
 }
 
 void ConstantMonitor::setTrace(const Trace &tr) { trace = tr; }
-
