@@ -12,7 +12,7 @@ class PredicateMonitor : public HydraMonitor {
   public:
     PredicateMonitor(Formula formula, size_t *id) : HydraMonitor(std::move(formula), id){};
 
-    Verdict step() override;
+    Verdict step(size_t parentId) override;
 
     void setTrace(const Trace &trace) override;
 

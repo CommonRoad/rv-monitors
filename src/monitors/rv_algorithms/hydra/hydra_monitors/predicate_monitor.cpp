@@ -6,7 +6,7 @@
 //
 #include "predicate_monitor.h"
 
-Verdict PredicateMonitor::step() {
+Verdict PredicateMonitor::step(size_t parentId) {
     if (traceIdx < trace.value().getLength()) {
         auto event{trace.value().getEvent(traceIdx)};
         auto verdict{

@@ -15,7 +15,7 @@ class ConstantMonitor : public HydraMonitor {
   public:
     ConstantMonitor(Formula formula, size_t *maxId) : HydraMonitor(std::move(formula), maxId){};
 
-    Verdict step() override;
+    Verdict step(size_t parentId) override;
 
     void setTrace(const Trace &trace) override;
 

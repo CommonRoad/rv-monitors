@@ -6,8 +6,8 @@
 //
 #include "previous_monitor.h"
 
-Verdict PreviousMonitor::step() {
-    Verdict subVerdict = subMonitor->step();
+Verdict PreviousMonitor::step(size_t parentId) {
+    Verdict subVerdict = subMonitor->step(id);
 
     if (currentVerdict and subVerdict.ts) {
         Verdict lastSubVerdict = *currentVerdict;

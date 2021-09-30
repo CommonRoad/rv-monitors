@@ -17,7 +17,7 @@ class SinceMonitor : public HydraMonitor {
         : HydraMonitor(formula, maxId), subMonitorF(std::move(subMonitorF)), subMonitorG(std::move(subMonitorG)),
           from(from), to(to){};
 
-    Verdict step() override;
+    Verdict step(size_t parentId) override;
 
     void setTrace(const Trace &tr) override;
 

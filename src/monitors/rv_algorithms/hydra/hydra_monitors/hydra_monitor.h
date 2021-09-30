@@ -28,7 +28,7 @@ class HydraMonitor {
   public:
     HydraMonitor(Formula formula, size_t *id);
 
-    virtual Verdict step() = 0;
+    virtual Verdict step(size_t parentId) = 0;
 
     const Formula &getFormula() const;
 

@@ -6,15 +6,15 @@
 //
 #include "since_monitor.h"
 
-Verdict SinceMonitor::step() {
-    subVerdictF = subMonitorF->step();
+Verdict SinceMonitor::step(size_t parentId) {
+    subVerdictF = subMonitorF->step(id);
     if (subVerdictF->ts)
         positionMonitorF.update(subVerdictF->ts.value());
     else if (!subVerdictF->b)
         lastViolation = std::make_pair(positionMonitorF.ts, positionMonitorF.tp);
 
     if (positionMonitorG.tp == -1) {
-        subVerdictG = subMonitorG->step();
+        subVerdictG = subMonitorG->step(id);
         if (subVerdictG->ts)
             positionMonitorG.update(subVerdictG->ts.value());
     }
@@ -24,7 +24,7 @@ Verdict SinceMonitor::step() {
         if (subVerdictG->b)
             lastSatisfaction = std::make_pair(positionMonitorG.ts, positionMonitorG.tp);
 
-        subVerdictG = subMonitorG->step();
+        subVerdictG = subMonitorG->step(id);
         if (subVerdictG->ts)
             positionMonitorG.update(subVerdictG->ts.value());
         else {
