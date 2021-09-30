@@ -12,7 +12,7 @@ class AtomicMonitor : public HydraMonitor {
   public:
     AtomicMonitor(const Formula &formula, size_t *id) : HydraMonitor(formula, id){};
 
-    Verdict step() override;
+    Verdict step(size_t parentId) override;
 
     void setTrace(const Trace &trace) override;
 

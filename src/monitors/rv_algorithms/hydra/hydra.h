@@ -43,5 +43,5 @@ class Hydra : public MonitorInterface {
     //                                                  const std::shared_ptr<HydraMonitor>& currentMonitor);
 
     std::vector<std::shared_ptr<HydraMonitor>> monitors;
-    size_t maxID{0};
+    size_t maxID{1};
 };

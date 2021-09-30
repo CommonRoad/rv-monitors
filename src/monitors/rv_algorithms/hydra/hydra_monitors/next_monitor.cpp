@@ -7,9 +7,9 @@
 #include "next_monitor.h"
 #include <iostream>
 
-Verdict NextMonitor::step() {
+Verdict NextMonitor::step(size_t parentId) {
     do {
-        auto subVerdict = subMonitor->step();
+        auto subVerdict = subMonitor->step(id);
         if (subVerdict.ts and currentTime) {
             size_t lastTime = *currentTime;
             currentTime = subVerdict.ts;

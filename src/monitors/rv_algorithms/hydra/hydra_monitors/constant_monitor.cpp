@@ -7,7 +7,7 @@
 #include "constant_monitor.h"
 #include <monitors/expression_tree/atomic/constant.h>
 
-Verdict ConstantMonitor::step() {
+Verdict ConstantMonitor::step(size_t parentId) {
     if (traceIdx < trace.value().getLength()) {
         auto event{trace.value().getEvent(traceIdx)};
         auto verdict{
