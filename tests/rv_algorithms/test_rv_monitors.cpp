@@ -16,10 +16,10 @@ void TestRVMonitors::SetUp() {
 std::vector<Verdict> TestRVMonitors::executeRVMonitor(AlgorithmType algorithm) {
     Trace tr{*trace};
     Formula fm{*formula};
-    auto monitor{RVMonitor(algorithm, fm, false, false)};
+    auto monitor{RVMonitor(algorithm, {fm}, false, false)};
     std::cout << algorithm;
 
-    return monitor.verify(tr);
+    return monitor.verify(tr)[fm.getId()];
 }
 
 TEST_F(TestRVMonitors, EventConsumingLTL) {
@@ -72,7 +72,7 @@ TEST_F(TestRVMonitors, StringToAlgorithm) {
 TEST_F(TestRVMonitors, PerformanceMeasurement) {
     Trace tr{*trace};
     Formula fm{*formula};
-    auto monitor{RVMonitor(AlgorithmType::dynamic_programming_ltl, fm, false, true)};
+    auto monitor{RVMonitor(AlgorithmType::dynamic_programming_ltl, {fm}, false, true)};
 
     monitor.verify(tr);
 

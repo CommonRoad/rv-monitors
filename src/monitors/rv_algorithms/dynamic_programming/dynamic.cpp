@@ -15,8 +15,8 @@
 #include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
 #include <monitors/utils/lazy_bool.h>
 
-DynamicProgrammingLTL::DynamicProgrammingLTL(const Formula &formula, bool pastEvaluation)
-    : MonitorInterface((formula)), pastEvaluation(pastEvaluation) {}
+DynamicProgrammingLTL::DynamicProgrammingLTL(const std::vector<Formula> &formulas, bool pastEvaluation)
+    : MonitorInterface((formulas)), pastEvaluation(pastEvaluation) {}
 
 void DynamicProgrammingLTL::initialize(size_t j, std::vector<bool> &initVector,
                                        std::map<std::string, lazy_bool> &eventMap,
@@ -124,11 +124,13 @@ void DynamicProgrammingLTL::update(size_t j, std::vector<bool> &updateVector, st
     }
 }
 
-std::vector<Verdict> DynamicProgrammingLTL::evaluate(Trace &trace) {
-    if (!pastEvaluation) {
-        return {Verdict{0, checkTraceDynamicallyFuture(trace)}};
-    }
-    return {Verdict{0, checkTraceDynamicallyPast(trace)}};
+std::map<std::string, std::vector<Verdict>> DynamicProgrammingLTL::evaluate(Trace &trace) {
+    std::map<std::string, std::vector<Verdict>> result;
+    if (!pastEvaluation)
+        result[formulas.at(0).getId()] = {Verdict{0, checkTraceDynamicallyFuture(trace)}};
+    else
+        result[formulas.at(0).getId()] = {Verdict{0, checkTraceDynamicallyPast(trace)}};
+    return result;
 }
 
 std::vector<bool> DynamicProgrammingLTL::initializePre(Event &event,
@@ -185,7 +187,7 @@ bool DynamicProgrammingLTL::checkTraceDynamicallyPast(Trace &trace) {
     if (trace.getTrace().empty()) {
         return false;
     }
-    std::vector<std::shared_ptr<Expression>> subformulae = Utils::subformulasBreadthFirstOrder(formula);
+    std::vector<std::shared_ptr<Expression>> subformulae = Utils::subformulasBreadthFirstOrder(formulas.at(0));
     std::vector<bool> pre = initializePre(trace.getTraceRef()[0], subformulae);
     for (size_t i = 1; i < trace.getTrace().size(); ++i) {
         pre = updateNowPast(trace.getTraceRef()[i], subformulae, pre);
@@ -275,7 +277,7 @@ bool DynamicProgrammingLTL::checkTraceDynamicallyFuture(Trace &trace) {
     if (trace.getTrace().empty()) {
         return false;
     }
-    std::vector<std::shared_ptr<Expression>> subformulas = Utils::subformulasBreadthFirstOrder(formula);
+    std::vector<std::shared_ptr<Expression>> subformulas = Utils::subformulasBreadthFirstOrder(formulas.at(0));
     std::vector<bool> next = initializeNext(trace.getTraceRef()[trace.getLength() - 1], subformulas);
     if (!next[0]) {
         return false;

@@ -8,18 +8,18 @@ TEST(TestBTT_FSMPast, violatedEnd) {
     Trace trace =
         Utils::createTrace({"green", "yellow", "red"}, {{"green"}, {"red"}, {"yellow"}, {"green"}, {"red"}, {"green"}});
     Formula formula = Parser::parse("G(green -> P(yellow))");
-    auto btt = BttFsm(formula, true);
+    auto btt = BttFsm({formula}, true);
 
-    EXPECT_FALSE(btt.evaluate(trace).at(0).b);
+    EXPECT_FALSE(btt.evaluate(trace)[formula.getId()].at(0).b);
 }
 
 TEST(TestBTT_FSMPast, violatedBeginning) {
     Trace trace = Utils::createTrace({"green", "yellow", "red"},
                                      {{"red"}, {"green"}, {"red"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}});
     Formula formula = Parser::parse("G(green -> P(yellow))");
-    auto btt = BttFsm(formula, true);
+    auto btt = BttFsm({formula}, true);
 
-    EXPECT_FALSE(btt.evaluate(trace).at(0).b);
+    EXPECT_FALSE(btt.evaluate(trace)[formula.getId()].at(0).b);
 }
 
 TEST(TestBTT_FSMPast, satisfied) {
@@ -27,7 +27,7 @@ TEST(TestBTT_FSMPast, satisfied) {
         Utils::createTrace({"green", "yellow", "red"},
                            {{"yellow"}, {"green"}, {"red"}, {"yellow"}, {"green"}, {"red"}, {"yellow"}, {"green"}});
     Formula formula = Parser::parse("G(green -> P(yellow))");
-    auto btt = BttFsm(formula, true);
+    auto btt = BttFsm({formula}, true);
 
-    EXPECT_TRUE(btt.evaluate(trace).at(0).b);
+    EXPECT_TRUE(btt.evaluate(trace)[formula.getId()].at(0).b);
 }

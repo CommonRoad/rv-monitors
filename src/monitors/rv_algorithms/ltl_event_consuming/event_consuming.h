@@ -12,7 +12,7 @@ class EventConsumingLTL : public MonitorInterface {
     bool pastEvaluation;
 
   public:
-    EventConsumingLTL(Formula formula, bool pastEvaluation = false);
+    EventConsumingLTL(const std::vector<Formula> &formulas, bool pastEvaluation = false);
     /**
      * Monitors a formula in LTLf on a trace.
      * @param formula Formula.
@@ -36,7 +36,7 @@ class EventConsumingLTL : public MonitorInterface {
      * @return List of verdicts for each time step of the trace. If the length of the vector is 1,
      * the runtime verification algorithm can only provide a global verdict for the complete trace.
      */
-    std::vector<Verdict> evaluate(Trace &trace) override;
+    std::map<std::string, std::vector<Verdict>> evaluate(Trace &trace) override;
 
     /**
      * to_string() function.

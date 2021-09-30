@@ -17,7 +17,7 @@
  */
 class Hydra : public MonitorInterface {
   public:
-    Hydra(const Formula &formula);
+    Hydra(const std::vector<Formula> &formulas);
 
     /**
      * Evaluation function for monitor algorithms.
@@ -26,7 +26,7 @@ class Hydra : public MonitorInterface {
      * @return List of verdicts for each time step of the trace. If the length of the vector is 1,
      * the runtime verification algorithm can only provide a global verdict for the complete trace.
      */
-    std::vector<Verdict> evaluate(Trace &trace) override;
+    std::map<std::string, std::vector<Verdict>> evaluate(Trace &trace) override;
 
     /**
      * to_string() function.
@@ -35,7 +35,13 @@ class Hydra : public MonitorInterface {
     [[nodiscard]] std::string to_string() const override;
 
   private:
-    void createMonitor(const Formula &formula);
+    void createMonitor(const std::vector<Formula> &formulas);
+    void combineMonitors();
+    void resetMonitors();
+    void setTraceMonitors(const Trace &tr);
+    //    std::shared_ptr<HydraMonitor> traverseMonitor(std::map<std::string, std::shared_ptr<HydraMonitor>> baseline,
+    //                                                  const std::shared_ptr<HydraMonitor>& currentMonitor);
 
-    std::shared_ptr<HydraMonitor> monitor;
+    std::vector<std::shared_ptr<HydraMonitor>> monitors;
+    size_t maxID{0};
 };

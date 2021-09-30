@@ -38,4 +38,7 @@ class HydraMonitor {
 
   protected:
     Formula formula;
+    std::map<std::string, size_t> parentHeads;
+    std::vector<bool> verdictHistory;
+    std::optional<std::string> id;
 };

@@ -8,14 +8,15 @@
 #include "monitors/rv_algorithms/ltl_event_consuming/event_consuming.h"
 #include "monitors/trace/event_generator.h"
 
-MtFsm::MtFsm(const Formula &formula, bool pastEvaluation)
-    : MonitorInterface((formula)), states(formulaToMT_FSM(formula, pastEvaluation)), pastEvaluation(pastEvaluation) {}
+MtFsm::MtFsm(const std::vector<Formula> &formulas, bool pastEvaluation)
+    : MonitorInterface((formulas)), states(formulaToMT_FSM(formulas.at(0), pastEvaluation)),
+      pastEvaluation(pastEvaluation) {}
 
 // TODO check if empty
 std::string MtFsm::to_string() const {
-    auto atomics{Utils::getAtomicsAndPredicates(formula.getExpr())};
+    auto atomics{Utils::getAtomicsAndPredicates(formulas.at(0).getExpr())};
     std::stringstream res;
-    res << "Formula: " << std::endl << formula.to_string() << std::endl;
+    res << "Formula: " << std::endl << formulas.at(0).getId() << std::endl;
     res << "Atomics:" << std::endl << "[" << *atomics.begin();
     for (auto it = std::next(atomics.begin()); it != atomics.end(); ++it) {
 
@@ -33,9 +34,10 @@ std::string MtFsm::to_string() const {
 
 const std::vector<StateMT_FSM> &MtFsm::getStates() const { return states; }
 
-std::vector<Verdict> MtFsm::evaluate(Trace &trace) {
+std::map<std::string, std::vector<Verdict>> MtFsm::evaluate(Trace &trace) {
     // First two states are true and false
     auto currentState = states[2];
+    std::map<std::string, std::vector<Verdict>> result;
 
     if (pastEvaluation)
         trace.setTerminalEvent(false);
@@ -45,21 +47,24 @@ std::vector<Verdict> MtFsm::evaluate(Trace &trace) {
         size_t eventIndex = pastEvaluation ? trace.getLength() - 1 - i : i;
         size_t nextState = currentState.nextState(trace.getEvent(eventIndex));
         if (nextState == 0u) {
-            return {Verdict{0, false}};
+            result[formulas.at(0).getId()] = {Verdict{0, false}};
+            return result;
         }
         if (nextState == 1) {
-            return {Verdict{0, true}};
+            result[formulas.at(0).getId()] = {Verdict{0, true}};
+            return result;
         }
         currentState = states[nextState];
     }
-    return {Verdict{0, false}};
+    result[formulas.at(0).getId()] = {Verdict{0, false}};
+    return result;
 }
 
 // Fig 5
 void MtFsm::formulaToMT_FSM(Formula &currentFormula, std::vector<StateMT_FSM> &currentStates, bool past) {
     MultiTransition mtTerminal({});
     MultiTransition mtNonTerminal({});
-    auto eventConsuming = EventConsumingLTL(currentFormula);
+    auto eventConsuming = EventConsumingLTL(std::vector<Formula>{currentFormula});
     auto atomics = Utils::getAtomicsAndPredicates(currentFormula.getExpr(), {});
     auto numberOfAtomics = Utils::getNumberOfAtomicsAndPredicates(currentFormula.getExpr());
     // All possible events
@@ -182,7 +187,7 @@ bool MtFsm::valid(Formula &formula) {
 bool MtFsm::valid(Formula &formulaToCheck, std::set<Formula> &statesToCheck) {
     auto atomics = Utils::getAtomicsAndPredicates(formulaToCheck.getExpr(), {});
     auto numberOfAtomics = Utils::getNumberOfAtomicsAndPredicates(formulaToCheck.getExpr());
-    auto eventConsuming = EventConsumingLTL(formulaToCheck);
+    auto eventConsuming = EventConsumingLTL(std::vector<Formula>{formulaToCheck});
 
     // Only constants
     if (numberOfAtomics == 0) {

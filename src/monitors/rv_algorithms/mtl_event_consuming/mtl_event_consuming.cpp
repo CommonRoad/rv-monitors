@@ -5,14 +5,16 @@
 
 MTLEventConsuming::MTLEventConsuming(const Formula &formula) : MonitorInterface((formula)) {}
 
-std::vector<Verdict> MTLEventConsuming::evaluate(Trace &trace) {
+std::map<std::string, std::vector<Verdict>> MTLEventConsuming::evaluate(Trace &trace) {
+    std::map<std::string, std::vector<Verdict>> result;
     // Empty trace
     if (trace.getTrace().empty()) {
         std::cout << "Trace is empty" << std::endl;
-        return {Verdict{0, false}};
+        result[formulas.at(0).getId()] = {Verdict{0, false}};
+        return result;
     }
     // Copy formula before working on it
-    auto formulaCopy = formula.deepCopy();
+    auto formulaCopy = formulas.at(0).deepCopy();
     MtlRewriteVisitor rw;
     MTLEventConsumingVisitor ev;
     // Rewrite
@@ -27,6 +29,7 @@ std::vector<Verdict> MTLEventConsuming::evaluate(Trace &trace) {
             break;
         }
     }
-    return {Verdict{0, formulaCopy.to_string() == "true"}};
+    result[formulas.at(0).getId()] = {Verdict{0, formulaCopy.to_string() == "true"}};
+    return result;
 }
 std::string MTLEventConsuming::to_string() const { return "TODO"; }

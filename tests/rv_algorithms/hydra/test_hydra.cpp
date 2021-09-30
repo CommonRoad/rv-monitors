@@ -10,12 +10,12 @@
 #include "monitors/rv_algorithms/hydra/hydra.h"
 
 void TestHydra::evalHydra(Trace &trace, const Formula &formula, const std::vector<Verdict> &expSolution) {
-    auto monitor{Hydra(formula)};
+    auto monitor{Hydra({formula})};
     auto solution{monitor.evaluate(trace)};
-    if (solution.size() != expSolution.size())
+    if (solution[formula.getId()].size() != expSolution.size())
         throw std::logic_error("Hydra Test: length of expected solution and solution does not match");
     for (size_t i{0}; i < expSolution.size(); ++i)
-        EXPECT_TRUE(expSolution[i] == solution[i]) << "Mismatch at time step: " << i;
+        EXPECT_TRUE(expSolution[i] == solution[formula.getId()][i]) << "Mismatch at time step: " << i;
 }
 
 TEST(TestHydra, testSinglePrevious) {
