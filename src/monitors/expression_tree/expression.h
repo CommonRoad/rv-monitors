@@ -69,7 +69,8 @@ class Expression {
      * @return Result of visit function of respective expression.
      */
     virtual std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor, size_t *maxId,
-                                                 std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline, size_t parentId) = 0;
+                                                 std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline,
+                                                 size_t parentId) = 0;
 
     /**
      * Checks if expression is a specific Constant.

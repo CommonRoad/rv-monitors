@@ -5,6 +5,8 @@ std::shared_ptr<Expression> Implication::clone() { return std::make_shared<Impli
 std::shared_ptr<Expression> Implication::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
     return visitor.visitImplication(*this, trace, index);
 }
-std::shared_ptr<HydraMonitor> Implication::accept(HydraCreationVisitor &visitor, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline, size_t parentId) {
+std::shared_ptr<HydraMonitor> Implication::accept(HydraCreationVisitor &visitor, size_t *maxId,
+                                                  std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline,
+                                                  size_t parentId) {
     return std::shared_ptr<HydraMonitor>();
 }

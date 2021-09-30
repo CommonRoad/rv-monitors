@@ -51,4 +51,3 @@ void Hydra::createMonitor(const std::vector<Formula> &formulas) {
 }
 
 Hydra::Hydra(const std::vector<Formula> &formulas) : MonitorInterface(formulas) { createMonitor(formulas); }
-

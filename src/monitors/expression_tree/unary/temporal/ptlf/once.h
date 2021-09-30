@@ -24,7 +24,9 @@ class Once : public Unary, public TemporalOperator {
         return visitor.visitOnce(*this, trace, index);
     }
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline, size_t parentId) override {
+    [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor, size_t *maxId,
+                                                       std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline,
+                                                       size_t parentId) override {
         return nullptr;
     }
 };
