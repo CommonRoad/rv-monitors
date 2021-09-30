@@ -22,7 +22,7 @@ class MtFsm : public MonitorInterface {
      * @param formula Formula that we want the BTT-FSM for.
      * @param pastEvaluation Boolean indicating whether past-based evaluation should be applied.
      */
-    MtFsm(const Formula &formula, bool pastEvaluation = false);
+    MtFsm(const std::vector<Formula> &formulas, bool pastEvaluation = false);
 
     /**
      * Getter for states.
@@ -43,7 +43,7 @@ class MtFsm : public MonitorInterface {
      * @param past True if formula is in PLTLf.
      * @return True if satisfied, false otherwise.
      */
-    [[nodiscard]] std::vector<Verdict> evaluate(Trace &trace) override;
+    [[nodiscard]] std::map<std::string, std::vector<Verdict>> evaluate(Trace &trace) override;
 
     /**
      * Helper for formulaToMT_FSM().

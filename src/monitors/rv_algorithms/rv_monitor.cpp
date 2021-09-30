@@ -10,7 +10,7 @@
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
 #include "monitors/utils/utils.h"
 
-std::vector<Verdict> RVMonitor::verify(Trace trace) {
+std::map<std::string, std::vector<Verdict>> RVMonitor::verify(Trace trace) {
     std::chrono::high_resolution_clock::time_point startTime;
     if (performanceMeasurement)
         startTime = ExecutionStatistic::start();
@@ -62,23 +62,23 @@ AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
     }
 }
 
-RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement)
+RVMonitor::RVMonitor(AlgorithmType algorithm, const std::vector<Formula> &formulas, bool past, bool measurement)
     : performanceMeasurement(measurement) {
     switch (algorithm) {
     case dynamic_programming_ltl:
-        monitor = std::make_unique<DynamicProgrammingLTL>(formula, past);
+        monitor = std::make_unique<DynamicProgrammingLTL>(formulas, past);
         break;
     case event_consuming_ltl:
-        monitor = std::make_unique<EventConsumingLTL>(formula, past);
+        monitor = std::make_unique<EventConsumingLTL>(formulas, past);
         break;
     case mt_fsm:
-        monitor = std::make_unique<MtFsm>(formula, past);
+        monitor = std::make_unique<MtFsm>(formulas, past);
         break;
     case btt_fsm:
-        monitor = std::make_unique<BttFsm>(formula, past);
+        monitor = std::make_unique<BttFsm>(formulas, past);
         break;
     case hydra_mtl:
-        monitor = std::make_unique<Hydra>(formula);
+        monitor = std::make_unique<Hydra>(formulas);
         break;
     }
 }

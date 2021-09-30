@@ -17,8 +17,8 @@
  */
 class DynamicProgrammingLTL : public MonitorInterface {
   public:
-    DynamicProgrammingLTL(const Formula &formula, bool pastEvaluation = false);
-    std::vector<Verdict> evaluate(Trace &trace) override;
+    DynamicProgrammingLTL(const std::vector<Formula> &formulas, bool pastEvaluation = false);
+    std::map<std::string, std::vector<Verdict>> evaluate(Trace &trace) override;
     std::string to_string() const override;
 
   private:

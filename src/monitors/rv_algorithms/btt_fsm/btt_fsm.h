@@ -20,7 +20,7 @@ class BttFsm : public MonitorInterface {
      * @param formula Formula that we want the BTT-FSM for.
      * @param pastEvaluation Boolean indicating whether past-based evaluation should be applied.
      */
-    BttFsm(const Formula &formula, bool pastEvaluation = false);
+    BttFsm(const std::vector<Formula> &formulas, bool pastEvaluation = false);
 
     /**
      * Returns a vector of all states in the BTT-FSM.
@@ -49,5 +49,5 @@ class BttFsm : public MonitorInterface {
      * @return List of verdicts for each time step of the trace. If the length of the vector is 1,
      * the runtime verification algorithm can only provide a global verdict for the complete trace.
      */
-    std::vector<Verdict> evaluate(Trace &trace) override;
+    std::map<std::string, std::vector<Verdict>> evaluate(Trace &trace) override;
 };

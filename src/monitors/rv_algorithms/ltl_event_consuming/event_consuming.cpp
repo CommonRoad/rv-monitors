@@ -7,8 +7,8 @@
 #include <memory>
 #include <utility>
 
-EventConsumingLTL::EventConsumingLTL(Formula formula, bool pastEvaluation)
-    : MonitorInterface((std::move(formula))), pastEvaluation(pastEvaluation) {}
+EventConsumingLTL::EventConsumingLTL(const std::vector<Formula> &formulas, bool pastEvaluation)
+    : MonitorInterface((std::move(formulas))), pastEvaluation(pastEvaluation) {}
 
 Formula EventConsumingLTL::eventConsumingFuture(Trace &trace) {
     // Empty trace
@@ -17,7 +17,7 @@ Formula EventConsumingLTL::eventConsumingFuture(Trace &trace) {
         return Formula(std::make_shared<Constant>(false));
     }
     // Copy formula before working on it
-    auto formulaCopy = formula.deepCopy();
+    auto formulaCopy = formulas.at(0).deepCopy();
     RewriteVisitor rw;
     EventConsumingVisitor ec;
 
@@ -43,7 +43,7 @@ Formula EventConsumingLTL::eventConsumingPast(Trace &trace) {
         return Formula(std::make_shared<Constant>(false));
     }
     // Copy formula before working on it
-    auto formulaCopy = formula.deepCopy();
+    auto formulaCopy = formulas.at(0).deepCopy();
     RewriteVisitor rw;
     EventConsumingVisitor ec;
 
@@ -66,10 +66,12 @@ Formula EventConsumingLTL::eventConsumingPast(Trace &trace) {
     return formulaCopy;
 }
 
-std::vector<Verdict> EventConsumingLTL::evaluate(Trace &trace) {
-    if (!pastEvaluation) {
-        return {Verdict{0, eventConsumingFuture(trace).to_string() == "true"}};
-    }
-    return {Verdict{0, eventConsumingPast(trace).to_string() == "true"}};
+std::map<std::string, std::vector<Verdict>> EventConsumingLTL::evaluate(Trace &trace) {
+    std::map<std::string, std::vector<Verdict>> result;
+    if (!pastEvaluation)
+        result[formulas.at(0).getId()] = {Verdict{0, eventConsumingFuture(trace).to_string() == "true"}};
+    else
+        result[formulas.at(0).getId()] = {Verdict{0, eventConsumingPast(trace).to_string() == "true"}};
+    return result;
 }
 std::string EventConsumingLTL::to_string() const { return "TODO"; }

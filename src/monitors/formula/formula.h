@@ -4,12 +4,14 @@
 #include "monitors/expression_tree/nary/nary_interface.h"
 #include "monitors/expression_tree/unary/unary.h"
 #include "monitors/trace/event.h"
+#include <optional>
 
 /**
  * Class representing a formula specified in temporal logic.
  */
 class Formula {
   private:
+    std::string id;
     std::shared_ptr<Expression> expr;
     std::shared_ptr<Event> event = nullptr;
 
@@ -19,6 +21,12 @@ class Formula {
      * @param expr Expression as root of the expression tree.
      */
     explicit Formula(std::shared_ptr<Expression> expr) : expr(std::move(expr)) {}
+
+    /**
+     * Constructor.
+     * @param expr Expression as root of the expression tree.
+     */
+    Formula(std::shared_ptr<Expression> expr, const std::string &id) : expr(std::move(expr)), id(expr->to_string()) {}
 
     /**
      * Getter for expression.
@@ -80,7 +88,6 @@ class Formula {
     template <class T>[[nodiscard]] static std::shared_ptr<T> deepCopy(const std::shared_ptr<T> &exprOrig) {
         if (exprOrig) {
             auto ret = exprOrig->clone();
-
             // Nary
             if (auto nary = std::dynamic_pointer_cast<NaryInterface>(ret)) {
                 if (std::dynamic_pointer_cast<Xor>(nary)) {
@@ -123,6 +130,12 @@ class Formula {
      * @return
      */
     [[nodiscard]] Formula deepCopy() const;
+
+    /**
+     * Getter for unique id/name;
+     * @return ID/name of formula.
+     */
+    const std::string &getId() const;
 
     /**
      * Adjusted ostream operator.

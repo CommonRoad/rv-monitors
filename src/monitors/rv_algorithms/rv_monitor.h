@@ -29,7 +29,7 @@ class RVMonitor {
      * PLTLf).
      * @param measurement Boolean indicating whether performance evaluation should be performed.
      */
-    RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement);
+    RVMonitor(AlgorithmType algorithm, const std::vector<Formula> &formula, bool past, bool measurement);
 
     /**
      * Evaluates trace based on temporal logic formula.
@@ -37,7 +37,7 @@ class RVMonitor {
      * @param trace Trace of predicates/atomic prepositions.
      * @return Verdict for each time step of trace.
      */
-    std::vector<Verdict> verify(Trace trace);
+    std::map<std::string, std::vector<Verdict>> verify(Trace trace);
 
     /**
      * Getter for execution statistics.
