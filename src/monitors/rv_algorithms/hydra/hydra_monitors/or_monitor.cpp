@@ -6,7 +6,7 @@
 //
 #include "or_monitor.h"
 
-Verdict OrMonitor::step(size_t parentId) {
+Verdict OrMonitor::concreteStep(size_t parentId) {
     Verdict verdict{subMonitors.at(0)->step(id)};
     for (size_t i{1}; i < subMonitors.size(); ++i)
         verdict = verdict || subMonitors.at(i)->step(id);
@@ -18,6 +18,7 @@ void OrMonitor::setTrace(const Trace &tr) {
         mon->setTrace(tr);
 }
 void OrMonitor::reset() {
+    HydraMonitor::reset();
     for (const auto &mon : subMonitors)
         mon->reset();
 }

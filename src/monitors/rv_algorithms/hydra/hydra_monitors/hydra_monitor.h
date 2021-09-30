@@ -25,20 +25,27 @@ struct HeadPos {
 };
 
 class HydraMonitor {
+  private:
+    size_t getMaxTraceIdx();
+
   public:
     HydraMonitor(Formula formula, size_t *id);
 
-    virtual Verdict step(size_t parentId) = 0;
+    Verdict step(size_t parentId);
+
+    virtual Verdict concreteStep(size_t parentId) = 0;
 
     const Formula &getFormula() const;
 
     virtual void setTrace(const Trace &tr) = 0;
 
-    virtual void reset() = 0;
+    virtual void reset();
+
+    void registerParent(size_t parentId);
 
   protected:
     Formula formula;
-    std::map<std::string, size_t> parentHeads;
-    std::vector<bool> verdictHistory;
     size_t id;
+    std::vector<Verdict> verdictHistory;
+    std::map<size_t, size_t> traceIdx;
 };

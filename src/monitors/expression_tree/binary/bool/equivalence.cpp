@@ -5,6 +5,6 @@ std::shared_ptr<Expression> Equivalence::clone() { return std::make_shared<Equiv
 std::shared_ptr<Expression> Equivalence::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
     return visitor.visitEquivalence(*this, trace, index);
 }
-std::shared_ptr<HydraMonitor> Equivalence::accept(HydraCreationVisitor &visitor, size_t *maxId) {
+std::shared_ptr<HydraMonitor> Equivalence::accept(HydraCreationVisitor &visitor, size_t *maxId, std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline, size_t parentId) {
     return std::shared_ptr<HydraMonitor>();
 }

@@ -15,7 +15,7 @@ class NextMonitor : public HydraMonitor {
     NextMonitor(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitor, size_t from, size_t to, size_t *maxId)
         : HydraMonitor(formula, maxId), subMonitor(std::move(subMonitor)), from(from), to(to){};
 
-    Verdict step(size_t parentId) override;
+    Verdict concreteStep(size_t parentId) override;
 
     void setTrace(const Trace &tr) override;
 

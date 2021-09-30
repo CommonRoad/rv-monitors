@@ -45,31 +45,10 @@ void Hydra::createMonitor(const std::vector<Formula> &formulas) {
         MtlRewriteVisitor rw;
         rw.rewrite(formulaCopy);
         HydraCreationVisitor hc;
-        monitors.push_back(hc.createMonitor(formulaCopy, &maxID));
+        std::map<std::string, std::shared_ptr<HydraMonitor>> baseline;
+        monitors.push_back(hc.createMonitor(formulaCopy, &maxID, &baseline, 0));
     }
-
-    // combineMonitors();
 }
 
 Hydra::Hydra(const std::vector<Formula> &formulas) : MonitorInterface(formulas) { createMonitor(formulas); }
 
-// void Hydra::combineMonitors() {
-//    std::map<std::string, std::shared_ptr<HydraMonitor>> baseline;
-//    for(const auto &mon : monitors)
-//        traverseMonitor(baseline, mon);
-//
-//
-//}
-
-// std::shared_ptr<HydraMonitor> Hydra::traverseMonitor(std::map<std::string, std::shared_ptr<HydraMonitor>> baseline,
-//                                              const std::shared_ptr<HydraMonitor>& currentMonitor){
-//    if(baseline.find(currentMonitor->getFormula().to_string()) == baseline.end()) {
-//        baseline.insert({currentMonitor->getFormula().to_string(), currentMonitor});
-//        if(auto andExpr = std::dynamic_pointer_cast<And>(currentMonitor->getFormula().getExpr())){
-//            for (const auto &itr : *andExpr)
-//                traverseMonitor(itr->)
-//        }
-//    }
-//    else
-//
-//}

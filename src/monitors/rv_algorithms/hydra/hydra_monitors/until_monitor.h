@@ -18,7 +18,7 @@ class UntilMonitor : public HydraMonitor {
         : HydraMonitor(formula, maxId), subMonitorF(std::move(subMonitorF)), subMonitorG(std::move(subMonitorG)),
           subMonitorH(std::move(subMonitorH)), from(from), to(to){};
 
-    Verdict step(size_t parentId) override;
+    Verdict concreteStep(size_t parentId) override;
 
     void setTrace(const Trace &tr) override;
 

@@ -13,7 +13,7 @@ class NegationMonitor : public HydraMonitor {
     NegationMonitor(Formula formula, std::shared_ptr<HydraMonitor> subMonitor, size_t *maxId)
         : HydraMonitor(std::move(formula), maxId), subMonitor(std::move(subMonitor)){};
 
-    Verdict step(size_t parentId) override;
+    Verdict concreteStep(size_t parentId) override;
 
     void setTrace(const Trace &trace) override;
 

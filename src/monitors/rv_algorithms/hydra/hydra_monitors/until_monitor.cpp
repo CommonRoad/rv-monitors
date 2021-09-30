@@ -34,7 +34,7 @@ void UntilMonitor::readFG() {
         handleEof();
 }
 
-Verdict UntilMonitor::step(size_t parentId) {
+Verdict UntilMonitor::concreteStep(size_t parentId) {
     subVerdictH = subMonitorH->step(id);
     if (subVerdictH->ts)
         positionMonitorH.update(subVerdictH->ts.value());
@@ -66,6 +66,7 @@ void UntilMonitor::setTrace(const Trace &tr) {
     subMonitorH->setTrace(tr);
 }
 void UntilMonitor::reset() {
+    HydraMonitor::reset();
     subMonitorG->reset();
     subMonitorF->reset();
     subMonitorH->reset();

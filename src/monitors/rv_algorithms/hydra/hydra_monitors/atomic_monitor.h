@@ -12,13 +12,10 @@ class AtomicMonitor : public HydraMonitor {
   public:
     AtomicMonitor(const Formula &formula, size_t *id) : HydraMonitor(formula, id){};
 
-    Verdict step(size_t parentId) override;
+    Verdict concreteStep(size_t parentId) override;
 
     void setTrace(const Trace &trace) override;
 
-    void reset() override;
-
   private:
-    size_t traceIdx{0};
     std::optional<Trace> trace;
 };
