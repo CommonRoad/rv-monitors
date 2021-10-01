@@ -4,7 +4,7 @@
 #include "visitor.h"
 #include <ANTLRInputStream.h>
 
-Formula Parser::parse(const std::string &formula, const std::string& formulaId) {
+Formula Parser::parse(const std::string &formula, const std::string &formulaId) {
 
     antlr4::ANTLRInputStream input(formula);
     FormulaLexer lexer(&input);
