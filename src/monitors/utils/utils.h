@@ -80,8 +80,7 @@ createTrace(const std::set<std::string> &atomics, const std::vector<std::vector<
  * @param length Length of the trace.
  * @return Trace.
  */
-[[nodiscard]] Trace
-createRandomTrace(const std::set<std::string> &atomics, size_t length);
+[[nodiscard]] Trace createRandomTrace(const std::set<std::string> &atomics, size_t length);
 
 /**
  * Creates a Trace with lazy evaluation of the predicates.

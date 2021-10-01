@@ -1,8 +1,8 @@
 #include <algorithm>
 #include <iostream>
 #include <queue>
-#include <set>
 #include <random>
+#include <set>
 
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/binary/binary.h"
@@ -343,7 +343,7 @@ Trace Utils::createLazyTrace(const std::map<std::string, std::function<bool(size
     return Trace{finalTrace};
 }
 
-[[nodiscard]] Trace Utils::createRandomTrace(const std::set<std::string> &atomics, size_t length){
+[[nodiscard]] Trace Utils::createRandomTrace(const std::set<std::string> &atomics, size_t length) {
     std::vector<Event> eventList;
     std::map<std::string, lazy_bool> event;
     size_t timeStepIdx{0};
@@ -352,15 +352,15 @@ Trace Utils::createLazyTrace(const std::map<std::string, std::function<bool(size
     uint32_t seed_val = 123456789;
     MyRNG rng;
     rng.seed(seed_val);
-    std::uniform_int_distribution<uint8_t> uint_dist2(0,  1);
+    std::uniform_int_distribution<uint8_t> uint_dist2(0, 1);
 
-    for(; timeStepIdx < length - 1; ++timeStepIdx){
-        for(const auto &atom : atomics){
+    for (; timeStepIdx < length - 1; ++timeStepIdx) {
+        for (const auto &atom : atomics) {
             bool atomicValue{uint_dist2(rng) == 1};
             event[atom] = lazy_bool(atomicValue);
         }
         eventList.emplace_back(event, timeStepIdx, false);
     }
-    eventList.emplace_back(event, timeStepIdx+1, true);
+    eventList.emplace_back(event, timeStepIdx + 1, true);
     return Trace(eventList);
 }
