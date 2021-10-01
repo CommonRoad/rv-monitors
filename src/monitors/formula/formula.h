@@ -5,6 +5,7 @@
 #include "monitors/expression_tree/unary/unary.h"
 #include "monitors/trace/event.h"
 #include <optional>
+#include <utility>
 
 /**
  * Class representing a formula specified in temporal logic.
@@ -20,13 +21,13 @@ class Formula {
      * Constructor.
      * @param expr Expression as root of the expression tree.
      */
-    explicit Formula(std::shared_ptr<Expression> expr) : expr(std::move(expr)) {}
+    explicit Formula(std::shared_ptr<Expression> expr) : expr(std::move(expr)), id(expr->to_string()) {}
 
     /**
      * Constructor.
      * @param expr Expression as root of the expression tree.
      */
-    Formula(std::shared_ptr<Expression> expr, const std::string &id) : expr(std::move(expr)), id(expr->to_string()) {}
+    Formula(std::shared_ptr<Expression> expr, std::string id) : expr(std::move(expr)), id(std::move(id)) {}
 
     /**
      * Getter for expression.
