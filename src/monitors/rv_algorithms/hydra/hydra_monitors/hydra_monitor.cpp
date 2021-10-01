@@ -9,7 +9,7 @@
 #include <utility>
 const Formula &HydraMonitor::getFormula() const { return formula; }
 
-HydraMonitor::HydraMonitor(Formula formula, size_t id) : formula(std::move(formula)), id((id)) {}
+HydraMonitor::HydraMonitor(Formula formula, size_t id) : formula(std::move(formula)), monitorId((id)) {}
 
 void HydraMonitor::reset() {
     for (auto &[_, id] : traceIdx)
@@ -41,3 +41,6 @@ Verdict HydraMonitor::step(size_t parentId) {
         return verdict;
     }
 }
+const std::string &HydraMonitor::getFormulaId() const { return formulaId; }
+
+void HydraMonitor::setFormulaId(const std::string &formula_id) { formulaId = formula_id; }

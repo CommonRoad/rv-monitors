@@ -20,14 +20,14 @@ void UntilMonitor::readFG() {
           positionMonitorF.tp == positionMonitorG.tp))
         throw std::runtime_error("Hydra UntilMonitor readFG error");
 
-    subVerdictF = subMonitorF->step(id);
+    subVerdictF = subMonitorF->step(monitorId);
     if (subVerdictF->ts)
         positionMonitorF.update(subVerdictF->ts.value());
     else {
         handleEof();
         return;
     }
-    subVerdictG = subMonitorG->step(id);
+    subVerdictG = subMonitorG->step(monitorId);
     if (subVerdictG->ts)
         positionMonitorG.update(subVerdictG->ts.value());
     else
@@ -35,7 +35,7 @@ void UntilMonitor::readFG() {
 }
 
 Verdict UntilMonitor::concreteStep(size_t parentId) {
-    subVerdictH = subMonitorH->step(id);
+    subVerdictH = subMonitorH->step(monitorId);
     if (subVerdictH->ts)
         positionMonitorH.update(subVerdictH->ts.value());
 

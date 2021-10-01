@@ -25,11 +25,10 @@
 #include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
 #include "monitors/formula/formula.h"
 
-size_t HydraCreationVisitor::maxId = 1;
-std::map<std::string, std::shared_ptr<HydraMonitor>> HydraCreationVisitor::baseline;
-
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::createMonitor(Formula &formula, size_t parentId) {
-    return formula.getExpr()->accept(*this, parentId);
+    auto newMonitor{formula.getExpr()->accept(*this, parentId)};
+    newMonitor->setFormulaId(formula.getId());
+    return newMonitor;
 }
 
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitAtomic(Atomic &op, size_t parentId) {

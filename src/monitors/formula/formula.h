@@ -12,8 +12,8 @@
  */
 class Formula {
   private:
-    std::shared_ptr<Expression> expr;
     std::string id;
+    std::shared_ptr<Expression> expr;
     std::shared_ptr<Event> event = nullptr;
 
   public:
@@ -21,14 +21,13 @@ class Formula {
      * Constructor.
      * @param expr Expression as root of the expression tree.
      */
-    explicit Formula(std::shared_ptr<Expression> expr) : expr(std::move(expr)),
-                                                         id(expr != nullptr ? expr->to_string() : "") {}
+    explicit Formula(std::shared_ptr<Expression> expr) : expr(std::move(expr)) {}
 
     /**
      * Constructor.
      * @param expr Expression as root of the expression tree.
      */
-    Formula(std::shared_ptr<Expression> expr, std::string id) : expr(std::move(expr)), id(std::move(id)) {}
+    explicit Formula(std::shared_ptr<Expression> expr, std::string id) : id(std::move(id)), expr(std::move(expr)) {}
 
     /**
      * Getter for expression.
@@ -80,6 +79,12 @@ class Formula {
      */
     [[nodiscard]] static bool sameTree(const std::shared_ptr<Expression> &before,
                                        const std::shared_ptr<Expression> &after);
+
+    /**
+     * Getter for formula id.
+     * @param id Formula identifier
+     */
+    void setId(const std::string &id);
 
     /**
      * Creates a deep copy of the given expression.

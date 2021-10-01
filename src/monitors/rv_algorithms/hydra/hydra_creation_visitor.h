@@ -92,6 +92,6 @@ class HydraCreationVisitor {
     [[nodiscard]] std::shared_ptr<HydraMonitor> visitNot(Not &op, size_t parentId);
 
   private:
-    static size_t maxId;
-    static std::map<std::string, std::shared_ptr<HydraMonitor>> baseline;
+    size_t maxId{0};
+    std::map<std::string, std::shared_ptr<HydraMonitor>> baseline;
 };

@@ -9,7 +9,7 @@
 
 Verdict NextMonitor::concreteStep(size_t parentId) {
     do {
-        auto subVerdict = subMonitor->step(id);
+        auto subVerdict = subMonitor->step(monitorId);
         if (subVerdict.ts and currentTime) {
             size_t lastTime = *currentTime;
             currentTime = subVerdict.ts;
