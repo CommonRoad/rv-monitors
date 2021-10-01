@@ -13,8 +13,8 @@
 class SinceMonitor : public HydraMonitor {
   public:
     SinceMonitor(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitorF,
-                 std::shared_ptr<HydraMonitor> subMonitorG, size_t from, size_t to, size_t *maxId)
-        : HydraMonitor(formula, maxId), subMonitorF(std::move(subMonitorF)), subMonitorG(std::move(subMonitorG)),
+                 std::shared_ptr<HydraMonitor> subMonitorG, size_t from, size_t to, size_t id)
+        : HydraMonitor(formula, id), subMonitorF(std::move(subMonitorF)), subMonitorG(std::move(subMonitorG)),
           from(from), to(to){};
 
     Verdict concreteStep(size_t parentId) override;

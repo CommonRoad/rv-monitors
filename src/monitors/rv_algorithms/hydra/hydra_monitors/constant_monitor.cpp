@@ -12,7 +12,6 @@ Verdict ConstantMonitor::concreteStep(size_t parentId) {
         auto event{trace.value().getEvent(traceIdx[parentId])};
         auto verdict{
             Verdict(event.getTimeStep(), (*std::dynamic_pointer_cast<Constant>(formula.getExpr())).getValue())};
-        ++traceIdx[parentId];
         return verdict;
     } else
         return Verdict(false);

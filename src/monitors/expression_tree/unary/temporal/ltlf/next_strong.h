@@ -24,9 +24,7 @@ class NextStrong : public Unary, public TemporalOperator {
         return visitor.visitNextStrong(*this, trace, index);
     }
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor, size_t *maxId,
-                                                       std::map<std::string, std::shared_ptr<HydraMonitor>> *baseline,
-                                                       size_t parentId) override {
-        return visitor.visitNext(*this, maxId, baseline, parentId);
+    [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor, size_t parentId) override {
+        return visitor.visitNext(*this, parentId);
     }
 };

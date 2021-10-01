@@ -40,5 +40,4 @@ class Hydra : public MonitorInterface {
     void setTraceMonitors(const Trace &tr);
 
     std::vector<std::shared_ptr<HydraMonitor>> monitors;
-    size_t maxID{1};
 };

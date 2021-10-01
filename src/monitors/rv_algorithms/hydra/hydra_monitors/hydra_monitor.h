@@ -29,7 +29,7 @@ class HydraMonitor {
     size_t getMaxTraceIdx();
 
   public:
-    HydraMonitor(Formula formula, size_t *id);
+    HydraMonitor(Formula formula, size_t id);
 
     Verdict step(size_t parentId);
 

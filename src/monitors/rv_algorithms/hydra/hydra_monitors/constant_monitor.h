@@ -13,13 +13,12 @@
 
 class ConstantMonitor : public HydraMonitor {
   public:
-    ConstantMonitor(Formula formula, size_t *maxId) : HydraMonitor(std::move(formula), maxId){};
+    ConstantMonitor(Formula formula, size_t id) : HydraMonitor(std::move(formula), id){};
 
     Verdict concreteStep(size_t parentId) override;
 
     void setTrace(const Trace &trace) override;
 
   private:
-    std::map<size_t, size_t> traceIdx;
     std::optional<Trace> trace;
 };

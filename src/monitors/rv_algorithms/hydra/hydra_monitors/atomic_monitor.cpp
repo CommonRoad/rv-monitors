@@ -11,7 +11,6 @@ Verdict AtomicMonitor::concreteStep(size_t parentId) {
         auto event{trace.value().getEvent(traceIdx[parentId])};
         auto verdict{
             Verdict(event.getTimeStep(), event.getValue(*std::dynamic_pointer_cast<Atomic>(formula.getExpr())))};
-        ++traceIdx[parentId];
         return verdict;
     } else
         return Verdict(false);
