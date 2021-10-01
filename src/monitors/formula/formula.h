@@ -12,8 +12,8 @@
  */
 class Formula {
   private:
-    std::string id;
     std::shared_ptr<Expression> expr;
+    std::string id;
     std::shared_ptr<Event> event = nullptr;
 
   public:
@@ -21,7 +21,8 @@ class Formula {
      * Constructor.
      * @param expr Expression as root of the expression tree.
      */
-    explicit Formula(std::shared_ptr<Expression> expr) : expr(std::move(expr)), id(expr->to_string()) {}
+    explicit Formula(std::shared_ptr<Expression> expr) : expr(std::move(expr)),
+                                                         id(expr != nullptr ? expr->to_string() : "") {}
 
     /**
      * Constructor.
