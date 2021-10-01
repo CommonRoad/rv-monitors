@@ -18,6 +18,12 @@ class Trace {
     explicit Trace(std::vector<Event> trace) : trace(std::move(trace)) {}
 
     /**
+     * Constructor.
+     * @param trace
+     */
+    Trace() : trace() {}
+
+    /**
      * Getter for an event.
      * @param index
      * @return Event at index.

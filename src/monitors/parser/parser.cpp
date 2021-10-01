@@ -4,7 +4,7 @@
 #include "visitor.h"
 #include <ANTLRInputStream.h>
 
-Formula Parser::parse(const std::string &formula) {
+Formula Parser::parse(const std::string &formula, const std::string& formulaId) {
 
     antlr4::ANTLRInputStream input(formula);
     FormulaLexer lexer(&input);
@@ -13,5 +13,7 @@ Formula Parser::parse(const std::string &formula) {
     FormulaParser parser(&tokens);
     antlr4::tree::ParseTree *treePointer = parser.formula();
     Visitor visitor;
-    return visitor.visit(treePointer).as<Formula>();
+    Formula fm{visitor.visit(treePointer).as<Formula>()};
+    fm.setId(formulaId);
+    return fm;
 }

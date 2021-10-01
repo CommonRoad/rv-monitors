@@ -10,7 +10,7 @@
 
 class PredicateMonitor : public HydraMonitor {
   public:
-    PredicateMonitor(Formula formula, size_t id) : HydraMonitor(std::move(formula), id){};
+    PredicateMonitor(Formula formula, size_t id) : HydraMonitor(std::move(formula), id) {};
 
     Verdict concreteStep(size_t parentId) override;
 
@@ -18,5 +18,5 @@ class PredicateMonitor : public HydraMonitor {
 
   private:
     std::map<size_t, size_t> traceIdx;
-    std::optional<Trace> trace;
+    Trace trace;
 };

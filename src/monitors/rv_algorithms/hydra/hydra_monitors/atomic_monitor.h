@@ -17,5 +17,5 @@ class AtomicMonitor : public HydraMonitor {
     void setTrace(const Trace &trace) override;
 
   private:
-    std::optional<Trace> trace;
+    Trace trace;
 };
