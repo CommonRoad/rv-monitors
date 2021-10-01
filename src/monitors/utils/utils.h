@@ -74,6 +74,16 @@ createTrace(const std::set<std::string> &atomics, const std::vector<std::vector<
             const std::optional<std::vector<size_t>> &timeSteps = std::optional<std::vector<size_t>>{});
 
 /**
+ * Creates a random Trace.
+ *
+ * @param atomics All possible predicates as strings.
+ * @param length Length of the trace.
+ * @return Trace.
+ */
+[[nodiscard]] Trace
+createRandomTrace(const std::set<std::string> &atomics, size_t length);
+
+/**
  * Creates a Trace with lazy evaluation of the predicates.
  * @param atomicsAndFunctions map containing lazy predicates
  * @param timeSteps time steps for which predicates should be evaluated

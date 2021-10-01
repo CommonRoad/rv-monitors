@@ -13,5 +13,5 @@ class Parser {
      * @param formula Formula string to be parsed.
      * @return Formula object.
      */
-    [[nodiscard]] static Formula parse(const std::string &formula);
+    [[nodiscard]] static Formula parse(const std::string &formula, const std::string& formulaId = "");
 };
