@@ -11,6 +11,7 @@
 void TestRVMonitors::SetUp() {
     trace = std::make_unique<Trace>(Utils::createTrace({"a", "b"}, {{"b"}, {"a"}, {"b"}}));
     formula = std::make_unique<Formula>(Parser::parse("G(b -> (X(a)))"));
+    formula->setId("R1");
 }
 
 std::vector<Verdict> TestRVMonitors::executeRVMonitor(AlgorithmType algorithm) {
