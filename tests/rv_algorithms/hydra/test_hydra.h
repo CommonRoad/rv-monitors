@@ -12,5 +12,6 @@
 
 class TestHydra : public testing::Test {
   public:
-    static void evalHydra(Trace &trace, const Formula &formula, const std::vector<Verdict> &expSolution);
+    static void evalHydra(Trace &trace, const std::vector<Formula> &formulas,
+                          const std::vector<std::vector<Verdict>> &expSolution);
 };

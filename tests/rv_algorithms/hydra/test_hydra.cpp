@@ -9,13 +9,16 @@
 #include "monitors/parser/parser.h"
 #include "monitors/rv_algorithms/hydra/hydra.h"
 
-void TestHydra::evalHydra(Trace &trace, const Formula &formula, const std::vector<Verdict> &expSolution) {
-    auto monitor{Hydra({formula})};
+void TestHydra::evalHydra(Trace &trace, const std::vector<Formula> &formulas,
+                          const std::vector<std::vector<Verdict>> &expSolution) {
+    auto monitor{Hydra(formulas)};
     auto solution{monitor.evaluate(trace)};
-    if (solution[formula.getId()].size() != expSolution.size())
-        throw std::logic_error("Hydra Test: length of expected solution and solution does not match");
-    for (size_t i{0}; i < expSolution.size(); ++i)
-        EXPECT_TRUE(expSolution[i] == solution[formula.getId()][i]) << "Mismatch at time step: " << i;
+    for (int i{0}; i < formulas.size(); ++i) {
+        if (solution[formulas[i].getId()].size() != expSolution[i].size())
+            throw std::logic_error("Hydra Test: length of expected solution and solution does not match");
+        for (size_t j{0}; j < expSolution[i].size(); ++j)
+            EXPECT_TRUE(expSolution[i][j] == solution[formulas[i].getId()][j]) << "Mismatch at time step: " << j;
+    }
 }
 
 TEST(TestHydra, testSinglePrevious) {
@@ -25,7 +28,7 @@ TEST(TestHydra, testSinglePrevious) {
     Formula formula = Parser::parse("P[0, 1](c)");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{0, true}, Verdict{1, true},
                                      Verdict{4, false}, Verdict{4, true}, Verdict{5, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testSingleNext) {
@@ -36,7 +39,7 @@ TEST(TestHydra, testSingleNext) {
 
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{0, false}, Verdict{1, false},
                                      Verdict{4, true}, Verdict{4, true},  Verdict{5, false}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testSingleSince) {
@@ -45,7 +48,7 @@ TEST(TestHydra, testSingleSince) {
     Formula formula = Parser::parse("(a)S[0, 4](b)");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{0, false}, Verdict{2, false},
                                      Verdict{4, true},  Verdict{5, true},  Verdict{10, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testSingleUntil) {
@@ -54,7 +57,7 @@ TEST(TestHydra, testSingleUntil) {
     Formula formula = Parser::parse("(a)U[0, 4](b)");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{0, true},  Verdict{2, true},
                                      Verdict{4, true}, Verdict{5, false}, Verdict{10, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testSingleUntilAnd) {
@@ -63,7 +66,7 @@ TEST(TestHydra, testSingleUntilAnd) {
     Formula formula = Parser::parse("((a)U[0, 4](b)) and a");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{0, true},  Verdict{2, true},
                                      Verdict{4, true}, Verdict{5, false}, Verdict{10, false}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testSinceUntilOr) {
@@ -72,7 +75,7 @@ TEST(TestHydra, testSinceUntilOr) {
     Formula formula = Parser::parse("(a)S[0, 4](b) or (a)U[0, 4](b)");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{0, true}, Verdict{2, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{10, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testSinceUntilAnd) {
@@ -81,7 +84,7 @@ TEST(TestHydra, testSinceUntilAnd) {
     Formula formula = Parser::parse("(a)S[0, 4](b) and (a)U[0, 4](b)");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{0, false}, Verdict{2, false},
                                      Verdict{4, true},  Verdict{5, false}, Verdict{10, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testSinceUntilNegated1) {
@@ -91,7 +94,7 @@ TEST(TestHydra, testSinceUntilNegated1) {
     Formula formula = Parser::parse("P[0, 4](!c)");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{0, false}, Verdict{1, false},
                                      Verdict{4, true},  Verdict{4, false}, Verdict{5, false}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testImplication) {
@@ -99,7 +102,7 @@ TEST(TestHydra, testImplication) {
     Formula formula = Parser::parse("a -> P(b)");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true},  Verdict{5, true}, Verdict{6, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testFutureAsUntil) {
@@ -107,7 +110,7 @@ TEST(TestHydra, testFutureAsUntil) {
     Formula formula = Parser::parse("true U a");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testFuture) {
@@ -115,7 +118,7 @@ TEST(TestHydra, testFuture) {
     Formula formula = Parser::parse("F(a)");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyAsUntil) {
@@ -123,7 +126,7 @@ TEST(TestHydra, testGloballyAsUntil) {
     Formula formula = Parser::parse("!((true) U (!a))");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballySatisfied) {
@@ -131,7 +134,7 @@ TEST(TestHydra, testGloballySatisfied) {
     Formula formula = Parser::parse("G(a)");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyViolatedTwice) {
@@ -139,7 +142,7 @@ TEST(TestHydra, testGloballyViolatedTwice) {
     Formula formula = Parser::parse("G(a)");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, false}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyFutureOnceIntervalViolatedOnce) {
@@ -147,7 +150,7 @@ TEST(TestHydra, testGloballyFutureOnceIntervalViolatedOnce) {
     Formula formula = Parser::parse("G(a -> F[0, 6](b & O[0, 6](c)))");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, false},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyFutureOnceIntervalSatisfied) {
@@ -155,7 +158,7 @@ TEST(TestHydra, testGloballyFutureOnceIntervalSatisfied) {
     Formula formula = Parser::parse("G(a -> F[0, 6](b & O[0, 6](c)))");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyFutureIntervalSatiesfied) {
@@ -163,7 +166,7 @@ TEST(TestHydra, testGloballyFutureIntervalSatiesfied) {
     Formula formula = Parser::parse("G(a -> F[0, 6](b))");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyFutureIntervalViolated) {
@@ -171,7 +174,7 @@ TEST(TestHydra, testGloballyFutureIntervalViolated) {
     Formula formula = Parser::parse("G(a -> F[0, 6](b))");
     std::vector<Verdict> expSolution{Verdict{0, true},  Verdict{1, false}, Verdict{2, false}, Verdict{3, false},
                                      Verdict{4, false}, Verdict{5, false}, Verdict{6, false}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyOnceIntervalViolated) {
@@ -179,7 +182,7 @@ TEST(TestHydra, testGloballyOnceIntervalViolated) {
     Formula formula = Parser::parse("G(a -> O[0, 4](b))");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, false}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyOnceIntervalSatisfied) {
@@ -187,7 +190,7 @@ TEST(TestHydra, testGloballyOnceIntervalSatisfied) {
     Formula formula = Parser::parse("G(a -> O[0, 6](b))");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testOnceIntervalSatisfied) {
@@ -195,7 +198,7 @@ TEST(TestHydra, testOnceIntervalSatisfied) {
     Formula formula = Parser::parse("O[0, 6](a)");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testOnceIntervalViolated) {
@@ -203,7 +206,7 @@ TEST(TestHydra, testOnceIntervalViolated) {
     Formula formula = Parser::parse("O[0, 6](a)");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true},  Verdict{5, true}, Verdict{6, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyPreviousViolated) {
@@ -211,7 +214,7 @@ TEST(TestHydra, testGloballyPreviousViolated) {
     Formula formula = Parser::parse("G(a -> P(b))");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, false}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, false}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testOnceIntervallSatisfied) {
@@ -219,7 +222,7 @@ TEST(TestHydra, testOnceIntervallSatisfied) {
     Formula formula = Parser::parse("O[0,2](a)");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testOnceIntervallViolated) {
@@ -227,7 +230,7 @@ TEST(TestHydra, testOnceIntervallViolated) {
     Formula formula = Parser::parse("O[0,2](a)");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, false}, Verdict{2, false}, Verdict{3, true},
                                      Verdict{4, true},  Verdict{5, true},  Verdict{6, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testHistoricallyAsSinceViolated) {
@@ -235,7 +238,7 @@ TEST(TestHydra, testHistoricallyAsSinceViolated) {
     Formula formula = Parser::parse("!(true S(!a))");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, false}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testHistoricallySatisfied) {
@@ -244,7 +247,7 @@ TEST(TestHydra, testHistoricallySatisfied) {
     Formula formula = Parser::parse("H(a)");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testHistoricallyViolated) {
@@ -252,7 +255,7 @@ TEST(TestHydra, testHistoricallyViolated) {
     Formula formula = Parser::parse("H(a)");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, false}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyOncePreviousViolated) {
@@ -260,7 +263,7 @@ TEST(TestHydra, testGloballyOncePreviousViolated) {
     Formula formula = Parser::parse("G(a -> O(b & P(!b)))");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, false}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testPreviousAndNegationViolated) {
@@ -268,7 +271,7 @@ TEST(TestHydra, testPreviousAndNegationViolated) {
     Formula formula = Parser::parse("b & P(!b)");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, true}, Verdict{2, false}, Verdict{3, false},
                                      Verdict{4, false}, Verdict{5, true}, Verdict{6, false}, Verdict{7, false}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyOncePreviousSatisfied) {
@@ -276,7 +279,7 @@ TEST(TestHydra, testGloballyOncePreviousSatisfied) {
     Formula formula = Parser::parse("G(a -> O(b & P(!b)))");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}, Verdict{7, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyAndOncePreviousImplicationViolatedOnce) {
@@ -284,7 +287,7 @@ TEST(TestHydra, testGloballyAndOncePreviousImplicationViolatedOnce) {
     Formula formula = Parser::parse("G((a & O(b & P(!b))) -> c)");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, false},
                                      Verdict{4, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyAndOncePreviousImplicationSatisfied1) {
@@ -292,14 +295,14 @@ TEST(TestHydra, testGloballyAndOncePreviousImplicationSatisfied1) {
     Formula formula = Parser::parse("G((a & O(b & P(!b))) -> c)");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyAndOncePreviousImplicationSatisfied2) {
     Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a"}, {"a"}, {"a"}});
     Formula formula = Parser::parse("G((a & O(b & P(!b))) -> c)");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyImplicationOnceHistoricallySatisfied) {
@@ -309,7 +312,7 @@ TEST(TestHydra, testGloballyImplicationOnceHistoricallySatisfied) {
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}, Verdict{7, true},
                                      Verdict{8, true}, Verdict{9, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyImplicationOnceHistoricallyViolatedOnce) {
@@ -318,7 +321,7 @@ TEST(TestHydra, testGloballyImplicationOnceHistoricallyViolatedOnce) {
     Formula formula = Parser::parse("G((!a & P(a)) -> (O[1,5](H[0,2](a & b))))");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true},  Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, false}, Verdict{7, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyImplicationOncePreviousViolatedOnce) {
@@ -326,7 +329,7 @@ TEST(TestHydra, testGloballyImplicationOncePreviousViolatedOnce) {
     Formula formula = Parser::parse("G((!a & P(a)) -> (O[1,3](a & b)))");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true},  Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, false}, Verdict{7, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyImplicationOncePreviousSatisfied) {
@@ -334,7 +337,7 @@ TEST(TestHydra, testGloballyImplicationOncePreviousSatisfied) {
     Formula formula = Parser::parse("G((!a & P(a)) -> (O[1,3](a & b)))");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true},
                                      Verdict{3, true}, Verdict{4, true}, Verdict{5, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyImplicationHistoricallySatisfied) {
@@ -342,7 +345,7 @@ TEST(TestHydra, testGloballyImplicationHistoricallySatisfied) {
     Formula formula = Parser::parse("G(c -> H[0,1](a & b))");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyImplicationHistoricallyViolatedOnce) {
@@ -350,12 +353,27 @@ TEST(TestHydra, testGloballyImplicationHistoricallyViolatedOnce) {
     Formula formula = Parser::parse("G(c -> H[0,1](a & b))");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, false},
                                      Verdict{3, true}, Verdict{4, true}, Verdict{5, true}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyNext) {
     Trace trace = Utils::createTrace({"a", "b"}, {{"b"}, {"a"}, {"b"}});
     Formula formula = Parser::parse("G(b -> (X(a)))");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, false}};
-    TestHydra::evalHydra(trace, formula, expSolution);
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, testCombinedSinceUntilFormulas) {
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"a"}, {"a"}, {"a", "b"}, {"a"}, {"b"}},
+                                     std::vector<size_t>{0, 0, 2, 4, 5, 10});
+    std::vector<Formula> formulas = {Parser::parse("(a)S[0, 4](b)"), Parser::parse("(a)U[0, 4](b)"),
+                                     Parser::parse("((a)U[0, 4](b)) and a"),
+                                     Parser::parse("(a)S[0, 4](b) or (a)U[0, 4](b)")};
+    std::vector<std::vector<Verdict>> expSolutions{
+        {Verdict{0, false}, Verdict{0, false}, Verdict{2, false}, Verdict{4, true}, Verdict{5, true},
+         Verdict{10, true}},
+        {Verdict{0, true}, Verdict{0, true}, Verdict{2, true}, Verdict{4, true}, Verdict{5, false}, Verdict{10, true}},
+        {Verdict{0, true}, Verdict{0, true}, Verdict{2, true}, Verdict{4, true}, Verdict{5, false}, Verdict{10, false}},
+        {Verdict{0, true}, Verdict{0, true}, Verdict{2, true}, Verdict{4, true}, Verdict{5, true}, Verdict{10, true}}};
+    TestHydra::evalHydra(trace, formulas, expSolutions);
 }
