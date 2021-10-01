@@ -7,7 +7,7 @@
 #include "previous_monitor.h"
 
 Verdict PreviousMonitor::concreteStep(size_t parentId) {
-    Verdict subVerdict = subMonitor->step(id);
+    Verdict subVerdict = subMonitor->step(monitorId);
 
     if (currentVerdict and subVerdict.ts) {
         Verdict lastSubVerdict = *currentVerdict;

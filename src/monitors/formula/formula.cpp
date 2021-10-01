@@ -44,6 +44,8 @@ Formula Formula::deepCopy() const { return Formula(Formula::deepCopy(getExpr()),
 
 const std::string &Formula::getId() const { return id; }
 
+void Formula::setId(const std::string &identifier) { id = identifier; }
+
 bool operator==(const Formula &f1, const Formula &f2) { return *(f1.getExpr()) == *(f2.getExpr()); }
 
 bool operator<(const Formula &f1, const Formula &f2) { return *(f1.getExpr()) < *(f2.getExpr()); }

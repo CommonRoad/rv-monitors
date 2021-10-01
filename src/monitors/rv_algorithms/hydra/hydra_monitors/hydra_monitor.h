@@ -43,9 +43,14 @@ class HydraMonitor {
 
     void registerParent(size_t parentId);
 
+    const std::string &getFormulaId() const;
+
+    void setFormulaId(const std::string &formula_id);
+
   protected:
     Formula formula;
-    size_t id;
+    std::string formulaId;
+    size_t monitorId;
     std::vector<Verdict> verdictHistory;
     std::map<size_t, size_t> traceIdx;
 };

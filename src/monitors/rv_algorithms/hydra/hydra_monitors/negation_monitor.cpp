@@ -6,7 +6,7 @@
 //
 #include "negation_monitor.h"
 
-Verdict NegationMonitor::concreteStep(size_t parentId) { return !subMonitor->step(id); }
+Verdict NegationMonitor::concreteStep(size_t parentId) { return !subMonitor->step(monitorId); }
 
 void NegationMonitor::setTrace(const Trace &tr) { subMonitor->setTrace(tr); }
 

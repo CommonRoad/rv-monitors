@@ -10,18 +10,18 @@ std::map<std::string, std::vector<Verdict>> Hydra::evaluate(Trace &trace) {
     if (trace.getTrace().empty()) {
         std::cout << "Trace is empty" << std::endl;
         for (const auto &mon : monitors)
-            result[mon->getFormula().getId()] = {Verdict{0, false}};
+            result[mon->getFormulaId()] = {Verdict{0, false}};
         return result;
     }
 
     resetMonitors();
     setTraceMonitors(trace);
     for (const auto &mon : monitors)
-        result[mon->getFormula().getId()].reserve(trace.getLength());
+        result[mon->getFormulaId()].reserve(trace.getLength());
 
     for (size_t i{0}; i < trace.getLength(); ++i)
         for (const auto &mon : monitors)
-            result[mon->getFormula().getId()].emplace_back(mon->step(0));
+            result[mon->getFormulaId()].emplace_back(mon->step(0));
 
     return result;
 }
@@ -38,13 +38,17 @@ void Hydra::setTraceMonitors(const Trace &tr) {
 }
 
 void Hydra::createMonitor(const std::vector<Formula> &formulas) {
+    HydraCreationVisitor hc;
     for (const auto &form : formulas) {
+        if (form.getId().empty())
+            throw std::logic_error("Formula has no valid unique ID.");
         auto formulaCopy{form.deepCopy()};
         if (auto globally = std::dynamic_pointer_cast<Globally>(formulaCopy.getExpr()))
             formulaCopy = Formula(globally->getLeft());
         MtlRewriteVisitor rw;
         rw.rewrite(formulaCopy);
-        HydraCreationVisitor hc;
+        formulaCopy.setId(form.getId());
+
         monitors.push_back(hc.createMonitor(formulaCopy, 0));
     }
 }
