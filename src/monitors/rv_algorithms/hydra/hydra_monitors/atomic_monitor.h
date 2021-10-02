@@ -10,7 +10,7 @@
 
 class AtomicMonitor : public HydraMonitor {
   public:
-    AtomicMonitor(const Formula &formula, size_t id) : HydraMonitor(formula, id){};
+    AtomicMonitor(const Formula &formula, size_t id, bool connectedEval) : HydraMonitor(formula, id, connectedEval){};
 
     Verdict concreteStep(size_t parentId) override;
 

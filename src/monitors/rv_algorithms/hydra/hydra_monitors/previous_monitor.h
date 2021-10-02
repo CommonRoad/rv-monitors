@@ -12,8 +12,8 @@
 
 class PreviousMonitor : public HydraMonitor {
   public:
-    PreviousMonitor(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitor, size_t from, size_t to, size_t id)
-        : HydraMonitor(formula, id), subMonitor(std::move(subMonitor)), from(from), to(to){};
+    PreviousMonitor(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitor, size_t from, size_t to, size_t id, bool connectedEval)
+        : HydraMonitor(formula, id, connectedEval), subMonitor(std::move(subMonitor)), from(from), to(to){};
 
     Verdict concreteStep(size_t parentId) override;
 

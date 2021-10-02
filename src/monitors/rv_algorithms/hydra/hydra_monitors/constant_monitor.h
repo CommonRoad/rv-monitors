@@ -13,7 +13,7 @@
 
 class ConstantMonitor : public HydraMonitor {
   public:
-    ConstantMonitor(Formula formula, size_t id) : HydraMonitor(std::move(formula), id){};
+    ConstantMonitor(Formula formula, size_t id, bool connectedEval) : HydraMonitor(std::move(formula), id, connectedEval){};
 
     Verdict concreteStep(size_t parentId) override;
 

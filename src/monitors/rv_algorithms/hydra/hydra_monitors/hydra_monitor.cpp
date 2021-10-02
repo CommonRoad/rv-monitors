@@ -9,7 +9,9 @@
 #include <utility>
 const Formula &HydraMonitor::getFormula() const { return formula; }
 
-HydraMonitor::HydraMonitor(Formula formula, size_t id) : formula(std::move(formula)), monitorId((id)) {}
+HydraMonitor::HydraMonitor(Formula formula, size_t id, bool connectedEval) : formula(std::move(formula)),
+                                                                             monitorId((id)),
+                                                                             connectedEval(connectedEval) {}
 
 void HydraMonitor::reset() {
     for (auto &[_, id] : traceIdx)
@@ -30,7 +32,11 @@ size_t HydraMonitor::getMaxTraceIdx() {
 }
 
 Verdict HydraMonitor::step(size_t parentId) {
-    if (traceIdx[parentId] == getMaxTraceIdx()) {
+    if (!connectedEval) {
+        auto verdict{concreteStep(parentId)};
+        ++traceIdx[parentId];
+        return verdict;
+    } else if (traceIdx[parentId] == getMaxTraceIdx()) {
         auto verdict{concreteStep(parentId)};
         verdictHistory.push_back(verdict);
         ++traceIdx[parentId];

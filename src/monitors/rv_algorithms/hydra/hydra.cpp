@@ -37,7 +37,7 @@ void Hydra::setTraceMonitors(const Trace &tr) {
         mon->setTrace(tr);
 }
 
-void Hydra::createMonitor(const std::vector<Formula> &formulas) {
+void Hydra::createMonitor(const std::vector<Formula> &formulas, bool connectedEval) {
     HydraCreationVisitor hc;
     for (const auto &form : formulas) {
         if (form.getId().empty())
@@ -49,8 +49,8 @@ void Hydra::createMonitor(const std::vector<Formula> &formulas) {
         rw.rewrite(formulaCopy);
         formulaCopy.setId(form.getId());
 
-        monitors.push_back(hc.createMonitor(formulaCopy, 0));
+        monitors.push_back(hc.createMonitor(formulaCopy, 0, connectedEval));
     }
 }
 
-Hydra::Hydra(const std::vector<Formula> &formulas) : MonitorInterface(formulas) { createMonitor(formulas); }
+Hydra::Hydra(const std::vector<Formula> &formulas, bool connectedEval) : MonitorInterface(formulas) { createMonitor(formulas, connectedEval); }

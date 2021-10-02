@@ -14,8 +14,8 @@ class UntilMonitor : public HydraMonitor {
   public:
     UntilMonitor(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitorF,
                  std::shared_ptr<HydraMonitor> subMonitorG, std::shared_ptr<HydraMonitor> subMonitorH, size_t from,
-                 size_t to, size_t id)
-        : HydraMonitor(formula, id), subMonitorF(std::move(subMonitorF)), subMonitorG(std::move(subMonitorG)),
+                 size_t to, size_t id, bool connectedEval)
+        : HydraMonitor(formula, id, connectedEval), subMonitorF(std::move(subMonitorF)), subMonitorG(std::move(subMonitorG)),
           subMonitorH(std::move(subMonitorH)), from(from), to(to){};
 
     Verdict concreteStep(size_t parentId) override;
