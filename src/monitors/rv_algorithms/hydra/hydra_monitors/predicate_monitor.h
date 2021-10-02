@@ -10,7 +10,8 @@
 
 class PredicateMonitor : public HydraMonitor {
   public:
-    PredicateMonitor(Formula formula, size_t id, bool connectedEval) : HydraMonitor(std::move(formula), id, connectedEval){};
+    PredicateMonitor(Formula formula, size_t id, bool connectedEval)
+        : HydraMonitor(std::move(formula), id, connectedEval){};
 
     Verdict concreteStep(size_t parentId) override;
 

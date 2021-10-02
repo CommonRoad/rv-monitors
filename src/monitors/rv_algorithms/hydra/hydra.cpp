@@ -53,4 +53,6 @@ void Hydra::createMonitor(const std::vector<Formula> &formulas, bool connectedEv
     }
 }
 
-Hydra::Hydra(const std::vector<Formula> &formulas, bool connectedEval) : MonitorInterface(formulas) { createMonitor(formulas, connectedEval); }
+Hydra::Hydra(const std::vector<Formula> &formulas, bool connectedEval) : MonitorInterface(formulas) {
+    createMonitor(formulas, connectedEval);
+}

@@ -11,8 +11,8 @@
 #include "monitors/utils/utils.h"
 #include <chrono>
 #include <iostream>
-#include <thread>
 #include <random>
+#include <thread>
 
 typedef std::mt19937 MyRNG;
 uint32_t seed_val = 123456789;
@@ -60,14 +60,11 @@ Trace createRandomTrace(const std::set<std::string> &atomics, size_t length) {
     return Trace(eventList);
 }
 
-
 Trace createRandomLazyTrace(size_t length) {
     std::vector<Event> eventList;
     size_t timeStepIdx{0};
     const std::map<std::string, std::function<bool(size_t)>> atomicsAndFunctions{
-        {"a", a}, {"b", b}, {"c", c},
-        {"d", d}
-    };
+        {"a", a}, {"b", b}, {"c", c}, {"d", d}};
     rng.seed(seed_val);
 
     for (; timeStepIdx < length; ++timeStepIdx) {
@@ -117,17 +114,17 @@ void evalHydraSingle(Trace &trace, const std::vector<Formula> &formulas) {
 
 int main() {
     Trace trace = createRandomTrace({"a", "b", "c", "d", "e", "f", "g", "i", "j"}, 200000);
-  //  Trace trace = createRandomLazyTrace(10);
-//    std::vector<Formula> formulas = {Parser::parse("(a)S[0, 40](b)"), Parser::parse("(c)U[0, 40](d)"),
-//                                     Parser::parse("((e)U[0, 40](f)) and g"), Parser::parse("X(i) and P(j)")};
-//    std::vector<Formula> formulas = {Parser::parse("(a)S[0, 4](b)"), Parser::parse("(a)U[0, 4](b)"),
-//                                     Parser::parse("((a)U[0, 4](b)) and a"),
-//                                     Parser::parse("(a)S[0, 4](b) or (a)U[0, 4](b)")};
+    //  Trace trace = createRandomLazyTrace(10);
+    //    std::vector<Formula> formulas = {Parser::parse("(a)S[0, 40](b)"), Parser::parse("(c)U[0, 40](d)"),
+    //                                     Parser::parse("((e)U[0, 40](f)) and g"), Parser::parse("X(i) and P(j)")};
+    //    std::vector<Formula> formulas = {Parser::parse("(a)S[0, 4](b)"), Parser::parse("(a)U[0, 4](b)"),
+    //                                     Parser::parse("((a)U[0, 4](b)) and a"),
+    //                                     Parser::parse("(a)S[0, 4](b) or (a)U[0, 4](b)")};
     std::vector<Formula> formulas = {Parser::parse("(a)S[0, 4](b) or (a)U[0, 4](b)")};
     formulas[0].setId("R1");
-//    formulas[1].setId("R2");
-//    formulas[2].setId("R3");
-//    formulas[3].setId("R4");
+    //    formulas[1].setId("R2");
+    //    formulas[2].setId("R3");
+    //    formulas[3].setId("R4");
     evalHydraCombined(trace, formulas);
     evalHydraSingle(trace, formulas);
 }

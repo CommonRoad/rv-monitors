@@ -9,9 +9,8 @@
 #include <utility>
 const Formula &HydraMonitor::getFormula() const { return formula; }
 
-HydraMonitor::HydraMonitor(Formula formula, size_t id, bool connectedEval) : formula(std::move(formula)),
-                                                                             monitorId((id)),
-                                                                             connectedEval(connectedEval) {}
+HydraMonitor::HydraMonitor(Formula formula, size_t id, bool connectedEval)
+    : formula(std::move(formula)), monitorId((id)), connectedEval(connectedEval) {}
 
 void HydraMonitor::reset() {
     for (auto &[_, id] : traceIdx)

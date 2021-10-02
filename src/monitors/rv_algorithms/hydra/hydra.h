@@ -17,7 +17,7 @@
  */
 class Hydra : public MonitorInterface {
   public:
-    Hydra(const std::vector<Formula> &formulas, bool connectedEval=true);
+    Hydra(const std::vector<Formula> &formulas, bool connectedEval = true);
 
     /**
      * Evaluation function for monitor algorithms.

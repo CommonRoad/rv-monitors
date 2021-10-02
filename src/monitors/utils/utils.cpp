@@ -342,4 +342,3 @@ Trace Utils::createLazyTrace(const std::map<std::string, std::function<bool(size
     }
     return Trace{finalTrace};
 }
-
