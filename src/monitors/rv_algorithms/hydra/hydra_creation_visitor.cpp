@@ -25,7 +25,8 @@
 #include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
 #include "monitors/formula/formula.h"
 
-std::shared_ptr<HydraMonitor> HydraCreationVisitor::createMonitor(Formula &formula, size_t parentId, bool connectedEval) {
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::createMonitor(Formula &formula, size_t parentId,
+                                                                  bool connectedEval) {
     auto newMonitor{formula.getExpr()->accept(*this, parentId, connectedEval)};
     newMonitor->setFormulaId(formula.getId());
     return newMonitor;
@@ -63,22 +64,24 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitPredicate(Predicate &op
         return baseline.at(op.to_string());
     } else {
         size_t id{maxId++};
-        auto newMonitor{std::make_shared<PredicateMonitor>(Formula(std::make_shared<Predicate>(op)), id, connectedEval)};
+        auto newMonitor{
+            std::make_shared<PredicateMonitor>(Formula(std::make_shared<Predicate>(op)), id, connectedEval)};
         baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(op.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
     }
 }
 
-std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitPreviously(Previously &op, size_t parentId, bool connectedEval) {
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitPreviously(Previously &op, size_t parentId,
+                                                                    bool connectedEval) {
     if (baseline.find(op.to_string()) != baseline.end()) {
         baseline.at(op.to_string())->registerParent(parentId);
         return baseline.at(op.to_string());
     } else {
         size_t id{maxId++};
-        auto newMonitor{std::make_shared<PreviousMonitor>(Formula(std::make_shared<Previously>(op)),
-                                                          op.getLeft()->accept(*this, id, connectedEval), op.getInterval()->getStart(),
-                                                          op.getInterval()->getEnd(), id, connectedEval)};
+        auto newMonitor{std::make_shared<PreviousMonitor>(
+            Formula(std::make_shared<Previously>(op)), op.getLeft()->accept(*this, id, connectedEval),
+            op.getInterval()->getStart(), op.getInterval()->getEnd(), id, connectedEval)};
         baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(op.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
@@ -91,9 +94,9 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitNext(NextStrong &op, si
         return baseline.at(op.to_string());
     } else {
         size_t id{maxId++};
-        auto newMonitor{std::make_shared<NextMonitor>(Formula(std::make_shared<NextStrong>(op)),
-                                                      op.getLeft()->accept(*this, id, connectedEval), op.getInterval()->getStart(),
-                                                      op.getInterval()->getEnd(), id, connectedEval)};
+        auto newMonitor{std::make_shared<NextMonitor>(
+            Formula(std::make_shared<NextStrong>(op)), op.getLeft()->accept(*this, id, connectedEval),
+            op.getInterval()->getStart(), op.getInterval()->getEnd(), id, connectedEval)};
         baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(op.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
@@ -107,8 +110,9 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitSince(Since &op, size_t
     } else {
         size_t id{maxId++};
         auto newMonitor{std::make_shared<SinceMonitor>(
-            Formula(std::make_shared<Since>(op)), op.getLeft()->accept(*this, id, connectedEval), op.getRight()->accept(*this, id, connectedEval),
-            op.getInterval()->getStart(), op.getInterval()->getEnd(), id, connectedEval)};
+            Formula(std::make_shared<Since>(op)), op.getLeft()->accept(*this, id, connectedEval),
+            op.getRight()->accept(*this, id, connectedEval), op.getInterval()->getStart(), op.getInterval()->getEnd(),
+            id, connectedEval)};
         baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(op.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
@@ -121,11 +125,13 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitUntil(Until &op, size_t
         return baseline.at(op.to_string());
     } else {
         size_t id{maxId++};
-        auto tmpConstSubMonitor{std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(true)), maxId++, connectedEval)};
+        auto tmpConstSubMonitor{
+            std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(true)), maxId++, connectedEval)};
         tmpConstSubMonitor->registerParent(id);
         auto newMonitor{std::make_shared<UntilMonitor>(
-            Formula(std::make_shared<Until>(op)), op.getLeft()->accept(*this, id, connectedEval), op.getRight()->accept(*this, id, connectedEval),
-            tmpConstSubMonitor, op.getInterval()->getStart(), op.getInterval()->getEnd(), id, connectedEval)};
+            Formula(std::make_shared<Until>(op)), op.getLeft()->accept(*this, id, connectedEval),
+            op.getRight()->accept(*this, id, connectedEval), tmpConstSubMonitor, op.getInterval()->getStart(),
+            op.getInterval()->getEnd(), id, connectedEval)};
         baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(op.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
@@ -170,8 +176,8 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitNot(Not &op, size_t par
         return baseline.at(op.to_string());
     } else {
         size_t id{maxId++};
-        auto newMonitor{
-            std::make_shared<NegationMonitor>(Formula(std::make_shared<Not>(op)), op.getLeft()->accept(*this, id, connectedEval), id, connectedEval)};
+        auto newMonitor{std::make_shared<NegationMonitor>(
+            Formula(std::make_shared<Not>(op)), op.getLeft()->accept(*this, id, connectedEval), id, connectedEval)};
         baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(op.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;

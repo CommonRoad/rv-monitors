@@ -29,7 +29,8 @@ class Since : public Binary, public TemporalOperator {
 
     [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override;
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor, size_t parentId, bool connectedEval) override;
+    [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor, size_t parentId,
+                                                       bool connectedEval) override;
 };
 
 #endif // RV_MONITORS_SINCE_H

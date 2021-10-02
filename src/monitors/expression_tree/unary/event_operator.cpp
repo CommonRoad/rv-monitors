@@ -11,6 +11,7 @@ Event EventOperator::getEvent() { return trace.getEvent(index); }
 std::string EventOperator::to_string() const {
     return "E(" + getLeft()->to_string() + trace.getTrace().at(index).to_string() + ")";
 }
-std::shared_ptr<HydraMonitor> EventOperator::accept(HydraCreationVisitor &visitor, size_t parentId, bool connectedEval) {
+std::shared_ptr<HydraMonitor> EventOperator::accept(HydraCreationVisitor &visitor, size_t parentId,
+                                                    bool connectedEval) {
     return std::shared_ptr<HydraMonitor>();
 }
