@@ -10,8 +10,8 @@
 
 class OrMonitor : public HydraMonitor {
   public:
-    OrMonitor(Formula formula, std::vector<std::shared_ptr<HydraMonitor>> subMonitors, size_t id)
-        : HydraMonitor(std::move(formula), id), subMonitors(std::move(subMonitors)){};
+    OrMonitor(Formula formula, std::vector<std::shared_ptr<HydraMonitor>> subMonitors, size_t id, bool connectedEval)
+        : HydraMonitor(std::move(formula), id, connectedEval), subMonitors(std::move(subMonitors)){};
 
     Verdict concreteStep(size_t parentId) override;
 

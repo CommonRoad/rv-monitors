@@ -13,7 +13,7 @@
 class SinceMonitor : public HydraMonitor {
   public:
     SinceMonitor(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitorF,
-                 std::shared_ptr<HydraMonitor> subMonitorG, size_t from, size_t to, size_t id)
+                 std::shared_ptr<HydraMonitor> subMonitorG, size_t from, size_t to, size_t id, bool connectedEval)
         : HydraMonitor(formula, id), subMonitorF(std::move(subMonitorF)), subMonitorG(std::move(subMonitorG)),
           from(from), to(to){};
 
