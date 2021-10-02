@@ -8,7 +8,6 @@
 #include "monitors/parser/parser.h"
 #include "monitors/rv_algorithms/hydra/hydra.h"
 #include "monitors/trace/trace.h"
-#include "monitors/utils/utils.h"
 #include <chrono>
 #include <iostream>
 #include <random>
@@ -19,25 +18,25 @@ uint32_t seed_val = 123456789;
 MyRNG rng;
 std::uniform_int_distribution<uint8_t> uint_dist2(0, 1);
 
-bool a(size_t timeStep) {
+bool a() {
     rng.seed(seed_val);
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
     return uint_dist2(rng) == 1;
 }
 
-bool b(size_t timeStep) {
+bool b() {
     rng.seed(seed_val);
     std::this_thread::sleep_for(std::chrono::milliseconds(2));
     return uint_dist2(rng) == 1;
 }
 
-bool c(size_t timeStep) {
+bool c() {
     rng.seed(seed_val);
     std::this_thread::sleep_for(std::chrono::milliseconds(5));
     return uint_dist2(rng) == 1;
 }
 
-bool d(size_t timeStep) {
+bool d() {
     rng.seed(seed_val);
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
     return uint_dist2(rng) == 1;
@@ -63,16 +62,14 @@ Trace createRandomTrace(const std::set<std::string> &atomics, size_t length) {
 Trace createRandomLazyTrace(size_t length) {
     std::vector<Event> eventList;
     size_t timeStepIdx{0};
-    const std::map<std::string, std::function<bool(size_t)>> atomicsAndFunctions{
+    const std::map<std::string, std::function<bool()>> atomicsAndFunctions{
         {"a", a}, {"b", b}, {"c", c}, {"d", d}};
     rng.seed(seed_val);
 
     for (; timeStepIdx < length; ++timeStepIdx) {
         std::map<std::string, lazy_bool> event;
-        for (auto const &[atomic, valueFetcher] : atomicsAndFunctions) {
-            auto valueFetcherBound = std::bind(valueFetcher, timeStepIdx);
-            event[atomic] = lazy_bool(valueFetcherBound);
-        }
+        for (auto const &[atomic, valueFetcher] : atomicsAndFunctions)
+            event[atomic] = lazy_bool(valueFetcher);
         eventList.emplace_back(event, timeStepIdx, timeStepIdx == length - 1);
         event.clear();
     }
