@@ -127,9 +127,9 @@ void DynamicProgrammingLTL::update(size_t j, std::vector<bool> &updateVector, st
 std::map<std::string, std::vector<Verdict>> DynamicProgrammingLTL::evaluate(Trace &trace) {
     std::map<std::string, std::vector<Verdict>> result;
     if (!pastEvaluation)
-        result[formulas.at(0).getId()] = {Verdict{0, checkTraceDynamicallyFuture(trace)}};
+        result[formulas.at(0).getId()] = {Verdict{checkTraceDynamicallyFuture(trace)}};
     else
-        result[formulas.at(0).getId()] = {Verdict{0, checkTraceDynamicallyPast(trace)}};
+        result[formulas.at(0).getId()] = {Verdict{checkTraceDynamicallyPast(trace)}};
     return result;
 }
 
@@ -139,7 +139,7 @@ std::vector<bool> DynamicProgrammingLTL::initializePre(Event &event,
     std::map<std::string, lazy_bool> eventMap = event.getEventMap();
     pre.resize(subformulas.size());
     // Fill pre backwards
-    for (size_t j = subformulas.size() - 1; j >= 0 && j < subformulas.size(); --j) {
+    for (size_t j = subformulas.size() - 1; j < subformulas.size(); --j) {
         initialize(j, pre, eventMap, subformulas);
         // Previously
         if (std::dynamic_pointer_cast<Previously>(subformulas[j])) {
@@ -164,7 +164,7 @@ std::vector<bool> DynamicProgrammingLTL::updateNowPast(Event &event,
     std::map<std::string, lazy_bool> eventMap = event.getEventMap();
 
     // j >= 0 && j < subformulas.size() to avoid underflow
-    for (size_t j = subformulas.size() - 1; j >= 0 && j < subformulas.size(); --j) {
+    for (size_t j = subformulas.size() - 1; j < subformulas.size(); --j) {
         update(j, now, pre, eventMap, subformulas);
         // Previously
         if (auto previously = std::dynamic_pointer_cast<Previously>(subformulas[j])) {
@@ -206,7 +206,7 @@ std::vector<bool> DynamicProgrammingLTL::initializeNext(Event &event,
     std::map<std::string, lazy_bool> eventMap = event.getEventMap();
     next.resize(subformulas.size());
     // Fill next backwards
-    for (size_t j = subformulas.size() - 1; j >= 0 && j < subformulas.size(); --j) {
+    for (size_t j = subformulas.size() - 1; j < subformulas.size(); --j) {
         initialize(j, next, eventMap, subformulas);
         // Weak Next
         if (std::dynamic_pointer_cast<NextWeak>(subformulas[j])) {
@@ -243,7 +243,7 @@ std::vector<bool> DynamicProgrammingLTL::updateNowFuture(Event &event,
     std::map<std::string, lazy_bool> eventMap = event.getEventMap();
 
     // j >= 0 && j < subformulas.size() to avoid underflow
-    for (size_t j = subformulas.size() - 1; j >= 0 && j < subformulas.size(); --j) {
+    for (size_t j = subformulas.size() - 1; j < subformulas.size(); --j) {
         update(j, now, next, eventMap, subformulas);
         // Next
         if (std::dynamic_pointer_cast<NextStrong>(subformulas[j]) ||
@@ -282,7 +282,7 @@ bool DynamicProgrammingLTL::checkTraceDynamicallyFuture(Trace &trace) {
     if (!next[0]) {
         return false;
     }
-    for (size_t i = trace.getLength() - 2; i >= 0 && i < trace.getLength() - 1; --i) {
+    for (size_t i = trace.getLength() - 2; i < trace.getLength() - 1; --i) {
         next = updateNowFuture(trace.getTraceRef()[i], subformulas, next);
         // Only for safety properties!
         if (!next[0]) {

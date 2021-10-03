@@ -69,9 +69,9 @@ Formula EventConsumingLTL::eventConsumingPast(Trace &trace) {
 std::map<std::string, std::vector<Verdict>> EventConsumingLTL::evaluate(Trace &trace) {
     std::map<std::string, std::vector<Verdict>> result;
     if (!pastEvaluation)
-        result[formulas.at(0).getId()] = {Verdict{0, eventConsumingFuture(trace).to_string() == "true"}};
+        result[formulas.at(0).getId()] = {Verdict{eventConsumingFuture(trace).to_string() == "true"}};
     else
-        result[formulas.at(0).getId()] = {Verdict{0, eventConsumingPast(trace).to_string() == "true"}};
+        result[formulas.at(0).getId()] = {Verdict{eventConsumingPast(trace).to_string() == "true"}};
     return result;
 }
 std::string EventConsumingLTL::to_string() const { return "TODO"; }

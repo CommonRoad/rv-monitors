@@ -82,4 +82,27 @@ RVMonitor::RVMonitor(AlgorithmType algorithm, const std::vector<Formula> &formul
         break;
     }
 }
+
+RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement)
+    : performanceMeasurement(measurement) {
+    switch (algorithm) {
+    case dynamic_programming_ltl:
+        monitor = std::make_unique<DynamicProgrammingLTL>(std::vector<Formula>{formula}, past);
+        break;
+    case event_consuming_ltl:
+        monitor = std::make_unique<EventConsumingLTL>(std::vector<Formula>{formula}, past);
+        break;
+    case mt_fsm:
+        monitor = std::make_unique<MtFsm>(std::vector<Formula>{formula}, past);
+        break;
+    case btt_fsm:
+        monitor = std::make_unique<BttFsm>(std::vector<Formula>{formula}, past);
+        break;
+    case hydra_mtl:
+        monitor = std::make_unique<Hydra>(std::vector<Formula>{formula});
+        break;
+    }
+}
+
 const ExecutionStatistic &RVMonitor::getExecutionStatistic() const { return executionStatistic; }
+

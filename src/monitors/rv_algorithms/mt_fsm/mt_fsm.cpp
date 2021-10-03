@@ -47,16 +47,16 @@ std::map<std::string, std::vector<Verdict>> MtFsm::evaluate(Trace &trace) {
         size_t eventIndex = pastEvaluation ? trace.getLength() - 1 - i : i;
         size_t nextState = currentState.nextState(trace.getEvent(eventIndex));
         if (nextState == 0u) {
-            result[formulas.at(0).getId()] = {Verdict{0, false}};
+            result[formulas.at(0).getId()] = {Verdict{false}};
             return result;
         }
         if (nextState == 1) {
-            result[formulas.at(0).getId()] = {Verdict{0, true}};
+            result[formulas.at(0).getId()] = {Verdict{true}};
             return result;
         }
         currentState = states[nextState];
     }
-    result[formulas.at(0).getId()] = {Verdict{0, false}};
+    result[formulas.at(0).getId()] = {Verdict{false}};
     return result;
 }
 

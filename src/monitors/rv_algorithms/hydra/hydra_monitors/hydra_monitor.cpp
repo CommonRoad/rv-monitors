@@ -6,6 +6,7 @@
 //
 #include "hydra_monitor.h"
 
+#include <iostream>
 #include <utility>
 const Formula &HydraMonitor::getFormula() const { return formula; }
 
