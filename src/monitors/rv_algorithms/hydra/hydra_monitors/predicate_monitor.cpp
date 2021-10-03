@@ -5,6 +5,7 @@
 // Credits: BMW Car@TUM
 //
 #include "predicate_monitor.h"
+#include <iostream>
 
 Verdict PredicateMonitor::concreteStep(size_t parentId) {
     if (traceIdx[parentId] < trace.getLength()) {

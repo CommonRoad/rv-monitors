@@ -29,6 +29,17 @@ class RVMonitor {
      * PLTLf).
      * @param measurement Boolean indicating whether performance evaluation should be performed.
      */
+    RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement);
+
+    /**
+     * Constructor
+     *
+     * @param algorithm Algorithm type, e.g., event-consuming LTL, BTT-FSM, etc.
+     * @param formula List of temporal logic formulas.
+     * @param past Boolean indicating whether formula specifies only future or past properties (true if formula is in
+     * PLTLf).
+     * @param measurement Boolean indicating whether performance evaluation should be performed.
+     */
     RVMonitor(AlgorithmType algorithm, const std::vector<Formula> &formula, bool past, bool measurement);
 
     /**

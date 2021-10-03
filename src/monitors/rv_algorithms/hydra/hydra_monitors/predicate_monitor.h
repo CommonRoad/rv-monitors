@@ -18,6 +18,5 @@ class PredicateMonitor : public HydraMonitor {
     void setTrace(const Trace &trace) override;
 
   private:
-    std::map<size_t, size_t> traceIdx;
     Trace trace;
 };
