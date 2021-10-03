@@ -112,8 +112,8 @@ void evalHydraSingle(Trace &trace, const std::vector<Formula> &formulas) {
 }
 
 int main() {
-    //Trace trace = createRandomTrace({"a", "b", "c", "d", "e", "f", "g", "i", "j"}, 200000);
-      Trace trace = createRandomLazyTrace(10);
+    // Trace trace = createRandomTrace({"a", "b", "c", "d", "e", "f", "g", "i", "j"}, 200000);
+    Trace trace = createRandomLazyTrace(10);
     //    std::vector<Formula> formulas = {Parser::parse("(a)S[0, 40](b)"), Parser::parse("(c)U[0, 40](d)"),
     //                                     Parser::parse("((e)U[0, 40](f)) and g"), Parser::parse("X(i) and P(j)")};
     //    std::vector<Formula> formulas = {Parser::parse("(a)S[0, 4](b)"), Parser::parse("(a)U[0, 4](b)"),
@@ -121,9 +121,9 @@ int main() {
     //                                     Parser::parse("(a)S[0, 4](b) or (a)U[0, 4](b)")};
     std::vector<Formula> formulas = {Parser::parse("a(test)")};
     formulas[0].setId("R1");
-//        formulas[1].setId("R2");
-//        formulas[2].setId("R3");
-//        formulas[3].setId("R4");
+    //        formulas[1].setId("R2");
+    //        formulas[2].setId("R3");
+    //        formulas[3].setId("R4");
     evalHydraCombined(trace, formulas);
     evalHydraSingle(trace, formulas);
 }

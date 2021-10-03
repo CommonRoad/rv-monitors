@@ -105,4 +105,3 @@ RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past,
 }
 
 const ExecutionStatistic &RVMonitor::getExecutionStatistic() const { return executionStatistic; }
-
