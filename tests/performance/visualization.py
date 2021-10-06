@@ -17,7 +17,8 @@ data2 = [data_single_F1_300, data_connected_F1_300, data_combined_F1_300]
 data3 = [data_single_F2_60, data_connected_F2_60, data_combined_F2_60]
 data4 = [data_single_F2_300, data_connected_F2_300, data_combined_F2_300]
 fig1, ax1 = plt.subplots()
-ax1.boxplot(data3)
+ax1.boxplot(data4)
 plt.ylabel('comp. time [ms]')
+plt.rcParams['svg.fonttype'] = 'none'
 plt.xticks([1, 2, 3], ['multi-head', 'connected multi-head', 'connected multi-root'])
 plt.show()
