@@ -26,7 +26,7 @@ void evalFormula2Atomic(const std::vector<Formula> &formulas, size_t numExecutio
 
 bool a(size_t dummy) {
     rng.seed(seed_val);
-    std::this_thread::sleep_for(std::chrono::microseconds (10));
+    std::this_thread::sleep_for(std::chrono::microseconds(10));
     return uint_dist2(rng) == 1;
 }
 
@@ -60,8 +60,6 @@ bool f(size_t dummy) {
     return uint_dist2(rng) == 1;
 }
 
-
-
 Trace createRandomTrace(const std::set<std::string> &atomics, size_t length) {
     std::vector<Event> eventList;
     size_t timeStepIdx{0};
@@ -84,7 +82,7 @@ Trace createRandomLazyTrace(size_t length) {
     size_t timeStepIdx{0};
     const std::map<std::string, std::function<bool(size_t)>> atomicsAndFunctions{
         {"atest", a}, {"btest", b}, {"ctest", c}, {"dtest", d}, {"etest", e}, {"ftest", f},
-        {"a", a}, {"b", b}, {"c", c}, {"d", d}, {"e", e}, {"f", f}};
+        {"a", a},     {"b", b},     {"c", c},     {"d", d},     {"e", e},     {"f", f}};
     rng.seed(seed_val);
 
     for (; timeStepIdx < length; ++timeStepIdx) {
@@ -141,22 +139,25 @@ void executeEval(const std::vector<Formula> &formulas1, size_t numExecutions, si
     std::vector<double> avgCompTimeConnected;
     std::vector<double> avgCompTimeSingle;
 
-    for(size_t i{0}; i< numExecutions; ++i){
+    for (size_t i{0}; i < numExecutions; ++i) {
         Trace trace = createRandomLazyTrace(traceLength);
         avgCompTimeCombined.push_back(evalHydraCombined(trace, formulas1));
         avgCompTimeConnected.push_back(evalHydraSingleConnected(trace, formulas1));
         avgCompTimeSingle.push_back(evalHydraSingle(trace, formulas1));
     }
-    std::cout << "Combined: " << std::accumulate(avgCompTimeCombined.begin(), avgCompTimeCombined.end(), 0)/numExecutions << '\n';
-    std::cout << "Connected: " << std::accumulate(avgCompTimeConnected.begin(), avgCompTimeConnected.end(), 0)/numExecutions << '\n';
-    std::cout << "Single: " <<  std::accumulate(avgCompTimeSingle.begin(), avgCompTimeSingle.end(), 0)/numExecutions << '\n';
-    for(const auto &val : avgCompTimeCombined)
+    std::cout << "Combined: "
+              << std::accumulate(avgCompTimeCombined.begin(), avgCompTimeCombined.end(), 0) / numExecutions << '\n';
+    std::cout << "Connected: "
+              << std::accumulate(avgCompTimeConnected.begin(), avgCompTimeConnected.end(), 0) / numExecutions << '\n';
+    std::cout << "Single: " << std::accumulate(avgCompTimeSingle.begin(), avgCompTimeSingle.end(), 0) / numExecutions
+              << '\n';
+    for (const auto &val : avgCompTimeCombined)
         std::cout << val << ", ";
     std::cout << '\n';
-    for(const auto &val : avgCompTimeConnected)
+    for (const auto &val : avgCompTimeConnected)
         std::cout << val << ", ";
     std::cout << '\n';
-    for(const auto &val : avgCompTimeSingle)
+    for (const auto &val : avgCompTimeSingle)
         std::cout << val << ", ";
     std::cout << '\n';
 }
@@ -166,40 +167,39 @@ void executeEvalAtomic(const std::vector<Formula> &formulas1, size_t numExecutio
     std::vector<double> avgCompTimeConnected;
     std::vector<double> avgCompTimeSingle;
 
-    for(size_t i{0}; i< numExecutions; ++i){
+    for (size_t i{0}; i < numExecutions; ++i) {
         Trace trace = createRandomTrace({"a", "b", "c", "d", "e", "f", "g", "i", "j"}, traceLength);
         avgCompTimeCombined.push_back(evalHydraCombined(trace, formulas1));
         avgCompTimeConnected.push_back(evalHydraSingleConnected(trace, formulas1));
         avgCompTimeSingle.push_back(evalHydraSingle(trace, formulas1));
     }
-    std::cout << "Combined: " << std::accumulate(avgCompTimeCombined.begin(), avgCompTimeCombined.end(), 0)/numExecutions << '\n';
-    std::cout << "Connected: " << std::accumulate(avgCompTimeConnected.begin(), avgCompTimeConnected.end(), 0)/numExecutions << '\n';
-    std::cout << "Single: " <<  std::accumulate(avgCompTimeSingle.begin(), avgCompTimeSingle.end(), 0)/numExecutions << '\n';
-    for(const auto &val : avgCompTimeCombined)
+    std::cout << "Combined: "
+              << std::accumulate(avgCompTimeCombined.begin(), avgCompTimeCombined.end(), 0) / numExecutions << '\n';
+    std::cout << "Connected: "
+              << std::accumulate(avgCompTimeConnected.begin(), avgCompTimeConnected.end(), 0) / numExecutions << '\n';
+    std::cout << "Single: " << std::accumulate(avgCompTimeSingle.begin(), avgCompTimeSingle.end(), 0) / numExecutions
+              << '\n';
+    for (const auto &val : avgCompTimeCombined)
         std::cout << val << ", ";
     std::cout << '\n';
-    for(const auto &val : avgCompTimeConnected)
+    for (const auto &val : avgCompTimeConnected)
         std::cout << val << ", ";
     std::cout << '\n';
-    for(const auto &val : avgCompTimeSingle)
+    for (const auto &val : avgCompTimeSingle)
         std::cout << val << ", ";
     std::cout << '\n';
 }
-
 
 int main() {
     std::vector<Formula> formulas1 = {Parser::parse("(a(test))S[0, 4](b(test))"),
                                       Parser::parse("(a(test))U[0, 4](b(test))"),
                                       Parser::parse("(a(test))S[0, 4](b(test)) or (a(test))U[0, 4](b(test))")};
-    std::vector<Formula> formulas2 = {Parser::parse("P(c(test))"),
-                                      Parser::parse("X(d(test))"),
+    std::vector<Formula> formulas2 = {Parser::parse("P(c(test))"), Parser::parse("X(d(test))"),
                                       Parser::parse("(a(test))S[0, 4](b(test)) or (e(test))U[0, 4](f(test))")};
 
-    std::vector<Formula> formulas3 = {Parser::parse("(a S[0, 4] b)"),
-                                      Parser::parse("(a U[0, 4] b)"),
+    std::vector<Formula> formulas3 = {Parser::parse("(a S[0, 4] b)"), Parser::parse("(a U[0, 4] b)"),
                                       Parser::parse("(a S[0, 4] b) or (a U[0, 4] b)")};
-    std::vector<Formula> formulas4 = {Parser::parse("P(c)"),
-                                      Parser::parse("X(d)"),
+    std::vector<Formula> formulas4 = {Parser::parse("P(c)"), Parser::parse("X(d)"),
                                       Parser::parse("(a S[0, 4] b) or (e U[0, 4] f)")};
 
     formulas1[0].setId("R1");
@@ -220,42 +220,42 @@ int main() {
     evalFormula1(formulas1, numExecutions, traceLength);
     evalFormula2(formulas2, numExecutions, traceLength);
 
-//    traceLength = {50000, 100000, 200000};
-//    evalFormula1Atomic(formulas3, numExecutions, traceLength);
-//    evalFormula2Atomic(formulas4, numExecutions, traceLength);
+    //    traceLength = {50000, 100000, 200000};
+    //    evalFormula1Atomic(formulas3, numExecutions, traceLength);
+    //    evalFormula2Atomic(formulas4, numExecutions, traceLength);
 }
 
 void evalFormula1(const std::vector<Formula> &formulas, size_t numExecutions, std::vector<size_t> &traceLength) {
     std::cout << "FormulaSet1: " << '\n';
-    for(const auto &length : traceLength){
-        std::cout << "Trace Length: " << length <<'\n';
+    for (const auto &length : traceLength) {
+        std::cout << "Trace Length: " << length << '\n';
         executeEval(formulas, numExecutions, length);
-        std::cout << "Assumption: " << 0.01 * length * 4 + 0.1*length * 4 << '\n';
+        std::cout << "Assumption: " << 0.01 * length * 4 + 0.1 * length * 4 << '\n';
     }
 }
 
 void evalFormula1Atomic(const std::vector<Formula> &formulas, size_t numExecutions, std::vector<size_t> &traceLength) {
     std::cout << "FormulaSet1: " << '\n';
-    for(const auto &length : traceLength){
-        std::cout << "Trace Length: " << length <<'\n';
+    for (const auto &length : traceLength) {
+        std::cout << "Trace Length: " << length << '\n';
         executeEval(formulas, numExecutions, length);
-        std::cout << "Assumption: " << 0.01 * length * 4 + 0.1*length * 4 << '\n';
+        std::cout << "Assumption: " << 0.01 * length * 4 + 0.1 * length * 4 << '\n';
     }
 }
 
 void evalFormula2(const std::vector<Formula> &formulas, size_t numExecutions, std::vector<size_t> &traceLength) {
     std::cout << "FormulaSet2: " << '\n';
-    for(const auto &length : traceLength){
-        std::cout << "Trace Length: " << length <<'\n';
+    for (const auto &length : traceLength) {
+        std::cout << "Trace Length: " << length << '\n';
         executeEval(formulas, numExecutions, length);
-        std::cout << "Assumption: " << 0.01 * length * 2 + 0.1*length * 2 + 0.5*length + length << '\n';
+        std::cout << "Assumption: " << 0.01 * length * 2 + 0.1 * length * 2 + 0.5 * length + length << '\n';
     }
 }
 
 void evalFormula2Atomic(const std::vector<Formula> &formulas, size_t numExecutions, std::vector<size_t> &traceLength) {
     std::cout << "FormulaSet2 Atomic: " << '\n';
-    for(const auto &length : traceLength){
-        std::cout << "Trace Length: " << length <<'\n';
+    for (const auto &length : traceLength) {
+        std::cout << "Trace Length: " << length << '\n';
         executeEval(formulas, numExecutions, length);
     }
 }

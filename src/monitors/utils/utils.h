@@ -23,14 +23,18 @@ struct Verdict {
         if (!this->ts or !w.ts)
             return Verdict(false);
         if (this->ts.value() != w.ts.value())
-            throw std::runtime_error("Verdict logical and time steps do not match.");
+            throw std::runtime_error(
+                "Verdict logical and: time steps do not match. Time step this: " + std::to_string(this->ts.value()) +
+                ". Time step w: " + std::to_string(w.ts.value()));
         return Verdict(this->ts.value(), this->b && w.b);
     }
     Verdict operator||(const Verdict &w) const {
         if (!this->ts or !w.ts)
             return Verdict(false);
         if (this->ts.value() != w.ts.value())
-            throw std::runtime_error("Verdict logical or time steps do not match.");
+            throw std::runtime_error(
+                "Verdict logical or: time steps do not match. Time step this: " + std::to_string(this->ts.value()) +
+                ". Time step w: " + std::to_string(w.ts.value()));
         return Verdict(this->ts.value(), this->b || w.b);
     }
 };

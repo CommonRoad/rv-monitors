@@ -44,6 +44,13 @@ class MonitorInterface {
      */
     virtual std::string to_string() const = 0;
 
+    /**
+     * Getter for formulas.
+     *
+     * @return List of formulas to monitor.
+     */
+    const std::vector<Formula> &getFormulas() const;
+
   protected:
     std::vector<Formula> formulas; //**< Temporal logic formulas which are evaluated by monitor */
 };

@@ -31,6 +31,10 @@ class RVMonitor {
      */
     RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement);
 
+    RVMonitor(const RVMonitor &obj);
+
+    RVMonitor &operator=(const RVMonitor &other);
+
     /**
      * Constructor
      *
@@ -57,7 +61,7 @@ class RVMonitor {
      */
     const ExecutionStatistic &getExecutionStatistic() const;
 
-  private:
+  protected:
     std::unique_ptr<MonitorInterface> monitor; //**< Pointer to monitoring algorithm */
     ExecutionStatistic executionStatistic;     //**< Execution statistic object */
     bool performanceMeasurement; //**< Boolean indicating whether performance evaluation should be performed. */

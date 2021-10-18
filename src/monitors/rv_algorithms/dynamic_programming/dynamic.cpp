@@ -292,3 +292,5 @@ bool DynamicProgrammingLTL::checkTraceDynamicallyFuture(Trace &trace) {
     return next[0];
 }
 std::string DynamicProgrammingLTL::to_string() const { return "TODO"; }
+
+bool DynamicProgrammingLTL::isPastEvaluation() const { return pastEvaluation; }

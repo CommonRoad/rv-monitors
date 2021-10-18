@@ -105,3 +105,41 @@ RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past,
 }
 
 const ExecutionStatistic &RVMonitor::getExecutionStatistic() const { return executionStatistic; }
+
+RVMonitor::RVMonitor(const RVMonitor &obj) {
+    if (auto *dynLTL = dynamic_cast<DynamicProgrammingLTL *>(obj.monitor.get()))
+        monitor = std::make_unique<DynamicProgrammingLTL>(dynLTL->getFormulas(), dynLTL->isPastEvaluation());
+    else if (auto *hydra = dynamic_cast<Hydra *>(obj.monitor.get())) {
+        std::vector<Formula> formulas;
+        for (const auto &form : hydra->getFormulas()) {
+            auto formulaCopy{form.deepCopy()};
+            formulaCopy.setId(form.getId());
+            formulas.push_back(formulaCopy);
+        }
+        monitor = std::make_unique<Hydra>(formulas);
+    }
+    // TODO other algorithms
+    executionStatistic = obj.executionStatistic;
+    performanceMeasurement = obj.performanceMeasurement;
+}
+
+RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
+    if (this != &other) { // prevent self-assignment{
+        if (auto *dynLTL = dynamic_cast<DynamicProgrammingLTL *>(other.monitor.get()))
+            monitor = std::make_unique<DynamicProgrammingLTL>(dynLTL->getFormulas(), dynLTL->isPastEvaluation());
+        else if (auto *hydra = dynamic_cast<Hydra *>(other.monitor.get())) {
+            std::vector<Formula> formulas;
+            for (const auto &form : hydra->getFormulas()) {
+                auto formulaCopy{form.deepCopy()};
+                formulaCopy.setId(form.getId());
+                formulas.push_back(formulaCopy);
+            }
+
+            monitor = std::make_unique<Hydra>(hydra->getFormulas());
+        }
+        // TODO other algorithms
+        executionStatistic = other.executionStatistic;
+        performanceMeasurement = other.performanceMeasurement;
+    }
+    return *this;
+}
