@@ -135,7 +135,7 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
                 formulas.push_back(formulaCopy);
             }
 
-            monitor = std::make_unique<Hydra>(hydra->getFormulas());
+            monitor = std::make_unique<Hydra>(formulas);
         }
         // TODO other algorithms
         executionStatistic = other.executionStatistic;
