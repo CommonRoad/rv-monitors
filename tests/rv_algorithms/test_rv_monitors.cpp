@@ -9,7 +9,7 @@
 #include "monitors/rv_algorithms/ltl_event_consuming/event_consuming.h"
 
 void TestRVMonitors::SetUp() {
-    trace = std::make_unique<Trace>(Utils::createTrace({"a", "b"}, {{"b"}, {"a"}, {"b"}}));
+    trace = std::make_unique<Trace>(Utils::createTrace({"a", "b", "c"}, {{"b"}, {"a"}, {"b"}}));
     formula = std::make_unique<Formula>(Parser::parse("G(b -> (X(a)))"));
     formula->setId("R1");
 }
@@ -82,4 +82,15 @@ TEST_F(TestRVMonitors, PerformanceMeasurement) {
     EXPECT_GT(monitor.getExecutionStatistic().getMinTime(), 0.0);
     EXPECT_GT(monitor.getExecutionStatistic().getMaxTime(), 0.0);
     EXPECT_GT(monitor.getExecutionStatistic().getTotalTime(), 0.0);
+}
+
+TEST_F(TestRVMonitors, CopyAndAssignmentConstructor) {
+    Trace tr{*trace};
+    Formula fm{Formula(Parser::parse("G(!(a | b) & !c)"))};
+    fm.setId("R_U1");
+    auto monitor{RVMonitor(AlgorithmType::hydra_mtl, {fm}, false, true)};
+    auto mon2{monitor};
+    mon2.verify(tr);
+    RVMonitor mon3 = monitor;
+    mon3.verify(tr);
 }
