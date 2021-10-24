@@ -9,14 +9,14 @@
 Verdict PreviousMonitor::concreteStep(size_t parentId) {
     Verdict subVerdict = subMonitor->step(monitorId);
 
-    if (currentVerdict and subVerdict.ts) {
+    if (currentVerdict.has_value() and subVerdict.ts.has_value()) {
         Verdict lastSubVerdict = *currentVerdict;
         currentVerdict = subVerdict;
         if (Utils::isInInterval(subVerdict.ts.value() - lastSubVerdict.ts.value(), from, to))
             return Verdict(subVerdict.ts.value(), lastSubVerdict.b);
         else
             return Verdict(subVerdict.ts.value(), false);
-    } else if (subVerdict.ts) {
+    } else if (subVerdict.ts.has_value()) {
         currentVerdict = subVerdict;
         return Verdict(subVerdict.ts.value(), false);
     } else
