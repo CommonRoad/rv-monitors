@@ -12,15 +12,18 @@ struct Verdict {
     std::optional<size_t> ts;
     bool b;
 
-    bool operator==(const Verdict &bv) const { return bv.ts and ts and ts == bv.ts and b == bv.b; }
+    bool operator==(const Verdict &bv) const {
+        return bv.ts.has_value() and this->ts.has_value() and this->ts == bv.ts and this->b == bv.b;
+    }
+
     Verdict operator!() const {
-        if (this->ts)
+        if (this->ts.has_value())
             return Verdict(this->ts.value(), !this->b);
         else
             return Verdict(!this->b);
     }
     Verdict operator&&(const Verdict &w) const {
-        if (!this->ts or !w.ts)
+        if (!this->ts.has_value() or !w.ts.has_value())
             return Verdict(false);
         if (this->ts.value() != w.ts.value())
             throw std::runtime_error(
@@ -29,7 +32,7 @@ struct Verdict {
         return Verdict(this->ts.value(), this->b && w.b);
     }
     Verdict operator||(const Verdict &w) const {
-        if (!this->ts or !w.ts)
+        if (!this->ts.has_value() or !w.ts.has_value())
             return Verdict(false);
         if (this->ts.value() != w.ts.value())
             throw std::runtime_error(

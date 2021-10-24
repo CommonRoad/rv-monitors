@@ -10,14 +10,14 @@
 Verdict NextMonitor::concreteStep(size_t parentId) {
     do {
         auto subVerdict = subMonitor->step(monitorId);
-        if (subVerdict.ts and currentTime) {
+        if (subVerdict.ts.has_value() and currentTime) {
             size_t lastTime = *currentTime;
             currentTime = subVerdict.ts;
             if (Utils::isInInterval(subVerdict.ts.value() - lastTime, from, to))
                 return Verdict(lastTime, subVerdict.b);
             else
                 return Verdict(lastTime, false);
-        } else if (!subVerdict.ts) {
+        } else if (!subVerdict.ts.has_value()) {
             return Verdict(*currentTime, false);
         } else {
             currentTime = subVerdict.ts;

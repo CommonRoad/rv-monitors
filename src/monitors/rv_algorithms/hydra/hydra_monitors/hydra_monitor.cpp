@@ -14,6 +14,7 @@ HydraMonitor::HydraMonitor(Formula formula, size_t id, bool connectedEval)
     : formula(std::move(formula)), monitorId((id)), connectedEval(connectedEval) {}
 
 void HydraMonitor::reset() {
+    verdictHistory = {};
     for (auto &[_, id] : traceIdx)
         id = 0;
 }
