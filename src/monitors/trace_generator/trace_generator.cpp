@@ -1,0 +1,59 @@
+//
+// Created by Evald Nexhipi on 23.10.21.
+//
+#include "monitors/trace_generator/trace_generator.h"
+#include "event.h"
+#include <iostream>
+Trace TraceGenerator :: GenerateTrace(const int length) {
+    std::vector<Event> trace;
+    double coin;
+
+    for (int i=0; i<length; i++)
+    {
+        coin = rreal(0, m_sumWeightsAtomic + m_sumWeightsPredicate);
+        double w = 0.0;
+        std::map<std::string, lazy_bool> eventMap;
+        for (auto & iter : m_atoms)
+        {
+            w += iter.m_weight;
+            if(w >= coin)
+            {
+                // Atom to be chosen to be true
+                std::shared_ptr<Atomic> a = iter.m_atomic;
+                eventMap.insert(std::pair<std::string, lazy_bool>(a->to_string(), true));
+                //                std::cout<< "Atomic" << i << " : "<<a->to_string() << std::endl;
+                //TODO Add the rest of the atoms to false
+
+            }
+            else
+            {
+                std::shared_ptr<Atomic> a = iter.m_atomic;
+                eventMap.insert(std::pair<std::string, lazy_bool>(a->to_string(), false));
+            }
+        }
+        for (auto & iter : m_predicates)
+        {
+            w += iter.m_weight;
+
+            if(w >= coin)
+            {
+                // Predicate to be chosen to be true
+                std::shared_ptr<Predicate> p = iter.m_predicate;
+                eventMap.insert(std::pair<std::string, lazy_bool>(p->to_string(), true));
+                //                std::cout<< "Predicate" << i << " : " <<p->to_string() << std::endl;
+            }
+            else
+            {
+                std::shared_ptr<Predicate> p = iter.m_predicate;
+                eventMap.insert(std::pair<std::string, lazy_bool>(p->to_string(), false));
+            }
+            //TODO Add the rest of the predicates to false
+        }
+        bool terminal = false;
+        if(i==length-1)
+            terminal = true;
+        Event e(eventMap, i, terminal);
+        trace.push_back(e);
+    }
+    return Trace(trace);
+}

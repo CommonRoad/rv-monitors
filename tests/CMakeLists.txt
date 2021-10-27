@@ -41,7 +41,7 @@ target_link_libraries(
         gmock # gmock includes the gtest target, so we don't need it here.
 )
 
-add_executable(rvmonitors_performance_eval performance/eval_performance.cpp)
+add_executable(rvmonitors_performance_eval performance/eval_performance.cpp formula_generator/test_formula_generator.h formula_generator/test_formula_generator.cpp trace_generator/test_trace_generator.h trace_generator/test_trace_generator.cpp)
 target_compile_definitions(rvmonitors_performance_eval PRIVATE)
 target_link_libraries(
         rvmonitors_performance_eval
