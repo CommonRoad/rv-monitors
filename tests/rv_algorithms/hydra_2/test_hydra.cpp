@@ -294,7 +294,7 @@ TEST(TestHydra, testGloballyOncePreviousViolated) {
     TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
-TEST(TestHydra, testPreviousAndNegationViolated) {
+TEST(TestHydra, testPreviousAndNegation) {
     Trace trace = Utils::createTrace({"a", "b", "c"}, {{"c"}, {"b"}, {"a", "b"}, {"c"}, {"a"}, {"b"}, {"a"}, {"a"}});
     Formula formula = Parser::parse("b & P(!b)");
     formula.setId("R1");
@@ -303,7 +303,7 @@ TEST(TestHydra, testPreviousAndNegationViolated) {
     TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
-TEST(TestHydra, testGloballyOncePreviousSatisfied) {
+TEST(TestHydra, testGloballyOncePrevious) {
     Trace trace = Utils::createTrace({"a", "b", "c"}, {{"c"}, {"b"}, {"a", "b"}, {"c"}, {"a"}, {"b"}, {"a"}, {"a"}});
     Formula formula = Parser::parse("G(a -> O(b & P(!b)))");
     formula.setId("R1");
@@ -312,12 +312,12 @@ TEST(TestHydra, testGloballyOncePreviousSatisfied) {
     TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
-TEST(TestHydra, testGloballyOncePreviousSatisfied2) {
+TEST(TestHydra, testGloballyOncePrevious2) {
     Trace trace = Utils::createTrace({"a", "b", "c"}, {{"c"}, {"b"}, {"a", "b"}, {"c"}, {"a"}, {"b"}, {"a"}, {"a"}});
     Formula formula = Parser::parse("true S (P(!(b)) & b)");
     formula.setId("R1");
-    std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, true}, Verdict{2, false}, Verdict{3, false},
-                                     Verdict{4, false}, Verdict{5, true}, Verdict{6, false}, Verdict{7, false}};
+    std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+                                     Verdict{4, true}, Verdict{5, true}, Verdict{6, true}, Verdict{7, true}};
     TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
@@ -383,6 +383,24 @@ TEST(TestHydra, testGloballyImplicationOncePreviousViolatedOnce) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true},  Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, false}, Verdict{7, true}};
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, testOnceIntervalAnd) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"c"}, {"a"}, {"a", "b"}, {"a"}, {"a"}, {"a"}, {"c"}, {"c"}});
+    Formula formula = Parser::parse("O[1,3](a & b)");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, false}, Verdict{2, false},  Verdict{3, true},
+                                     Verdict{4, true}, Verdict{5, true}, Verdict{6, false}, Verdict{7, false}};
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, testNegationAndPrevious) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"c"}, {"a"}, {"a", "b"}, {"a"}, {"a"}, {"a"}, {"c"}, {"c"}});
+    Formula formula = Parser::parse("!a & P(a)");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, false}, Verdict{2, false},  Verdict{3, false},
+                                     Verdict{4, false}, Verdict{5, false}, Verdict{6, true}, Verdict{7, false}};
     TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 

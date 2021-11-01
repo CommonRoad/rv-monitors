@@ -46,18 +46,14 @@ Verdict HydraMonitor::step(size_t parentId, size_t stepNumber, bool ret) {
             verdict = verdictHistory[traceIdx[parentId]];
             ++traceIdx[parentId];
         }
-        if(verdict.ts.has_value())
-            std::cout << "E1 - " << formula.to_string() << ": " << verdict.ts.value() << " - " << verdict.b << '\n';
-        else
-            std::cout << "E1 - " <<  formula.to_string() << ": " << "no value" << " - " << verdict.b << '\n';
         return verdict;
     }
     while (stepNumber >= traceIdx[parentId]) {
         if (!connectedEval) {
-            verdict = concreteStep(parentId, stepNumber);
+            verdict = concreteStep(parentId, traceIdx[parentId]);
             ++traceIdx[parentId];
         } else if (traceIdx[parentId] == getMaxTraceIdx()) {
-            verdict = concreteStep(parentId, stepNumber);
+            verdict = concreteStep(parentId, traceIdx[parentId]);
             verdictHistory.push_back(verdict);
             ++traceIdx[parentId];
         } else {
@@ -65,10 +61,6 @@ Verdict HydraMonitor::step(size_t parentId, size_t stepNumber, bool ret) {
             ++traceIdx[parentId];
         }
     }
-    if(verdict.ts.has_value())
-        std::cout << "E2 - " <<  formula.to_string() << ": " << verdict.ts.value() << " - " << verdict.b << '\n';
-    else
-        std::cout << "E2 - " <<  formula.to_string() << ": " << "no value" << " - " << verdict.b << '\n';
     return verdict;
 }
 const std::string &HydraMonitor::getFormulaId() const { return formulaId; }
