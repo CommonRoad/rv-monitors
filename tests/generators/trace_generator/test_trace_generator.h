@@ -8,4 +8,7 @@
 
 class TestTraceGenerator : public testing::Test {};
 
+class TestTraceGeneratorZeroLength : public testing::Test {};
+
+class TestTraceGeneratorLengthOne : public testing::Test {};
 #endif // RVMONITORS_TEST_TRACE_GENERATOR_H

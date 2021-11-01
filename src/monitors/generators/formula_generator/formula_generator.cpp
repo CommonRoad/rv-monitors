@@ -3,6 +3,11 @@
 //
 #include "formula_generator.h"
 
+/**
+ * Recursively generate an expression
+ * @param nrOperators the number of operators needed for the expression
+ * @return generated expression
+ */
 std::shared_ptr<Expression> FormulaGenerator::GenerateExpression(const int nrOperators)
 {
     double coin;
@@ -30,7 +35,7 @@ std::shared_ptr<Expression> FormulaGenerator::GenerateExpression(const int nrOpe
         return m_predicates[rint(0, m_predicates.size() - 1)].m_predicate;
     }
     /**
-     * Operator to be generated
+     * Operator to be added
      */
     else
     {
@@ -61,9 +66,9 @@ std::shared_ptr<Expression> FormulaGenerator::GenerateExpression(const int nrOpe
             oi.m_name == OP_GLOBALLY ||
             oi.m_name == OP_NEXT_STRONG ||
             oi.m_name == OP_NEXT_WEAK ||
-            oi.m_name == OP_HISTORICALLY || //Added
-            oi.m_name == OP_ONCE || //Added
-            oi.m_name == OP_PREVIOUSLY //Added
+            oi.m_name == OP_HISTORICALLY ||
+            oi.m_name == OP_ONCE ||
+            oi.m_name == OP_PREVIOUSLY
         )
         {
             auto exprLeft = GenerateExpression(nrOperators - 1);

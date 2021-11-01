@@ -24,6 +24,9 @@ class ComputationTimeGenerator
 
     }
 
+    /**
+     * Initializes the sequence of pseudo-random numbers generated when the rand function is called.
+     */
     static void rseed(void)
     {
         srand (time(NULL));
@@ -45,9 +48,13 @@ class ComputationTimeGenerator
         return x > max ? max : x;
     }
 
+    /**
+     * Adds atoms distribution for each delay
+     * @param atoms atoms to be added
+     * @param weights associated weights
+     */
     virtual void AddAtomsDistribution(std::vector<std::shared_ptr<Atomic>> atoms, const std::vector<double> weights)
     {
-        //std::vector<std::shared_ptr<AtomicInfo>> atomsInfo;
         std::vector<AtomicInfo> atomsInfo;
         double total_weights = 0;
         for (int i=0; i < atoms.size(); ++i)
@@ -57,17 +64,19 @@ class ComputationTimeGenerator
             ai.m_weight = weights[i];
             atomsInfo.push_back(ai);
             total_weights+=weights[i];
-            //std::cout<<ai->m_atomic<<std::endl;
         }
 
         m_atoms.push_back(atomsInfo);
         m_sumWeightsAtomic.push_back(total_weights);
     }
 
-
+    /**
+     * Adds predicates distribution for each delay
+     * @param predicates predicates to be added
+     * @param weights associated weights
+     */
     virtual void AddPredicateDistribution(std::vector<std::shared_ptr<Predicate>> predicates, const std::vector<double> weights)
     {
-        //std::vector<std::shared_ptr<PredicateInfo>> predicatesInfo;
         std::vector<PredicateInfo> predicatesInfo;
         double total_weights = 0;
         for (int i=0; i < predicates.size(); ++i)
@@ -83,10 +92,26 @@ class ComputationTimeGenerator
         m_sumWeightsPredicate.push_back(total_weights);
     }
 
+    /**
+     * Generates an atom or predicate for a specific delay / duration
+     * @param delay_index index of current delay / duration
+     * @return an atom or predicate
+     */
     virtual std::shared_ptr<Expression> generateAtomOrPredicate(int delay_index);
 
+    /**
+     * Generate a specific number of Atoms or Predicates
+     * @param index_of_delay index of current delay / duration
+     * @param nrPreds number of Atoms or Predicates to be generated
+     * @param preds generated Atoms / Predicates
+     */
     virtual void generateAtomsAndPredicates (int index_of_delay, int nrPreds, std::vector< std::shared_ptr<Expression> > & preds);
 
+    /**
+     * Atoms and Predicates generated for a delay / duration
+     * @param info vector of form {duration_in_miliseconds, min_number_of_predicates, max_number_of_predicates, ...}
+     * @param preds generated predicates
+     */
     void createPredicatesOnDelays (std::vector<int> info,  std::vector< std::vector<std::shared_ptr<Expression>>*> &preds);
 
   protected:
@@ -105,11 +130,9 @@ class ComputationTimeGenerator
     std::vector<double> m_sumWeightsAtomic;
     std::vector<double> m_sumWeightsPredicate;
 
-    //std::vector<std::vector<std::shared_ptr<AtomicInfo>>> m_atoms;
+
     std::vector<std::vector<AtomicInfo>> m_atoms;
-    //std::vector<std::vector<std::shared_ptr<PredicateInfo>>> m_predicates;
     std::vector<std::vector<PredicateInfo>> m_predicates;
 };
-
 
 #endif // RVMONITORS_COMPUTATION_TIME_GENERATOR_H

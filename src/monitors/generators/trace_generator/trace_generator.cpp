@@ -18,14 +18,13 @@ Trace TraceGenerator :: GenerateTrace(const int length) {
             w += iter.m_weight;
             if(w >= coin)
             {
-                // Atom to be chosen to be true
+                /* Atom to be chosen to be true */
                 std::shared_ptr<Atomic> a = iter.m_atomic;
                 eventMap.insert(std::pair<std::string, lazy_bool>(a->to_string(), true));
-                //                std::cout<< "Atomic" << i << " : "<<a->to_string() << std::endl;
-
             }
             else
             {
+                /* Atom to be chosen to be false */
                 std::shared_ptr<Atomic> a = iter.m_atomic;
                 eventMap.insert(std::pair<std::string, lazy_bool>(a->to_string(), false));
             }
@@ -36,13 +35,13 @@ Trace TraceGenerator :: GenerateTrace(const int length) {
 
             if(w >= coin)
             {
-                // Predicate to be chosen to be true
+                /* Predicate to be chosen to be true */
                 std::shared_ptr<Predicate> p = iter.m_predicate;
                 eventMap.insert(std::pair<std::string, lazy_bool>(p->to_string(), true));
-                //                std::cout<< "Predicate" << i << " : " <<p->to_string() << std::endl;
             }
             else
             {
+                /* Predicate to be chosen to be false */
                 std::shared_ptr<Predicate> p = iter.m_predicate;
                 eventMap.insert(std::pair<std::string, lazy_bool>(p->to_string(), false));
             }

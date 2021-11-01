@@ -9,4 +9,5 @@
 
 class TestComputationTimeGenerator : public testing::Test {};
 
+class TestComputationTimeGeneratorLongerDelays : public testing::Test {};
 #endif // RVMONITORS_TEST_COMPUTATION_TIME_GENERATOR_H

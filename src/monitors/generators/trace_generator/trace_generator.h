@@ -18,6 +18,9 @@ class TraceGenerator
 
     }
 
+    /**
+     * Initializes the sequence of pseudo-random numbers generated when the rand function is called.
+     */
     static void rseed(void)
     {
         srand (time(NULL));
@@ -39,6 +42,11 @@ class TraceGenerator
         return x > max ? max : x;
     }
 
+    /**
+     * Adds atoms to the Formula Generator
+     * @param a Atom to be added
+     * @param w Associated weight
+     */
     virtual void AddAtomic(std::shared_ptr<Atomic> a, const double w)
     {
         AtomicInfo ai;
@@ -48,7 +56,11 @@ class TraceGenerator
         m_sumWeightsAtomic += w;
     }
 
-
+    /**
+     * Adds predicates to the Formula Generator
+     * @param p Predicate to be added
+     * @param w Associated weight
+     */
     virtual void AddPredicate(std::shared_ptr<Predicate> p, const double w)
     {
         PredicateInfo pi;
@@ -58,6 +70,11 @@ class TraceGenerator
         m_sumWeightsPredicate += w;
     }
 
+    /**
+     * Trace to be pseudo-randomly generated
+     * @param length of the trace
+     * @return returns a pseudo-random Trace
+     */
     virtual Trace GenerateTrace(const int length);
 
   protected:

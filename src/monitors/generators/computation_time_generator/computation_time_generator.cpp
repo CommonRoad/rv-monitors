@@ -51,10 +51,12 @@ void ComputationTimeGenerator::createPredicatesOnDelays (std::vector<int> info, 
         std::cout<<"Delay "<<next_delay+1<<" started"<<std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(timeDelay));
         generateAtomsAndPredicates(next_delay, nrPreds, *preds);
+
         std::cout<<"Predicates Generated: ";
         for (auto & p : *preds)
             std::cout<<p->to_string()<<" ";
         std::cout<<std::endl;
+
         next_delay++;
 	allPreds.push_back(preds);
     }
