@@ -8,7 +8,7 @@
 
 #include <utility>
 
-#include "monitors/rv_algorithms/hydra_2/hydra_monitors/hydra_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.h"
 
 class SinceMonitor : public HydraMonitor {
   public:
@@ -17,7 +17,7 @@ class SinceMonitor : public HydraMonitor {
         : HydraMonitor(formula, id), subMonitorF(std::move(subMonitorF)), subMonitorG(std::move(subMonitorG)),
           from(from), to(to){};
 
-    Verdict concreteStep(size_t parentId, size_t stepNumber) override;
+    Verdict concreteStep(size_t parentId) override;
 
     void setTrace(const Trace &tr) override;
 

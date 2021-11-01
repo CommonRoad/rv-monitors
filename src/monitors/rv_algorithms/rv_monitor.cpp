@@ -5,7 +5,7 @@
 // Credits: BMW Car@TUM
 //
 #include "rv_monitor.h"
-#include "monitors/rv_algorithms/hydra_2/hydra.h"
+#include "monitors/rv_algorithms/hydra/hydra.h"
 #include "monitors/rv_algorithms/ltl_event_consuming/event_consuming.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
 #include "monitors/utils/utils.h"

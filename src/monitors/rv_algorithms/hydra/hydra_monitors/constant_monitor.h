@@ -6,7 +6,7 @@
 //
 #pragma once
 
-#include "monitors/rv_algorithms/hydra_2/hydra_monitors/hydra_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.h"
 #include <memory>
 #include <optional>
 #include <utility>
@@ -16,7 +16,7 @@ class ConstantMonitor : public HydraMonitor {
     ConstantMonitor(Formula formula, size_t id, bool connectedEval)
         : HydraMonitor(std::move(formula), id, connectedEval){};
 
-    Verdict concreteStep(size_t parentId, size_t stepNumber) override;
+    Verdict concreteStep(size_t parentId) override;
 
     void setTrace(const Trace &trace) override;
 

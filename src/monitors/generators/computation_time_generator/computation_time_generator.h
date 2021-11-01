@@ -67,7 +67,7 @@ class ComputationTimeGenerator
 
     virtual void generateAtomsAndPredicates (int nrPreds, std::vector< std::shared_ptr<Expression> > & preds);
 
-    void createPredicatesOnDelays (std::vector<int> info,  std::vector< std::vector<std::shared_ptr<Expression>>*> &preds);
+    double createPredicatesOnDelays (std::vector<int> info,  std::vector< std::vector<std::shared_ptr<Expression>>*> &preds);
 
   protected:
     struct AtomicInfo

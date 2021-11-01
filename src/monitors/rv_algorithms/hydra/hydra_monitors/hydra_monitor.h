@@ -31,9 +31,9 @@ class HydraMonitor {
   public:
     HydraMonitor(Formula formula, size_t id, bool connectedEval = true);
 
-    Verdict step(size_t parentId, size_t stepNumber, bool ret = false);
+    Verdict step(size_t parentId);
 
-    virtual Verdict concreteStep(size_t parentId, size_t stepNumber) = 0;
+    virtual Verdict concreteStep(size_t parentId) = 0;
 
     const Formula &getFormula() const;
 
@@ -46,8 +46,6 @@ class HydraMonitor {
     const std::string &getFormulaId() const;
 
     void setFormulaId(const std::string &formula_id);
-
-    //void updateIdx(size_t parentId);
 
   protected:
     Formula formula;

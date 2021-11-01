@@ -15,27 +15,27 @@ void UntilMonitor::handleEof() {
     positionMonitorG.eof = true;
 }
 
-void UntilMonitor::readFG(size_t stepNumber) {
+void UntilMonitor::readFG() {
     if (!(positionMonitorF.tp == -1 || positionMonitorF.ts == positionMonitorG.ts ||
           positionMonitorF.tp == positionMonitorG.tp))
         throw std::runtime_error("Hydra UntilMonitor readFG error");
 
-    subVerdictF = subMonitorF->step(monitorId, stepNumber, true);
+    subVerdictF = subMonitorF->step(monitorId);
     if (subVerdictF->ts)
         positionMonitorF.update(subVerdictF->ts.value());
     else {
         handleEof();
         return;
     }
-    subVerdictG = subMonitorG->step(monitorId, stepNumber, true);
+    subVerdictG = subMonitorG->step(monitorId);
     if (subVerdictG->ts)
         positionMonitorG.update(subVerdictG->ts.value());
     else
         handleEof();
 }
 
-Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
-    subVerdictH = subMonitorH->step(monitorId, stepNumber, true);
+Verdict UntilMonitor::concreteStep(size_t parentId) {
+    subVerdictH = subMonitorH->step(monitorId);
     if (subVerdictH->ts)
         positionMonitorH.update(subVerdictH->ts.value());
 
@@ -44,10 +44,8 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     if (lastViolation && lastViolation->second < positionMonitorH.tp)
         lastViolation = {};
 
-    if (positionMonitorF.tp == -1) {
-        readFG(stepNumber);
-        stepNumber += 1;
-    }
+    if (positionMonitorF.tp == -1)
+        readFG();
 
     while (!positionMonitorF.eof && !lastViolation && positionMonitorF.ts - positionMonitorH.ts <= to) {
         if (subVerdictG->b) {
@@ -56,8 +54,7 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         if (!subVerdictF->b) {
             lastViolation = std::make_pair(positionMonitorF.ts, positionMonitorF.tp);
         }
-        readFG(stepNumber);
-        stepNumber += 1;
+        readFG();
     }
 
     int v = static_cast<int>(lastSatisfaction && lastSatisfaction->first - positionMonitorH.ts >= from);

@@ -6,17 +6,16 @@
 //
 #include "since_monitor.h"
 
-Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
-    subVerdictF = subMonitorF->step(monitorId, stepNumber);
-    if (subVerdictF->ts.has_value())
+Verdict SinceMonitor::concreteStep(size_t parentId) {
+    subVerdictF = subMonitorF->step(monitorId);
+    if (subVerdictF->ts)
         positionMonitorF.update(subVerdictF->ts.value());
     else if (!subVerdictF->b)
         lastViolation = std::make_pair(positionMonitorF.ts, positionMonitorF.tp);
 
     if (positionMonitorG.tp == -1) {
-        subVerdictG = subMonitorG->step(monitorId, stepNumber);
-        stepNumber += 1;
-        if (subVerdictG->ts.has_value())
+        subVerdictG = subMonitorG->step(monitorId);
+        if (subVerdictG->ts)
             positionMonitorG.update(subVerdictG->ts.value());
     }
 
@@ -24,9 +23,9 @@ Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
            positionMonitorF.ts - positionMonitorG.ts >= from) {
         if (subVerdictG->b)
             lastSatisfaction = std::make_pair(positionMonitorG.ts, positionMonitorG.tp);
-        subVerdictG = subMonitorG->step(monitorId, stepNumber);
-        stepNumber += 1;
-        if (subVerdictG->ts.has_value())
+
+        subVerdictG = subMonitorG->step(monitorId);
+        if (subVerdictG->ts)
             positionMonitorG.update(subVerdictG->ts.value());
         else {
             positionMonitorG.eof = true;

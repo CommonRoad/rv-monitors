@@ -6,7 +6,7 @@
 #include <utility>
 
 #include "monitors/rewriting/expression_visitor.h"
-#include "monitors/rv_algorithms/hydra_2/hydra_creation_visitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_creation_visitor.h"
 #include "monitors/symbols/symbols.h"
 
 class Trace;

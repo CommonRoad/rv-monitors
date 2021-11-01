@@ -34,7 +34,7 @@ void ComputationTimeGenerator::generateAtomsAndPredicates(int nrPreds, std::vect
 	preds.push_back(generateAtomOrPredicate());
 }
 
-void ComputationTimeGenerator::createPredicatesOnDelays (std::vector<int> info,  std::vector< std::vector<std::shared_ptr<Expression>>*> &allPreds)
+double ComputationTimeGenerator::createPredicatesOnDelays (std::vector<int> info,  std::vector< std::vector<std::shared_ptr<Expression>>*> &allPreds)
 {
     for(int i = 0; i < info.size(); i += 3)
     {
@@ -49,5 +49,7 @@ void ComputationTimeGenerator::createPredicatesOnDelays (std::vector<int> info, 
 	
     }
 
+    return 0.0;
+    
 }
 
