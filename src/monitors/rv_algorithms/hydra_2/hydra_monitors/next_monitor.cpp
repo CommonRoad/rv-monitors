@@ -7,9 +7,9 @@
 #include "next_monitor.h"
 #include <iostream>
 
-Verdict NextMonitor::concreteStep(size_t parentId) {
+Verdict NextMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     do {
-        auto subVerdict = subMonitor->step(monitorId);
+        auto subVerdict = subMonitor->step(monitorId, stepNumber);
         if (subVerdict.ts.has_value() and currentTime) {
             size_t lastTime = *currentTime;
             currentTime = subVerdict.ts;

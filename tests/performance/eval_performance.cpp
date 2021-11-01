@@ -6,7 +6,7 @@
 //
 
 #include "monitors/parser/parser.h"
-#include "monitors/rv_algorithms/hydra/hydra.h"
+#include "monitors/rv_algorithms/hydra_2/hydra.h"
 #include "monitors/trace/trace.h"
 #include <chrono>
 #include <iostream>
