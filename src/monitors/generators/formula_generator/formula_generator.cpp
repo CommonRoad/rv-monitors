@@ -1,7 +1,7 @@
 //
 // Created by Evald Nexhipi on 20.10.21.
 //
-#include "monitors/formula_generator/formula_generator.h"
+#include "formula_generator.h"
 
 std::shared_ptr<Expression> FormulaGenerator::GenerateExpression(const int nrOperators)
 {

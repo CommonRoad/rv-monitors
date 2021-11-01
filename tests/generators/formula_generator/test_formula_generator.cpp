@@ -2,7 +2,7 @@
 // Created by Evald Nexhipi on 20.10.21.
 //
 #include "test_formula_generator.h"
-#include "monitors/formula_generator/formula_generator.h"
+#include "monitors/generators/formula_generator/formula_generator.h"
 
 TEST(TestFormulaGenerator, tfg) {
 

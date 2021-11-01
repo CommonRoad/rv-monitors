@@ -4,7 +4,7 @@
 #include "test_trace_generator.h"
 #include "monitors/expression_tree/atomic/predicate.h"
 #include "monitors/expression_tree/atomic/atomic.h"
-#include "monitors/trace_generator/trace_generator.h"
+#include "monitors/generators/trace_generator/trace_generator.h"
 TEST(TestTraceGenerator, ttg){
     TraceGenerator fg;
     fg.rseed();
