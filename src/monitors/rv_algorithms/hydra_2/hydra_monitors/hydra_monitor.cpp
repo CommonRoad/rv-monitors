@@ -67,4 +67,4 @@ const std::string &HydraMonitor::getFormulaId() const { return formulaId; }
 
 void HydraMonitor::setFormulaId(const std::string &formula_id) { formulaId = formula_id; }
 
-//void HydraMonitor::updateIdx(size_t parentId){ ++traceIdx[parentId]; }
+// void HydraMonitor::updateIdx(size_t parentId){ ++traceIdx[parentId]; }

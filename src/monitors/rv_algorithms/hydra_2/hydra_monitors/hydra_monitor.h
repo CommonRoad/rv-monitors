@@ -47,7 +47,7 @@ class HydraMonitor {
 
     void setFormulaId(const std::string &formula_id);
 
-    //void updateIdx(size_t parentId);
+    // void updateIdx(size_t parentId);
 
   protected:
     Formula formula;
