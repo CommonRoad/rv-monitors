@@ -8,8 +8,19 @@
 
 Verdict OrMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     Verdict verdict{subMonitors.at(0)->step(monitorId, stepNumber)};
+    if(verdict.b) {
+        if(!verdict.ts.has_value())
+            return Verdict(true);
+        else
+            return Verdict(verdict.ts.value(), true);
+    }
     for (size_t i{1}; i < subMonitors.size(); ++i)
-        verdict = verdict || subMonitors.at(i)->step(monitorId, stepNumber);
+        if(subMonitors.at(i)->step(monitorId, stepNumber).b) {
+            if(!verdict.ts.has_value())
+                return Verdict(true);
+            else
+                return Verdict(verdict.ts.value(), true);
+        }
     return verdict;
 }
 
