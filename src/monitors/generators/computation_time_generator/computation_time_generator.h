@@ -6,6 +6,7 @@
 #define RVMONITORS_COMPUTATION_TIME_GENERATOR_H
 #include <iostream>
 #include <memory>
+#include <thread>
 #include <monitors/expression_tree/expression.h>
 #include "monitors/expression_tree/atomic/atomic.h"
 #include "monitors/expression_tree/atomic/predicate.h"
@@ -44,30 +45,49 @@ class ComputationTimeGenerator
         return x > max ? max : x;
     }
 
-    virtual void AddAtomic(std::shared_ptr<Atomic> a, const double w)
+    virtual void AddAtomsDistribution(std::vector<std::shared_ptr<Atomic>> atoms, const std::vector<double> weights)
     {
-        AtomicInfo ai;
-        ai.m_atomic = a;
-        ai.m_weight = w;
-        m_atoms.push_back(ai);
-        m_sumWeightsAtomic += w;
+        //std::vector<std::shared_ptr<AtomicInfo>> atomsInfo;
+        std::vector<AtomicInfo> atomsInfo;
+        double total_weights = 0;
+        for (int i=0; i < atoms.size(); ++i)
+        {
+            AtomicInfo ai;
+            ai.m_atomic = atoms[i];
+            ai.m_weight = weights[i];
+            atomsInfo.push_back(ai);
+            total_weights+=weights[i];
+            //std::cout<<ai->m_atomic<<std::endl;
+        }
+
+        m_atoms.push_back(atomsInfo);
+        m_sumWeightsAtomic.push_back(total_weights);
     }
 
 
-    virtual void AddPredicate(std::shared_ptr<Predicate> p, const double w)
+    virtual void AddPredicateDistribution(std::vector<std::shared_ptr<Predicate>> predicates, const std::vector<double> weights)
     {
-        PredicateInfo pi;
-        pi.m_predicate = p;
-        pi.m_weight = w;
-        m_predicates.push_back(pi);
-        m_sumWeightsPredicate += w;
+        //std::vector<std::shared_ptr<PredicateInfo>> predicatesInfo;
+        std::vector<PredicateInfo> predicatesInfo;
+        double total_weights = 0;
+        for (int i=0; i < predicates.size(); ++i)
+        {
+            PredicateInfo pi;
+            pi.m_predicate = predicates[i];
+            pi.m_weight = weights[i];
+            predicatesInfo.push_back(pi);
+            total_weights+=weights[i];
+        }
+
+        m_predicates.push_back(predicatesInfo);
+        m_sumWeightsPredicate.push_back(total_weights);
     }
 
-    virtual std::shared_ptr<Expression> generateAtomOrPredicate();
+    virtual std::shared_ptr<Expression> generateAtomOrPredicate(int delay_index);
 
-    virtual void generateAtomsAndPredicates (int nrPreds, std::vector< std::shared_ptr<Expression> > & preds);
+    virtual void generateAtomsAndPredicates (int index_of_delay, int nrPreds, std::vector< std::shared_ptr<Expression> > & preds);
 
-    double createPredicatesOnDelays (std::vector<int> info,  std::vector< std::vector<std::shared_ptr<Expression>>*> &preds);
+    void createPredicatesOnDelays (std::vector<int> info,  std::vector< std::vector<std::shared_ptr<Expression>>*> &preds);
 
   protected:
     struct AtomicInfo
@@ -82,11 +102,13 @@ class ComputationTimeGenerator
         double m_weight;
     };
 
-    double m_sumWeightsAtomic;
-    double m_sumWeightsPredicate;
+    std::vector<double> m_sumWeightsAtomic;
+    std::vector<double> m_sumWeightsPredicate;
 
-    std::vector<AtomicInfo> m_atoms;
-    std::vector<PredicateInfo> m_predicates;
+    //std::vector<std::vector<std::shared_ptr<AtomicInfo>>> m_atoms;
+    std::vector<std::vector<AtomicInfo>> m_atoms;
+    //std::vector<std::vector<std::shared_ptr<PredicateInfo>>> m_predicates;
+    std::vector<std::vector<PredicateInfo>> m_predicates;
 };
 
 
