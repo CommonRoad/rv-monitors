@@ -7,18 +7,17 @@
 #include "and_monitor.h"
 #include <iostream>
 
-
 Verdict AndMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     Verdict verdict{subMonitors.at(0)->step(monitorId, stepNumber)};
-    if(!verdict.b) {
-         if(!verdict.ts.has_value())
+    if (!verdict.b) {
+        if (!verdict.ts.has_value())
             return Verdict(false);
-         else
-           return Verdict(verdict.ts.value(), false);
+        else
+            return Verdict(verdict.ts.value(), false);
     }
     for (size_t i{1}; i < subMonitors.size(); ++i)
-        if(!subMonitors.at(i)->step(monitorId, stepNumber).b) {
-            if(!verdict.ts.has_value())
+        if (!subMonitors.at(i)->step(monitorId, stepNumber).b) {
+            if (!verdict.ts.has_value())
                 return Verdict(false);
             else
                 return Verdict(verdict.ts.value(), false);
