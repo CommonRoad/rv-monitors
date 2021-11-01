@@ -21,7 +21,7 @@ std::map<std::string, std::vector<Verdict>> Hydra::evaluate(Trace &trace) {
 
     for (size_t i{0}; i < trace.getLength(); ++i)
         for (const auto &mon : monitors)
-            result[mon->getFormulaId()].emplace_back(mon->step(0));
+            result[mon->getFormulaId()].emplace_back(mon->step(0, i));
 
     return result;
 }

@@ -6,7 +6,7 @@
 //
 #include "atomic_monitor.h"
 
-Verdict AtomicMonitor::concreteStep(size_t parentId) {
+Verdict AtomicMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     if (traceIdx[parentId] < trace.getLength()) {
         auto event{trace.getEvent(traceIdx[parentId])};
         auto verdict{

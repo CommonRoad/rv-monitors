@@ -6,14 +6,14 @@
 //
 #pragma once
 
-#include "monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/hydra_monitor.h"
 
-class OrMonitor : public HydraMonitor {
+class AndMonitor : public HydraMonitor {
   public:
-    OrMonitor(Formula formula, std::vector<std::shared_ptr<HydraMonitor>> subMonitors, size_t id, bool connectedEval)
+    AndMonitor(Formula formula, std::vector<std::shared_ptr<HydraMonitor>> subMonitors, size_t id, bool connectedEval)
         : HydraMonitor(std::move(formula), id, connectedEval), subMonitors(std::move(subMonitors)){};
 
-    Verdict concreteStep(size_t parentId) override;
+    Verdict concreteStep(size_t parentId, size_t stepNumber) override;
 
     void setTrace(const Trace &trace) override;
 
