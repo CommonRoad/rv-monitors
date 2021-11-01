@@ -7,7 +7,7 @@
 
 #include "test_hydra.h"
 #include "monitors/parser/parser.h"
-#include "monitors/rv_algorithms/hydra/hydra.h"
+#include "monitors/rv_algorithms/hydra_2/hydra.h"
 
 void TestHydra::evalHydra(Trace &trace, const std::vector<Formula> &formulas,
                           const std::vector<std::vector<Verdict>> &expSolution) {
@@ -17,7 +17,7 @@ void TestHydra::evalHydra(Trace &trace, const std::vector<Formula> &formulas,
         if (solution[formulas[i].getId()].size() != expSolution[i].size())
             throw std::logic_error("Hydra Test: length of expected solution and solution does not match");
         for (size_t j{0}; j < expSolution[i].size(); ++j)
-            EXPECT_TRUE(expSolution[i][j] == solution[formulas[i].getId()][j]) << "Mismatch at time step: " << j;
+            EXPECT_TRUE(expSolution[i][j] == solution[formulas[i].getId()][j]) << "Mismatch at element index: " << j;
     }
 }
 
@@ -309,6 +309,24 @@ TEST(TestHydra, testGloballyOncePreviousSatisfied) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}, Verdict{7, true}};
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, testGloballyOncePreviousSatisfied2) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"c"}, {"b"}, {"a", "b"}, {"c"}, {"a"}, {"b"}, {"a"}, {"a"}});
+    Formula formula = Parser::parse("true S (P(!(b)) & b)");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, true}, Verdict{2, false}, Verdict{3, false},
+                                     Verdict{4, false}, Verdict{5, true}, Verdict{6, false}, Verdict{7, false}};
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, testPreviousAnd) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"c"}, {"b"}, {"a", "b"}, {"c"}, {"a"}, {"b"}, {"a"}, {"a"}});
+    Formula formula = Parser::parse("P(!(b)) & b");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, true}, Verdict{2, false}, Verdict{3, false},
+                                     Verdict{4, false}, Verdict{5, true}, Verdict{6, false}, Verdict{7, false}};
     TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 

@@ -6,10 +6,10 @@
 //
 #include "or_monitor.h"
 
-Verdict OrMonitor::concreteStep(size_t parentId) {
-    Verdict verdict{subMonitors.at(0)->step(monitorId)};
+Verdict OrMonitor::concreteStep(size_t parentId, size_t stepNumber) {
+    Verdict verdict{subMonitors.at(0)->step(monitorId, stepNumber)};
     for (size_t i{1}; i < subMonitors.size(); ++i)
-        verdict = verdict || subMonitors.at(i)->step(monitorId);
+        verdict = verdict || subMonitors.at(i)->step(monitorId, stepNumber);
     return verdict;
 }
 
