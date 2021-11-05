@@ -37,7 +37,7 @@ void AndMonitor::reset() {
 }
 std::string AndMonitor::to_string() {
     std::string s;
-    for(const auto &mon : subMonitors)
+    for (const auto &mon : subMonitors)
         s += mon->to_string() + " and ";
     s.erase(s.size() - 5);
     return s;

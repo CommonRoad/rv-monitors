@@ -6,7 +6,7 @@
 
 std::string Predicate::to_string() const {
     std::string s{name + "("};
-    for(const auto &param : parameters)
+    for (const auto &param : parameters)
         s += param + ", ";
     s.erase(s.size() - 2);
     s += ")";
