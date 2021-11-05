@@ -8,6 +8,7 @@
 
 #include <map>
 #include <memory>
+#include <vector>
 
 class HydraMonitor;
 
@@ -69,6 +70,8 @@ class Predicate;
 
 class HydraCreationVisitor {
   public:
+    HydraCreationVisitor(const std::vector<std::tuple<std::string, size_t, double>> &predicate_costs);
+
     std::shared_ptr<HydraMonitor> createMonitor(Formula &formula, size_t parentId, bool connectedEval);
 
     [[nodiscard]] std::shared_ptr<HydraMonitor> visitAtomic(Atomic &op, size_t parentId, bool connectedEval);
@@ -94,4 +97,7 @@ class HydraCreationVisitor {
   private:
     size_t maxId{0};
     std::map<std::string, std::shared_ptr<HydraMonitor>> baseline;
+    std::vector<std::tuple<std::string, size_t, double>> predicateCosts;
+
+    void resort(std::vector<std::shared_ptr<HydraMonitor>> &monitors);
 };

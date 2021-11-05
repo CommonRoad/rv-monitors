@@ -29,7 +29,7 @@ class HydraMonitor {
     size_t getMaxTraceIdx();
 
   public:
-    HydraMonitor(Formula formula, size_t id, bool connectedEval = true);
+    HydraMonitor(Formula formula, size_t id, bool connectedEval = true, size_t evalCost = 0, double satisfactionProbability = 100.0);
 
     Verdict step(size_t parentId, size_t stepNumber, bool ret = false);
 
@@ -47,7 +47,11 @@ class HydraMonitor {
 
     void setFormulaId(const std::string &formula_id);
 
-    // void updateIdx(size_t parentId);
+    size_t getEvalCost() const;
+
+    double getSatisfactionProbability() const;
+
+    virtual std::string to_string() = 0;
 
   protected:
     Formula formula;
@@ -56,4 +60,6 @@ class HydraMonitor {
     std::vector<Verdict> verdictHistory;
     std::map<size_t, size_t> traceIdx;
     bool connectedEval;
+    size_t evalCost{0};
+    double satisfactionProbability{100.0};
 };

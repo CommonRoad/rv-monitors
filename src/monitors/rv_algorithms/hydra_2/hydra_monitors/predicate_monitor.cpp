@@ -18,3 +18,6 @@ Verdict PredicateMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 }
 
 void PredicateMonitor::setTrace(const Trace &tr) { trace = tr; }
+std::string PredicateMonitor::to_string() {
+    return formula.to_string();
+}

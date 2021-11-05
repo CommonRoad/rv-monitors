@@ -33,3 +33,4 @@ void OrMonitor::reset() {
     for (const auto &mon : subMonitors)
         mon->reset();
 }
+std::string OrMonitor::to_string() { return std::string(); }

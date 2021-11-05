@@ -20,6 +20,8 @@ class ConstantMonitor : public HydraMonitor {
 
     void setTrace(const Trace &trace) override;
 
+    std::string to_string() override;
+
   private:
     Trace trace;
 };

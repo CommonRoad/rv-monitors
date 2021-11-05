@@ -17,3 +17,5 @@ Verdict AtomicMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 }
 
 void AtomicMonitor::setTrace(const Trace &tr) { trace = tr; }
+
+std::string AtomicMonitor::to_string() { return std::string(); }

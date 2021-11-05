@@ -19,6 +19,8 @@ class OrMonitor : public HydraMonitor {
 
     void reset() override;
 
+    std::string to_string() override;
+
   private:
     std::vector<std::shared_ptr<HydraMonitor>> subMonitors;
 };
