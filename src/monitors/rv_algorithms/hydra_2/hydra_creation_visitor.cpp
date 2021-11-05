@@ -25,6 +25,7 @@
 #include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
 #include "monitors/formula/formula.h"
 #include <numeric>
+#include <utility>
 
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::createMonitor(Formula &formula, size_t parentId,
                                                                   bool connectedEval) {
@@ -67,13 +68,14 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitPredicate(Predicate &op
         size_t id{maxId++};
         size_t cost;
         double prob;
-        for(const auto &pred : predicateCosts)
-            if(std::get<0>(pred).find(op.getName())){
+        for (const auto &pred : predicateCosts)
+            if (std::get<0>(pred).find(op.getName()) != 0u) {
                 cost = std::get<1>(pred);
                 prob = std::get<2>(pred);
+                break;
             }
-        auto newMonitor{
-            std::make_shared<PredicateMonitor>(Formula(std::make_shared<Predicate>(op)), id, connectedEval, cost, prob)};
+        auto newMonitor{std::make_shared<PredicateMonitor>(Formula(std::make_shared<Predicate>(op)), id, connectedEval,
+                                                           cost, prob)};
         baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(op.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
@@ -192,19 +194,19 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitNot(Not &op, size_t par
         return newMonitor;
     }
 }
-HydraCreationVisitor::HydraCreationVisitor(const std::vector<std::tuple<std::string, size_t, double>> &predicateCosts)
-    : predicateCosts(predicateCosts) {}
+HydraCreationVisitor::HydraCreationVisitor(std::vector<std::tuple<std::string, size_t, double>> predicateCosts)
+    : predicateCosts(std::move(predicateCosts)) {}
 
-
-void HydraCreationVisitor::resort(std::vector<std::shared_ptr<HydraMonitor>> &monitors){
+void HydraCreationVisitor::resort(std::vector<std::shared_ptr<HydraMonitor>> &monitors) {
     std::vector<double> cost;
     std::vector<size_t> tmp(monitors.size());
+    cost.reserve(monitors.size());
     for (const auto &mon : monitors)
         cost.push_back(mon->getSatisfactionProbability() * static_cast<double>(mon->getEvalCost()));
 
-    std::iota(tmp.begin(),tmp.end(),0);
-    sort( tmp.begin(),tmp.end(), [&](size_t i,size_t j){return cost[i] < cost[j];} );
+    std::iota(tmp.begin(), tmp.end(), 0);
+    sort(tmp.begin(), tmp.end(), [&](size_t i, size_t j) { return cost[i] < cost[j]; });
     auto tmpSubMonitors{monitors};
-    for(size_t idx{0}; idx < monitors.size(); ++idx)
+    for (size_t idx{0}; idx < monitors.size(); ++idx)
         monitors[idx] = tmpSubMonitors.at(tmp.at(idx));
 }

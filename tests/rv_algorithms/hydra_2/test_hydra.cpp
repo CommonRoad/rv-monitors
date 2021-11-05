@@ -68,7 +68,7 @@ TEST(TestHydra, testSingleUntil2) {
                                      std::vector<size_t>{0, 1, 2, 3, 4, 5});
     Formula formula = Parser::parse("(a)U[0, 4](b)");
     formula.setId("R1");
-    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true},  Verdict{2, true},
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true},
                                      Verdict{3, true}, Verdict{4, true}, Verdict{5, true}};
     TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
@@ -78,7 +78,7 @@ TEST(TestHydra, testSingleUntil3) {
                                      std::vector<size_t>{0, 1, 2, 3, 4, 5});
     Formula formula = Parser::parse("(a)U[0, 4](b)");
     formula.setId("R1");
-    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true},  Verdict{2, false},
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, false},
                                      Verdict{3, true}, Verdict{4, true}, Verdict{5, true}};
     TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
@@ -88,8 +88,8 @@ TEST(TestHydra, testSingleUntil4) {
                                      std::vector<size_t>{0, 1, 2, 3, 4, 5, 6});
     Formula formula = Parser::parse("(a)U[0, 4](b)");
     formula.setId("R1");
-    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true},  Verdict{2, true},
-                                     Verdict{3, true}, Verdict{4, false}, Verdict{5, false}, Verdict{6, true}};
+    std::vector<Verdict> expSolution{Verdict{0, true},  Verdict{1, true},  Verdict{2, true}, Verdict{3, true},
+                                     Verdict{4, false}, Verdict{5, false}, Verdict{6, true}};
     TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 

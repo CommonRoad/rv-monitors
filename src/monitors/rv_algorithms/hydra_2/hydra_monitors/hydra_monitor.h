@@ -29,7 +29,8 @@ class HydraMonitor {
     size_t getMaxTraceIdx();
 
   public:
-    HydraMonitor(Formula formula, size_t id, bool connectedEval = true, size_t evalCost = 0, double satisfactionProbability = 100.0);
+    HydraMonitor(Formula formula, size_t id, bool connectedEval = true, size_t evalCost = 0,
+                 double satisfactionProbability = 100.0);
 
     Verdict step(size_t parentId, size_t stepNumber, bool ret = false);
 
