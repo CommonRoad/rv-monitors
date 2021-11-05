@@ -4,7 +4,14 @@
 
 #include "predicate.h"
 
-std::string Predicate::to_string() const { return this->getSymbol(); }
+std::string Predicate::to_string() const {
+    std::string s{name + "("};
+    for(const auto &param : parameters)
+        s += param + ", ";
+    s.erase(s.size() - 2);
+    s += ")";
+    return s;
+}
 
 std::shared_ptr<Expression> Predicate::clone() { return std::make_shared<Predicate>(*this); }
 

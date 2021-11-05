@@ -18,3 +18,4 @@ Verdict ConstantMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 }
 
 void ConstantMonitor::setTrace(const Trace &tr) { trace = tr; }
+std::string ConstantMonitor::to_string() { return std::string(); }

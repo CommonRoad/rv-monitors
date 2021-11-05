@@ -32,3 +32,4 @@ void NextMonitor::reset() {
     currentTime = {};
     subMonitor->reset();
 }
+std::string NextMonitor::to_string() { return std::string(); }

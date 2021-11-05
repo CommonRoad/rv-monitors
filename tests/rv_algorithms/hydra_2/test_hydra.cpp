@@ -53,13 +53,43 @@ TEST(TestHydra, testSingleSince) {
     TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
-TEST(TestHydra, testSingleUntil) {
+TEST(TestHydra, testSingleUntil1) {
     Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"a"}, {"a"}, {"a", "b"}, {"a"}, {"b"}},
                                      std::vector<size_t>{0, 0, 2, 4, 5, 10});
     Formula formula = Parser::parse("(a)U[0, 4](b)");
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{0, true},  Verdict{2, true},
                                      Verdict{4, true}, Verdict{5, false}, Verdict{10, true}};
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, testSingleUntil2) {
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"a"}, {"a"}, {"a", "b"}, {"a"}, {"b"}},
+                                     std::vector<size_t>{0, 1, 2, 3, 4, 5});
+    Formula formula = Parser::parse("(a)U[0, 4](b)");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true},  Verdict{2, true},
+                                     Verdict{3, true}, Verdict{4, true}, Verdict{5, true}};
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, testSingleUntil3) {
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"b"}, {}, {"a", "b"}, {"a"}, {"b"}},
+                                     std::vector<size_t>{0, 1, 2, 3, 4, 5});
+    Formula formula = Parser::parse("(a)U[0, 4](b)");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true},  Verdict{2, false},
+                                     Verdict{3, true}, Verdict{4, true}, Verdict{5, true}};
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, testSingleUntil4) {
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"a"}, {"a"}, {"a", "b"}, {"a"}, {}, {"b"}},
+                                     std::vector<size_t>{0, 1, 2, 3, 4, 5, 6});
+    Formula formula = Parser::parse("(a)U[0, 4](b)");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true},  Verdict{2, true},
+                                     Verdict{3, true}, Verdict{4, false}, Verdict{5, false}, Verdict{6, true}};
     TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 

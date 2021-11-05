@@ -10,12 +10,14 @@
 
 class PredicateMonitor : public HydraMonitor {
   public:
-    PredicateMonitor(Formula formula, size_t id, bool connectedEval)
-        : HydraMonitor(std::move(formula), id, connectedEval){};
+    PredicateMonitor(Formula formula, size_t id, bool connectedEval, size_t evalCost = 0, double satisfactionProbability = 100.0)
+        : HydraMonitor(std::move(formula), id, connectedEval, evalCost, satisfactionProbability){};
 
     Verdict concreteStep(size_t parentId, size_t stepNumber) override;
 
     void setTrace(const Trace &trace) override;
+
+    std::string to_string() override;
 
   private:
     Trace trace;

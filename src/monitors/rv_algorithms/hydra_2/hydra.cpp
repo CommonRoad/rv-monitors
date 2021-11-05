@@ -25,7 +25,12 @@ std::map<std::string, std::vector<Verdict>> Hydra::evaluate(Trace &trace) {
 
     return result;
 }
-std::string Hydra::to_string() const { return "TODO"; }
+std::string Hydra::to_string() const {
+    std::string s;
+    for(const auto &mon : monitors)
+        s += mon->to_string() + '\n';
+    return s;
+}
 
 void Hydra::resetMonitors() {
     for (const auto &mon : monitors)
@@ -37,8 +42,9 @@ void Hydra::setTraceMonitors(const Trace &tr) {
         mon->setTrace(tr);
 }
 
-void Hydra::createMonitor(const std::vector<Formula> &formulas, bool connectedEval) {
-    HydraCreationVisitor hc;
+void Hydra::createMonitor(const std::vector<Formula> &formulas, bool connectedEval,
+                          std::vector<std::tuple<std::string, size_t, double>> predicateCosts) {
+    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
     for (const auto &form : formulas) {
         if (form.getId().empty())
             throw std::logic_error("Formula has no valid unique ID.");
@@ -53,6 +59,7 @@ void Hydra::createMonitor(const std::vector<Formula> &formulas, bool connectedEv
     }
 }
 
-Hydra::Hydra(const std::vector<Formula> &formulas, bool connectedEval) : MonitorInterface(formulas) {
-    createMonitor(formulas, connectedEval);
+Hydra::Hydra(const std::vector<Formula> &formulas, bool connectedEval,
+             std::vector<std::tuple<std::string, size_t, double>> predicateCosts) : MonitorInterface(formulas) {
+    createMonitor(formulas, connectedEval, predicateCosts);
 }
