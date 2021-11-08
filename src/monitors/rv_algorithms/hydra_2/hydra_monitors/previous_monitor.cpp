@@ -29,4 +29,4 @@ void PreviousMonitor::reset() {
     subMonitor->reset();
     currentVerdict = {};
 }
-std::string PreviousMonitor::to_string() { return std::string(); }
+std::string PreviousMonitor::to_string() { return "P(" + subMonitor->to_string() + ")"; }

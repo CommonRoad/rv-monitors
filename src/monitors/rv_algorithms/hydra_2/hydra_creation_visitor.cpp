@@ -66,10 +66,10 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitPredicate(Predicate &op
         return baseline.at(op.to_string());
     } else {
         size_t id{maxId++};
-        size_t cost;
+        double cost;
         double prob;
         for (const auto &pred : predicateCosts)
-            if (std::get<0>(pred).find(op.getName()) != 0u) {
+            if (std::get<0>(pred) == op.getName()) {
                 cost = std::get<1>(pred);
                 prob = std::get<2>(pred);
                 break;
@@ -157,6 +157,7 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitOr(Or &op, size_t paren
         size_t id{maxId++};
         for (const auto &expr : op.getExpressions())
             monitors.push_back(expr->accept(*this, id, connectedEval));
+        resort(monitors, false);
         auto newMonitor{std::make_shared<OrMonitor>(Formula(std::make_shared<Or>(op)), monitors, id, connectedEval)};
         baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(op.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
@@ -173,7 +174,7 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitAnd(And &op, size_t par
         size_t id{maxId++};
         for (const auto &expr : op.getExpressions())
             monitors.push_back(expr->accept(*this, id, connectedEval));
-        resort(monitors);
+        resort(monitors, true);
         auto newMonitor{std::make_shared<AndMonitor>(Formula(std::make_shared<And>(op)), monitors, id, connectedEval)};
         baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(op.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
@@ -194,17 +195,23 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitNot(Not &op, size_t par
         return newMonitor;
     }
 }
-HydraCreationVisitor::HydraCreationVisitor(std::vector<std::tuple<std::string, size_t, double>> predicateCosts)
+
+HydraCreationVisitor::HydraCreationVisitor(std::vector<std::tuple<std::string, double, double>> predicateCosts)
     : predicateCosts(std::move(predicateCosts)) {}
 
-void HydraCreationVisitor::resort(std::vector<std::shared_ptr<HydraMonitor>> &monitors) {
+void HydraCreationVisitor::resort(std::vector<std::shared_ptr<HydraMonitor>> &monitors, bool increasing) {
     std::vector<double> cost;
     std::vector<size_t> tmp(monitors.size());
     cost.reserve(monitors.size());
-    for (const auto &mon : monitors)
-        cost.push_back(mon->getSatisfactionProbability() * static_cast<double>(mon->getEvalCost()));
 
     std::iota(tmp.begin(), tmp.end(), 0);
+    if (increasing) {
+        for (const auto &mon : monitors)
+            cost.push_back(mon->getSatisfactionProbability() + static_cast<double>(mon->getEvalCost()));
+    } else {
+        for (const auto &mon : monitors)
+            cost.push_back((1 - mon->getSatisfactionProbability()) + static_cast<double>(mon->getEvalCost()));
+    }
     sort(tmp.begin(), tmp.end(), [&](size_t i, size_t j) { return cost[i] < cost[j]; });
     auto tmpSubMonitors{monitors};
     for (size_t idx{0}; idx < monitors.size(); ++idx)

@@ -70,7 +70,7 @@ class Predicate;
 
 class HydraCreationVisitor {
   public:
-    HydraCreationVisitor(std::vector<std::tuple<std::string, size_t, double>> predicate_costs);
+    HydraCreationVisitor(std::vector<std::tuple<std::string, double, double>> predicate_costs);
 
     std::shared_ptr<HydraMonitor> createMonitor(Formula &formula, size_t parentId, bool connectedEval);
 
@@ -97,7 +97,7 @@ class HydraCreationVisitor {
   private:
     size_t maxId{0};
     std::map<std::string, std::shared_ptr<HydraMonitor>> baseline;
-    std::vector<std::tuple<std::string, size_t, double>> predicateCosts;
+    std::vector<std::tuple<std::string, double, double>> predicateCosts;
 
-    void resort(std::vector<std::shared_ptr<HydraMonitor>> &monitors);
+    void resort(std::vector<std::shared_ptr<HydraMonitor>> &monitors, bool increasing);
 };

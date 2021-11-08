@@ -32,4 +32,4 @@ void NextMonitor::reset() {
     currentTime = {};
     subMonitor->reset();
 }
-std::string NextMonitor::to_string() { return std::string(); }
+std::string NextMonitor::to_string() { return "X(" + subMonitor->to_string() + ")"; }
