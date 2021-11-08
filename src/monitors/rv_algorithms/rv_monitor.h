@@ -30,7 +30,7 @@ class RVMonitor {
      * @param measurement Boolean indicating whether performance evaluation should be performed.
      */
     RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement,
-              const std::vector<std::tuple<std::string, size_t, double>>& predicateCosts = {});
+              const std::vector<std::tuple<std::string, double, double>> &predicateCosts = {});
 
     RVMonitor(const RVMonitor &obj);
 
@@ -46,7 +46,7 @@ class RVMonitor {
      * @param measurement Boolean indicating whether performance evaluation should be performed.
      */
     RVMonitor(AlgorithmType algorithm, const std::vector<Formula> &formula, bool past, bool measurement,
-              const std::vector<std::tuple<std::string, size_t, double>>& predicateCosts = {});
+              const std::vector<std::tuple<std::string, double, double>> &predicateCosts = {});
 
     /**
      * Evaluates trace based on temporal logic formula.
@@ -62,6 +62,8 @@ class RVMonitor {
      * @return Execution statistic object.
      */
     const ExecutionStatistic &getExecutionStatistic() const;
+
+    std::string to_string();
 
   protected:
     std::unique_ptr<MonitorInterface> monitor; //**< Pointer to monitoring algorithm */

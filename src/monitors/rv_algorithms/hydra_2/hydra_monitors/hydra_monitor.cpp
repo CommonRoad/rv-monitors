@@ -8,9 +8,11 @@
 
 #include <iostream>
 #include <utility>
+
 const Formula &HydraMonitor::getFormula() const { return formula; }
 
-HydraMonitor::HydraMonitor(Formula formula, size_t id, bool connectedEval, size_t evalCost, double satisfactionProbability)
+HydraMonitor::HydraMonitor(Formula formula, size_t id, bool connectedEval, double evalCost,
+                           double satisfactionProbability)
     : formula(std::move(formula)), monitorId((id)), connectedEval(connectedEval), evalCost(evalCost),
       satisfactionProbability(satisfactionProbability) {}
 
@@ -68,6 +70,6 @@ const std::string &HydraMonitor::getFormulaId() const { return formulaId; }
 
 void HydraMonitor::setFormulaId(const std::string &formula_id) { formulaId = formula_id; }
 
-size_t HydraMonitor::getEvalCost() const { return evalCost; }
+double HydraMonitor::getEvalCost() const { return evalCost; }
 
 double HydraMonitor::getSatisfactionProbability() const { return satisfactionProbability; }

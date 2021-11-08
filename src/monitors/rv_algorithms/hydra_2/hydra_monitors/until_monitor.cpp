@@ -82,4 +82,6 @@ void UntilMonitor::reset() {
     positionMonitorF.reset();
     positionMonitorH.reset();
 }
-std::string UntilMonitor::to_string() { return std::string(); }
+std::string UntilMonitor::to_string() {
+    return "(" + subMonitorF->to_string() + ")U(" + subMonitorG->to_string() + ")";
+}

@@ -10,7 +10,8 @@
 
 class PredicateMonitor : public HydraMonitor {
   public:
-    PredicateMonitor(Formula formula, size_t id, bool connectedEval, size_t evalCost = 0, double satisfactionProbability = 100.0)
+    PredicateMonitor(Formula formula, size_t id, bool connectedEval, size_t evalCost = 0,
+                     double satisfactionProbability = 100.0)
         : HydraMonitor(std::move(formula), id, connectedEval, evalCost, satisfactionProbability){};
 
     Verdict concreteStep(size_t parentId, size_t stepNumber) override;

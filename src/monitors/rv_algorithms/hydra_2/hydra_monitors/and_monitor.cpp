@@ -35,10 +35,25 @@ void AndMonitor::reset() {
     for (const auto &mon : subMonitors)
         mon->reset();
 }
+
 std::string AndMonitor::to_string() {
     std::string s;
     for (const auto &mon : subMonitors)
         s += mon->to_string() + " and ";
     s.erase(s.size() - 5);
     return s;
+}
+
+double AndMonitor::computeCost(const std::vector<std::shared_ptr<HydraMonitor>> &monitors) {
+    double cost{0.0};
+    for (const auto &mon : monitors)
+        cost += mon->getEvalCost();
+    return cost / static_cast<double>(monitors.size());
+}
+
+double AndMonitor::computeSatisfactionProbability(const std::vector<std::shared_ptr<HydraMonitor>> &monitors) {
+    double prob{monitors.at(0)->getSatisfactionProbability()};
+    for (size_t idx{1}; idx < monitors.size(); ++idx)
+        prob *= monitors.at(idx)->getSatisfactionProbability() / 10.0;
+    return prob;
 }

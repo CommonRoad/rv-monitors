@@ -27,7 +27,7 @@ std::map<std::string, std::vector<Verdict>> Hydra::evaluate(Trace &trace) {
 }
 std::string Hydra::to_string() const {
     std::string s;
-    for(const auto &mon : monitors)
+    for (const auto &mon : monitors)
         s += mon->to_string() + '\n';
     return s;
 }
@@ -43,7 +43,7 @@ void Hydra::setTraceMonitors(const Trace &tr) {
 }
 
 void Hydra::createMonitor(const std::vector<Formula> &formulas, bool connectedEval,
-                          std::vector<std::tuple<std::string, size_t, double>> predicateCosts) {
+                          std::vector<std::tuple<std::string, double, double>> predicateCosts) {
     HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
     for (const auto &form : formulas) {
         if (form.getId().empty())
@@ -60,6 +60,7 @@ void Hydra::createMonitor(const std::vector<Formula> &formulas, bool connectedEv
 }
 
 Hydra::Hydra(const std::vector<Formula> &formulas, bool connectedEval,
-             std::vector<std::tuple<std::string, size_t, double>> predicateCosts) : MonitorInterface(formulas) {
+             std::vector<std::tuple<std::string, double, double>> predicateCosts)
+    : MonitorInterface(formulas) {
     createMonitor(formulas, connectedEval, predicateCosts);
 }

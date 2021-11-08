@@ -33,4 +33,25 @@ void OrMonitor::reset() {
     for (const auto &mon : subMonitors)
         mon->reset();
 }
-std::string OrMonitor::to_string() { return std::string(); }
+
+std::string OrMonitor::to_string() {
+    std::string s;
+    for (const auto &mon : subMonitors)
+        s += mon->to_string() + " or ";
+    s.erase(s.size() - 4);
+    return s;
+}
+
+double OrMonitor::computeCost(const std::vector<std::shared_ptr<HydraMonitor>> &monitors) {
+    double cost{0.0};
+    for (const auto &mon : monitors)
+        cost += mon->getEvalCost();
+    return cost / static_cast<double>(monitors.size());
+}
+
+double OrMonitor::computeSatisfactionProbability(const std::vector<std::shared_ptr<HydraMonitor>> &monitors) {
+    double prob{monitors.at(0)->getSatisfactionProbability()};
+    for (size_t idx{1}; idx < monitors.size(); ++idx)
+        prob *= monitors.at(idx)->getSatisfactionProbability() / 10.0;
+    return prob;
+}

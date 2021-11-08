@@ -63,7 +63,7 @@ AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
 }
 
 RVMonitor::RVMonitor(AlgorithmType algorithm, const std::vector<Formula> &formulas, bool past, bool measurement,
-                     const std::vector<std::tuple<std::string, size_t, double>>& predicateCosts)
+                     const std::vector<std::tuple<std::string, double, double>> &predicateCosts)
     : performanceMeasurement(measurement) {
     switch (algorithm) {
     case dynamic_programming_ltl:
@@ -85,7 +85,7 @@ RVMonitor::RVMonitor(AlgorithmType algorithm, const std::vector<Formula> &formul
 }
 
 RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement,
-                     const std::vector<std::tuple<std::string, size_t, double>>& predicateCosts)
+                     const std::vector<std::tuple<std::string, double, double>> &predicateCosts)
     : performanceMeasurement(measurement) {
     switch (algorithm) {
     case dynamic_programming_ltl:
@@ -145,3 +145,5 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
     }
     return *this;
 }
+
+std::string RVMonitor::to_string() { return monitor->to_string(); }
