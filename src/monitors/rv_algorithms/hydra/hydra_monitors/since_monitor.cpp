@@ -52,4 +52,6 @@ void SinceMonitor::reset() {
     positionMonitorG.reset();
     positionMonitorF.reset();
 }
-std::string SinceMonitor::to_string() { return std::string(); }
+std::string SinceMonitor::to_string() {
+    return "(" + subMonitorF->to_string() + ")S(" + subMonitorG->to_string() + ")";
+}

@@ -14,4 +14,4 @@ void NegationMonitor::reset() {
     HydraMonitor::reset();
     subMonitor->reset();
 }
-std::string NegationMonitor::to_string() { return std::string(); }
+std::string NegationMonitor::to_string() { return "!(" + subMonitor->to_string() + ")"; }

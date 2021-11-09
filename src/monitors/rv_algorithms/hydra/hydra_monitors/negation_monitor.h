@@ -11,7 +11,9 @@
 class NegationMonitor : public HydraMonitor {
   public:
     NegationMonitor(Formula formula, std::shared_ptr<HydraMonitor> subMonitor, size_t id, bool connectedEval)
-        : HydraMonitor(std::move(formula), id, connectedEval, subMonitor->getEvalCost(), subMonitor->getSatisfactionProbability()), subMonitor(std::move(subMonitor)){};
+        : HydraMonitor(std::move(formula), id, connectedEval, subMonitor->getEvalCost(),
+                       100 - subMonitor->getSatisfactionProbability()),
+          subMonitor(std::move(subMonitor)){};
 
     Verdict concreteStep(size_t parentId) override;
 
