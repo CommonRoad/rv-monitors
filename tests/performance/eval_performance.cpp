@@ -8,6 +8,8 @@
 #include "monitors/parser/parser.h"
 #include "monitors/rv_algorithms/hydra/hydra.h"
 #include "monitors/trace/trace.h"
+#include "monitors/generators/formula_generator/formula_generator.h"
+#include "monitors/generators/trace_generator/trace_generator.h"
 #include <chrono>
 #include <iostream>
 #include <random>
@@ -190,7 +192,44 @@ void executeEvalAtomic(const std::vector<Formula> &formulas1, size_t numExecutio
     std::cout << '\n';
 }
 
+void test_0 ();
+void test_1 ();
+
+void executeEvaluate2(const std::vector<Formula> &formulas1, size_t numExecutions, Trace trace) {
+    std::vector<double> avgCompTimeCombined;
+    std::vector<double> avgCompTimeConnected;
+    std::vector<double> avgCompTimeSingle;
+
+    for (size_t i{0}; i < numExecutions; ++i) {
+        avgCompTimeCombined.push_back(evalHydraCombined(trace, formulas1));
+        avgCompTimeConnected.push_back(evalHydraSingleConnected(trace, formulas1));
+        avgCompTimeSingle.push_back(evalHydraSingle(trace, formulas1));
+    }
+    std::cout << "Combined: "
+              << std::accumulate(avgCompTimeCombined.begin(), avgCompTimeCombined.end(), 0) / numExecutions << '\n';
+    std::cout << "Connected: "
+              << std::accumulate(avgCompTimeConnected.begin(), avgCompTimeConnected.end(), 0) / numExecutions << '\n';
+    std::cout << "Single: " << std::accumulate(avgCompTimeSingle.begin(), avgCompTimeSingle.end(), 0) / numExecutions
+              << '\n';
+    for (const auto &val : avgCompTimeCombined)
+        std::cout << val << ", ";
+    std::cout << '\n';
+    for (const auto &val : avgCompTimeConnected)
+        std::cout << val << ", ";
+    std::cout << '\n';
+    for (const auto &val : avgCompTimeSingle)
+        std::cout << val << ", ";
+    std::cout << '\n';
+}
+
 int main() {
+    int nr;
+    std::cout<< "Test Number 0-1" << std::endl;
+    std::cin >> nr;
+    (nr==0)?test_0():test_1();
+}
+
+void test_0 () {
     std::vector<Formula> formulas1 = {Parser::parse("(a(test))S[0, 4](b(test))"),
                                       Parser::parse("(a(test))U[0, 4](b(test))"),
                                       Parser::parse("(a(test))S[0, 4](b(test)) or (a(test))U[0, 4](b(test))")};
@@ -223,6 +262,43 @@ int main() {
     //    traceLength = {50000, 100000, 200000};
     //    evalFormula1Atomic(formulas3, numExecutions, traceLength);
     //    evalFormula2Atomic(formulas4, numExecutions, traceLength);
+}
+
+void test_1 (){
+    FormulaGenerator fg;
+    fg.rseed();
+    TraceGenerator tg;
+    tg.rseed();
+
+    auto a = std::make_shared<Atomic>("a");
+    auto b = std::make_shared<Atomic>("b");
+    auto c = std::make_shared<Atomic>("c");
+    auto p = std::make_shared<Predicate>("p", "na", std::vector<std::string>{"params1", "params2"});
+    auto q = std::make_shared<Predicate>("q", "na", std::vector<std::string>{"params1", "params2","params3"});
+
+    fg.AddAtomic(a, 1.0); tg.AddAtomic(a, 2.0);
+    fg.AddAtomic(b, 2.0); tg.AddAtomic(b, 1.0);
+    fg.AddAtomic(c, 3.0); tg.AddAtomic(c, 3.0);
+    fg.AddPredicate(p, 3.0); tg.AddPredicate(p, 1.0);
+    fg.AddPredicate(q, 2.0); tg.AddPredicate(q, 2.0);
+
+    fg.AddOperator(OP_NOT, 1.0);
+    fg.AddOperator(OP_IF, 5.0);
+    fg.AddOperator(OP_AND, 3.0);
+    fg.AddOperator(OP_OR, 2.0);
+    fg.AddOperator(OP_SINCE, 1.0);
+    fg.AddOperator(OP_GLOBALLY, 1.0);
+
+    Formula f1 = fg.GenerateFormula(7); f1.setId("R1");
+    Formula f2 = fg.GenerateFormula(3); f2.setId("R2");
+    Formula f3 = fg.GenerateFormula(5); f3.setId("R3");
+    std::vector<Formula> formulas = {f1, f2, f3};
+
+    Trace trace = tg.GenerateTrace(5);
+    size_t numExecutions{1000};
+
+    //call the evaluator
+    executeEvaluate2(formulas, numExecutions, trace);
 }
 
 void evalFormula1(const std::vector<Formula> &formulas, size_t numExecutions, std::vector<size_t> &traceLength) {

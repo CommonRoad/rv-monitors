@@ -140,7 +140,7 @@ std::shared_ptr<Expression> FormulaGenerator::GenerateExpression(const int nrOpe
                  oi.m_name == OP_XOR ||
                  oi.m_name == OP_IF ||
                  oi.m_name == OP_IFF ||
-                 oi.m_name == OP_SINCE) //Added
+                 oi.m_name == OP_SINCE)
         {
             auto nrLeft = rint(0, nrOperators - 1);
             auto exprLeft = GenerateExpression(nrLeft);

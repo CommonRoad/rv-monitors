@@ -29,12 +29,8 @@ std::shared_ptr<Expression> ComputationTimeGenerator::generateAtomOrPredicate(in
 
 void ComputationTimeGenerator::generateAtomsAndPredicates(int index_of_delay, int nrPreds, std::vector < std::shared_ptr<Expression> > & preds)
 {
-//    std::vector<std::shared_ptr<Expression>> predicates_ith_delay;
-//    int max_iterations = (m_atoms.size() >= m_predicates.size()) ? m_atoms.size() : m_predicates.size();
-//    for (int j=0; j< max_iterations; ++j) {
         for (int i = 0; i < nrPreds; ++i)
             preds.push_back(generateAtomOrPredicate(index_of_delay));
-//    }
 }
 
 void ComputationTimeGenerator::createPredicatesOnDelays (std::vector<int> info,  std::vector< std::vector<std::shared_ptr<Expression>>*> &allPreds)
