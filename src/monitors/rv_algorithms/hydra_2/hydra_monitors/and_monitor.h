@@ -5,8 +5,7 @@
 // Credits: BMW Car@TUM
 //
 #pragma once
-
-#include "monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.h"
+#include "hydra_monitor.h"
 
 class AndMonitor : public HydraMonitor {
   public:
@@ -15,7 +14,7 @@ class AndMonitor : public HydraMonitor {
                        computeSatisfactionProbability(subMonitors)),
           subMonitors(std::move(subMonitors)){};
 
-    Verdict concreteStep(size_t parentId) override;
+    Verdict concreteStep(size_t parentId, size_t stepNumber) override;
 
     void setTrace(const Trace &trace) override;
 

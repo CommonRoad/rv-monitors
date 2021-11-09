@@ -4,18 +4,18 @@
 // Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
 // Credits: BMW Car@TUM
 //
-#include "atomic_monitor.h"
+#include "constant_monitor.h"
+#include <monitors/expression_tree/atomic/constant.h>
 
-Verdict AtomicMonitor::concreteStep(size_t parentId) {
+Verdict ConstantMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     if (traceIdx[parentId] < trace.getLength()) {
         auto event{trace.getEvent(traceIdx[parentId])};
         auto verdict{
-            Verdict(event.getTimeStep(), event.getValue(*std::dynamic_pointer_cast<Atomic>(formula.getExpr())))};
+            Verdict(event.getTimeStep(), (*std::dynamic_pointer_cast<Constant>(formula.getExpr())).getValue())};
         return verdict;
     } else
         return Verdict(false);
 }
 
-void AtomicMonitor::setTrace(const Trace &tr) { trace = tr; }
-
-std::string AtomicMonitor::to_string() { return std::string(); }
+void ConstantMonitor::setTrace(const Trace &tr) { trace = tr; }
+std::string ConstantMonitor::to_string() { return formula.getExpr()->getSymbol(); }

@@ -8,7 +8,7 @@
 
 #include <utility>
 
-#include "monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.h"
+#include "hydra_monitor.h"
 
 class UntilMonitor : public HydraMonitor {
   public:
@@ -20,7 +20,7 @@ class UntilMonitor : public HydraMonitor {
           subMonitorF(std::move(subMonitorF)), subMonitorG(std::move(subMonitorG)), subMonitorH(std::move(subMonitorH)),
           from(from), to(to){};
 
-    Verdict concreteStep(size_t parentId) override;
+    Verdict concreteStep(size_t parentId, size_t stepNumber) override;
 
     void setTrace(const Trace &tr) override;
 
@@ -29,7 +29,7 @@ class UntilMonitor : public HydraMonitor {
     std::string to_string() override;
 
   private:
-    void readFG();
+    void readFG(size_t stepNumber);
     void handleEof();
 
     std::shared_ptr<HydraMonitor> subMonitorF, subMonitorG, subMonitorH;

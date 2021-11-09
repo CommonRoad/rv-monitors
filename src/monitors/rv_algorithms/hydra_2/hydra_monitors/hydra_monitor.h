@@ -32,9 +32,9 @@ class HydraMonitor {
     HydraMonitor(Formula formula, size_t id, bool connectedEval = true, double evalCost = 0,
                  double satisfactionProbability = 100.0);
 
-    Verdict step(size_t parentId);
+    Verdict step(size_t parentId, size_t stepNumber, bool ret = false);
 
-    virtual Verdict concreteStep(size_t parentId) = 0;
+    virtual Verdict concreteStep(size_t parentId, size_t stepNumber) = 0;
 
     const Formula &getFormula() const;
 
@@ -48,19 +48,12 @@ class HydraMonitor {
 
     void setFormulaId(const std::string &formula_id);
 
-<<<<<<< HEAD:src/monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.h
-<<<<<<< HEAD:src/monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.h
-=======
-    size_t getEvalCost() const;
-=======
     double getEvalCost() const;
->>>>>>> f3128485b1a080a741b27cba1e7c32649fbd2a56:src/monitors/rv_algorithms/hydra_2/hydra_monitors/hydra_monitor.h
 
     double getSatisfactionProbability() const;
 
     virtual std::string to_string() = 0;
 
->>>>>>> refs/remotes/origin/hydra_2:src/monitors/rv_algorithms/hydra_2/hydra_monitors/hydra_monitor.h
   protected:
     Formula formula;
     std::string formulaId;

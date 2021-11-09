@@ -6,7 +6,7 @@
 //
 #pragma once
 
-#include "monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.h"
+#include "hydra_monitor.h"
 
 class NegationMonitor : public HydraMonitor {
   public:
@@ -15,7 +15,7 @@ class NegationMonitor : public HydraMonitor {
                        100 - subMonitor->getSatisfactionProbability()),
           subMonitor(std::move(subMonitor)){};
 
-    Verdict concreteStep(size_t parentId) override;
+    Verdict concreteStep(size_t parentId, size_t stepNumber) override;
 
     void setTrace(const Trace &trace) override;
 

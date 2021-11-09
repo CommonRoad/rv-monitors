@@ -6,7 +6,7 @@
 //
 
 #include "monitors/parser/parser.h"
-#include "monitors/rv_algorithms/hydra/hydra.h"
+#include "monitors/rv_algorithms/hydra_2/hydra.h"
 #include "monitors/trace/trace.h"
 #include "monitors/generators/formula_generator/formula_generator.h"
 #include "monitors/generators/trace_generator/trace_generator.h"
@@ -223,10 +223,7 @@ void executeEvaluate2(const std::vector<Formula> &formulas1, size_t numExecution
 }
 
 int main() {
-    int nr;
-    std::cout<< "Test Number 0-1" << std::endl;
-    std::cin >> nr;
-    (nr==0)?test_0():test_1();
+   test_1();
 }
 
 void test_0 () {
@@ -294,11 +291,13 @@ void test_1 (){
     Formula f3 = fg.GenerateFormula(5); f3.setId("R3");
     std::vector<Formula> formulas = {f1, f2, f3};
 
-    Trace trace = tg.GenerateTrace(5);
+    Trace trace = tg.GenerateTrace(60);
     size_t numExecutions{1000};
 
     //call the evaluator
+    std::cout<< "Test Running ... "<<std::endl;
     executeEvaluate2(formulas, numExecutions, trace);
+    std::cout<<"Test Finished"<<std::endl;
 }
 
 void evalFormula1(const std::vector<Formula> &formulas, size_t numExecutions, std::vector<size_t> &traceLength) {

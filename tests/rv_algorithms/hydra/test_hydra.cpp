@@ -7,17 +7,17 @@
 
 #include "test_hydra.h"
 #include "monitors/parser/parser.h"
-#include "monitors/rv_algorithms/hydra/hydra.h"
+#include "monitors/rv_algorithms/hydra_2/hydra.h"
 
-void TestHydra::evalHydra(Trace &trace, const std::vector<Formula> &formulas,
-                          const std::vector<std::vector<Verdict>> &expSolution) {
+    void TestHydra::evalHydra(Trace &trace, const std::vector<Formula> &formulas,
+                              const std::vector<std::vector<Verdict>> &expSolution) {
     auto monitor{Hydra(formulas)};
     auto solution{monitor.evaluate(trace)};
     for (int i{0}; i < formulas.size(); ++i) {
         if (solution[formulas[i].getId()].size() != expSolution[i].size())
             throw std::logic_error("Hydra Test: length of expected solution and solution does not match");
         for (size_t j{0}; j < expSolution[i].size(); ++j)
-            EXPECT_TRUE(expSolution[i][j] == solution[formulas[i].getId()][j]) << "Mismatch at time step: " << j;
+            EXPECT_TRUE(expSolution[i][j] == solution[formulas[i].getId()][j]) << "Mismatch at element index: " << j;
     }
 }
 
@@ -342,8 +342,6 @@ TEST(TestHydra, testGloballyOncePrevious) {
     TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
-<<<<<<< HEAD:tests/rv_algorithms/hydra/test_hydra.cpp
-=======
 TEST(TestHydra, testGloballyOncePrevious2) {
     Trace trace = Utils::createTrace({"a", "b", "c"}, {{"c"}, {"b"}, {"a", "b"}, {"c"}, {"a"}, {"b"}, {"a"}, {"a"}});
     Formula formula = Parser::parse("true S (P(!(b)) & b)");
@@ -362,7 +360,6 @@ TEST(TestHydra, testPreviousAnd) {
     TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
->>>>>>> refs/remotes/origin/hydra_2:tests/rv_algorithms/hydra_2/test_hydra.cpp
 TEST(TestHydra, testGloballyAndOncePreviousImplicationViolatedOnce) {
     Trace trace = Utils::createTrace({"a", "b", "c"}, {{"c"}, {"b"}, {"b"}, {"a"}, {"c"}});
     Formula formula = Parser::parse("G((a & O(b & P(!b))) -> c)");

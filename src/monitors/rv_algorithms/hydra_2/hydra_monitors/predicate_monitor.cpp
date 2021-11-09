@@ -4,18 +4,18 @@
 // Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
 // Credits: BMW Car@TUM
 //
-#include "constant_monitor.h"
-#include <monitors/expression_tree/atomic/constant.h>
+#include "predicate_monitor.h"
+#include <iostream>
 
-Verdict ConstantMonitor::concreteStep(size_t parentId) {
+Verdict PredicateMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     if (traceIdx[parentId] < trace.getLength()) {
         auto event{trace.getEvent(traceIdx[parentId])};
         auto verdict{
-            Verdict(event.getTimeStep(), (*std::dynamic_pointer_cast<Constant>(formula.getExpr())).getValue())};
+            Verdict(event.getTimeStep(), event.getValue(*std::dynamic_pointer_cast<Predicate>(formula.getExpr())))};
         return verdict;
     } else
         return Verdict(false);
 }
 
-void ConstantMonitor::setTrace(const Trace &tr) { trace = tr; }
-std::string ConstantMonitor::to_string() { return formula.getExpr()->getSymbol(); }
+void PredicateMonitor::setTrace(const Trace &tr) { trace = tr; }
+std::string PredicateMonitor::to_string() { return formula.to_string(); }

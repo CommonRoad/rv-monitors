@@ -6,7 +6,7 @@
 //
 #pragma once
 
-#include "monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.h"
+#include "hydra_monitor.h"
 
 class PredicateMonitor : public HydraMonitor {
   public:
@@ -14,7 +14,7 @@ class PredicateMonitor : public HydraMonitor {
                      double satisfactionProbability = 100.0)
         : HydraMonitor(std::move(formula), id, connectedEval, evalCost, satisfactionProbability){};
 
-    Verdict concreteStep(size_t parentId) override;
+    Verdict concreteStep(size_t parentId, size_t stepNumber) override;
 
     void setTrace(const Trace &trace) override;
 
