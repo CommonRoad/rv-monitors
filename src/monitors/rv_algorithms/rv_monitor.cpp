@@ -62,7 +62,8 @@ AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
     }
 }
 
-RVMonitor::RVMonitor(AlgorithmType algorithm, const std::vector<Formula> &formulas, bool past, bool measurement)
+RVMonitor::RVMonitor(AlgorithmType algorithm, const std::vector<Formula> &formulas, bool past, bool measurement,
+                     const std::vector<std::tuple<std::string, size_t, double>>& predicateCosts)
     : performanceMeasurement(measurement) {
     switch (algorithm) {
     case dynamic_programming_ltl:
@@ -78,12 +79,13 @@ RVMonitor::RVMonitor(AlgorithmType algorithm, const std::vector<Formula> &formul
         monitor = std::make_unique<BttFsm>(formulas, past);
         break;
     case hydra_mtl:
-        monitor = std::make_unique<Hydra>(formulas);
+        monitor = std::make_unique<Hydra>(formulas, true, predicateCosts);
         break;
     }
 }
 
-RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement)
+RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement,
+                     const std::vector<std::tuple<std::string, size_t, double>>& predicateCosts)
     : performanceMeasurement(measurement) {
     switch (algorithm) {
     case dynamic_programming_ltl:
@@ -99,7 +101,7 @@ RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past,
         monitor = std::make_unique<BttFsm>(std::vector<Formula>{formula}, past);
         break;
     case hydra_mtl:
-        monitor = std::make_unique<Hydra>(std::vector<Formula>{formula});
+        monitor = std::make_unique<Hydra>(std::vector<Formula>{formula}, true, predicateCosts);
         break;
     }
 }

@@ -29,7 +29,8 @@ class HydraMonitor {
     size_t getMaxTraceIdx();
 
   public:
-    HydraMonitor(Formula formula, size_t id, bool connectedEval = true);
+    HydraMonitor(Formula formula, size_t id, bool connectedEval = true, size_t evalCost = 0,
+                 double satisfactionProbability = 100.0);
 
     Verdict step(size_t parentId);
 
@@ -47,6 +48,15 @@ class HydraMonitor {
 
     void setFormulaId(const std::string &formula_id);
 
+<<<<<<< HEAD:src/monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.h
+=======
+    size_t getEvalCost() const;
+
+    double getSatisfactionProbability() const;
+
+    virtual std::string to_string() = 0;
+
+>>>>>>> refs/remotes/origin/hydra_2:src/monitors/rv_algorithms/hydra_2/hydra_monitors/hydra_monitor.h
   protected:
     Formula formula;
     std::string formulaId;
@@ -54,4 +64,6 @@ class HydraMonitor {
     std::vector<Verdict> verdictHistory;
     std::map<size_t, size_t> traceIdx;
     bool connectedEval;
+    size_t evalCost{0};
+    double satisfactionProbability{100.0};
 };

@@ -52,3 +52,4 @@ void SinceMonitor::reset() {
     positionMonitorG.reset();
     positionMonitorF.reset();
 }
+std::string SinceMonitor::to_string() { return std::string(); }

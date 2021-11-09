@@ -11,13 +11,15 @@
 class NegationMonitor : public HydraMonitor {
   public:
     NegationMonitor(Formula formula, std::shared_ptr<HydraMonitor> subMonitor, size_t id, bool connectedEval)
-        : HydraMonitor(std::move(formula), id, connectedEval), subMonitor(std::move(subMonitor)){};
+        : HydraMonitor(std::move(formula), id, connectedEval, subMonitor->getEvalCost(), subMonitor->getSatisfactionProbability()), subMonitor(std::move(subMonitor)){};
 
     Verdict concreteStep(size_t parentId) override;
 
     void setTrace(const Trace &trace) override;
 
     void reset() override;
+
+    std::string to_string() override;
 
   private:
     std::shared_ptr<HydraMonitor> subMonitor;

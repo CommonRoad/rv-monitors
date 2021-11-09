@@ -160,9 +160,10 @@ class FormulaGenerator
      * @param nrOperators number of operators to be added in the Formula
      * @return return the pseudo-randomly generated Formula
      */
-    virtual Formula* GenerateFormula(const int nrOperators)
+    virtual Formula GenerateFormula(const int nrOperators)
     {
-        return new Formula(GenerateExpression(nrOperators));
+        Formula f(GenerateExpression(nrOperators));
+        return f;
     }
 
   protected:

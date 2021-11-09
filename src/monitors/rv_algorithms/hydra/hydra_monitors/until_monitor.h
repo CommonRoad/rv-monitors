@@ -24,6 +24,8 @@ class UntilMonitor : public HydraMonitor {
 
     void reset() override;
 
+    std::string to_string() override;
+
   private:
     void readFG();
     void handleEof();

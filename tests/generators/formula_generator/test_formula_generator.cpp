@@ -27,7 +27,7 @@ TEST(TestFormulaGenerator, tfg) {
     fg.AddOperator(OP_GLOBALLY, 2.0);
 
     auto f =  fg.GenerateFormula(7);
-    std::cout << *f << std::endl;
+    std::cout << f << std::endl;
 
     EXPECT_TRUE(true);
 }
@@ -54,7 +54,7 @@ TEST(TestFormulaGeneratorNoIntervals, tfgni) {
     fg.AddOperator(OP_GLOBALLY, 2.0);
 
     auto f =  fg.GenerateFormula(7);
-    std::cout << *f << std::endl;
+    std::cout << f << std::endl;
 
     EXPECT_TRUE(true);
 }
@@ -74,7 +74,7 @@ TEST(TestFormulaGeneratorOneOperator, tfgoo) {
     fg.AddOperator(OP_GLOBALLY, 2.0);
 
     auto f =  fg.GenerateFormula(1);
-    std::cout << *f << std::endl;
+    std::cout << f << std::endl;
 
     EXPECT_TRUE(true);
 }
@@ -97,7 +97,7 @@ TEST(TestFormulaGeneratorNoOperator, tfgno) {
     fg.AddOperator(OP_GLOBALLY, 2.0);
 
     auto f =  fg.GenerateFormula(0);
-    std::cout << *f << std::endl;
+    std::cout << f << std::endl;
 
     EXPECT_TRUE(true);
 }

@@ -23,6 +23,8 @@ class SinceMonitor : public HydraMonitor {
 
     void reset() override;
 
+    std::string to_string() override;
+
   private:
     std::shared_ptr<HydraMonitor> subMonitorF, subMonitorG;
     std::optional<Verdict> subVerdictF, subVerdictG;
