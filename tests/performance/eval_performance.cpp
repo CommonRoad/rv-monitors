@@ -5,11 +5,11 @@
 // Credits: BMW Car@TUM
 //
 
+#include "monitors/generators/formula_generator/formula_generator.h"
+#include "monitors/generators/trace_generator/trace_generator.h"
 #include "monitors/parser/parser.h"
 #include "monitors/rv_algorithms/hydra_2/hydra.h"
 #include "monitors/trace/trace.h"
-#include "monitors/generators/formula_generator/formula_generator.h"
-#include "monitors/generators/trace_generator/trace_generator.h"
 #include <chrono>
 #include <iostream>
 #include <random>
@@ -192,8 +192,8 @@ void executeEvalAtomic(const std::vector<Formula> &formulas1, size_t numExecutio
     std::cout << '\n';
 }
 
-void test_0 ();
-void test_1 ();
+void test_0();
+void test_1();
 
 void executeEvaluate2(const std::vector<Formula> &formulas1, size_t numExecutions, Trace trace) {
     std::vector<double> avgCompTimeCombined;
@@ -222,11 +222,9 @@ void executeEvaluate2(const std::vector<Formula> &formulas1, size_t numExecution
     std::cout << '\n';
 }
 
-int main() {
-   test_1();
-}
+int main() { test_1(); }
 
-void test_0 () {
+void test_0() {
     std::vector<Formula> formulas1 = {Parser::parse("(a(test))S[0, 4](b(test))"),
                                       Parser::parse("(a(test))U[0, 4](b(test))"),
                                       Parser::parse("(a(test))S[0, 4](b(test)) or (a(test))U[0, 4](b(test))")};
@@ -261,7 +259,7 @@ void test_0 () {
     //    evalFormula2Atomic(formulas4, numExecutions, traceLength);
 }
 
-void test_1 (){
+void test_1() {
     FormulaGenerator fg;
     fg.rseed();
     TraceGenerator tg;
@@ -271,13 +269,18 @@ void test_1 (){
     auto b = std::make_shared<Atomic>("b");
     auto c = std::make_shared<Atomic>("c");
     auto p = std::make_shared<Predicate>("p", "na", std::vector<std::string>{"params1", "params2"});
-    auto q = std::make_shared<Predicate>("q", "na", std::vector<std::string>{"params1", "params2","params3"});
+    auto q = std::make_shared<Predicate>("q", "na", std::vector<std::string>{"params1", "params2", "params3"});
 
-    fg.AddAtomic(a, 1.0); tg.AddAtomic(a, 2.0);
-    fg.AddAtomic(b, 2.0); tg.AddAtomic(b, 1.0);
-    fg.AddAtomic(c, 3.0); tg.AddAtomic(c, 3.0);
-    fg.AddPredicate(p, 3.0); tg.AddPredicate(p, 1.0);
-    fg.AddPredicate(q, 2.0); tg.AddPredicate(q, 2.0);
+    fg.AddAtomic(a, 1.0);
+    tg.AddAtomic(a, 2.0);
+    fg.AddAtomic(b, 2.0);
+    tg.AddAtomic(b, 1.0);
+    fg.AddAtomic(c, 3.0);
+    tg.AddAtomic(c, 3.0);
+    fg.AddPredicate(p, 3.0);
+    tg.AddPredicate(p, 1.0);
+    fg.AddPredicate(q, 2.0);
+    tg.AddPredicate(q, 2.0);
 
     fg.AddOperator(OP_NOT, 1.0);
     fg.AddOperator(OP_IF, 5.0);
@@ -286,18 +289,21 @@ void test_1 (){
     fg.AddOperator(OP_SINCE, 1.0);
     fg.AddOperator(OP_GLOBALLY, 1.0);
 
-    Formula f1 = fg.GenerateFormula(7); f1.setId("R1");
-    Formula f2 = fg.GenerateFormula(3); f2.setId("R2");
-    Formula f3 = fg.GenerateFormula(5); f3.setId("R3");
+    Formula f1 = fg.GenerateFormula(7);
+    f1.setId("R1");
+    Formula f2 = fg.GenerateFormula(3);
+    f2.setId("R2");
+    Formula f3 = fg.GenerateFormula(5);
+    f3.setId("R3");
     std::vector<Formula> formulas = {f1, f2, f3};
 
     Trace trace = tg.GenerateTrace(60);
     size_t numExecutions{1000};
 
-    //call the evaluator
-    std::cout<< "Test Running ... "<<std::endl;
+    // call the evaluator
+    std::cout << "Test Running ... " << std::endl;
     executeEvaluate2(formulas, numExecutions, trace);
-    std::cout<<"Test Finished"<<std::endl;
+    std::cout << "Test Finished" << std::endl;
 }
 
 void evalFormula1(const std::vector<Formula> &formulas, size_t numExecutions, std::vector<size_t> &traceLength) {

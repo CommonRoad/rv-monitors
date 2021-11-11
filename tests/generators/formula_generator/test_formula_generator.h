@@ -13,6 +13,6 @@ class TestFormulaGeneratorNoIntervals : public testing::Test {};
 
 class TestFormulaGeneratorOneOperator : public testing::Test {};
 
-class TestFormulaGeneratorNoOperator : public  testing::Test {};
+class TestFormulaGeneratorNoOperator : public testing::Test {};
 
 #endif // RVMONITORS_TEST_FORMULA_GENERATOR_H

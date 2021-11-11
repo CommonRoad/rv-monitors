@@ -2,10 +2,10 @@
 // Created by Evald Nexhipi on 23.10.21.
 //
 #include "test_trace_generator.h"
-#include "monitors/expression_tree/atomic/predicate.h"
 #include "monitors/expression_tree/atomic/atomic.h"
+#include "monitors/expression_tree/atomic/predicate.h"
 #include "monitors/generators/trace_generator/trace_generator.h"
-TEST(TestTraceGenerator, ttg){
+TEST(TestTraceGenerator, ttg) {
     TraceGenerator fg;
     fg.rseed();
 
@@ -13,7 +13,7 @@ TEST(TestTraceGenerator, ttg){
     auto a2 = std::make_shared<Atomic>("a2");
     auto a3 = std::make_shared<Atomic>("a3");
     auto p1 = std::make_shared<Predicate>("p1", "na", std::vector<std::string>{"params1", "params2"});
-    auto p2 = std::make_shared<Predicate>("p2", "na", std::vector<std::string>{"params1", "params2","params3"});
+    auto p2 = std::make_shared<Predicate>("p2", "na", std::vector<std::string>{"params1", "params2", "params3"});
 
     fg.AddAtomic(a1, 1.0);
     fg.AddAtomic(a2, 1.0);
@@ -21,13 +21,13 @@ TEST(TestTraceGenerator, ttg){
     fg.AddPredicate(p1, 3.0);
     fg.AddPredicate(p2, 2.0);
 
-    auto f =  fg.GenerateTrace(10);
+    auto f = fg.GenerateTrace(10);
     std::cout << f.to_string() << std::endl;
 
     EXPECT_TRUE(true);
 }
 
-TEST(TestTraceGeneratorZeroLength, ttgzl){
+TEST(TestTraceGeneratorZeroLength, ttgzl) {
     TraceGenerator fg;
     fg.rseed();
 
@@ -35,7 +35,7 @@ TEST(TestTraceGeneratorZeroLength, ttgzl){
     auto a2 = std::make_shared<Atomic>("a2");
     auto a3 = std::make_shared<Atomic>("a3");
     auto p1 = std::make_shared<Predicate>("p1", "na", std::vector<std::string>{"params1", "params2"});
-    auto p2 = std::make_shared<Predicate>("p2", "na", std::vector<std::string>{"params1", "params2","params3"});
+    auto p2 = std::make_shared<Predicate>("p2", "na", std::vector<std::string>{"params1", "params2", "params3"});
 
     fg.AddAtomic(a1, 1.0);
     fg.AddAtomic(a2, 1.0);
@@ -43,13 +43,13 @@ TEST(TestTraceGeneratorZeroLength, ttgzl){
     fg.AddPredicate(p1, 3.0);
     fg.AddPredicate(p2, 2.0);
 
-    auto f =  fg.GenerateTrace(0);
+    auto f = fg.GenerateTrace(0);
     std::cout << f.to_string() << std::endl;
 
     EXPECT_TRUE(true);
 }
 
-TEST(TestTraceGeneratorLengthOne, ttglo){
+TEST(TestTraceGeneratorLengthOne, ttglo) {
     TraceGenerator fg;
     fg.rseed();
 
@@ -57,7 +57,7 @@ TEST(TestTraceGeneratorLengthOne, ttglo){
     auto a2 = std::make_shared<Atomic>("a2");
     auto a3 = std::make_shared<Atomic>("a3");
     auto p1 = std::make_shared<Predicate>("p1", "na", std::vector<std::string>{"params1", "params2"});
-    auto p2 = std::make_shared<Predicate>("p2", "na", std::vector<std::string>{"params1", "params2","params3"});
+    auto p2 = std::make_shared<Predicate>("p2", "na", std::vector<std::string>{"params1", "params2", "params3"});
 
     fg.AddAtomic(a1, 1.0);
     fg.AddAtomic(a2, 1.0);
@@ -65,7 +65,7 @@ TEST(TestTraceGeneratorLengthOne, ttglo){
     fg.AddPredicate(p1, 3.0);
     fg.AddPredicate(p2, 2.0);
 
-    auto f =  fg.GenerateTrace(1);
+    auto f = fg.GenerateTrace(1);
     std::cout << f.to_string() << std::endl;
 
     EXPECT_TRUE(true);

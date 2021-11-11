@@ -9,8 +9,8 @@
 #include "monitors/parser/parser.h"
 #include "monitors/rv_algorithms/hydra_2/hydra.h"
 
-    void TestHydra::evalHydra(Trace &trace, const std::vector<Formula> &formulas,
-                              const std::vector<std::vector<Verdict>> &expSolution) {
+void TestHydra::evalHydra(Trace &trace, const std::vector<Formula> &formulas,
+                          const std::vector<std::vector<Verdict>> &expSolution) {
     auto monitor{Hydra(formulas)};
     auto solution{monitor.evaluate(trace)};
     for (int i{0}; i < formulas.size(); ++i) {

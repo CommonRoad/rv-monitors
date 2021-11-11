@@ -23,10 +23,10 @@ TEST(TestFormulaGenerator, tfg) {
     fg.AddOperator(OP_IF, 2.0);
     fg.AddOperator(OP_IFF, 2.0);
     fg.AddOperator(OP_SINCE, 2.0);
-    fg.AddOperatorWithInterval(OP_FUTURE, 2.0, 0,  3, 10, 30);
+    fg.AddOperatorWithInterval(OP_FUTURE, 2.0, 0, 3, 10, 30);
     fg.AddOperator(OP_GLOBALLY, 2.0);
 
-    auto f =  fg.GenerateFormula(7);
+    auto f = fg.GenerateFormula(7);
     std::cout << f << std::endl;
 
     EXPECT_TRUE(true);
@@ -53,7 +53,7 @@ TEST(TestFormulaGeneratorNoIntervals, tfgni) {
     fg.AddOperator(OP_SINCE, 2.0);
     fg.AddOperator(OP_GLOBALLY, 2.0);
 
-    auto f =  fg.GenerateFormula(7);
+    auto f = fg.GenerateFormula(7);
     std::cout << f << std::endl;
 
     EXPECT_TRUE(true);
@@ -73,7 +73,7 @@ TEST(TestFormulaGeneratorOneOperator, tfgoo) {
     fg.AddPredicate(p1, 3.0);
     fg.AddOperator(OP_GLOBALLY, 2.0);
 
-    auto f =  fg.GenerateFormula(1);
+    auto f = fg.GenerateFormula(1);
     std::cout << f << std::endl;
 
     EXPECT_TRUE(true);
@@ -96,7 +96,7 @@ TEST(TestFormulaGeneratorNoOperator, tfgno) {
     fg.AddOperator(OP_SINCE, 2.0);
     fg.AddOperator(OP_GLOBALLY, 2.0);
 
-    auto f =  fg.GenerateFormula(0);
+    auto f = fg.GenerateFormula(0);
     std::cout << f << std::endl;
 
     EXPECT_TRUE(true);
