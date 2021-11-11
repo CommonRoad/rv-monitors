@@ -2,12 +2,12 @@
 // Created by Evald Nexhipi on 20.10.21.
 //
 #include "test_formula_generator.h"
-#include "monitors/generators/formula_generator/formula_generator.h"
+#include "monitors/utils/generators/formula_generator/formula_generator.h"
 
 TEST(TestFormulaGenerator, tfg) {
 
     FormulaGenerator fg;
-    fg.rseed();
+    FormulaGenerator::rseed();
 
     auto a1 = std::make_shared<Atomic>("a1");
     auto a2 = std::make_shared<Atomic>("a2");
@@ -35,7 +35,7 @@ TEST(TestFormulaGenerator, tfg) {
 TEST(TestFormulaGeneratorNoIntervals, tfgni) {
 
     FormulaGenerator fg;
-    fg.rseed();
+    FormulaGenerator::rseed();
 
     auto a1 = std::make_shared<Atomic>("a1");
     auto a2 = std::make_shared<Atomic>("a2");
@@ -62,7 +62,7 @@ TEST(TestFormulaGeneratorNoIntervals, tfgni) {
 TEST(TestFormulaGeneratorOneOperator, tfgoo) {
 
     FormulaGenerator fg;
-    fg.rseed();
+    FormulaGenerator::rseed();
 
     auto a1 = std::make_shared<Atomic>("a1");
     auto a2 = std::make_shared<Atomic>("a2");
@@ -82,7 +82,7 @@ TEST(TestFormulaGeneratorOneOperator, tfgoo) {
 TEST(TestFormulaGeneratorNoOperator, tfgno) {
 
     FormulaGenerator fg;
-    fg.rseed();
+    FormulaGenerator::rseed();
 
     auto a1 = std::make_shared<Atomic>("a1");
     auto a2 = std::make_shared<Atomic>("a2");

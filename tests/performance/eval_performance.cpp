@@ -5,8 +5,8 @@
 // Credits: BMW Car@TUM
 //
 
-#include "monitors/generators/formula_generator/formula_generator.h"
-#include "monitors/generators/trace_generator/trace_generator.h"
+#include "monitors/utils/generators/formula_generator/formula_generator.h"
+#include "monitors/utils/generators/trace_generator/trace_generator.h"
 #include "monitors/parser/parser.h"
 #include "monitors/rv_algorithms/hydra_2/hydra.h"
 #include "monitors/trace/trace.h"

@@ -79,7 +79,12 @@ set(RV_MONITOR_SRC_FILES
         monitors/utils/lazy_bool.cpp
         monitors/utils/execution_statistic.cpp
         monitors/utils/utils.cpp
-        monitors/generators/formula_generator/formula_generator.h monitors/generators/formula_generator/formula_generator.cpp monitors/generators/trace_generator/trace_generator.h monitors/generators/trace_generator/trace_generator.cpp monitors/generators/computation_time_generator/computation_time_generator.h monitors/generators/computation_time_generator/computation_time_generator.cpp)
+        monitors/utils/generators/formula_generator/formula_generator.h
+        monitors/utils/generators/formula_generator/formula_generator.cpp
+        monitors/utils/generators/trace_generator/trace_generator.h
+        monitors/utils/generators/trace_generator/trace_generator.cpp
+        monitors/utils/generators/computation_time_generator/computation_time_generator.h
+        monitors/utils/generators/computation_time_generator/computation_time_generator.cpp)
 
 
 # create library of this project

@@ -29,12 +29,12 @@ set(RV_MONITOR_TEST_SRC_FILES
         rewriting/test_basic_rewrite_visitor.cpp
         rewriting/test_rewrite_visitor.cpp
         utils/test_lazy_bool.cpp
-	generators/formula_generator/test_formula_generator.cpp
-	generators/formula_generator/test_formula_generator.cpp
-	generators/trace_generator/test_trace_generator.cpp
-	generators/trace_generator/test_trace_generator.cpp
-	generators/computation_time_generator/test_computation_time_generator.cpp
-	generators/computation_time_generator/test_computation_time_generator.cpp
+        utils/generators/formula_generator/test_formula_generator.cpp
+        utils/generators/formula_generator/test_formula_generator.cpp
+        utils/generators/trace_generator/test_trace_generator.cpp
+        utils/generators/trace_generator/test_trace_generator.cpp
+        utils/generators/computation_time_generator/test_computation_time_generator.cpp
+        utils/generators/computation_time_generator/test_computation_time_generator.cpp
 
         )
 

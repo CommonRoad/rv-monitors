@@ -4,10 +4,10 @@
 #include "test_trace_generator.h"
 #include "monitors/expression_tree/atomic/atomic.h"
 #include "monitors/expression_tree/atomic/predicate.h"
-#include "monitors/generators/trace_generator/trace_generator.h"
+#include "monitors/utils/generators/trace_generator/trace_generator.h"
 TEST(TestTraceGenerator, ttg) {
     TraceGenerator fg;
-    fg.rseed();
+    TraceGenerator::rseed();
 
     auto a1 = std::make_shared<Atomic>("a1");
     auto a2 = std::make_shared<Atomic>("a2");
@@ -29,7 +29,7 @@ TEST(TestTraceGenerator, ttg) {
 
 TEST(TestTraceGeneratorZeroLength, ttgzl) {
     TraceGenerator fg;
-    fg.rseed();
+    TraceGenerator::rseed();
 
     auto a1 = std::make_shared<Atomic>("a1");
     auto a2 = std::make_shared<Atomic>("a2");
@@ -51,7 +51,7 @@ TEST(TestTraceGeneratorZeroLength, ttgzl) {
 
 TEST(TestTraceGeneratorLengthOne, ttglo) {
     TraceGenerator fg;
-    fg.rseed();
+    TraceGenerator::rseed();
 
     auto a1 = std::make_shared<Atomic>("a1");
     auto a2 = std::make_shared<Atomic>("a2");

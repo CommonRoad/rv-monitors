@@ -34,14 +34,14 @@ void ComputationTimeGenerator::generateAtomsAndPredicates(int index_of_delay, in
 void ComputationTimeGenerator::createPredicatesOnDelays(
     std::vector<int> info, std::vector<std::vector<std::shared_ptr<Expression>> *> &allPreds) {
     int next_delay = 0;
-    for (int i = 0; i < info.size(); i += 3) {
+    for (size_t i = 0; i < info.size(); i += 3) {
         auto timeDelay = info[i];
         auto minNrPreds = info[i + 1];
         auto maxNrPreds = info[i + 2];
         auto nrPreds = rint(minNrPreds, maxNrPreds);
 
-        auto preds = new std::vector<std::shared_ptr<Expression>>();
-        std::cout << "Delay " << next_delay + 1 << " started" << std::endl;
+        auto *preds = new std::vector<std::shared_ptr<Expression>>();
+        // std::cout << "Delay " << next_delay + 1 << " started" << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(timeDelay));
         generateAtomsAndPredicates(next_delay, nrPreds, *preds);
 

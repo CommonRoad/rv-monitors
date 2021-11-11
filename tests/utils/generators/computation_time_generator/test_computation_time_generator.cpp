@@ -2,10 +2,10 @@
 // Created by Evald Nexhipi on 28.10.21.
 //
 #include "test_computation_time_generator.h"
-#include "monitors/generators/computation_time_generator/computation_time_generator.h"
+#include "monitors/utils/generators/computation_time_generator/computation_time_generator.h"
 TEST(TestComputationTimeGenerator, tctg) {
     ComputationTimeGenerator ctg;
-    ctg.rseed();
+    ComputationTimeGenerator::rseed();
     std::vector<std::vector<std::shared_ptr<Expression>> *> allPreds;
 
     /* Atoms and Predicates of Delay 1 */
@@ -71,7 +71,7 @@ TEST(TestComputationTimeGenerator, tctg) {
 
 TEST(TestComputationTimeGeneratorLongerDelays, tctgld) {
     ComputationTimeGenerator ctg;
-    ctg.rseed();
+    ComputationTimeGenerator::rseed();
     std::vector<std::vector<std::shared_ptr<Expression>> *> allPreds;
 
     /* Atoms and Predicates of Delay 1 */
@@ -137,7 +137,7 @@ TEST(TestComputationTimeGeneratorLongerDelays, tctgld) {
 
 TEST(TestComputationTimeGeneratorHighNumberOfPredicates, tctghnop) {
     ComputationTimeGenerator ctg;
-    ctg.rseed();
+    ComputationTimeGenerator::rseed();
     std::vector<std::vector<std::shared_ptr<Expression>> *> allPreds;
 
     /* Atoms and Predicates of Delay 1 */
@@ -203,7 +203,7 @@ TEST(TestComputationTimeGeneratorHighNumberOfPredicates, tctghnop) {
 
 TEST(TestComputationTimeGeneratorNoPredicates, tctgnp) {
     ComputationTimeGenerator ctg;
-    ctg.rseed();
+    ComputationTimeGenerator::rseed();
     std::vector<std::vector<std::shared_ptr<Expression>> *> allPreds;
 
     /* Atoms and Predicates of Delay 1 */
