@@ -1,13 +1,12 @@
 //
-// Created by Evald Nexhipi on 28.10.21.
+// Created by Sebastian Maierhofer.
+// Technical University of Munich - Cyber-Physical Systems Group
+// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
+// Credits: BMW Car@TUM
 //
-
-#ifndef RVMONITORS_TEST_COMPUTATION_TIME_GENERATOR_H
-#define RVMONITORS_TEST_COMPUTATION_TIME_GENERATOR_H
-
+#pragma once
 #include <gtest/gtest.h>
 
 class TestComputationTimeGenerator : public testing::Test {};
 
 class TestComputationTimeGeneratorLongerDelays : public testing::Test {};
-#endif // RVMONITORS_TEST_COMPUTATION_TIME_GENERATOR_H

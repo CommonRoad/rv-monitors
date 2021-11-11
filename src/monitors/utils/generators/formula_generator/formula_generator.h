@@ -1,8 +1,11 @@
 //
-// Created by Evald Nexhipi on 20.10.21.
+// Created by Sebastian Maierhofer.
+// Technical University of Munich - Cyber-Physical Systems Group
+// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
+// Credits: BMW Car@TUM
 //
-#ifndef RVMONITORS_FORMULA_GENERATOR_H
-#define RVMONITORS_FORMULA_GENERATOR_H
+
+#pragma once
 
 #include "monitors/formula/formula.h"
 
@@ -46,28 +49,42 @@ class FormulaGenerator {
   public:
     FormulaGenerator(void) : m_sumWeightsAtomic(0.0), m_sumWeightsPredicate(0.0), m_sumWeightsOperator(0.0) {}
 
-    virtual ~FormulaGenerator(void) {}
-
     /**
      * Initializes the sequence of pseudo-random numbers generated when the rand function is called.
      */
     static void rseed(void) { srand(time(NULL)); }
 
+    /**
+     * Generates a real number
+     * @return returns a pseudo-random real number
+     */
     static double rreal(void) { return ((double)rand()) / ((double)RAND_MAX); }
 
+    /**
+     * Generates a real number within an interval
+     * @param min minimum number to be generated
+     * @param max maximum number to be generated
+     * @return a real number within (min, max) interval
+     */
     static double rreal(const double min, const double max) { return min + (max - min) * rreal(); }
 
-    static inline long rint(const long min, const long max) {
-        const long x = min + (long)rreal(0, max - min + 1);
+    /**
+     * Generates an integer within an interval
+     * @param min minimum number to be generated
+     * @param max maximum number to be generated
+     * @return an integer within (min, max) interval
+     */
+    static inline size_t rint(const size_t min, const size_t max) {
+        const size_t x = min + (size_t)rreal(0, max - min + 1);
         return x > max ? max : x;
     }
 
     /**
      * Adds atoms to the Formula Generator
      * @param a Atom to be added
-     * @param w Associated weight
+     * @param w Associated weight (larger than 0)
      */
-    virtual void AddAtomic(std::shared_ptr<Atomic> a, const double w) {
+    virtual void addAtomic(std::shared_ptr<Atomic> a, const double w) {
         AtomicInfo ai;
         ai.m_atomic = a;
         ai.m_weight = w;
@@ -78,9 +95,9 @@ class FormulaGenerator {
     /**
      * Adds predicates to the Formula Generator
      * @param p Predicate to be added
-     * @param w Associated weight
+     * @param w Associated weight (larger than 0)
      */
-    virtual void AddPredicate(std::shared_ptr<Predicate> p, const double w) {
+    virtual void addPredicate(std::shared_ptr<Predicate> p, const double w) {
         PredicateInfo pi;
         pi.m_predicate = p;
         pi.m_weight = w;
@@ -91,9 +108,9 @@ class FormulaGenerator {
     /**
      * Operators to be added
      * @param name Operator to be added
-     * @param w Associated weight
+     * @param w Associated weight (larger than 0)
      */
-    virtual void AddOperator(const std::string &name, const double w) {
+    virtual void addOperator(const std::string &name, const double w) {
         OperatorInfo oi;
         oi.m_name = name;
         oi.m_weight = w;
@@ -111,8 +128,8 @@ class FormulaGenerator {
      * @param minDuration
      * @param maxDuration
      */
-    virtual void AddOperatorWithInterval(const std::string &name, const double w, const int minStart,
-                                         const int maxStart, const int minDuration, const int maxDuration) {
+    virtual void addOperatorWithInterval(const std::string &name, const double w, const size_t minStart,
+                                         const size_t maxStart, const size_t minDuration, const size_t maxDuration) {
         OperatorInfo oi;
         oi.m_name = name;
         oi.m_weight = w;
@@ -130,58 +147,97 @@ class FormulaGenerator {
      * @param nrOperators number of operators to be added in the Formula
      * @return returns a recursively generated expression
      */
-    virtual std::shared_ptr<Expression> GenerateExpression(const int nrOperators);
+    std::shared_ptr<Expression> generateExpression(const size_t nrOperators);
 
     /**
      * Formula to be generated
      * @param nrOperators number of operators to be added in the Formula
      * @return return the pseudo-randomly generated Formula
      */
-    virtual Formula GenerateFormula(const int nrOperators) {
-        Formula f(GenerateExpression(nrOperators));
+    Formula generateFormula(const size_t nrOperators) {
+        Formula f(generateExpression(nrOperators));
         return f;
     }
 
   protected:
+    /**
+     * Structure to store the association of a weight to an Atom
+     * @var m_atomic atoms to be stored in the structure
+     * @var m_weight respective weights for the atoms
+     */
     struct AtomicInfo {
         std::shared_ptr<Atomic> m_atomic;
         double m_weight;
     };
 
+    /**
+     * Structure to store the association of a weight to a Predicate
+     * @var m_atomic atoms to be stored in the structure
+     * @var m_weight respective weights for the predicates
+     */
     struct PredicateInfo {
         std::shared_ptr<Predicate> m_predicate;
         double m_weight;
     };
 
+    /**
+     * Structure to store information regarding operators
+     * @var m_name name of the operator
+     * @var m_weight respective weight for the operator
+     * @var m_hasInterval operators within an interval
+     * @var m_minStart minimum Start
+     * @var m_maxStart maximum Start
+     * @var m_minDuration minimum Duration
+     * @var m_maxDuration maximum Duration
+     */
     struct OperatorInfo {
         std::string m_name;
         double m_weight;
         bool m_hasInterval;
-        int m_minStart;
-        int m_maxStart;
-        int m_minDuration;
-        int m_maxDuration;
+        size_t m_minStart;
+        size_t m_maxStart;
+        size_t m_minDuration;
+        size_t m_maxDuration;
     };
 
     /**
      * Interval to be generated for operators on intervals
      * @param oi Operator info
-     * @param tstart contains minStart and maxStart of the interval
-     * @param tend contains minDuration and maxDuration of the interval
+     * @param tstart randomly generates a value between m_minStart and m_maxStart
+     * @param tend randomly generates a value between m_minDuration and m_maxDuration
      */
-    virtual void GenerateInterval(const OperatorInfo &oi, int &tstart, int &tend) const {
+    void generateInterval(const OperatorInfo &oi, size_t &tstart, size_t &tend) const {
         tstart = rint(oi.m_minStart, oi.m_maxStart);
         tend = tstart + rint(oi.m_minDuration, oi.m_maxDuration);
     }
 
-    int m_nrOperators;
+    /**
+     * @var m_nrOperators total number of operators to be in the formula
+     */
+    size_t m_nrOperators;
+    /**
+     * @var m_sumWeightsAtomic total sum of atoms weights
+     */
     double m_sumWeightsAtomic;
+    /**
+     * @var m_sumWeightsPredicate total sum of predicate weights
+     */
     double m_sumWeightsPredicate;
+    /**
+     * @var m_sumWeightsOperator total sum of operators weights
+     */
     double m_sumWeightsOperator;
 
+    /**
+     * @var m_atoms vector containing atoms info
+     */
     std::vector<AtomicInfo> m_atoms;
+    /**
+     * @var m_predicates vector containing predicates info
+     */
     std::vector<PredicateInfo> m_predicates;
+    /**
+     * @var m_operators vector containing operators info
+     */
     std::vector<OperatorInfo> m_operators;
 };
-
-#endif // RVMONITORS_FORMULA_GENERATOR_H

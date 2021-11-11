@@ -1,5 +1,8 @@
 //
-// Created by Evald Nexhipi on 23.10.21.
+// Created by Sebastian Maierhofer.
+// Technical University of Munich - Cyber-Physical Systems Group
+// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
+// Credits: BMW Car@TUM
 //
 #include "test_trace_generator.h"
 #include "monitors/expression_tree/atomic/atomic.h"
@@ -12,16 +15,16 @@ TEST(TestTraceGenerator, ttg) {
     auto a1 = std::make_shared<Atomic>("a1");
     auto a2 = std::make_shared<Atomic>("a2");
     auto a3 = std::make_shared<Atomic>("a3");
-    auto p1 = std::make_shared<Predicate>("p1", "na", std::vector<std::string>{"params1", "params2"});
-    auto p2 = std::make_shared<Predicate>("p2", "na", std::vector<std::string>{"params1", "params2", "params3"});
+    auto p1 = std::make_shared<Predicate>("p1", "p1", std::vector<std::string>{"params1", "params2"});
+    auto p2 = std::make_shared<Predicate>("p2", "p2", std::vector<std::string>{"params1", "params2", "params3"});
 
-    fg.AddAtomic(a1, 1.0);
-    fg.AddAtomic(a2, 1.0);
-    fg.AddAtomic(a3, 3.0);
-    fg.AddPredicate(p1, 3.0);
-    fg.AddPredicate(p2, 2.0);
+    fg.addAtomic(a1, 1.0);
+    fg.addAtomic(a2, 1.0);
+    fg.addAtomic(a3, 3.0);
+    fg.addPredicate(p1, 3.0);
+    fg.addPredicate(p2, 2.0);
 
-    auto f = fg.GenerateTrace(10);
+    auto f = fg.generateTrace(10);
     std::cout << f.to_string() << std::endl;
 
     EXPECT_TRUE(true);
@@ -34,16 +37,16 @@ TEST(TestTraceGeneratorZeroLength, ttgzl) {
     auto a1 = std::make_shared<Atomic>("a1");
     auto a2 = std::make_shared<Atomic>("a2");
     auto a3 = std::make_shared<Atomic>("a3");
-    auto p1 = std::make_shared<Predicate>("p1", "na", std::vector<std::string>{"params1", "params2"});
-    auto p2 = std::make_shared<Predicate>("p2", "na", std::vector<std::string>{"params1", "params2", "params3"});
+    auto p1 = std::make_shared<Predicate>("p1", "p1", std::vector<std::string>{"params1", "params2"});
+    auto p2 = std::make_shared<Predicate>("p2", "p2", std::vector<std::string>{"params1", "params2", "params3"});
 
-    fg.AddAtomic(a1, 1.0);
-    fg.AddAtomic(a2, 1.0);
-    fg.AddAtomic(a3, 3.0);
-    fg.AddPredicate(p1, 3.0);
-    fg.AddPredicate(p2, 2.0);
+    fg.addAtomic(a1, 1.0);
+    fg.addAtomic(a2, 1.0);
+    fg.addAtomic(a3, 3.0);
+    fg.addPredicate(p1, 3.0);
+    fg.addPredicate(p2, 2.0);
 
-    auto f = fg.GenerateTrace(0);
+    auto f = fg.generateTrace(0);
     std::cout << f.to_string() << std::endl;
 
     EXPECT_TRUE(true);
@@ -56,16 +59,16 @@ TEST(TestTraceGeneratorLengthOne, ttglo) {
     auto a1 = std::make_shared<Atomic>("a1");
     auto a2 = std::make_shared<Atomic>("a2");
     auto a3 = std::make_shared<Atomic>("a3");
-    auto p1 = std::make_shared<Predicate>("p1", "na", std::vector<std::string>{"params1", "params2"});
-    auto p2 = std::make_shared<Predicate>("p2", "na", std::vector<std::string>{"params1", "params2", "params3"});
+    auto p1 = std::make_shared<Predicate>("p1", "p1", std::vector<std::string>{"params1", "params2"});
+    auto p2 = std::make_shared<Predicate>("p2", "p2", std::vector<std::string>{"params1", "params2", "params3"});
 
-    fg.AddAtomic(a1, 1.0);
-    fg.AddAtomic(a2, 1.0);
-    fg.AddAtomic(a3, 3.0);
-    fg.AddPredicate(p1, 3.0);
-    fg.AddPredicate(p2, 2.0);
+    fg.addAtomic(a1, 1.0);
+    fg.addAtomic(a2, 1.0);
+    fg.addAtomic(a3, 3.0);
+    fg.addPredicate(p1, 3.0);
+    fg.addPredicate(p2, 2.0);
 
-    auto f = fg.GenerateTrace(1);
+    auto f = fg.generateTrace(1);
     std::cout << f.to_string() << std::endl;
 
     EXPECT_TRUE(true);

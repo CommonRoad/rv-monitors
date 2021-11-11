@@ -1,10 +1,13 @@
 //
-// Created by Evald Nexhipi on 28.10.21.
+// Created by Sebastian Maierhofer.
+// Technical University of Munich - Cyber-Physical Systems Group
+// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
+// Credits: BMW Car@TUM
 //
 #include "computation_time_generator.h"
 #include <chrono>
 
-std::shared_ptr<Expression> ComputationTimeGenerator::generateAtomOrPredicate(int delay_index) {
+std::shared_ptr<Expression> ComputationTimeGenerator::generateAtomOrPredicate(size_t delay_index) {
     double coin;
     coin = rreal(0, m_sumWeightsAtomic[delay_index] + m_sumWeightsPredicate[delay_index]);
     double w = 0.0;
@@ -22,33 +25,32 @@ std::shared_ptr<Expression> ComputationTimeGenerator::generateAtomOrPredicate(in
         return m_predicates[delay_index].back().m_predicate;
     if (m_atoms[delay_index].size() > 0)
         return m_atoms[delay_index].back().m_atomic;
-    return NULL;
 }
 
-void ComputationTimeGenerator::generateAtomsAndPredicates(int index_of_delay, int nrPreds,
+void ComputationTimeGenerator::generateAtomsAndPredicates(size_t index_of_delay, size_t nrPreds,
                                                           std::vector<std::shared_ptr<Expression>> &preds) {
     for (int i = 0; i < nrPreds; ++i)
         preds.push_back(generateAtomOrPredicate(index_of_delay));
 }
 
 void ComputationTimeGenerator::createPredicatesOnDelays(
-    std::vector<int> info, std::vector<std::vector<std::shared_ptr<Expression>> *> &allPreds) {
-    int next_delay = 0;
+    std::vector<size_t> info, std::vector<std::vector<std::shared_ptr<Expression>> *> &allPreds) {
+    size_t next_delay = 0;
     for (size_t i = 0; i < info.size(); i += 3) {
-        auto timeDelay = info[i];
-        auto minNrPreds = info[i + 1];
-        auto maxNrPreds = info[i + 2];
-        auto nrPreds = rint(minNrPreds, maxNrPreds);
+        size_t timeDelay = info[i];
+        size_t minNrPreds = info[i + 1];
+        size_t maxNrPreds = info[i + 2];
+        size_t nrPreds = rint(minNrPreds, maxNrPreds);
 
         auto *preds = new std::vector<std::shared_ptr<Expression>>();
         // std::cout << "Delay " << next_delay + 1 << " started" << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(timeDelay));
         generateAtomsAndPredicates(next_delay, nrPreds, *preds);
 
-        std::cout << "Predicates Generated: ";
-        for (auto &p : *preds)
-            std::cout << p->to_string() << " ";
-        std::cout << std::endl;
+        // std::cout << "Predicates Generated: ";
+        // for (auto &p : *preds)
+           // std::cout << p->to_string() << " ";
+        //std::cout << std::endl;
 
         next_delay++;
         allPreds.push_back(preds);

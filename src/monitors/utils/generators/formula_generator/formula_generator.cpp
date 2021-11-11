@@ -1,14 +1,12 @@
 //
-// Created by Evald Nexhipi on 20.10.21.
+// Created by Sebastian Maierhofer.
+// Technical University of Munich - Cyber-Physical Systems Group
+// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
+// Credits: BMW Car@TUM
 //
 #include "formula_generator.h"
 
-/**
- * Recursively generate an expression
- * @param nrOperators the number of operators needed for the expression
- * @return generated expression
- */
-std::shared_ptr<Expression> FormulaGenerator::GenerateExpression(const int nrOperators) {
+std::shared_ptr<Expression> FormulaGenerator::generateExpression(const size_t nrOperators) {
     double coin;
 
     /**
@@ -35,9 +33,9 @@ std::shared_ptr<Expression> FormulaGenerator::GenerateExpression(const int nrOpe
      */
     else {
         coin = rreal(0, m_sumWeightsOperator);
-        int pos = m_operators.size() - 1;
+        size_t pos = m_operators.size() - 1;
         double w = 0.0;
-        for (int i = 0; i < m_operators.size(); ++i) {
+        for (size_t i = 0; i < m_operators.size(); ++i) {
             w += m_operators[i].m_weight;
             if (w >= coin) {
                 pos = i;
@@ -45,11 +43,11 @@ std::shared_ptr<Expression> FormulaGenerator::GenerateExpression(const int nrOpe
             }
         }
 
-        int tstart;
-        int tend;
+        size_t tstart;
+        size_t tend;
         auto oi = m_operators[pos];
         if (oi.m_hasInterval)
-            GenerateInterval(oi, tstart, tend);
+            generateInterval(oi, tstart, tend);
 
         /**
          * If unary operator
@@ -57,7 +55,7 @@ std::shared_ptr<Expression> FormulaGenerator::GenerateExpression(const int nrOpe
         if (oi.m_name == OP_NOT || oi.m_name == OP_FUTURE || oi.m_name == OP_GLOBALLY || oi.m_name == OP_NEXT_STRONG ||
             oi.m_name == OP_NEXT_WEAK || oi.m_name == OP_HISTORICALLY || oi.m_name == OP_ONCE ||
             oi.m_name == OP_PREVIOUSLY) {
-            auto exprLeft = GenerateExpression(nrOperators - 1);
+            auto exprLeft = generateExpression(nrOperators - 1);
 
             if (oi.m_name == OP_NOT)
                 return std::make_shared<Not>(exprLeft);
@@ -117,8 +115,8 @@ std::shared_ptr<Expression> FormulaGenerator::GenerateExpression(const int nrOpe
         else if (oi.m_name == OP_AND || oi.m_name == OP_OR || oi.m_name == OP_XOR || oi.m_name == OP_IF ||
                  oi.m_name == OP_IFF || oi.m_name == OP_SINCE) {
             auto nrLeft = rint(0, nrOperators - 1);
-            auto exprLeft = GenerateExpression(nrLeft);
-            auto exprRight = GenerateExpression(nrOperators - 1 - nrLeft);
+            auto exprLeft = generateExpression(nrLeft);
+            auto exprRight = generateExpression(nrOperators - 1 - nrLeft);
 
             if (oi.m_name == OP_AND)
                 return std::make_shared<And>(

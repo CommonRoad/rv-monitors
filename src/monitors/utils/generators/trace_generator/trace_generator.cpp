@@ -1,14 +1,17 @@
 //
-// Created by Evald Nexhipi on 23.10.21.
+// Created by Sebastian Maierhofer.
+// Technical University of Munich - Cyber-Physical Systems Group
+// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
+// Credits: BMW Car@TUM
 //
 #include "trace_generator.h"
 #include "monitors/trace/event.h"
 #include <iostream>
-Trace TraceGenerator ::GenerateTrace(const int length) {
+Trace TraceGenerator ::generateTrace(const size_t length) {
     std::vector<Event> trace;
     double coin;
 
-    for (int i = 0; i < length; ++i) {
+    for (size_t i = 0; i < length; ++i) {
         coin = rreal(0, m_sumWeightsAtomic + m_sumWeightsPredicate);
         double w = 0.0;
         std::map<std::string, lazy_bool> eventMap;
@@ -17,6 +20,7 @@ Trace TraceGenerator ::GenerateTrace(const int length) {
             if (w >= coin) {
                 /* Atom to be chosen to be true */
                 std::shared_ptr<Atomic> a = iter.m_atomic;
+                //toString()
                 eventMap.insert(std::pair<std::string, lazy_bool>(a->to_string(), true));
             } else {
                 /* Atom to be chosen to be false */

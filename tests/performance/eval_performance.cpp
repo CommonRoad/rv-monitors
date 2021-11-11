@@ -192,9 +192,6 @@ void executeEvalAtomic(const std::vector<Formula> &formulas1, size_t numExecutio
     std::cout << '\n';
 }
 
-void test_0();
-void test_1();
-
 void executeEvaluate2(const std::vector<Formula> &formulas1, size_t numExecutions, Trace trace) {
     std::vector<double> avgCompTimeCombined;
     std::vector<double> avgCompTimeConnected;
@@ -221,6 +218,10 @@ void executeEvaluate2(const std::vector<Formula> &formulas1, size_t numExecution
         std::cout << val << ", ";
     std::cout << '\n';
 }
+
+void test_0();
+
+void test_1();
 
 int main() { test_1(); }
 
@@ -268,36 +269,36 @@ void test_1() {
     auto a = std::make_shared<Atomic>("a");
     auto b = std::make_shared<Atomic>("b");
     auto c = std::make_shared<Atomic>("c");
-    auto p = std::make_shared<Predicate>("p", "na", std::vector<std::string>{"params1", "params2"});
-    auto q = std::make_shared<Predicate>("q", "na", std::vector<std::string>{"params1", "params2", "params3"});
+    auto p = std::make_shared<Predicate>("p", "p", std::vector<std::string>{"params1", "params2"});
+    auto q = std::make_shared<Predicate>("q", "q", std::vector<std::string>{"params1", "params2", "params3"});
 
-    fg.AddAtomic(a, 1.0);
-    tg.AddAtomic(a, 2.0);
-    fg.AddAtomic(b, 2.0);
-    tg.AddAtomic(b, 1.0);
-    fg.AddAtomic(c, 3.0);
-    tg.AddAtomic(c, 3.0);
-    fg.AddPredicate(p, 3.0);
-    tg.AddPredicate(p, 1.0);
-    fg.AddPredicate(q, 2.0);
-    tg.AddPredicate(q, 2.0);
+    fg.addAtomic(a, 1.0);
+    tg.addAtomic(a, 2.0);
+    fg.addAtomic(b, 2.0);
+    tg.addAtomic(b, 1.0);
+    fg.addAtomic(c, 3.0);
+    tg.addAtomic(c, 3.0);
+    fg.addPredicate(p, 3.0);
+    tg.addPredicate(p, 1.0);
+    fg.addPredicate(q, 2.0);
+    tg.addPredicate(q, 2.0);
 
-    fg.AddOperator(OP_NOT, 1.0);
-    fg.AddOperator(OP_IF, 5.0);
-    fg.AddOperator(OP_AND, 3.0);
-    fg.AddOperator(OP_OR, 2.0);
-    fg.AddOperator(OP_SINCE, 1.0);
-    fg.AddOperator(OP_GLOBALLY, 1.0);
+    fg.addOperator(OP_NOT, 1.0);
+    fg.addOperator(OP_IF, 5.0);
+    fg.addOperator(OP_AND, 3.0);
+    fg.addOperator(OP_OR, 2.0);
+    fg.addOperator(OP_SINCE, 1.0);
+    fg.addOperator(OP_GLOBALLY, 1.0);
 
-    Formula f1 = fg.GenerateFormula(7);
+    Formula f1 = fg.generateFormula(7);
     f1.setId("R1");
-    Formula f2 = fg.GenerateFormula(3);
+    Formula f2 = fg.generateFormula(3);
     f2.setId("R2");
-    Formula f3 = fg.GenerateFormula(5);
+    Formula f3 = fg.generateFormula(5);
     f3.setId("R3");
     std::vector<Formula> formulas = {f1, f2, f3};
 
-    Trace trace = tg.GenerateTrace(60);
+    Trace trace = tg.generateTrace(60);
     size_t numExecutions{1000};
 
     // call the evaluator
