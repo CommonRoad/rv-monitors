@@ -13,6 +13,6 @@ class TestComputationTimeGeneratorLongerDelays : public testing::Test {};
 
 class TestComputationTimeGeneratorHighNumberOfPredicates : public testing::Test {};
 
-class TestComputationTimeGeneratorNoPredicates : public testing::Test{};
+class TestComputationTimeGeneratorNoPredicates : public testing::Test {};
 
 class TestComputationTimeGeneratorNoExpression : public testing::Test {};

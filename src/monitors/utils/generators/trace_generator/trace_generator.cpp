@@ -20,7 +20,7 @@ Trace TraceGenerator ::generateTrace(const size_t length) {
             if (w >= coin) {
                 /* Atom to be chosen to be true */
                 std::shared_ptr<Atomic> a = iter.m_atomic;
-                //toString()
+                // toString()
                 eventMap.insert(std::pair<std::string, lazy_bool>(a->to_string(), true));
             } else {
                 /* Atom to be chosen to be false */

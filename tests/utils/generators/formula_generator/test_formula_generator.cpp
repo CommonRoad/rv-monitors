@@ -29,7 +29,6 @@ TEST(TestFormulaGenerator, tfg) {
     fg.addOperatorWithInterval(OP_FUTURE, 2.0, 0, 3, 10, 30);
     fg.addOperator(OP_GLOBALLY, 2.0);
 
-
     auto f = fg.generateFormula(7);
     std::cout << f << std::endl;
 

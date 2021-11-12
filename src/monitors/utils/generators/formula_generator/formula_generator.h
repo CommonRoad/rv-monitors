@@ -15,8 +15,10 @@
 #include "monitors/expression_tree/binary/bool/implication.h"
 #include "monitors/expression_tree/nary/bool/and.h"
 #include "monitors/expression_tree/nary/bool/or.h"
+
 #include "monitors/expression_tree/nary/bool/xor.h"
 #include "monitors/expression_tree/unary/bool/not.h"
+#include <utility>
 
 #include "monitors/expression_tree/unary/temporal/ltlf/future.h"
 #include "monitors/expression_tree/unary/temporal/ltlf/globally.h"
@@ -47,18 +49,16 @@ const std::string OP_PREVIOUSLY = "P";
 
 class FormulaGenerator {
   public:
-    FormulaGenerator(void) : m_sumWeightsAtomic(0.0), m_sumWeightsPredicate(0.0), m_sumWeightsOperator(0.0) {}
-
     /**
      * Initializes the sequence of pseudo-random numbers generated when the rand function is called.
      */
-    static void rseed(void) { srand(time(NULL)); }
+    static void rseed() { srand(time(NULL)); }
 
     /**
      * Generates a real number
      * @return returns a pseudo-random real number
      */
-    static double rreal(void) { return ((double)rand()) / ((double)RAND_MAX); }
+    static double rreal() { return ((double)rand()) / ((double)RAND_MAX); }
 
     /**
      * Generates a real number within an interval
@@ -75,7 +75,7 @@ class FormulaGenerator {
      * @return an integer within (min, max) interval
      */
     static inline size_t rint(const size_t min, const size_t max) {
-        const size_t x = min + (size_t)rreal(0, max - min + 1);
+        const size_t x = min + (size_t)rreal(0, static_cast<double>(max - min + 1));
         return x > max ? max : x;
     }
 
@@ -86,7 +86,7 @@ class FormulaGenerator {
      */
     virtual void addAtomic(std::shared_ptr<Atomic> a, const double w) {
         AtomicInfo ai;
-        ai.m_atomic = a;
+        ai.m_atomic = std::move(a);
         ai.m_weight = w;
         m_atoms.push_back(ai);
         m_sumWeightsAtomic += w;
@@ -99,7 +99,7 @@ class FormulaGenerator {
      */
     virtual void addPredicate(std::shared_ptr<Predicate> p, const double w) {
         PredicateInfo pi;
-        pi.m_predicate = p;
+        pi.m_predicate = std::move(p);
         pi.m_weight = w;
         m_predicates.push_back(pi);
         m_sumWeightsPredicate += w;
@@ -147,7 +147,7 @@ class FormulaGenerator {
      * @param nrOperators number of operators to be added in the Formula
      * @return returns a recursively generated expression
      */
-    std::shared_ptr<Expression> generateExpression(const size_t nrOperators);
+    std::shared_ptr<Expression> generateExpression(size_t nrOperators);
 
     /**
      * Formula to be generated
@@ -218,15 +218,15 @@ class FormulaGenerator {
     /**
      * @var m_sumWeightsAtomic total sum of atoms weights
      */
-    double m_sumWeightsAtomic;
+    double m_sumWeightsAtomic{0.0};
     /**
      * @var m_sumWeightsPredicate total sum of predicate weights
      */
-    double m_sumWeightsPredicate;
+    double m_sumWeightsPredicate{0.0};
     /**
      * @var m_sumWeightsOperator total sum of operators weights
      */
-    double m_sumWeightsOperator;
+    double m_sumWeightsOperator{0.0};
 
     /**
      * @var m_atoms vector containing atoms info

@@ -16,18 +16,18 @@
 #include <vector>
 class ComputationTimeGenerator {
   public:
-    ComputationTimeGenerator(void) : m_sumWeightsAtomic(0.0), m_sumWeightsPredicate(0.0) {}
+    ComputationTimeGenerator() : m_sumWeightsAtomic(0.0), m_sumWeightsPredicate(0.0) {}
 
     /**
      * Initializes the sequence of pseudo-random numbers generated when the rand function is called.
      */
-    static void rseed(void) { srand(time(NULL)); }
+    static void rseed() { srand(time(NULL)); }
 
     /**
      * Generates a real number
      * @return returns a pseudo-random real number
      */
-    static double rreal(void) { return ((double)rand()) / ((double)RAND_MAX); }
+    static double rreal() { return ((double)rand()) / ((double)RAND_MAX); }
 
     /**
      * Generates a real number within an interval
@@ -44,7 +44,7 @@ class ComputationTimeGenerator {
      * @return an integer within (min, max) interval
      */
     static inline size_t rint(const size_t min, const size_t max) {
-        const size_t x = min + (size_t)rreal(0, max - min + 1);
+        const size_t x = min + (size_t)rreal(0, static_cast<double>(max - min + 1));
         return x > max ? max : x;
     }
 
@@ -56,7 +56,7 @@ class ComputationTimeGenerator {
     virtual void addAtomsDistribution(std::vector<std::shared_ptr<Atomic>> atoms, const std::vector<double> &weights) {
         std::vector<AtomicInfo> atomsInfo;
         double total_weights = 0;
-        for (int i = 0; i < atoms.size(); ++i) {
+        for (size_t i = 0; i < atoms.size(); ++i) {
             AtomicInfo ai;
             ai.m_atomic = atoms[i];
             ai.m_weight = weights[i];
@@ -77,7 +77,7 @@ class ComputationTimeGenerator {
                                           const std::vector<double> &weights) {
         std::vector<PredicateInfo> predicatesInfo;
         double total_weights = 0;
-        for (int i = 0; i < predicates.size(); ++i) {
+        for (size_t i = 0; i < predicates.size(); ++i) {
             PredicateInfo pi;
             pi.m_predicate = predicates[i];
             pi.m_weight = weights[i];
@@ -103,7 +103,7 @@ class ComputationTimeGenerator {
      * @param preds generated Atoms / Predicates
      */
     void generateAtomsAndPredicates(size_t index_of_delay, size_t nrPreds,
-                                            std::vector<std::shared_ptr<Expression>> &preds);
+                                    std::vector<std::shared_ptr<Expression>> &preds);
 
     /**
      * Atoms and Predicates generated for a delay / duration in [ms] (larger than 0)

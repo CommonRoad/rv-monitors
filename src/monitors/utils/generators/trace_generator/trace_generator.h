@@ -7,23 +7,21 @@
 
 #pragma once
 
+#include <utility>
+
 #include "monitors/trace/trace.h"
 class TraceGenerator {
   public:
-    TraceGenerator(void) : m_sumWeightsAtomic(0.0), m_sumWeightsPredicate(0.0) {}
-
-    virtual ~TraceGenerator(void) {}
-
     /**
      * Initializes the sequence of pseudo-random numbers generated when the rand function is called.
      */
-    static void rseed(void) { srand(time(NULL)); }
+    static void rseed() { srand(time(NULL)); }
 
     /**
      * Generates a real number
      * @return returns a pseudo-random real number
      */
-    static double rreal(void) { return ((double)rand()) / ((double)RAND_MAX); }
+    static double rreal() { return ((double)rand()) / ((double)RAND_MAX); }
 
     /**
      * Generates a real number within an interval
@@ -40,7 +38,7 @@ class TraceGenerator {
      * @return an integer within (min, max) interval
      */
     static inline size_t rint(const size_t min, const size_t max) {
-        const size_t x = min + (size_t)rreal(0, max - min + 1);
+        const size_t x = min + (size_t)rreal(0, static_cast<double>(max - min + 1));
         return x > max ? max : x;
     }
 
@@ -51,7 +49,7 @@ class TraceGenerator {
      */
     virtual void addAtomic(std::shared_ptr<Atomic> a, const double w) {
         AtomicInfo ai;
-        ai.m_atomic = a;
+        ai.m_atomic = std::move(a);
         ai.m_weight = w;
         m_atoms.push_back(ai);
         m_sumWeightsAtomic += w;
@@ -64,7 +62,7 @@ class TraceGenerator {
      */
     virtual void addPredicate(std::shared_ptr<Predicate> p, const double w) {
         PredicateInfo pi;
-        pi.m_predicate = p;
+        pi.m_predicate = std::move(p);
         pi.m_weight = w;
         m_predicates.push_back(pi);
         m_sumWeightsPredicate += w;
@@ -75,7 +73,7 @@ class TraceGenerator {
      * @param length of the trace
      * @return returns a pseudo-random Trace
      */
-    Trace generateTrace(const size_t length);
+    Trace generateTrace(size_t length);
 
   protected:
     /**
@@ -101,11 +99,11 @@ class TraceGenerator {
     /**
      * @var m_sumWeightsAtomic total sum of atoms weights
      */
-    double m_sumWeightsAtomic;
+    double m_sumWeightsAtomic{0.0};
     /**
      * @var m_sumWeightsPredicate total sum of predicate weights
      */
-    double m_sumWeightsPredicate;
+    double m_sumWeightsPredicate{0.0};
 
     /**
      * @var m_atoms vector containing atoms info

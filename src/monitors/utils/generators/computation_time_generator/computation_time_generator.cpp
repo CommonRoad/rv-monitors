@@ -9,8 +9,8 @@
 
 std::shared_ptr<Expression> ComputationTimeGenerator::generateAtomOrPredicate(size_t delay_index) {
 
-    if (!m_predicates.empty() && !m_atoms.empty()){
-        if (!m_predicates[delay_index].empty() && !m_atoms[delay_index].empty()){
+    if (!m_predicates.empty() && !m_atoms.empty()) {
+        if (!m_predicates[delay_index].empty() && !m_atoms[delay_index].empty()) {
             double coin;
             coin = rreal(0, m_sumWeightsAtomic[delay_index] + m_sumWeightsPredicate[delay_index]);
             double w = 0.0;
@@ -26,7 +26,7 @@ std::shared_ptr<Expression> ComputationTimeGenerator::generateAtomOrPredicate(si
             }
         }
 
-        if (!m_predicates[delay_index].empty() && m_atoms[delay_index].empty()){
+        if (!m_predicates[delay_index].empty() && m_atoms[delay_index].empty()) {
             double coin;
             coin = rreal(0, m_sumWeightsPredicate[delay_index]);
             double w = 0.0;
@@ -37,7 +37,7 @@ std::shared_ptr<Expression> ComputationTimeGenerator::generateAtomOrPredicate(si
             }
         }
 
-        if (!m_atoms[delay_index].empty() && m_predicates[delay_index].empty()){
+        if (!m_atoms[delay_index].empty() && m_predicates[delay_index].empty()) {
             double coin;
             coin = rreal(0, m_sumWeightsAtomic[delay_index]);
             double w = 0.0;
@@ -49,9 +49,8 @@ std::shared_ptr<Expression> ComputationTimeGenerator::generateAtomOrPredicate(si
         }
     }
 
-
-    if (!m_predicates.empty() && m_atoms.empty()){
-        if (!m_predicates[delay_index].empty()){
+    if (!m_predicates.empty() && m_atoms.empty()) {
+        if (!m_predicates[delay_index].empty()) {
             double coin;
             coin = rreal(0, m_sumWeightsPredicate[delay_index]);
             double w = 0.0;
@@ -63,8 +62,8 @@ std::shared_ptr<Expression> ComputationTimeGenerator::generateAtomOrPredicate(si
         }
     }
 
-    if (!m_atoms.empty() && m_predicates.empty()){
-        if (!m_atoms[delay_index].empty() && m_predicates[delay_index].empty()){
+    if (!m_atoms.empty() && m_predicates.empty()) {
+        if (!m_atoms[delay_index].empty() && m_predicates[delay_index].empty()) {
             double coin;
             coin = rreal(0, m_sumWeightsAtomic[delay_index]);
             double w = 0.0;
@@ -81,7 +80,7 @@ std::shared_ptr<Expression> ComputationTimeGenerator::generateAtomOrPredicate(si
 
 void ComputationTimeGenerator::generateAtomsAndPredicates(size_t index_of_delay, size_t nrPreds,
                                                           std::vector<std::shared_ptr<Expression>> &preds) {
-    for (int i = 0; i < nrPreds; ++i)
+    for (size_t i = 0; i < nrPreds; ++i)
         preds.push_back(generateAtomOrPredicate(index_of_delay));
 }
 
@@ -101,8 +100,8 @@ void ComputationTimeGenerator::createPredicatesOnDelays(
 
         // std::cout << "Predicates Generated: ";
         // for (auto &p : *preds)
-           // std::cout << p->to_string() << " ";
-        //std::cout << std::endl;
+        // std::cout << p->to_string() << " ";
+        // std::cout << std::endl;
 
         next_delay++;
         allPreds.push_back(preds);
