@@ -279,3 +279,32 @@ TEST(TestComputationTimeGeneratorNoPredicates, tctgnp) {
     ctg.createPredicatesOnDelays({1000, 0, 0, 2000, 2, 20, 1000, 0, 0, 1000, 0, 0}, allPreds);
     EXPECT_TRUE(true);
 }
+
+TEST(TestComputationTimeGeneratorNoExpression, tctgne) {
+    ComputationTimeGenerator ctg;
+    ComputationTimeGenerator::rseed();
+    std::vector<std::vector<std::shared_ptr<Expression>> *> allPreds;
+
+    ctg.createPredicatesOnDelays({1000, 0, 0, 2000, 2, 20, 1000, 0, 0, 1000, 0, 0}, allPreds);
+
+//    std::vector<std::vector<int>> vecs = {};
+//    for (auto &vec : vecs){
+//        std::cout<<"Numbers Generated: ";
+//        for (auto &v : vec){
+//            std::cout<<v<<" ";
+//        }
+//        std::cout<<std::endl;
+//    }
+
+    std::cout<<" All Preds size: "<<allPreds.size()<<std::endl;
+
+    for (auto &preds : allPreds){
+        std::cout<<"Preds Generated: ";
+        for (auto &pred: *preds){
+            std::cout<<pred<<" ";
+        }
+        std::cout<<std::endl;
+    }
+
+    EXPECT_TRUE(true);
+}
