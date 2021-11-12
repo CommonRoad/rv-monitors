@@ -21,7 +21,7 @@ class ComputationTimeGenerator {
     /**
      * Initializes the sequence of pseudo-random numbers generated when the rand function is called.
      */
-    static void rseed() { srand(time(NULL)); }
+    static void rseed() { srand(static_cast<unsigned int>(time(nullptr))); }
 
     /**
      * Generates a real number
