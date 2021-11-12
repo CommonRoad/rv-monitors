@@ -6,6 +6,17 @@
 //
 #include "test_computation_time_generator.h"
 #include "monitors/utils/generators/computation_time_generator/computation_time_generator.h"
+
+void print_preds (std::vector<std::vector<std::shared_ptr<Expression>> *> &allPreds){
+        for (auto &preds : allPreds){
+            std::cout<<"Preds Generated: ";
+            for (auto &pred: *preds){
+                std::cout<<pred->getSymbol()<<" ";
+            }
+            std::cout<<std::endl;
+        }
+}
+
 TEST(TestComputationTimeGenerator, tctg) {
     ComputationTimeGenerator ctg;
     ComputationTimeGenerator::rseed();
@@ -70,14 +81,7 @@ TEST(TestComputationTimeGenerator, tctg) {
 
     ctg.createPredicatesOnDelays({500, 1, 3, 1000, 2, 6, 750, 1, 5, 2000, 1, 4}, allPreds);
 
-
-//    for (auto &preds : allPreds){
-//        std::cout<<"Preds Generated: ";
-//        for (auto &pred: *preds){
-//            std::cout<<pred->getSymbol()<<" ";
-//        }
-//        std::cout<<std::endl;
-//    }
+    //print_preds(allPreds);
 
     EXPECT_TRUE(true);
 }
@@ -286,25 +290,5 @@ TEST(TestComputationTimeGeneratorNoExpression, tctgne) {
     std::vector<std::vector<std::shared_ptr<Expression>> *> allPreds;
 
     ctg.createPredicatesOnDelays({1000, 0, 0, 2000, 2, 20, 1000, 0, 0, 1000, 0, 0}, allPreds);
-
-//    std::vector<std::vector<int>> vecs = {};
-//    for (auto &vec : vecs){
-//        std::cout<<"Numbers Generated: ";
-//        for (auto &v : vec){
-//            std::cout<<v<<" ";
-//        }
-//        std::cout<<std::endl;
-//    }
-
-    std::cout<<" All Preds size: "<<allPreds.size()<<std::endl;
-
-    for (auto &preds : allPreds){
-        std::cout<<"Preds Generated: ";
-        for (auto &pred: *preds){
-            std::cout<<pred<<" ";
-        }
-        std::cout<<std::endl;
-    }
-
     EXPECT_TRUE(true);
 }

@@ -75,7 +75,7 @@ std::shared_ptr<Expression> ComputationTimeGenerator::generateAtomOrPredicate(si
             }
         }
     }
-    
+
     return nullptr;
 }
 
