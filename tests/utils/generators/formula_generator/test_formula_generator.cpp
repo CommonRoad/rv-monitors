@@ -1,7 +1,7 @@
 //
-// Created by Sebastian Maierhofer.
+// Created by Evald Nexhipi.
 // Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
+// Copyright (c) 2021 Technical University of Munich. All rights reserved.
 // Credits: BMW Car@TUM
 //
 #include "test_formula_generator.h"
@@ -10,7 +10,7 @@
 TEST(TestFormulaGenerator, tfg) {
 
     FormulaGenerator fg;
-    fg.rseed();
+    FormulaGenerator::rseed();
 
     auto a1 = std::make_shared<Atomic>("a1");
     auto a2 = std::make_shared<Atomic>("a2");
@@ -38,7 +38,7 @@ TEST(TestFormulaGenerator, tfg) {
 TEST(TestFormulaGeneratorNoIntervals, tfgni) {
 
     FormulaGenerator fg;
-    fg.rseed();
+    FormulaGenerator::rseed();
 
     auto a1 = std::make_shared<Atomic>("a1");
     auto a2 = std::make_shared<Atomic>("a2");
@@ -65,7 +65,7 @@ TEST(TestFormulaGeneratorNoIntervals, tfgni) {
 TEST(TestFormulaGeneratorOneOperator, tfgoo) {
 
     FormulaGenerator fg;
-    fg.rseed();
+    FormulaGenerator::rseed();
 
     auto a1 = std::make_shared<Atomic>("a1");
     auto a2 = std::make_shared<Atomic>("a2");
@@ -85,7 +85,7 @@ TEST(TestFormulaGeneratorOneOperator, tfgoo) {
 TEST(TestFormulaGeneratorNoOperator, tfgno) {
 
     FormulaGenerator fg;
-    fg.rseed();
+    FormulaGenerator::rseed();
 
     auto a1 = std::make_shared<Atomic>("a1");
     auto a2 = std::make_shared<Atomic>("a2");
