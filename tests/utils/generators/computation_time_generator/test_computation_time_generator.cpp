@@ -8,11 +8,13 @@
 #include "monitors/utils/generators/computation_time_generator/computation_time_generator.h"
 
 void print_preds(std::vector<std::vector<std::shared_ptr<Expression>> *> &allPreds) {
+    size_t delay = 1;
     for (auto &preds : allPreds) {
-        std::cout << "Preds Generated: ";
+        std::cout << "Preds Generated on delay ["<<delay<<"] : ";
         for (auto &pred : *preds) {
             std::cout << pred->getSymbol() << " ";
         }
+        delay++;
         std::cout << std::endl;
     }
 }
@@ -81,7 +83,7 @@ TEST(TestComputationTimeGenerator, tctg) {
 
     ctg.createPredicatesOnDelays({500, 1, 3, 1000, 2, 6, 750, 1, 5, 2000, 1, 4}, allPreds);
 
-    // print_preds(allPreds);
+    print_preds(allPreds);
 
     EXPECT_TRUE(true);
 }

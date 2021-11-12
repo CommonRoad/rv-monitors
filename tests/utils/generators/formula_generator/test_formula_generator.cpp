@@ -19,18 +19,18 @@ TEST(TestFormulaGenerator, tfg) {
     fg.addAtomic(a1, 1.0);
     fg.addAtomic(a2, 1.0);
     fg.addPredicate(p1, 3.0);
-    fg.addOperator(OP_NOT, 1.0);
-    fg.addOperator(OP_AND, 2.0);
-    fg.addOperator(OP_OR, 2.0);
-    fg.addOperator(OP_XOR, 2.0);
-    fg.addOperator(OP_IF, 2.0);
-    fg.addOperator(OP_IFF, 2.0);
-    fg.addOperator(OP_SINCE, 2.0);
-    fg.addOperatorWithInterval(OP_FUTURE, 2.0, 0, 3, 10, 30);
-    fg.addOperator(OP_GLOBALLY, 2.0);
+    fg.addOperator(notSymbol, 1.0);
+    fg.addOperator(andSymbol, 2.0);
+    fg.addOperator(orSymbol, 2.0);
+    fg.addOperator(xorSymbol, 2.0);
+    fg.addOperator(implicationSymbol, 2.0);
+    fg.addOperator(equivalenceSymbol, 2.0);
+    fg.addOperator(sinceSymbol, 2.0);
+    fg.addOperatorWithInterval(futureSymbol, 2.0, 0, 3, 10, 30);
+    fg.addOperator(globallySymbol, 2.0);
 
     auto f = fg.generateFormula(7);
-    std::cout << f << std::endl;
+    //std::cout << f << std::endl;
 
     EXPECT_TRUE(true);
 }
@@ -47,17 +47,17 @@ TEST(TestFormulaGeneratorNoIntervals, tfgni) {
     fg.addAtomic(a1, 1.0);
     fg.addAtomic(a2, 1.0);
     fg.addPredicate(p1, 3.0);
-    fg.addOperator(OP_NOT, 1.0);
-    fg.addOperator(OP_AND, 2.0);
-    fg.addOperator(OP_OR, 2.0);
-    fg.addOperator(OP_XOR, 2.0);
-    fg.addOperator(OP_IF, 2.0);
-    fg.addOperator(OP_IFF, 2.0);
-    fg.addOperator(OP_SINCE, 2.0);
-    fg.addOperator(OP_GLOBALLY, 2.0);
+    fg.addOperator(notSymbol, 1.0);
+    fg.addOperator(andSymbol, 2.0);
+    fg.addOperator(orSymbol, 2.0);
+    fg.addOperator(xorSymbol, 2.0);
+    fg.addOperator(implicationSymbol, 2.0);
+    fg.addOperator(equivalenceSymbol, 2.0);
+    fg.addOperator(sinceSymbol, 2.0);
+    fg.addOperator(globallySymbol, 2.0);
 
     auto f = fg.generateFormula(7);
-    std::cout << f << std::endl;
+    //std::cout << f << std::endl;
 
     EXPECT_TRUE(true);
 }
@@ -74,10 +74,10 @@ TEST(TestFormulaGeneratorOneOperator, tfgoo) {
     fg.addAtomic(a1, 1.0);
     fg.addAtomic(a2, 1.0);
     fg.addPredicate(p1, 3.0);
-    fg.addOperator(OP_GLOBALLY, 2.0);
+    fg.addOperator(globallySymbol, 2.0);
 
     auto f = fg.generateFormula(1);
-    std::cout << f << std::endl;
+    //std::cout << f << std::endl;
 
     EXPECT_TRUE(true);
 }
@@ -94,13 +94,13 @@ TEST(TestFormulaGeneratorNoOperator, tfgno) {
     fg.addAtomic(a1, 1.0);
     fg.addAtomic(a2, 1.0);
     fg.addPredicate(p1, 3.0);
-    fg.addOperator(OP_NOT, 1.0);
-    fg.addOperator(OP_IFF, 5.0);
-    fg.addOperator(OP_SINCE, 2.0);
-    fg.addOperator(OP_GLOBALLY, 2.0);
+    fg.addOperator(notSymbol, 1.0);
+    fg.addOperator(equivalenceSymbol, 5.0);
+    fg.addOperator(sinceSymbol, 2.0);
+    fg.addOperator(globallySymbol, 2.0);
 
     auto f = fg.generateFormula(0);
-    std::cout << f << std::endl;
+    //std::cout << f << std::endl;
 
     EXPECT_TRUE(true);
 }

@@ -7,73 +7,58 @@
 #include "computation_time_generator.h"
 #include <chrono>
 
+std::shared_ptr<Expression> ComputationTimeGenerator::generateAtom(size_t delay_index) {
+    double coin = rreal(0, m_sumWeightsAtomic[delay_index]);
+    double w = 0.0;
+    for (auto &iter : m_atoms[delay_index]) {
+        w += iter.m_weight;
+        if (w >= coin)
+            return iter.m_atomic;
+    }
+}
+
+std::shared_ptr<Expression> ComputationTimeGenerator::generatePredicate(size_t delay_index) {
+    double coin = rreal(0, m_sumWeightsPredicate[delay_index]);
+    double w = 0.0;
+    for (auto &iter : m_predicates[delay_index]) {
+        w += iter.m_weight;
+        if (w >= coin)
+            return iter.m_predicate;
+    }
+}
+std::shared_ptr<Expression> ComputationTimeGenerator::generateBoth(size_t delay_index) {
+    double coin = rreal(0, m_sumWeightsAtomic[delay_index] + m_sumWeightsPredicate[delay_index]);
+    double w = 0.0;
+    for (auto &iter : m_atoms[delay_index]) {
+        w += iter.m_weight;
+        if (w >= coin)
+            return iter.m_atomic;
+    }
+    for (auto &iter : m_predicates[delay_index]) {
+        w += iter.m_weight;
+        if (w >= coin)
+            return iter.m_predicate;
+    }
+}
+
 std::shared_ptr<Expression> ComputationTimeGenerator::generateAtomOrPredicate(size_t delay_index) {
 
     if (!m_predicates.empty() && !m_atoms.empty()) {
-        if (!m_predicates[delay_index].empty() && !m_atoms[delay_index].empty()) {
-            double coin;
-            coin = rreal(0, m_sumWeightsAtomic[delay_index] + m_sumWeightsPredicate[delay_index]);
-            double w = 0.0;
-            for (auto &iter : m_atoms[delay_index]) {
-                w += iter.m_weight;
-                if (w >= coin)
-                    return iter.m_atomic;
-            }
-            for (auto &iter : m_predicates[delay_index]) {
-                w += iter.m_weight;
-                if (w >= coin)
-                    return iter.m_predicate;
-            }
-        }
+        if (!m_predicates[delay_index].empty() && !m_atoms[delay_index].empty())
+            return generateBoth(delay_index);
 
-        if (!m_predicates[delay_index].empty() && m_atoms[delay_index].empty()) {
-            double coin;
-            coin = rreal(0, m_sumWeightsPredicate[delay_index]);
-            double w = 0.0;
-            for (auto &iter : m_predicates[delay_index]) {
-                w += iter.m_weight;
-                if (w >= coin)
-                    return iter.m_predicate;
-            }
-        }
+        if (!m_predicates[delay_index].empty() && m_atoms[delay_index].empty())
+            return generatePredicate(delay_index);
 
-        if (!m_atoms[delay_index].empty() && m_predicates[delay_index].empty()) {
-            double coin;
-            coin = rreal(0, m_sumWeightsAtomic[delay_index]);
-            double w = 0.0;
-            for (auto &iter : m_atoms[delay_index]) {
-                w += iter.m_weight;
-                if (w >= coin)
-                    return iter.m_atomic;
-            }
-        }
+        if (!m_atoms[delay_index].empty() && m_predicates[delay_index].empty())
+            return generateAtom(delay_index);
     }
 
-    if (!m_predicates.empty() && m_atoms.empty()) {
-        if (!m_predicates[delay_index].empty()) {
-            double coin;
-            coin = rreal(0, m_sumWeightsPredicate[delay_index]);
-            double w = 0.0;
-            for (auto &iter : m_predicates[delay_index]) {
-                w += iter.m_weight;
-                if (w >= coin)
-                    return iter.m_predicate;
-            }
-        }
-    }
+    if (!m_predicates.empty() && m_atoms.empty())
+        return generatePredicate(delay_index);
 
-    if (!m_atoms.empty() && m_predicates.empty()) {
-        if (!m_atoms[delay_index].empty() && m_predicates[delay_index].empty()) {
-            double coin;
-            coin = rreal(0, m_sumWeightsAtomic[delay_index]);
-            double w = 0.0;
-            for (auto &iter : m_atoms[delay_index]) {
-                w += iter.m_weight;
-                if (w >= coin)
-                    return iter.m_atomic;
-            }
-        }
-    }
+    if (!m_atoms.empty() && m_predicates.empty())
+        return generateAtom(delay_index);
 
     return nullptr;
 }
@@ -94,14 +79,9 @@ void ComputationTimeGenerator::createPredicatesOnDelays(
         size_t nrPreds = rint(minNrPreds, maxNrPreds);
 
         auto *preds = new std::vector<std::shared_ptr<Expression>>();
-        // std::cout << "Delay " << next_delay + 1 << " started" << std::endl;
+
         std::this_thread::sleep_for(std::chrono::milliseconds(timeDelay));
         generateAtomsAndPredicates(next_delay, nrPreds, *preds);
-
-        // std::cout << "Predicates Generated: ";
-        // for (auto &p : *preds)
-        // std::cout << p->to_string() << " ";
-        // std::cout << std::endl;
 
         next_delay++;
         allPreds.push_back(preds);

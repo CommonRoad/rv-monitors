@@ -14,14 +14,57 @@
 #include <thread>
 
 #include <vector>
+
+/**
+ * Class to pseudo-randomly generate atoms or predicates given the distributions for different delays
+ */
 class ComputationTimeGenerator {
+  protected:
+    /**
+     * Structure to store the association of a weight to an Atom
+     * @var m_atomic atoms to be stored in the structure
+     * @var m_weight respective weights for the atoms
+     */
+    struct AtomicInfo {
+        std::shared_ptr<Atomic> m_atomic;
+        double m_weight;
+    };
+
+    /**
+     * Structure to store the association of a weight to a Predicate
+     * @var m_atomic atoms to be stored in the structure
+     * @var m_weight respective weights for the predicates
+     */
+    struct PredicateInfo {
+        std::shared_ptr<Predicate> m_predicate;
+        double m_weight;
+    };
+
+    /**
+     * @var m_sumWeightsAtomic vector containing atoms total weights on each delay
+     */
+    std::vector<double> m_sumWeightsAtomic;
+    /**
+     * @var m_sumWeightsPredicate vector containing predicates total weights on each delay
+     */
+    std::vector<double> m_sumWeightsPredicate;
+
+    /**
+     * @var m_atoms vector containing atoms info
+     */
+    std::vector<std::vector<AtomicInfo>> m_atoms;
+    /**
+     * @var m_predicates vector containing predicates info
+     */
+    std::vector<std::vector<PredicateInfo>> m_predicates;
+
   public:
     ComputationTimeGenerator() : m_sumWeightsAtomic(0.0), m_sumWeightsPredicate(0.0) {}
 
     /**
      * Initializes the sequence of pseudo-random numbers generated when the rand function is called.
      */
-    static void rseed() { srand(time(NULL)); }
+    static void rseed() { srand(static_cast<unsigned int>(time(nullptr))); }
 
     /**
      * Generates a real number
@@ -90,7 +133,28 @@ class ComputationTimeGenerator {
     }
 
     /**
-     * Generates an atom or predicate for a specific delay / duration
+     * Generates an atom
+     * @param delay_index index of current delay / duration
+     * @return an atom
+     */
+    std::shared_ptr<Expression> generateAtom (size_t delay_index);
+
+    /**
+     * Generates a predicate
+     * @param delay_index index of current delay / duration
+     * @return a predicate
+     */
+    std::shared_ptr<Expression> generatePredicate (size_t delay_index);
+
+    /**
+     * Can generate either an atom or predicate
+     * @param delay_index index of current delay / duration
+     * @return an atom or predicate
+     */
+    std::shared_ptr<Expression> generateBoth (size_t delay_index);
+
+    /**
+     * Generates an atom or predicate accordingly for a specific delay / duration
      * @param delay_index index of current delay / duration
      * @return an atom or predicate
      */
@@ -112,43 +176,4 @@ class ComputationTimeGenerator {
      */
     void createPredicatesOnDelays(std::vector<size_t> info,
                                   std::vector<std::vector<std::shared_ptr<Expression>> *> &preds);
-
-  protected:
-    /**
-     * Structure to store the association of a weight to an Atom
-     * @var m_atomic atoms to be stored in the structure
-     * @var m_weight respective weights for the atoms
-     */
-    struct AtomicInfo {
-        std::shared_ptr<Atomic> m_atomic;
-        double m_weight;
-    };
-
-    /**
-     * Structure to store the association of a weight to a Predicate
-     * @var m_atomic atoms to be stored in the structure
-     * @var m_weight respective weights for the predicates
-     */
-    struct PredicateInfo {
-        std::shared_ptr<Predicate> m_predicate;
-        double m_weight;
-    };
-
-    /**
-     * @var m_sumWeightsAtomic vector containing atoms total weights on each delay
-     */
-    std::vector<double> m_sumWeightsAtomic;
-    /**
-     * @var m_sumWeightsPredicate vector containing predicates total weights on each delay
-     */
-    std::vector<double> m_sumWeightsPredicate;
-
-    /**
-     * @var m_atoms vector containing atoms info
-     */
-    std::vector<std::vector<AtomicInfo>> m_atoms;
-    /**
-     * @var m_predicates vector containing predicates info
-     */
-    std::vector<std::vector<PredicateInfo>> m_predicates;
 };

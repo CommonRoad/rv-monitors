@@ -25,7 +25,7 @@ TEST(TestTraceGenerator, ttg) {
     fg.addPredicate(p2, 2.0);
 
     auto f = fg.generateTrace(10);
-    std::cout << f.to_string() << std::endl;
+    //std::cout << f.to_string() << std::endl;
 
     EXPECT_TRUE(true);
 }
@@ -47,7 +47,7 @@ TEST(TestTraceGeneratorZeroLength, ttgzl) {
     fg.addPredicate(p2, 2.0);
 
     auto f = fg.generateTrace(0);
-    std::cout << f.to_string() << std::endl;
+    //std::cout << f.to_string() << std::endl;
 
     EXPECT_TRUE(true);
 }
@@ -69,7 +69,7 @@ TEST(TestTraceGeneratorLengthOne, ttglo) {
     fg.addPredicate(p2, 2.0);
 
     auto f = fg.generateTrace(1);
-    std::cout << f.to_string() << std::endl;
+    //std::cout << f.to_string() << std::endl;
 
     EXPECT_TRUE(true);
 }

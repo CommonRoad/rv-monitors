@@ -283,12 +283,12 @@ void test_1() {
     fg.addPredicate(q, 2.0);
     tg.addPredicate(q, 2.0);
 
-    fg.addOperator(OP_NOT, 1.0);
-    fg.addOperator(OP_IF, 5.0);
-    fg.addOperator(OP_AND, 3.0);
-    fg.addOperator(OP_OR, 2.0);
-    fg.addOperator(OP_SINCE, 1.0);
-    fg.addOperator(OP_GLOBALLY, 1.0);
+    fg.addOperator(notSymbol, 1.0);
+    fg.addOperator(implicationSymbol, 5.0);
+    fg.addOperator(andSymbol, 3.0);
+    fg.addOperator(orSymbol, 2.0);
+    fg.addOperator(sinceSymbol, 1.0);
+    fg.addOperator(globallySymbol, 1.0);
 
     Formula f1 = fg.generateFormula(7);
     f1.setId("R1");
