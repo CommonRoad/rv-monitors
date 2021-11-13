@@ -17,13 +17,13 @@ class TraceGenerator {
     /**
      * Initializes the sequence of pseudo-random numbers generated when the rand function is called.
      */
-    static void rseed() { srand(static_cast<unsigned int>(time(nullptr))); }
+    static void rSeed() { srand(static_cast<unsigned int>(time(nullptr))); }
 
     /**
      * Generates a real number
      * @return returns a pseudo-random real number
      */
-    static double rreal() { return ((double)rand()) / ((double)RAND_MAX); }
+    static double rReal() { return ((double)rand()) / ((double)RAND_MAX); }
 
     /**
      * Generates a real number within an interval
@@ -31,7 +31,7 @@ class TraceGenerator {
      * @param max maximum number to be generated
      * @return a real number within (min, max) interval
      */
-    static double rreal(const double min, const double max) { return min + (max - min) * rreal(); }
+    static double rReal(const double min, const double max) { return min + (max - min) * rReal(); }
 
     /**
      * Generates an integer within an interval
@@ -39,8 +39,8 @@ class TraceGenerator {
      * @param max maximum number to be generated
      * @return an integer within (min, max) interval
      */
-    static inline size_t rint(const size_t min, const size_t max) {
-        const size_t x = min + (size_t)rreal(0, static_cast<double>(max - min + 1));
+    static inline size_t rInt(const size_t min, const size_t max) {
+        const size_t x = min + (size_t)rReal(0, static_cast<double>(max - min + 1));
         return x > max ? max : x;
     }
 

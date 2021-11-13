@@ -10,7 +10,7 @@
 TEST(TestFormulaGenerator, tfg) {
 
     FormulaGenerator fg;
-    FormulaGenerator::rseed();
+    FormulaGenerator::rSeed();
 
     auto a1 = std::make_shared<Atomic>("a1");
     auto a2 = std::make_shared<Atomic>("a2");
@@ -30,7 +30,6 @@ TEST(TestFormulaGenerator, tfg) {
     fg.addOperator(globallySymbol, 2.0);
 
     auto f = fg.generateFormula(7);
-    // std::cout << f << std::endl;
 
     EXPECT_TRUE(true);
 }
@@ -38,7 +37,7 @@ TEST(TestFormulaGenerator, tfg) {
 TEST(TestFormulaGeneratorNoIntervals, tfgni) {
 
     FormulaGenerator fg;
-    FormulaGenerator::rseed();
+    FormulaGenerator::rSeed();
 
     auto a1 = std::make_shared<Atomic>("a1");
     auto a2 = std::make_shared<Atomic>("a2");
@@ -57,7 +56,6 @@ TEST(TestFormulaGeneratorNoIntervals, tfgni) {
     fg.addOperator(globallySymbol, 2.0);
 
     auto f = fg.generateFormula(7);
-    // std::cout << f << std::endl;
 
     EXPECT_TRUE(true);
 }
@@ -65,7 +63,7 @@ TEST(TestFormulaGeneratorNoIntervals, tfgni) {
 TEST(TestFormulaGeneratorOneOperator, tfgoo) {
 
     FormulaGenerator fg;
-    FormulaGenerator::rseed();
+    FormulaGenerator::rSeed();
 
     auto a1 = std::make_shared<Atomic>("a1");
     auto a2 = std::make_shared<Atomic>("a2");
@@ -77,7 +75,6 @@ TEST(TestFormulaGeneratorOneOperator, tfgoo) {
     fg.addOperator(globallySymbol, 2.0);
 
     auto f = fg.generateFormula(1);
-    // std::cout << f << std::endl;
 
     EXPECT_TRUE(true);
 }
@@ -85,7 +82,7 @@ TEST(TestFormulaGeneratorOneOperator, tfgoo) {
 TEST(TestFormulaGeneratorNoOperator, tfgno) {
 
     FormulaGenerator fg;
-    FormulaGenerator::rseed();
+    FormulaGenerator::rSeed();
 
     auto a1 = std::make_shared<Atomic>("a1");
     auto a2 = std::make_shared<Atomic>("a2");
@@ -100,7 +97,6 @@ TEST(TestFormulaGeneratorNoOperator, tfgno) {
     fg.addOperator(globallySymbol, 2.0);
 
     auto f = fg.generateFormula(0);
-    // std::cout << f << std::endl;
 
     EXPECT_TRUE(true);
 }

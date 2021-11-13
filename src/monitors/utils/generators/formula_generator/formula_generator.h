@@ -80,18 +80,14 @@ class FormulaGenerator {
     /**
      * Interval to be generated for operators on intervals
      * @param oi Operator info
-     * @param tstart randomly generates a value between m_minStart and m_maxStart
-     * @param tend randomly generates a value between m_minDuration and m_maxDuration
+     * @param tStart randomly generates a value between m_minStart and m_maxStart
+     * @param tEnd randomly generates a value between m_minDuration and m_maxDuration
      */
-    void generateInterval(const OperatorInfo &oi, size_t &tstart, size_t &tend) const {
-        tstart = rint(oi.m_minStart, oi.m_maxStart);
-        tend = tstart + rint(oi.m_minDuration, oi.m_maxDuration);
+    static void generateInterval(const OperatorInfo &oi, size_t &tStart, size_t &tEnd) {
+        tStart = rInt(oi.m_minStart, oi.m_maxStart);
+        tEnd = tStart + rInt(oi.m_minDuration, oi.m_maxDuration);
     }
 
-    /**
-     * @var m_nrOperators total number of operators to be in the formula
-     */
-    size_t m_nrOperators;
     /**
      * @var m_sumWeightsAtomic total sum of atoms weights
      */
@@ -122,13 +118,13 @@ class FormulaGenerator {
     /**
      * Initializes the sequence of pseudo-random numbers generated when the rand function is called.
      */
-    static void rseed() { srand(static_cast<unsigned int>(time(nullptr))); }
+    static void rSeed() { srand(static_cast<unsigned int>(time(nullptr))); }
 
     /**
      * Generates a real number
      * @return returns a pseudo-random real number
      */
-    static double rreal() { return ((double)rand()) / ((double)RAND_MAX); }
+    static double rReal() { return ((double)rand()) / ((double)RAND_MAX); }
 
     /**
      * Generates a real number within an interval
@@ -136,7 +132,7 @@ class FormulaGenerator {
      * @param max maximum number to be generated
      * @return a real number within (min, max) interval
      */
-    static double rreal(const double min, const double max) { return min + (max - min) * rreal(); }
+    static double rReal(const double min, const double max) { return min + (max - min) * rReal(); }
 
     /**
      * Generates an integer within an interval
@@ -144,8 +140,8 @@ class FormulaGenerator {
      * @param max maximum number to be generated
      * @return an integer within (min, max) interval
      */
-    static inline size_t rint(const size_t min, const size_t max) {
-        const size_t x = min + (size_t)rreal(0, static_cast<double>(max - min + 1));
+    static inline size_t rInt(const size_t min, const size_t max) {
+        const size_t x = min + (size_t)rReal(0, static_cast<double>(max - min + 1));
         return x > max ? max : x;
     }
 
@@ -217,12 +213,31 @@ class FormulaGenerator {
      * @param op operator name
      * @param exprLeft expression on the left
      * @param hasInterval check if the operator has an interval
-     * @param tstart start time step of the operator
-     * @param tend end time step of the operator
+     * @param tStart start time step of the operator
+     * @param tEnd end time step of the operator
      * @return a unary expression
      */
-    std::shared_ptr<Expression> generateUnaryExpression(std::string op, const std::shared_ptr<Expression> &exprLeft,
-                                                        bool hasInterval, size_t tstart, size_t tend);
+    static std::shared_ptr<Expression> generateUnaryExpression(const std::string& op, const std::shared_ptr<Expression> &exprLeft,
+                                                        bool hasInterval, size_t tStart, size_t tEnd);
+
+    /**
+     * Helper Function to generate Unary Expression with interval
+     * @param op operator name
+     * @param exprLeft expression on the left
+     * @param tStart start time step of the operator
+     * @param tEnd end time step of the operator
+     * @return a unary expression
+     */
+    static std::shared_ptr<Expression> generateUnaryExpressionWithInterval(const std::string& op, const std::shared_ptr<Expression> &exprLeft,
+                                                        size_t tStart, size_t tEnd);
+
+    /**
+     * Helper Function to generate Unary Expression with interval
+     * @param op operator name
+     * @param exprLeft expression on the left
+     * @return a unary expression
+     */
+    static std::shared_ptr<Expression> generateUnaryExpressionWithoutInterval(const std::string& op, const std::shared_ptr<Expression> &exprLeft);
 
     /**
      * Helper Function to generate Binary Expression
@@ -231,7 +246,7 @@ class FormulaGenerator {
      * @param exprRight expression on the right
      * @return a binary expression
      */
-    std::shared_ptr<Expression> generateBinaryExpression(std::string op, const std::shared_ptr<Expression> &exprLeft,
+    static std::shared_ptr<Expression> generateBinaryExpression(const std::string& op, const std::shared_ptr<Expression> &exprLeft,
                                                          const std::shared_ptr<Expression> &exprRight);
 
     /**

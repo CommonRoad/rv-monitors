@@ -64,13 +64,13 @@ class ComputationTimeGenerator {
     /**
      * Initializes the sequence of pseudo-random numbers generated when the rand function is called.
      */
-    static void rseed() { srand(static_cast<unsigned int>(time(nullptr))); }
+    static void rSeed() { srand(static_cast<unsigned int>(time(nullptr))); }
 
     /**
      * Generates a real number
      * @return returns a pseudo-random real number
      */
-    static double rreal() { return ((double)rand()) / ((double)RAND_MAX); }
+    static double rReal() { return ((double)rand()) / ((double)RAND_MAX); }
 
     /**
      * Generates a real number within an interval
@@ -78,7 +78,7 @@ class ComputationTimeGenerator {
      * @param max maximum number to be generated
      * @return a real number within (min, max) interval
      */
-    static double rreal(const double min, const double max) { return min + (max - min) * rreal(); }
+    static double rReal(const double min, const double max) { return min + (max - min) * rReal(); }
 
     /**
      * Generates an integer within an interval
@@ -86,8 +86,8 @@ class ComputationTimeGenerator {
      * @param max maximum number to be generated
      * @return an integer within (min, max) interval
      */
-    static inline size_t rint(const size_t min, const size_t max) {
-        const size_t x = min + (size_t)rreal(0, static_cast<double>(max - min + 1));
+    static inline size_t rInt(const size_t min, const size_t max) {
+        const size_t x = min + (size_t)rReal(0, static_cast<double>(max - min + 1));
         return x > max ? max : x;
     }
 
@@ -163,17 +163,17 @@ class ComputationTimeGenerator {
     /**
      * Generate a specific number of Atoms or Predicates
      * @param index_of_delay index of current delay / duration
-     * @param nrPreds number of Atoms or Predicates to be generated
-     * @param preds generated Atoms / Predicates
+     * @param nrPredicates number of Atoms or Predicates to be generated
+     * @param predicates generated Atoms / Predicates
      */
-    void generateAtomsAndPredicates(size_t index_of_delay, size_t nrPreds,
-                                    std::vector<std::shared_ptr<Expression>> &preds);
+    void generateAtomsAndPredicates(size_t index_of_delay, size_t nrPredicates,
+                                    std::vector<std::shared_ptr<Expression>> &predicates);
 
     /**
      * Atoms and Predicates generated for a delay / duration in [ms] (larger than 0)
-     * @param info vector of form {duration_in_miliseconds, min_number_of_predicates, max_number_of_predicates, ...}
-     * @param preds generated predicates
+     * @param info vector of form {duration_in_milliseconds, min_number_of_predicates, max_number_of_predicates, ...}
+     * @param predicates generated predicates
      */
     void createPredicatesOnDelays(std::vector<size_t> info,
-                                  std::vector<std::vector<std::shared_ptr<Expression>> *> &preds);
+                                  std::vector<std::vector<std::shared_ptr<Expression>> *> &predicates);
 };

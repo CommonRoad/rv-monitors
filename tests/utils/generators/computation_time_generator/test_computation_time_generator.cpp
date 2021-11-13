@@ -7,11 +7,11 @@
 #include "test_computation_time_generator.h"
 #include "monitors/utils/generators/computation_time_generator/computation_time_generator.h"
 
-void print_preds(std::vector<std::vector<std::shared_ptr<Expression>> *> &allPreds) {
+void print_predicates(std::vector<std::vector<std::shared_ptr<Expression>> *> &allPredicates) {
     size_t delay = 1;
-    for (auto &preds : allPreds) {
-        std::cout << "Preds Generated on delay [" << delay << "] : ";
-        for (auto &pred : *preds) {
+    for (auto &predicates : allPredicates) {
+        std::cout << "Predicates generated on delay [" << delay << "] : ";
+        for (auto &pred : *predicates) {
             std::cout << pred->getSymbol() << " ";
         }
         delay++;
@@ -21,8 +21,8 @@ void print_preds(std::vector<std::vector<std::shared_ptr<Expression>> *> &allPre
 
 TEST(TestComputationTimeGenerator, tctg) {
     ComputationTimeGenerator ctg;
-    ComputationTimeGenerator::rseed();
-    std::vector<std::vector<std::shared_ptr<Expression>> *> allPreds;
+    ComputationTimeGenerator::rSeed();
+    std::vector<std::vector<std::shared_ptr<Expression>> *> allPredicates;
 
     /* Atoms and Predicates of Delay 1 */
     auto a11 = std::make_shared<Atomic>("a11");
@@ -81,17 +81,17 @@ TEST(TestComputationTimeGenerator, tctg) {
     ctg.addAtomsDistribution(atoms_4, atom_weights_4);
     ctg.addPredicateDistribution(predicates_4, predicate_weights_4);
 
-    ctg.createPredicatesOnDelays({500, 1, 3, 1000, 2, 6, 750, 1, 5, 2000, 1, 4}, allPreds);
+    ctg.createPredicatesOnDelays({500, 1, 3, 1000, 2, 6, 750, 1, 5, 2000, 1, 4}, allPredicates);
 
-    print_preds(allPreds);
+    print_predicates(allPredicates);
 
     EXPECT_TRUE(true);
 }
 
 TEST(TestComputationTimeGeneratorLongerDelays, tctgld) {
     ComputationTimeGenerator ctg;
-    ComputationTimeGenerator::rseed();
-    std::vector<std::vector<std::shared_ptr<Expression>> *> allPreds;
+    ComputationTimeGenerator::rSeed();
+    std::vector<std::vector<std::shared_ptr<Expression>> *> allPredicates;
 
     /* Atoms and Predicates of Delay 1 */
     auto a11 = std::make_shared<Atomic>("a11");
@@ -150,14 +150,14 @@ TEST(TestComputationTimeGeneratorLongerDelays, tctgld) {
     ctg.addAtomsDistribution(atoms_4, atom_weights_4);
     ctg.addPredicateDistribution(predicates_4, predicate_weights_4);
 
-    ctg.createPredicatesOnDelays({5000, 1, 3, 1000, 2, 6, 7500, 1, 5, 3000, 1, 4}, allPreds);
+    ctg.createPredicatesOnDelays({5000, 1, 3, 1000, 2, 6, 7500, 1, 5, 3000, 1, 4}, allPredicates);
     EXPECT_TRUE(true);
 }
 
 TEST(TestComputationTimeGeneratorHighNumberOfPredicates, tctghnop) {
     ComputationTimeGenerator ctg;
-    ComputationTimeGenerator::rseed();
-    std::vector<std::vector<std::shared_ptr<Expression>> *> allPreds;
+    ComputationTimeGenerator::rSeed();
+    std::vector<std::vector<std::shared_ptr<Expression>> *> allPredicates;
 
     /* Atoms and Predicates of Delay 1 */
     auto a11 = std::make_shared<Atomic>("a11");
@@ -216,14 +216,14 @@ TEST(TestComputationTimeGeneratorHighNumberOfPredicates, tctghnop) {
     ctg.addAtomsDistribution(atoms_4, atom_weights_4);
     ctg.addPredicateDistribution(predicates_4, predicate_weights_4);
 
-    ctg.createPredicatesOnDelays({1000, 10, 50, 2000, 2, 20, 3000, 3, 50, 4000, 1, 40}, allPreds);
+    ctg.createPredicatesOnDelays({1000, 10, 50, 2000, 2, 20, 3000, 3, 50, 4000, 1, 40}, allPredicates);
     EXPECT_TRUE(true);
 }
 
 TEST(TestComputationTimeGeneratorNoPredicates, tctgnp) {
     ComputationTimeGenerator ctg;
-    ComputationTimeGenerator::rseed();
-    std::vector<std::vector<std::shared_ptr<Expression>> *> allPreds;
+    ComputationTimeGenerator::rSeed();
+    std::vector<std::vector<std::shared_ptr<Expression>> *> allPredicates;
 
     /* Atoms and Predicates of Delay 1 */
     auto a11 = std::make_shared<Atomic>("a11");
@@ -282,15 +282,15 @@ TEST(TestComputationTimeGeneratorNoPredicates, tctgnp) {
     ctg.addAtomsDistribution(atoms_4, atom_weights_4);
     ctg.addPredicateDistribution(predicates_4, predicate_weights_4);
 
-    ctg.createPredicatesOnDelays({1000, 0, 0, 2000, 2, 20, 1000, 0, 0, 1000, 0, 0}, allPreds);
+    ctg.createPredicatesOnDelays({1000, 0, 0, 2000, 2, 20, 1000, 0, 0, 1000, 0, 0}, allPredicates);
     EXPECT_TRUE(true);
 }
 
 TEST(TestComputationTimeGeneratorNoExpression, tctgne) {
     ComputationTimeGenerator ctg;
-    ComputationTimeGenerator::rseed();
-    std::vector<std::vector<std::shared_ptr<Expression>> *> allPreds;
+    ComputationTimeGenerator::rSeed();
+    std::vector<std::vector<std::shared_ptr<Expression>> *> allPredicates;
 
-    ctg.createPredicatesOnDelays({1000, 0, 0, 2000, 2, 20, 1000, 0, 0, 1000, 0, 0}, allPreds);
+    ctg.createPredicatesOnDelays({1000, 0, 0, 2000, 2, 20, 1000, 0, 0, 1000, 0, 0}, allPredicates);
     EXPECT_TRUE(true);
 }

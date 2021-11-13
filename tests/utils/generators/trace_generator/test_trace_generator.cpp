@@ -10,7 +10,7 @@
 #include "monitors/utils/generators/trace_generator/trace_generator.h"
 TEST(TestTraceGenerator, ttg) {
     TraceGenerator fg;
-    TraceGenerator::rseed();
+    TraceGenerator::rSeed();
 
     auto a1 = std::make_shared<Atomic>("a1");
     auto a2 = std::make_shared<Atomic>("a2");
@@ -25,14 +25,13 @@ TEST(TestTraceGenerator, ttg) {
     fg.addPredicate(p2, 2.0);
 
     auto f = fg.generateTrace(10);
-    // std::cout << f.to_string() << std::endl;
 
     EXPECT_TRUE(true);
 }
 
 TEST(TestTraceGeneratorZeroLength, ttgzl) {
     TraceGenerator fg;
-    TraceGenerator::rseed();
+    TraceGenerator::rSeed();
 
     auto a1 = std::make_shared<Atomic>("a1");
     auto a2 = std::make_shared<Atomic>("a2");
@@ -47,14 +46,13 @@ TEST(TestTraceGeneratorZeroLength, ttgzl) {
     fg.addPredicate(p2, 2.0);
 
     auto f = fg.generateTrace(0);
-    // std::cout << f.to_string() << std::endl;
 
     EXPECT_TRUE(true);
 }
 
 TEST(TestTraceGeneratorLengthOne, ttglo) {
     TraceGenerator fg;
-    TraceGenerator::rseed();
+    TraceGenerator::rSeed();
 
     auto a1 = std::make_shared<Atomic>("a1");
     auto a2 = std::make_shared<Atomic>("a2");
@@ -69,7 +67,6 @@ TEST(TestTraceGeneratorLengthOne, ttglo) {
     fg.addPredicate(p2, 2.0);
 
     auto f = fg.generateTrace(1);
-    // std::cout << f.to_string() << std::endl;
 
     EXPECT_TRUE(true);
 }

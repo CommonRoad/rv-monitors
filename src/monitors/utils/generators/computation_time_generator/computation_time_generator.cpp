@@ -8,26 +8,28 @@
 #include <chrono>
 
 std::shared_ptr<Expression> ComputationTimeGenerator::generateAtom(size_t delay_index) {
-    double coin = rreal(0, m_sumWeightsAtomic[delay_index]);
+    double coin = rReal(0, m_sumWeightsAtomic[delay_index]);
     double w = 0.0;
     for (auto &iter : m_atoms[delay_index]) {
         w += iter.m_weight;
         if (w >= coin)
             return iter.m_atomic;
     }
+    return nullptr;
 }
 
 std::shared_ptr<Expression> ComputationTimeGenerator::generatePredicate(size_t delay_index) {
-    double coin = rreal(0, m_sumWeightsPredicate[delay_index]);
+    double coin = rReal(0, m_sumWeightsPredicate[delay_index]);
     double w = 0.0;
     for (auto &iter : m_predicates[delay_index]) {
         w += iter.m_weight;
         if (w >= coin)
             return iter.m_predicate;
     }
+    return nullptr;
 }
 std::shared_ptr<Expression> ComputationTimeGenerator::generateBoth(size_t delay_index) {
-    double coin = rreal(0, m_sumWeightsAtomic[delay_index] + m_sumWeightsPredicate[delay_index]);
+    double coin = rReal(0, m_sumWeightsAtomic[delay_index] + m_sumWeightsPredicate[delay_index]);
     double w = 0.0;
     for (auto &iter : m_atoms[delay_index]) {
         w += iter.m_weight;
@@ -39,6 +41,7 @@ std::shared_ptr<Expression> ComputationTimeGenerator::generateBoth(size_t delay_
         if (w >= coin)
             return iter.m_predicate;
     }
+    return nullptr;
 }
 
 std::shared_ptr<Expression> ComputationTimeGenerator::generateAtomOrPredicate(size_t delay_index) {
@@ -63,27 +66,27 @@ std::shared_ptr<Expression> ComputationTimeGenerator::generateAtomOrPredicate(si
     return nullptr;
 }
 
-void ComputationTimeGenerator::generateAtomsAndPredicates(size_t index_of_delay, size_t nrPreds,
-                                                          std::vector<std::shared_ptr<Expression>> &preds) {
-    for (size_t i = 0; i < nrPreds; ++i)
-        preds.push_back(generateAtomOrPredicate(index_of_delay));
+void ComputationTimeGenerator::generateAtomsAndPredicates(size_t index_of_delay, size_t nrPredicates,
+                                                          std::vector<std::shared_ptr<Expression>> &predicates) {
+    for (size_t i = 0; i < nrPredicates; ++i)
+        predicates.push_back(generateAtomOrPredicate(index_of_delay));
 }
 
 void ComputationTimeGenerator::createPredicatesOnDelays(
-    std::vector<size_t> info, std::vector<std::vector<std::shared_ptr<Expression>> *> &allPreds) {
+    std::vector<size_t> info, std::vector<std::vector<std::shared_ptr<Expression>> *> &predicates) {
     size_t next_delay = 0;
     for (size_t i = 0; i < info.size(); i += 3) {
         size_t timeDelay = info[i];
-        size_t minNrPreds = info[i + 1];
-        size_t maxNrPreds = info[i + 2];
-        size_t nrPreds = rint(minNrPreds, maxNrPreds);
+        size_t minNrPredicates = info[i + 1];
+        size_t maxNrPredicates = info[i + 2];
+        size_t nrPredicates = rInt(minNrPredicates, maxNrPredicates);
 
-        auto *preds = new std::vector<std::shared_ptr<Expression>>();
+        auto *predicatesTmp = new std::vector<std::shared_ptr<Expression>>();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(timeDelay));
-        generateAtomsAndPredicates(next_delay, nrPreds, *preds);
+        generateAtomsAndPredicates(next_delay, nrPredicates, *predicatesTmp);
 
         next_delay++;
-        allPreds.push_back(preds);
+        predicates.push_back(predicatesTmp);
     }
 }

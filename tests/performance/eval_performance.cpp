@@ -262,9 +262,9 @@ void test_0() {
 
 void test_1() {
     FormulaGenerator fg;
-    fg.rseed();
+    FormulaGenerator::rSeed();
     TraceGenerator tg;
-    tg.rseed();
+    TraceGenerator::rSeed();
 
     auto a = std::make_shared<Atomic>("a");
     auto b = std::make_shared<Atomic>("b");

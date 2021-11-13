@@ -12,7 +12,7 @@ Trace TraceGenerator ::generateTrace(const size_t length) {
     double coin;
 
     for (size_t i = 0; i < length; ++i) {
-        coin = rreal(0, m_sumWeightsAtomic + m_sumWeightsPredicate);
+        coin = rReal(0, m_sumWeightsAtomic + m_sumWeightsPredicate);
         double w = 0.0;
         std::map<std::string, lazy_bool> eventMap;
         for (auto &iter : m_atoms) {
