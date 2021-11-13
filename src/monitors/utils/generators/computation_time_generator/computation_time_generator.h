@@ -137,21 +137,21 @@ class ComputationTimeGenerator {
      * @param delay_index index of current delay / duration
      * @return an atom
      */
-    std::shared_ptr<Expression> generateAtom (size_t delay_index);
+    std::shared_ptr<Expression> generateAtom(size_t delay_index);
 
     /**
      * Generates a predicate
      * @param delay_index index of current delay / duration
      * @return a predicate
      */
-    std::shared_ptr<Expression> generatePredicate (size_t delay_index);
+    std::shared_ptr<Expression> generatePredicate(size_t delay_index);
 
     /**
      * Can generate either an atom or predicate
      * @param delay_index index of current delay / duration
      * @return an atom or predicate
      */
-    std::shared_ptr<Expression> generateBoth (size_t delay_index);
+    std::shared_ptr<Expression> generateBoth(size_t delay_index);
 
     /**
      * Generates an atom or predicate accordingly for a specific delay / duration

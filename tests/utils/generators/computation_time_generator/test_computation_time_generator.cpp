@@ -10,7 +10,7 @@
 void print_preds(std::vector<std::vector<std::shared_ptr<Expression>> *> &allPreds) {
     size_t delay = 1;
     for (auto &preds : allPreds) {
-        std::cout << "Preds Generated on delay ["<<delay<<"] : ";
+        std::cout << "Preds Generated on delay [" << delay << "] : ";
         for (auto &pred : *preds) {
             std::cout << pred->getSymbol() << " ";
         }

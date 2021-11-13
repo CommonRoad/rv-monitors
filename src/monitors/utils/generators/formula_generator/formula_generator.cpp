@@ -6,8 +6,9 @@
 //
 #include "formula_generator.h"
 
-
-std::shared_ptr<Expression> FormulaGenerator::generateUnaryExpression(std::string op, const std::shared_ptr<Expression> &exprLeft, bool hasInterval ,size_t tstart, size_t tend) {
+std::shared_ptr<Expression> FormulaGenerator::generateUnaryExpression(std::string op,
+                                                                      const std::shared_ptr<Expression> &exprLeft,
+                                                                      bool hasInterval, size_t tstart, size_t tend) {
 
     if (op == notSymbol)
         return std::make_shared<Not>(exprLeft);
@@ -62,7 +63,9 @@ std::shared_ptr<Expression> FormulaGenerator::generateUnaryExpression(std::strin
     }
 }
 
-std::shared_ptr<Expression> FormulaGenerator::generateBinaryExpression(std::string op, const std::shared_ptr<Expression> &exprLeft, const std::shared_ptr<Expression> &exprRight) {
+std::shared_ptr<Expression> FormulaGenerator::generateBinaryExpression(std::string op,
+                                                                       const std::shared_ptr<Expression> &exprLeft,
+                                                                       const std::shared_ptr<Expression> &exprRight) {
     if (op == andSymbol)
         return std::make_shared<And>(
             std::set<std::shared_ptr<Expression>, NaryInterface::SharedPtrExprCompare>{exprLeft, exprRight});
@@ -71,8 +74,7 @@ std::shared_ptr<Expression> FormulaGenerator::generateBinaryExpression(std::stri
             std::set<std::shared_ptr<Expression>, NaryInterface::SharedPtrExprCompare>{exprLeft, exprRight});
     if (op == xorSymbol)
         return std::make_shared<Xor>(
-            std::multiset<std::shared_ptr<Expression>, NaryInterface::SharedPtrExprCompare>{exprLeft,
-                                                                                            exprRight});
+            std::multiset<std::shared_ptr<Expression>, NaryInterface::SharedPtrExprCompare>{exprLeft, exprRight});
     if (op == implicationSymbol)
         return std::make_shared<Implication>(exprRight, exprLeft);
     if (op == equivalenceSymbol)
@@ -132,9 +134,9 @@ std::shared_ptr<Expression> FormulaGenerator::generateExpression(const size_t nr
         /**
          * If unary operator
          */
-        if (oi.m_name == notSymbol || oi.m_name == futureSymbol || oi.m_name == globallySymbol || oi.m_name == nextStrongSymbol ||
-            oi.m_name == nextWeakSymbol || oi.m_name == historicallySymbol || oi.m_name == onceSymbol ||
-            oi.m_name == previousSymbol) {
+        if (oi.m_name == notSymbol || oi.m_name == futureSymbol || oi.m_name == globallySymbol ||
+            oi.m_name == nextStrongSymbol || oi.m_name == nextWeakSymbol || oi.m_name == historicallySymbol ||
+            oi.m_name == onceSymbol || oi.m_name == previousSymbol) {
             auto exprLeft = generateExpression(nrOperators - 1);
 
             return generateUnaryExpression(oi.m_name, exprLeft, oi.m_hasInterval, tstart, tend);
@@ -143,8 +145,8 @@ std::shared_ptr<Expression> FormulaGenerator::generateExpression(const size_t nr
         /**
          * If binary operator
          */
-        else if (oi.m_name == andSymbol || oi.m_name == orSymbol || oi.m_name == xorSymbol || oi.m_name == implicationSymbol ||
-                 oi.m_name == equivalenceSymbol || oi.m_name == sinceSymbol) {
+        else if (oi.m_name == andSymbol || oi.m_name == orSymbol || oi.m_name == xorSymbol ||
+                 oi.m_name == implicationSymbol || oi.m_name == equivalenceSymbol || oi.m_name == sinceSymbol) {
             auto nrLeft = rint(0, nrOperators - 1);
             auto exprLeft = generateExpression(nrLeft);
             auto exprRight = generateExpression(nrOperators - 1 - nrLeft);

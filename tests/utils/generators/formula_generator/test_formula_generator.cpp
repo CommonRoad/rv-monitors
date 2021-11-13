@@ -30,7 +30,7 @@ TEST(TestFormulaGenerator, tfg) {
     fg.addOperator(globallySymbol, 2.0);
 
     auto f = fg.generateFormula(7);
-    //std::cout << f << std::endl;
+    // std::cout << f << std::endl;
 
     EXPECT_TRUE(true);
 }
@@ -57,7 +57,7 @@ TEST(TestFormulaGeneratorNoIntervals, tfgni) {
     fg.addOperator(globallySymbol, 2.0);
 
     auto f = fg.generateFormula(7);
-    //std::cout << f << std::endl;
+    // std::cout << f << std::endl;
 
     EXPECT_TRUE(true);
 }
@@ -77,7 +77,7 @@ TEST(TestFormulaGeneratorOneOperator, tfgoo) {
     fg.addOperator(globallySymbol, 2.0);
 
     auto f = fg.generateFormula(1);
-    //std::cout << f << std::endl;
+    // std::cout << f << std::endl;
 
     EXPECT_TRUE(true);
 }
@@ -100,7 +100,7 @@ TEST(TestFormulaGeneratorNoOperator, tfgno) {
     fg.addOperator(globallySymbol, 2.0);
 
     auto f = fg.generateFormula(0);
-    //std::cout << f << std::endl;
+    // std::cout << f << std::endl;
 
     EXPECT_TRUE(true);
 }

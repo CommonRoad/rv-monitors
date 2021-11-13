@@ -221,7 +221,8 @@ class FormulaGenerator {
      * @param tend end time step of the operator
      * @return a unary expression
      */
-    std::shared_ptr <Expression> generateUnaryExpression (std::string op, const std::shared_ptr<Expression> &exprLeft, bool hasInterval, size_t tstart, size_t tend);
+    std::shared_ptr<Expression> generateUnaryExpression(std::string op, const std::shared_ptr<Expression> &exprLeft,
+                                                        bool hasInterval, size_t tstart, size_t tend);
 
     /**
      * Helper Function to generate Binary Expression
@@ -230,19 +231,20 @@ class FormulaGenerator {
      * @param exprRight expression on the right
      * @return a binary expression
      */
-    std::shared_ptr <Expression> generateBinaryExpression (std::string op, const std::shared_ptr<Expression> &exprLeft, const std::shared_ptr<Expression> &exprRight);
+    std::shared_ptr<Expression> generateBinaryExpression(std::string op, const std::shared_ptr<Expression> &exprLeft,
+                                                         const std::shared_ptr<Expression> &exprRight);
 
     /**
      * Generates either an atom or predicate
      * @return an atom or predicate
      */
-    std::shared_ptr <Expression> generateAtomOrPredicate ();
+    std::shared_ptr<Expression> generateAtomOrPredicate();
 
     /**
      * Chooses an index in operators vector randomly
      * @param pos index in the operators vector
      */
-    void pickOperator (size_t &pos);
+    void pickOperator(size_t &pos);
 
     /**
      * Expression is generated based on the given number of operators
