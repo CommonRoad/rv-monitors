@@ -6,18 +6,18 @@
 //
 #include "formula_generator.h"
 
-std::shared_ptr<Expression> FormulaGenerator::generateUnaryExpression(const std::string& op,
+std::shared_ptr<Expression> FormulaGenerator::generateUnaryExpression(const std::string &op,
                                                                       const std::shared_ptr<Expression> &exprLeft,
                                                                       bool hasInterval, size_t tStart, size_t tEnd) {
 
-    if(hasInterval)
+    if (hasInterval)
         return generateUnaryExpressionWithInterval(op, exprLeft, tStart, tEnd);
     else
         return generateUnaryExpressionWithoutInterval(op, exprLeft);
 }
 
-std::shared_ptr<Expression> FormulaGenerator::generateUnaryExpressionWithInterval(const std::string& op,
-                                                                                  const std::shared_ptr<Expression> &exprLeft, size_t tStart, size_t tEnd) {
+std::shared_ptr<Expression> FormulaGenerator::generateUnaryExpressionWithInterval(
+    const std::string &op, const std::shared_ptr<Expression> &exprLeft, size_t tStart, size_t tEnd) {
     if (op == futureSymbol)
         return std::make_shared<Future>(exprLeft, std::make_shared<Interval>(tStart, tEnd));
     else if (op == globallySymbol)
@@ -36,8 +36,9 @@ std::shared_ptr<Expression> FormulaGenerator::generateUnaryExpressionWithInterva
         throw std::logic_error("FormulaGenerator::generateUnaryExpressionWithInterval: Unknown operator!");
 }
 
-std::shared_ptr<Expression> FormulaGenerator::generateUnaryExpressionWithoutInterval(const std::string& op,
-                                                                                  const std::shared_ptr<Expression> &exprLeft) {
+std::shared_ptr<Expression>
+FormulaGenerator::generateUnaryExpressionWithoutInterval(const std::string &op,
+                                                         const std::shared_ptr<Expression> &exprLeft) {
     if (op == notSymbol)
         return std::make_shared<Not>(exprLeft);
     else if (op == futureSymbol)
@@ -58,7 +59,7 @@ std::shared_ptr<Expression> FormulaGenerator::generateUnaryExpressionWithoutInte
         throw std::logic_error("FormulaGenerator::generateUnaryExpressionWithoutInterval: Unknown operator!");
 }
 
-std::shared_ptr<Expression> FormulaGenerator::generateBinaryExpression(const std::string& op,
+std::shared_ptr<Expression> FormulaGenerator::generateBinaryExpression(const std::string &op,
                                                                        const std::shared_ptr<Expression> &exprLeft,
                                                                        const std::shared_ptr<Expression> &exprRight) {
     if (op == andSymbol)

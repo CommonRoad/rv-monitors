@@ -217,8 +217,9 @@ class FormulaGenerator {
      * @param tEnd end time step of the operator
      * @return a unary expression
      */
-    static std::shared_ptr<Expression> generateUnaryExpression(const std::string& op, const std::shared_ptr<Expression> &exprLeft,
-                                                        bool hasInterval, size_t tStart, size_t tEnd);
+    static std::shared_ptr<Expression> generateUnaryExpression(const std::string &op,
+                                                               const std::shared_ptr<Expression> &exprLeft,
+                                                               bool hasInterval, size_t tStart, size_t tEnd);
 
     /**
      * Helper Function to generate Unary Expression with interval
@@ -228,8 +229,9 @@ class FormulaGenerator {
      * @param tEnd end time step of the operator
      * @return a unary expression
      */
-    static std::shared_ptr<Expression> generateUnaryExpressionWithInterval(const std::string& op, const std::shared_ptr<Expression> &exprLeft,
-                                                        size_t tStart, size_t tEnd);
+    static std::shared_ptr<Expression> generateUnaryExpressionWithInterval(const std::string &op,
+                                                                           const std::shared_ptr<Expression> &exprLeft,
+                                                                           size_t tStart, size_t tEnd);
 
     /**
      * Helper Function to generate Unary Expression with interval
@@ -237,7 +239,8 @@ class FormulaGenerator {
      * @param exprLeft expression on the left
      * @return a unary expression
      */
-    static std::shared_ptr<Expression> generateUnaryExpressionWithoutInterval(const std::string& op, const std::shared_ptr<Expression> &exprLeft);
+    static std::shared_ptr<Expression>
+    generateUnaryExpressionWithoutInterval(const std::string &op, const std::shared_ptr<Expression> &exprLeft);
 
     /**
      * Helper Function to generate Binary Expression
@@ -246,8 +249,9 @@ class FormulaGenerator {
      * @param exprRight expression on the right
      * @return a binary expression
      */
-    static std::shared_ptr<Expression> generateBinaryExpression(const std::string& op, const std::shared_ptr<Expression> &exprLeft,
-                                                         const std::shared_ptr<Expression> &exprRight);
+    static std::shared_ptr<Expression> generateBinaryExpression(const std::string &op,
+                                                                const std::shared_ptr<Expression> &exprLeft,
+                                                                const std::shared_ptr<Expression> &exprRight);
 
     /**
      * Generates either an atom or predicate
