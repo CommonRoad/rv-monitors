@@ -10,9 +10,3 @@
 #include <gtest/gtest.h>
 
 class TestFormulaGenerator : public testing::Test {};
-
-class TestFormulaGeneratorNoIntervals : public testing::Test {};
-
-class TestFormulaGeneratorOneOperator : public testing::Test {};
-
-class TestFormulaGeneratorNoOperator : public testing::Test {};

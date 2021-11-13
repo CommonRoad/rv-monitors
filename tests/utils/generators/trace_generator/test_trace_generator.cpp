@@ -8,7 +8,7 @@
 #include "monitors/expression_tree/atomic/atomic.h"
 #include "monitors/expression_tree/atomic/predicate.h"
 #include "monitors/utils/generators/trace_generator/trace_generator.h"
-TEST(TestTraceGenerator, ttg) {
+TEST(TestTraceGenerator, testGeneral) {
     TraceGenerator fg;
     TraceGenerator::rSeed();
 
@@ -29,7 +29,7 @@ TEST(TestTraceGenerator, ttg) {
     EXPECT_TRUE(true);
 }
 
-TEST(TestTraceGeneratorZeroLength, ttgzl) {
+TEST(TestTraceGenerator, testZeroLength) {
     TraceGenerator fg;
     TraceGenerator::rSeed();
 
@@ -50,7 +50,7 @@ TEST(TestTraceGeneratorZeroLength, ttgzl) {
     EXPECT_TRUE(true);
 }
 
-TEST(TestTraceGeneratorLengthOne, ttglo) {
+TEST(TestTraceGenerator, testLengthOne) {
     TraceGenerator fg;
     TraceGenerator::rSeed();
 

@@ -19,7 +19,7 @@ void print_predicates(std::vector<std::vector<std::shared_ptr<Expression>> *> &a
     }
 }
 
-TEST(TestComputationTimeGenerator, tctg) {
+TEST(TestComputationTimeGenerator, testGeneral) {
     ComputationTimeGenerator ctg;
     ComputationTimeGenerator::rSeed();
     std::vector<std::vector<std::shared_ptr<Expression>> *> allPredicates;
@@ -88,7 +88,7 @@ TEST(TestComputationTimeGenerator, tctg) {
     EXPECT_TRUE(true);
 }
 
-TEST(TestComputationTimeGeneratorLongerDelays, tctgld) {
+TEST(TestComputationTimeGenerator, testLongerDelays) {
     ComputationTimeGenerator ctg;
     ComputationTimeGenerator::rSeed();
     std::vector<std::vector<std::shared_ptr<Expression>> *> allPredicates;
@@ -154,7 +154,7 @@ TEST(TestComputationTimeGeneratorLongerDelays, tctgld) {
     EXPECT_TRUE(true);
 }
 
-TEST(TestComputationTimeGeneratorHighNumberOfPredicates, tctghnop) {
+TEST(TestComputationTimeGenerator, testHighNumberOfPredicates) {
     ComputationTimeGenerator ctg;
     ComputationTimeGenerator::rSeed();
     std::vector<std::vector<std::shared_ptr<Expression>> *> allPredicates;
@@ -220,7 +220,7 @@ TEST(TestComputationTimeGeneratorHighNumberOfPredicates, tctghnop) {
     EXPECT_TRUE(true);
 }
 
-TEST(TestComputationTimeGeneratorNoPredicates, tctgnp) {
+TEST(TestComputationTimeGenerator, testNoPredicates) {
     ComputationTimeGenerator ctg;
     ComputationTimeGenerator::rSeed();
     std::vector<std::vector<std::shared_ptr<Expression>> *> allPredicates;
@@ -286,7 +286,7 @@ TEST(TestComputationTimeGeneratorNoPredicates, tctgnp) {
     EXPECT_TRUE(true);
 }
 
-TEST(TestComputationTimeGeneratorNoExpression, tctgne) {
+TEST(TestComputationTimeGenerator, testNoExpression) {
     ComputationTimeGenerator ctg;
     ComputationTimeGenerator::rSeed();
     std::vector<std::vector<std::shared_ptr<Expression>> *> allPredicates;

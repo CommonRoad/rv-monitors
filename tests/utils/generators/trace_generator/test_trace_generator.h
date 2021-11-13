@@ -8,7 +8,3 @@
 #include <gtest/gtest.h>
 
 class TestTraceGenerator : public testing::Test {};
-
-class TestTraceGeneratorZeroLength : public testing::Test {};
-
-class TestTraceGeneratorLengthOne : public testing::Test {};

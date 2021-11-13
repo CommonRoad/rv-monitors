@@ -7,7 +7,7 @@
 #include "test_formula_generator.h"
 #include "monitors/utils/generators/formula_generator/formula_generator.h"
 
-TEST(TestFormulaGenerator, tfg) {
+TEST(TestFormulaGenerator, generalTest) {
 
     FormulaGenerator fg;
     FormulaGenerator::rSeed();
@@ -34,7 +34,7 @@ TEST(TestFormulaGenerator, tfg) {
     EXPECT_TRUE(true);
 }
 
-TEST(TestFormulaGeneratorNoIntervals, tfgni) {
+TEST(TestFormulaGenerator, testNoIntervals) {
 
     FormulaGenerator fg;
     FormulaGenerator::rSeed();
@@ -60,7 +60,7 @@ TEST(TestFormulaGeneratorNoIntervals, tfgni) {
     EXPECT_TRUE(true);
 }
 
-TEST(TestFormulaGeneratorOneOperator, tfgoo) {
+TEST(TestFormulaGenerator, testOneOperator) {
 
     FormulaGenerator fg;
     FormulaGenerator::rSeed();
@@ -79,7 +79,7 @@ TEST(TestFormulaGeneratorOneOperator, tfgoo) {
     EXPECT_TRUE(true);
 }
 
-TEST(TestFormulaGeneratorNoOperator, tfgno) {
+TEST(TestFormulaGenerator, testNoOperator) {
 
     FormulaGenerator fg;
     FormulaGenerator::rSeed();
