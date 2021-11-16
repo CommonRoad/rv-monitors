@@ -16,13 +16,13 @@
 #include "hydra_monitors/since_monitor.h"
 #include "hydra_monitors/until_monitor.h"
 #include "monitors/expression_tree/atomic/constant.h"
-#include "monitors/expression_tree/binary//temporal/ltlf/until.h"
-#include "monitors/expression_tree/binary//temporal/ptlf/since.h"
+#include "monitors/expression_tree/binary/temporal/since.h"
+#include "monitors/expression_tree/binary/temporal/until.h"
 #include "monitors/expression_tree/nary/bool/and.h"
 #include "monitors/expression_tree/nary/bool/or.h"
 #include "monitors/expression_tree/unary/bool/not.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/next_strong.h"
-#include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
+#include "monitors/expression_tree/unary/temporal/next_strong.h"
+#include "monitors/expression_tree/unary/temporal/previously.h"
 #include "monitors/formula/formula.h"
 #include <numeric>
 #include <utility>
