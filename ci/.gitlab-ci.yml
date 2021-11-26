@@ -76,8 +76,6 @@ build-test:
   artifacts:
     paths:
       - ./build/
-      - ./rvmonitors_test
-      - ./librvmonitors.so
     expire_in: 20 minutes
 
 build-run-coverage:
@@ -90,8 +88,6 @@ build-run-coverage:
   artifacts:
     paths:
       - ./build/
-      - ./rvmonitors_coverage
-      - ./librvmonitors.so
     expire_in: 20 minutes
 
 
@@ -99,7 +95,7 @@ build-run-coverage:
 test-coverage:
   stage: test
   script:
-    - ./rvmonitors_test --gtest_output="xml:report.xml"
+    - ./build/rvmonitors_test --gtest_output="xml:report.xml"
   dependencies:
     - build-test
   artifacts:
