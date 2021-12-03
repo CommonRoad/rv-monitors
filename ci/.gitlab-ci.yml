@@ -55,7 +55,7 @@ build-clang:
     - mkdir build && cd build
     - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Release ..
     - make rvmonitors -j4
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DRVMONITORS_BUILD_SHARED_LIBS -DCMAKE_BUILD_TYPE=Release ..
+    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DRVMONITORS_BUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release ..
     - make rvmonitors -j4
   needs: []
 
@@ -67,7 +67,7 @@ build-gcc:
     - mkdir build && cd build
     - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Release ..
     - make rvmonitors -j4
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DRVMONITORS_BUILD_SHARED_LIBS -DCMAKE_BUILD_TYPE=Release ..
+    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DRVMONITORS_BUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release ..
     - make rvmonitors -j4
   needs: []
 
