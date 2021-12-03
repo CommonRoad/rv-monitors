@@ -83,7 +83,11 @@ set(RV_MONITOR_SRC_FILES
 
 
 # create library of this project
-add_library(${LIBRARY_NAME} SHARED ${RV_MONITOR_SRC_FILES})
+if(RVMONITORS_BUILD_SHARED_LIBS)
+    add_library(${LIBRARY_NAME} SHARED ${RV_MONITOR_SRC_FILES})
+else()
+    add_library(${LIBRARY_NAME} STATIC ${RV_MONITOR_SRC_FILES})
+endif()
 
 target_compile_features(${LIBRARY_NAME}
         PUBLIC cxx_lambdas cxx_auto_type
