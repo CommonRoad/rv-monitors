@@ -35,11 +35,6 @@ set(ANTLR4CPP_JAR_LOCATION ${CMAKE_SOURCE_DIR}/libs/antlr.jar)
 # get antlr4 as external project
 include(monitors_antlr4cpp)
 
-# Activate code coverage
-if (RVMONITORS_BUILD_CODE_COVERAGE)
-    option(CodeCoverage "CodeCoverage" ON)
-endif()
-
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
