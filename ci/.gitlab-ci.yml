@@ -82,7 +82,7 @@ build-run-coverage:
   stage: compile
   script:
     - mkdir build && cd build
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCODE_COVERAGE=ON -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_BUILD_TYPE=Debug ..
+    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -RVMONITORS_BUILD_CODE_COVERAGE=ON -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_BUILD_TYPE=Debug ..
     - make rvmonitors_coverage -j4
   needs: []
   artifacts:
@@ -151,7 +151,7 @@ docs:
   stage: docs
   script:
     - mkdir -p build && cd build
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Debug -DBUILD_DOXYGEN=ON  ..
+    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Debug -DRVMONITORS_BUILD_DOXYGEN=ON  ..
     - make doc_doxygen ..
   dependencies: []
   artifacts:
