@@ -31,7 +31,7 @@ set(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
 
 set(ANTLR4CPP_JAR_LOCATION ${CMAKE_SOURCE_DIR}/libs/antlr.jar)
 
-include(monitors_sanitizers)
+#include(monitors_sanitizers)
 
 # get antlr4 as external project
 include(monitors_antlr4cpp)
