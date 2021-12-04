@@ -103,7 +103,7 @@ target_include_directories(${LIBRARY_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
-target_link_libraries(${LIBRARY_NAME}
+target_link_libraries(${LIBRARY_NAME} PRIVATE
         antlr4cpp
         )
 
