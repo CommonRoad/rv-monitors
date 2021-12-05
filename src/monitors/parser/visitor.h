@@ -498,9 +498,9 @@ class Visitor : public FormulaBaseVisitor {
      */
     antlrcpp::Any visitFiniteInterval(FormulaParser::FiniteIntervalContext *ctx) override {
         bool finite{false};
-        if ((int)visit(ctx->u) > 0)
+        if (visit(ctx->u).as<int>() > 0)
             finite = true;
-        return std::make_shared<Interval>(Interval(visit(ctx->l), visit(ctx->u), finite));
+        return std::make_shared<Interval>(Interval(visit(ctx->l).as<int>(), visit(ctx->u).as<int>(), finite));
     }
 
     /**

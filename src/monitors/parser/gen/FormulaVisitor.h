@@ -1,20 +1,24 @@
 
-// Generated from Formula.g4 by ANTLR 4.7.2
+// Generated from Formula.g4 by ANTLR 4.9.3
 
 #pragma once
 
-#include "FormulaParser.h"
+
 #include "antlr4-runtime.h"
+#include "FormulaParser.h"
+
+
 
 /**
  * This class defines an abstract visitor for a parse tree
  * produced by FormulaParser.
  */
-class FormulaVisitor : public antlr4::tree::AbstractParseTreeVisitor {
-  public:
-    /**
-     * Visit parse trees produced by FormulaParser.
-     */
+class  FormulaVisitor : public antlr4::tree::AbstractParseTreeVisitor {
+public:
+
+  /**
+   * Visit parse trees produced by FormulaParser.
+   */
     virtual antlrcpp::Any visitFormula(FormulaParser::FormulaContext *context) = 0;
 
     virtual antlrcpp::Any visitEquivalence(FormulaParser::EquivalenceContext *context) = 0;
@@ -90,4 +94,7 @@ class FormulaVisitor : public antlr4::tree::AbstractParseTreeVisitor {
     virtual antlrcpp::Any visitBrackets(FormulaParser::BracketsContext *context) = 0;
 
     virtual antlrcpp::Any visitDigit(FormulaParser::DigitContext *context) = 0;
+
+
 };
+

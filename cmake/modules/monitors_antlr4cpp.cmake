@@ -5,8 +5,8 @@ include(ExternalProject)
 ExternalProject_ADD(
         antlr4cpp_bundled
         PREFIX      antlr4cppPrefix
-        URL ${PROJECT_SOURCE_DIR}/libs/antlr4/antlr4-cpp-runtime-4.8-source.zip
-        URL_HASH    MD5=7a0d422e522e90be8d1615d17aa2c114
+        URL ${PROJECT_SOURCE_DIR}/libs/antlr4/antlr4-cpp-runtime-4.9.3-source.zip
+        URL_HASH    MD5=eafa4fef583e12e963062882773461be
         BUILD_BYPRODUCTS ${CMAKE_BINARY_DIR}/antlr4cppPrefix/install/lib/libantlr4-runtime.so
         CMAKE_ARGS  -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/antlr4cppPrefix/install -DCMAKE_CXX_FLAGS=-w
 )
