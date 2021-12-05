@@ -267,7 +267,7 @@ template <class T, class F>
  * @param arr Iterable container.
  * @return String representation of arr.
  */
-template <class T>[[nodiscard]] std::string iterableToString(const T &arr) {
+template <class T> [[nodiscard]] std::string iterableToString(const T &arr) {
     return iterableToString(arr, [](const auto &x) { return x; });
 }
 

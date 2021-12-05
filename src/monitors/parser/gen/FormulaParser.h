@@ -3,681 +3,686 @@
 
 #pragma once
 
-
 #include "antlr4-runtime.h"
 
-
-
-
-class  FormulaParser : public antlr4::Parser {
-public:
-  enum {
-    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, BOOL = 7, 
-    NOT = 8, GLOBALLY = 9, FUTURE = 10, NEXT_WEAK = 11, NEXT_STRONG = 12, 
-    UNTIL = 13, RELEASE = 14, ONCE = 15, PREVIOUSLY = 16, SINCE = 17, HISTORICALLY = 18, 
-    AND = 19, OR = 20, XOR = 21, IMPL = 22, EQ = 23, TRUE = 24, FALSE = 25, 
-    ATOMIC = 26, PREDICATE = 27, WS = 28, DIGIT = 29
-  };
-
-  enum {
-    RuleFormula = 0, RuleExpr = 1, RuleXor_expr = 2, RuleOr_expr = 3, RuleAnd_expr = 4, 
-    RuleRelease_until_expr = 5, RuleUnary = 6, RuleInterval = 7, RuleAtom = 8, 
-    RuleNumber = 9
-  };
-
-  explicit FormulaParser(antlr4::TokenStream *input);
-  ~FormulaParser();
-
-  virtual std::string getGrammarFileName() const override;
-  virtual const antlr4::atn::ATN& getATN() const override { return _atn; };
-  virtual const std::vector<std::string>& getTokenNames() const override { return _tokenNames; }; // deprecated: use vocabulary instead.
-  virtual const std::vector<std::string>& getRuleNames() const override;
-  virtual antlr4::dfa::Vocabulary& getVocabulary() const override;
-
-
-  class FormulaContext;
-  class ExprContext;
-  class Xor_exprContext;
-  class Or_exprContext;
-  class And_exprContext;
-  class Release_until_exprContext;
-  class UnaryContext;
-  class IntervalContext;
-  class AtomContext;
-  class NumberContext; 
-
-  class  FormulaContext : public antlr4::ParserRuleContext {
+class FormulaParser : public antlr4::Parser {
   public:
-    FormulaContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
+    enum {
+        T__0 = 1,
+        T__1 = 2,
+        T__2 = 3,
+        T__3 = 4,
+        T__4 = 5,
+        T__5 = 6,
+        BOOL = 7,
+        NOT = 8,
+        GLOBALLY = 9,
+        FUTURE = 10,
+        NEXT_WEAK = 11,
+        NEXT_STRONG = 12,
+        UNTIL = 13,
+        RELEASE = 14,
+        ONCE = 15,
+        PREVIOUSLY = 16,
+        SINCE = 17,
+        HISTORICALLY = 18,
+        AND = 19,
+        OR = 20,
+        XOR = 21,
+        IMPL = 22,
+        EQ = 23,
+        TRUE = 24,
+        FALSE = 25,
+        ATOMIC = 26,
+        PREDICATE = 27,
+        WS = 28,
+        DIGIT = 29
+    };
+
+    enum {
+        RuleFormula = 0,
+        RuleExpr = 1,
+        RuleXor_expr = 2,
+        RuleOr_expr = 3,
+        RuleAnd_expr = 4,
+        RuleRelease_until_expr = 5,
+        RuleUnary = 6,
+        RuleInterval = 7,
+        RuleAtom = 8,
+        RuleNumber = 9
+    };
+
+    explicit FormulaParser(antlr4::TokenStream *input);
+    ~FormulaParser();
+
+    virtual std::string getGrammarFileName() const override;
+    virtual const antlr4::atn::ATN &getATN() const override { return _atn; };
+    virtual const std::vector<std::string> &getTokenNames() const override {
+        return _tokenNames;
+    }; // deprecated: use vocabulary instead.
+    virtual const std::vector<std::string> &getRuleNames() const override;
+    virtual antlr4::dfa::Vocabulary &getVocabulary() const override;
+
+    class FormulaContext;
+    class ExprContext;
+    class Xor_exprContext;
+    class Or_exprContext;
+    class And_exprContext;
+    class Release_until_exprContext;
+    class UnaryContext;
+    class IntervalContext;
+    class AtomContext;
+    class NumberContext;
+
+    class FormulaContext : public antlr4::ParserRuleContext {
+      public:
+        FormulaContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+        virtual size_t getRuleIndex() const override;
+        ExprContext *expr();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    FormulaContext *formula();
+
+    class ExprContext : public antlr4::ParserRuleContext {
+      public:
+        ExprContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+
+        ExprContext() = default;
+        void copyFrom(ExprContext *context);
+        using antlr4::ParserRuleContext::copyFrom;
+
+        virtual size_t getRuleIndex() const override;
+    };
+
+    class EquivalenceContext : public ExprContext {
+      public:
+        EquivalenceContext(ExprContext *ctx);
+
+        FormulaParser::ExprContext *left = nullptr;
+        antlr4::Token *op = nullptr;
+        FormulaParser::ExprContext *right = nullptr;
+        std::vector<ExprContext *> expr();
+        ExprContext *expr(size_t i);
+        antlr4::tree::TerminalNode *EQ();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    class XorExprContext : public ExprContext {
+      public:
+        XorExprContext(ExprContext *ctx);
+
+        Xor_exprContext *xor_expr();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    class ImplicationContext : public ExprContext {
+      public:
+        ImplicationContext(ExprContext *ctx);
+
+        FormulaParser::ExprContext *left = nullptr;
+        antlr4::Token *op = nullptr;
+        FormulaParser::ExprContext *right = nullptr;
+        std::vector<ExprContext *> expr();
+        ExprContext *expr(size_t i);
+        antlr4::tree::TerminalNode *IMPL();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
     ExprContext *expr();
+    ExprContext *expr(int precedence);
+    class Xor_exprContext : public antlr4::ParserRuleContext {
+      public:
+        Xor_exprContext(antlr4::ParserRuleContext *parent, size_t invokingState);
 
+        Xor_exprContext() = default;
+        void copyFrom(Xor_exprContext *context);
+        using antlr4::ParserRuleContext::copyFrom;
 
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
+        virtual size_t getRuleIndex() const override;
+    };
 
-  FormulaContext* formula();
+    class XorContext : public Xor_exprContext {
+      public:
+        XorContext(Xor_exprContext *ctx);
 
-  class  ExprContext : public antlr4::ParserRuleContext {
-  public:
-    ExprContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    ExprContext() = default;
-    void copyFrom(ExprContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
+        antlr4::Token *op = nullptr;
+        std::vector<Or_exprContext *> or_expr();
+        Or_exprContext *or_expr(size_t i);
+        std::vector<antlr4::tree::TerminalNode *> XOR();
+        antlr4::tree::TerminalNode *XOR(size_t i);
 
-    virtual size_t getRuleIndex() const override;
-
-   
-  };
-
-  class  EquivalenceContext : public ExprContext {
-  public:
-    EquivalenceContext(ExprContext *ctx);
-
-    FormulaParser::ExprContext *left = nullptr;
-    antlr4::Token *op = nullptr;
-    FormulaParser::ExprContext *right = nullptr;
-    std::vector<ExprContext *> expr();
-    ExprContext* expr(size_t i);
-    antlr4::tree::TerminalNode *EQ();
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  XorExprContext : public ExprContext {
-  public:
-    XorExprContext(ExprContext *ctx);
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
 
     Xor_exprContext *xor_expr();
 
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
+    class Or_exprContext : public antlr4::ParserRuleContext {
+      public:
+        Or_exprContext(antlr4::ParserRuleContext *parent, size_t invokingState);
 
-  class  ImplicationContext : public ExprContext {
-  public:
-    ImplicationContext(ExprContext *ctx);
+        Or_exprContext() = default;
+        void copyFrom(Or_exprContext *context);
+        using antlr4::ParserRuleContext::copyFrom;
 
-    FormulaParser::ExprContext *left = nullptr;
-    antlr4::Token *op = nullptr;
-    FormulaParser::ExprContext *right = nullptr;
-    std::vector<ExprContext *> expr();
-    ExprContext* expr(size_t i);
-    antlr4::tree::TerminalNode *IMPL();
+        virtual size_t getRuleIndex() const override;
+    };
 
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
+    class OrContext : public Or_exprContext {
+      public:
+        OrContext(Or_exprContext *ctx);
 
-  ExprContext* expr();
-  ExprContext* expr(int precedence);
-  class  Xor_exprContext : public antlr4::ParserRuleContext {
-  public:
-    Xor_exprContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    Xor_exprContext() = default;
-    void copyFrom(Xor_exprContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
+        antlr4::Token *op = nullptr;
+        std::vector<And_exprContext *> and_expr();
+        And_exprContext *and_expr(size_t i);
+        std::vector<antlr4::tree::TerminalNode *> OR();
+        antlr4::tree::TerminalNode *OR(size_t i);
 
-    virtual size_t getRuleIndex() const override;
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
 
-   
-  };
+    Or_exprContext *or_expr();
 
-  class  XorContext : public Xor_exprContext {
-  public:
-    XorContext(Xor_exprContext *ctx);
+    class And_exprContext : public antlr4::ParserRuleContext {
+      public:
+        And_exprContext(antlr4::ParserRuleContext *parent, size_t invokingState);
 
-    antlr4::Token *op = nullptr;
-    std::vector<Or_exprContext *> or_expr();
-    Or_exprContext* or_expr(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> XOR();
-    antlr4::tree::TerminalNode* XOR(size_t i);
+        And_exprContext() = default;
+        void copyFrom(And_exprContext *context);
+        using antlr4::ParserRuleContext::copyFrom;
 
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
+        virtual size_t getRuleIndex() const override;
+    };
 
-  Xor_exprContext* xor_expr();
+    class AndContext : public And_exprContext {
+      public:
+        AndContext(And_exprContext *ctx);
 
-  class  Or_exprContext : public antlr4::ParserRuleContext {
-  public:
-    Or_exprContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    Or_exprContext() = default;
-    void copyFrom(Or_exprContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
+        antlr4::Token *op = nullptr;
+        std::vector<Release_until_exprContext *> release_until_expr();
+        Release_until_exprContext *release_until_expr(size_t i);
+        std::vector<antlr4::tree::TerminalNode *> AND();
+        antlr4::tree::TerminalNode *AND(size_t i);
 
-    virtual size_t getRuleIndex() const override;
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
 
-   
-  };
+    And_exprContext *and_expr();
 
-  class  OrContext : public Or_exprContext {
-  public:
-    OrContext(Or_exprContext *ctx);
+    class Release_until_exprContext : public antlr4::ParserRuleContext {
+      public:
+        Release_until_exprContext(antlr4::ParserRuleContext *parent, size_t invokingState);
 
-    antlr4::Token *op = nullptr;
-    std::vector<And_exprContext *> and_expr();
-    And_exprContext* and_expr(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> OR();
-    antlr4::tree::TerminalNode* OR(size_t i);
+        Release_until_exprContext() = default;
+        void copyFrom(Release_until_exprContext *context);
+        using antlr4::ParserRuleContext::copyFrom;
 
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
+        virtual size_t getRuleIndex() const override;
+    };
 
-  Or_exprContext* or_expr();
+    class SinceIntervalContext : public Release_until_exprContext {
+      public:
+        SinceIntervalContext(Release_until_exprContext *ctx);
 
-  class  And_exprContext : public antlr4::ParserRuleContext {
-  public:
-    And_exprContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    And_exprContext() = default;
-    void copyFrom(And_exprContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
+        FormulaParser::UnaryContext *left = nullptr;
+        antlr4::Token *op = nullptr;
+        FormulaParser::IntervalContext *iv = nullptr;
+        FormulaParser::UnaryContext *right = nullptr;
+        std::vector<UnaryContext *> unary();
+        UnaryContext *unary(size_t i);
+        antlr4::tree::TerminalNode *SINCE();
+        IntervalContext *interval();
 
-    virtual size_t getRuleIndex() const override;
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
 
-   
-  };
+    class ReleaseIntervalContext : public Release_until_exprContext {
+      public:
+        ReleaseIntervalContext(Release_until_exprContext *ctx);
 
-  class  AndContext : public And_exprContext {
-  public:
-    AndContext(And_exprContext *ctx);
+        FormulaParser::UnaryContext *left = nullptr;
+        antlr4::Token *op = nullptr;
+        FormulaParser::IntervalContext *iv = nullptr;
+        FormulaParser::UnaryContext *right = nullptr;
+        std::vector<UnaryContext *> unary();
+        UnaryContext *unary(size_t i);
+        antlr4::tree::TerminalNode *RELEASE();
+        IntervalContext *interval();
 
-    antlr4::Token *op = nullptr;
-    std::vector<Release_until_exprContext *> release_until_expr();
-    Release_until_exprContext* release_until_expr(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> AND();
-    antlr4::tree::TerminalNode* AND(size_t i);
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
 
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
+    class SinceContext : public Release_until_exprContext {
+      public:
+        SinceContext(Release_until_exprContext *ctx);
 
-  And_exprContext* and_expr();
+        FormulaParser::UnaryContext *left = nullptr;
+        antlr4::Token *op = nullptr;
+        FormulaParser::UnaryContext *right = nullptr;
+        std::vector<UnaryContext *> unary();
+        UnaryContext *unary(size_t i);
+        antlr4::tree::TerminalNode *SINCE();
 
-  class  Release_until_exprContext : public antlr4::ParserRuleContext {
-  public:
-    Release_until_exprContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    Release_until_exprContext() = default;
-    void copyFrom(Release_until_exprContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
 
-    virtual size_t getRuleIndex() const override;
+    class UntilIntervalContext : public Release_until_exprContext {
+      public:
+        UntilIntervalContext(Release_until_exprContext *ctx);
 
-   
-  };
+        FormulaParser::UnaryContext *left = nullptr;
+        antlr4::Token *op = nullptr;
+        FormulaParser::IntervalContext *iv = nullptr;
+        FormulaParser::UnaryContext *right = nullptr;
+        std::vector<UnaryContext *> unary();
+        UnaryContext *unary(size_t i);
+        antlr4::tree::TerminalNode *UNTIL();
+        IntervalContext *interval();
 
-  class  SinceIntervalContext : public Release_until_exprContext {
-  public:
-    SinceIntervalContext(Release_until_exprContext *ctx);
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
 
-    FormulaParser::UnaryContext *left = nullptr;
-    antlr4::Token *op = nullptr;
-    FormulaParser::IntervalContext *iv = nullptr;
-    FormulaParser::UnaryContext *right = nullptr;
-    std::vector<UnaryContext *> unary();
-    UnaryContext* unary(size_t i);
-    antlr4::tree::TerminalNode *SINCE();
-    IntervalContext *interval();
+    class UnaryExprContext : public Release_until_exprContext {
+      public:
+        UnaryExprContext(Release_until_exprContext *ctx);
 
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
+        UnaryContext *unary();
 
-  class  ReleaseIntervalContext : public Release_until_exprContext {
-  public:
-    ReleaseIntervalContext(Release_until_exprContext *ctx);
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
 
-    FormulaParser::UnaryContext *left = nullptr;
-    antlr4::Token *op = nullptr;
-    FormulaParser::IntervalContext *iv = nullptr;
-    FormulaParser::UnaryContext *right = nullptr;
-    std::vector<UnaryContext *> unary();
-    UnaryContext* unary(size_t i);
-    antlr4::tree::TerminalNode *RELEASE();
-    IntervalContext *interval();
+    class ReleaseContext : public Release_until_exprContext {
+      public:
+        ReleaseContext(Release_until_exprContext *ctx);
 
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
+        FormulaParser::UnaryContext *left = nullptr;
+        antlr4::Token *op = nullptr;
+        FormulaParser::UnaryContext *right = nullptr;
+        std::vector<UnaryContext *> unary();
+        UnaryContext *unary(size_t i);
+        antlr4::tree::TerminalNode *RELEASE();
 
-  class  SinceContext : public Release_until_exprContext {
-  public:
-    SinceContext(Release_until_exprContext *ctx);
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
 
-    FormulaParser::UnaryContext *left = nullptr;
-    antlr4::Token *op = nullptr;
-    FormulaParser::UnaryContext *right = nullptr;
-    std::vector<UnaryContext *> unary();
-    UnaryContext* unary(size_t i);
-    antlr4::tree::TerminalNode *SINCE();
+    class UntilContext : public Release_until_exprContext {
+      public:
+        UntilContext(Release_until_exprContext *ctx);
 
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
+        FormulaParser::UnaryContext *left = nullptr;
+        antlr4::Token *op = nullptr;
+        FormulaParser::UnaryContext *right = nullptr;
+        std::vector<UnaryContext *> unary();
+        UnaryContext *unary(size_t i);
+        antlr4::tree::TerminalNode *UNTIL();
 
-  class  UntilIntervalContext : public Release_until_exprContext {
-  public:
-    UntilIntervalContext(Release_until_exprContext *ctx);
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
 
-    FormulaParser::UnaryContext *left = nullptr;
-    antlr4::Token *op = nullptr;
-    FormulaParser::IntervalContext *iv = nullptr;
-    FormulaParser::UnaryContext *right = nullptr;
-    std::vector<UnaryContext *> unary();
-    UnaryContext* unary(size_t i);
-    antlr4::tree::TerminalNode *UNTIL();
-    IntervalContext *interval();
+    Release_until_exprContext *release_until_expr();
 
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
+    class UnaryContext : public antlr4::ParserRuleContext {
+      public:
+        UnaryContext(antlr4::ParserRuleContext *parent, size_t invokingState);
 
-  class  UnaryExprContext : public Release_until_exprContext {
-  public:
-    UnaryExprContext(Release_until_exprContext *ctx);
+        UnaryContext() = default;
+        void copyFrom(UnaryContext *context);
+        using antlr4::ParserRuleContext::copyFrom;
+
+        virtual size_t getRuleIndex() const override;
+    };
+
+    class GloballyContext : public UnaryContext {
+      public:
+        GloballyContext(UnaryContext *ctx);
+
+        antlr4::Token *op = nullptr;
+        FormulaParser::AtomContext *right = nullptr;
+        antlr4::tree::TerminalNode *GLOBALLY();
+        AtomContext *atom();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    class OnceContext : public UnaryContext {
+      public:
+        OnceContext(UnaryContext *ctx);
+
+        antlr4::Token *op = nullptr;
+        FormulaParser::AtomContext *right = nullptr;
+        antlr4::tree::TerminalNode *ONCE();
+        AtomContext *atom();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    class GloballyIntervalContext : public UnaryContext {
+      public:
+        GloballyIntervalContext(UnaryContext *ctx);
+
+        antlr4::Token *op = nullptr;
+        FormulaParser::IntervalContext *iv = nullptr;
+        FormulaParser::AtomContext *right = nullptr;
+        antlr4::tree::TerminalNode *GLOBALLY();
+        IntervalContext *interval();
+        AtomContext *atom();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    class PreviouslyIntervalContext : public UnaryContext {
+      public:
+        PreviouslyIntervalContext(UnaryContext *ctx);
+
+        antlr4::Token *op = nullptr;
+        FormulaParser::IntervalContext *iv = nullptr;
+        FormulaParser::AtomContext *right = nullptr;
+        antlr4::tree::TerminalNode *PREVIOUSLY();
+        IntervalContext *interval();
+        AtomContext *atom();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    class HistoricallyIntervalContext : public UnaryContext {
+      public:
+        HistoricallyIntervalContext(UnaryContext *ctx);
+
+        antlr4::Token *op = nullptr;
+        FormulaParser::IntervalContext *iv = nullptr;
+        FormulaParser::AtomContext *right = nullptr;
+        antlr4::tree::TerminalNode *HISTORICALLY();
+        IntervalContext *interval();
+        AtomContext *atom();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    class PreviouslyContext : public UnaryContext {
+      public:
+        PreviouslyContext(UnaryContext *ctx);
+
+        antlr4::Token *op = nullptr;
+        FormulaParser::AtomContext *right = nullptr;
+        antlr4::tree::TerminalNode *PREVIOUSLY();
+        AtomContext *atom();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    class NextWeakContext : public UnaryContext {
+      public:
+        NextWeakContext(UnaryContext *ctx);
+
+        antlr4::Token *op = nullptr;
+        FormulaParser::AtomContext *right = nullptr;
+        antlr4::tree::TerminalNode *NEXT_WEAK();
+        AtomContext *atom();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    class NextWeakIntervalContext : public UnaryContext {
+      public:
+        NextWeakIntervalContext(UnaryContext *ctx);
+
+        antlr4::Token *op = nullptr;
+        FormulaParser::IntervalContext *iv = nullptr;
+        FormulaParser::AtomContext *right = nullptr;
+        antlr4::tree::TerminalNode *NEXT_WEAK();
+        IntervalContext *interval();
+        AtomContext *atom();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    class AtomExprContext : public UnaryContext {
+      public:
+        AtomExprContext(UnaryContext *ctx);
+
+        AtomContext *atom();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    class HistoricallyContext : public UnaryContext {
+      public:
+        HistoricallyContext(UnaryContext *ctx);
+
+        antlr4::Token *op = nullptr;
+        FormulaParser::AtomContext *right = nullptr;
+        antlr4::tree::TerminalNode *HISTORICALLY();
+        AtomContext *atom();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    class NextStrongIntervalContext : public UnaryContext {
+      public:
+        NextStrongIntervalContext(UnaryContext *ctx);
+
+        antlr4::Token *op = nullptr;
+        FormulaParser::IntervalContext *iv = nullptr;
+        FormulaParser::AtomContext *right = nullptr;
+        antlr4::tree::TerminalNode *NEXT_STRONG();
+        IntervalContext *interval();
+        AtomContext *atom();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    class PredicateContext : public UnaryContext {
+      public:
+        PredicateContext(UnaryContext *ctx);
+
+        antlr4::Token *op = nullptr;
+        antlr4::Token *right = nullptr;
+        antlr4::tree::TerminalNode *PREDICATE();
+        std::vector<antlr4::tree::TerminalNode *> ATOMIC();
+        antlr4::tree::TerminalNode *ATOMIC(size_t i);
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    class NextStrongContext : public UnaryContext {
+      public:
+        NextStrongContext(UnaryContext *ctx);
+
+        antlr4::Token *op = nullptr;
+        FormulaParser::AtomContext *right = nullptr;
+        antlr4::tree::TerminalNode *NEXT_STRONG();
+        AtomContext *atom();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    class OnceIntervalContext : public UnaryContext {
+      public:
+        OnceIntervalContext(UnaryContext *ctx);
+
+        antlr4::Token *op = nullptr;
+        FormulaParser::IntervalContext *iv = nullptr;
+        FormulaParser::AtomContext *right = nullptr;
+        antlr4::tree::TerminalNode *ONCE();
+        IntervalContext *interval();
+        AtomContext *atom();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    class FutureIntervalContext : public UnaryContext {
+      public:
+        FutureIntervalContext(UnaryContext *ctx);
+
+        antlr4::Token *op = nullptr;
+        FormulaParser::IntervalContext *iv = nullptr;
+        FormulaParser::AtomContext *right = nullptr;
+        antlr4::tree::TerminalNode *FUTURE();
+        IntervalContext *interval();
+        AtomContext *atom();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    class NotContext : public UnaryContext {
+      public:
+        NotContext(UnaryContext *ctx);
+
+        antlr4::Token *op = nullptr;
+        FormulaParser::AtomContext *right = nullptr;
+        antlr4::tree::TerminalNode *NOT();
+        AtomContext *atom();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    class FutureContext : public UnaryContext {
+      public:
+        FutureContext(UnaryContext *ctx);
+
+        antlr4::Token *op = nullptr;
+        FormulaParser::AtomContext *right = nullptr;
+        antlr4::tree::TerminalNode *FUTURE();
+        AtomContext *atom();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    class NotExprContext : public UnaryContext {
+      public:
+        NotExprContext(UnaryContext *ctx);
+
+        antlr4::Token *op = nullptr;
+        FormulaParser::ExprContext *right = nullptr;
+        antlr4::tree::TerminalNode *NOT();
+        ExprContext *expr();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
 
     UnaryContext *unary();
 
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
+    class IntervalContext : public antlr4::ParserRuleContext {
+      public:
+        IntervalContext(antlr4::ParserRuleContext *parent, size_t invokingState);
 
-  class  ReleaseContext : public Release_until_exprContext {
-  public:
-    ReleaseContext(Release_until_exprContext *ctx);
+        IntervalContext() = default;
+        void copyFrom(IntervalContext *context);
+        using antlr4::ParserRuleContext::copyFrom;
 
-    FormulaParser::UnaryContext *left = nullptr;
-    antlr4::Token *op = nullptr;
-    FormulaParser::UnaryContext *right = nullptr;
-    std::vector<UnaryContext *> unary();
-    UnaryContext* unary(size_t i);
-    antlr4::tree::TerminalNode *RELEASE();
+        virtual size_t getRuleIndex() const override;
+    };
 
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
+    class FiniteIntervalContext : public IntervalContext {
+      public:
+        FiniteIntervalContext(IntervalContext *ctx);
 
-  class  UntilContext : public Release_until_exprContext {
-  public:
-    UntilContext(Release_until_exprContext *ctx);
+        FormulaParser::NumberContext *l = nullptr;
+        FormulaParser::NumberContext *u = nullptr;
+        std::vector<NumberContext *> number();
+        NumberContext *number(size_t i);
 
-    FormulaParser::UnaryContext *left = nullptr;
-    antlr4::Token *op = nullptr;
-    FormulaParser::UnaryContext *right = nullptr;
-    std::vector<UnaryContext *> unary();
-    UnaryContext* unary(size_t i);
-    antlr4::tree::TerminalNode *UNTIL();
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
 
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
+    class InfiniteIntervalContext : public IntervalContext {
+      public:
+        InfiniteIntervalContext(IntervalContext *ctx);
 
-  Release_until_exprContext* release_until_expr();
+        FormulaParser::NumberContext *l = nullptr;
+        antlr4::Token *u = nullptr;
+        NumberContext *number();
 
-  class  UnaryContext : public antlr4::ParserRuleContext {
-  public:
-    UnaryContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    UnaryContext() = default;
-    void copyFrom(UnaryContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
 
-    virtual size_t getRuleIndex() const override;
-
-   
-  };
-
-  class  GloballyContext : public UnaryContext {
-  public:
-    GloballyContext(UnaryContext *ctx);
-
-    antlr4::Token *op = nullptr;
-    FormulaParser::AtomContext *right = nullptr;
-    antlr4::tree::TerminalNode *GLOBALLY();
-    AtomContext *atom();
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  OnceContext : public UnaryContext {
-  public:
-    OnceContext(UnaryContext *ctx);
-
-    antlr4::Token *op = nullptr;
-    FormulaParser::AtomContext *right = nullptr;
-    antlr4::tree::TerminalNode *ONCE();
-    AtomContext *atom();
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  GloballyIntervalContext : public UnaryContext {
-  public:
-    GloballyIntervalContext(UnaryContext *ctx);
-
-    antlr4::Token *op = nullptr;
-    FormulaParser::IntervalContext *iv = nullptr;
-    FormulaParser::AtomContext *right = nullptr;
-    antlr4::tree::TerminalNode *GLOBALLY();
     IntervalContext *interval();
-    AtomContext *atom();
 
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
+    class AtomContext : public antlr4::ParserRuleContext {
+      public:
+        AtomContext(antlr4::ParserRuleContext *parent, size_t invokingState);
 
-  class  PreviouslyIntervalContext : public UnaryContext {
-  public:
-    PreviouslyIntervalContext(UnaryContext *ctx);
+        AtomContext() = default;
+        void copyFrom(AtomContext *context);
+        using antlr4::ParserRuleContext::copyFrom;
 
-    antlr4::Token *op = nullptr;
-    FormulaParser::IntervalContext *iv = nullptr;
-    FormulaParser::AtomContext *right = nullptr;
-    antlr4::tree::TerminalNode *PREVIOUSLY();
-    IntervalContext *interval();
-    AtomContext *atom();
+        virtual size_t getRuleIndex() const override;
+    };
 
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
+    class BracketsContext : public AtomContext {
+      public:
+        BracketsContext(AtomContext *ctx);
 
-  class  HistoricallyIntervalContext : public UnaryContext {
-  public:
-    HistoricallyIntervalContext(UnaryContext *ctx);
+        FormulaParser::ExprContext *content = nullptr;
+        std::vector<ExprContext *> expr();
+        ExprContext *expr(size_t i);
 
-    antlr4::Token *op = nullptr;
-    FormulaParser::IntervalContext *iv = nullptr;
-    FormulaParser::AtomContext *right = nullptr;
-    antlr4::tree::TerminalNode *HISTORICALLY();
-    IntervalContext *interval();
-    AtomContext *atom();
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
 
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
+    class AtomicContext : public AtomContext {
+      public:
+        AtomicContext(AtomContext *ctx);
 
-  class  PreviouslyContext : public UnaryContext {
-  public:
-    PreviouslyContext(UnaryContext *ctx);
+        antlr4::tree::TerminalNode *ATOMIC();
 
-    antlr4::Token *op = nullptr;
-    FormulaParser::AtomContext *right = nullptr;
-    antlr4::tree::TerminalNode *PREVIOUSLY();
-    AtomContext *atom();
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
 
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
+    class BooleanContext : public AtomContext {
+      public:
+        BooleanContext(AtomContext *ctx);
 
-  class  NextWeakContext : public UnaryContext {
-  public:
-    NextWeakContext(UnaryContext *ctx);
+        antlr4::tree::TerminalNode *BOOL();
 
-    antlr4::Token *op = nullptr;
-    FormulaParser::AtomContext *right = nullptr;
-    antlr4::tree::TerminalNode *NEXT_WEAK();
-    AtomContext *atom();
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  NextWeakIntervalContext : public UnaryContext {
-  public:
-    NextWeakIntervalContext(UnaryContext *ctx);
-
-    antlr4::Token *op = nullptr;
-    FormulaParser::IntervalContext *iv = nullptr;
-    FormulaParser::AtomContext *right = nullptr;
-    antlr4::tree::TerminalNode *NEXT_WEAK();
-    IntervalContext *interval();
-    AtomContext *atom();
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  AtomExprContext : public UnaryContext {
-  public:
-    AtomExprContext(UnaryContext *ctx);
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
 
     AtomContext *atom();
 
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
+    class NumberContext : public antlr4::ParserRuleContext {
+      public:
+        NumberContext(antlr4::ParserRuleContext *parent, size_t invokingState);
 
-  class  HistoricallyContext : public UnaryContext {
-  public:
-    HistoricallyContext(UnaryContext *ctx);
+        NumberContext() = default;
+        void copyFrom(NumberContext *context);
+        using antlr4::ParserRuleContext::copyFrom;
 
-    antlr4::Token *op = nullptr;
-    FormulaParser::AtomContext *right = nullptr;
-    antlr4::tree::TerminalNode *HISTORICALLY();
-    AtomContext *atom();
+        virtual size_t getRuleIndex() const override;
+    };
 
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
+    class DigitContext : public NumberContext {
+      public:
+        DigitContext(NumberContext *ctx);
 
-  class  NextStrongIntervalContext : public UnaryContext {
-  public:
-    NextStrongIntervalContext(UnaryContext *ctx);
+        antlr4::tree::TerminalNode *DIGIT();
 
-    antlr4::Token *op = nullptr;
-    FormulaParser::IntervalContext *iv = nullptr;
-    FormulaParser::AtomContext *right = nullptr;
-    antlr4::tree::TerminalNode *NEXT_STRONG();
-    IntervalContext *interval();
-    AtomContext *atom();
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
 
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  PredicateContext : public UnaryContext {
-  public:
-    PredicateContext(UnaryContext *ctx);
-
-    antlr4::Token *op = nullptr;
-    antlr4::Token *right = nullptr;
-    antlr4::tree::TerminalNode *PREDICATE();
-    std::vector<antlr4::tree::TerminalNode *> ATOMIC();
-    antlr4::tree::TerminalNode* ATOMIC(size_t i);
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  NextStrongContext : public UnaryContext {
-  public:
-    NextStrongContext(UnaryContext *ctx);
-
-    antlr4::Token *op = nullptr;
-    FormulaParser::AtomContext *right = nullptr;
-    antlr4::tree::TerminalNode *NEXT_STRONG();
-    AtomContext *atom();
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  OnceIntervalContext : public UnaryContext {
-  public:
-    OnceIntervalContext(UnaryContext *ctx);
-
-    antlr4::Token *op = nullptr;
-    FormulaParser::IntervalContext *iv = nullptr;
-    FormulaParser::AtomContext *right = nullptr;
-    antlr4::tree::TerminalNode *ONCE();
-    IntervalContext *interval();
-    AtomContext *atom();
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  FutureIntervalContext : public UnaryContext {
-  public:
-    FutureIntervalContext(UnaryContext *ctx);
-
-    antlr4::Token *op = nullptr;
-    FormulaParser::IntervalContext *iv = nullptr;
-    FormulaParser::AtomContext *right = nullptr;
-    antlr4::tree::TerminalNode *FUTURE();
-    IntervalContext *interval();
-    AtomContext *atom();
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  NotContext : public UnaryContext {
-  public:
-    NotContext(UnaryContext *ctx);
-
-    antlr4::Token *op = nullptr;
-    FormulaParser::AtomContext *right = nullptr;
-    antlr4::tree::TerminalNode *NOT();
-    AtomContext *atom();
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  FutureContext : public UnaryContext {
-  public:
-    FutureContext(UnaryContext *ctx);
-
-    antlr4::Token *op = nullptr;
-    FormulaParser::AtomContext *right = nullptr;
-    antlr4::tree::TerminalNode *FUTURE();
-    AtomContext *atom();
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  NotExprContext : public UnaryContext {
-  public:
-    NotExprContext(UnaryContext *ctx);
-
-    antlr4::Token *op = nullptr;
-    FormulaParser::ExprContext *right = nullptr;
-    antlr4::tree::TerminalNode *NOT();
-    ExprContext *expr();
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  UnaryContext* unary();
-
-  class  IntervalContext : public antlr4::ParserRuleContext {
-  public:
-    IntervalContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    IntervalContext() = default;
-    void copyFrom(IntervalContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
-
-    virtual size_t getRuleIndex() const override;
-
-   
-  };
-
-  class  FiniteIntervalContext : public IntervalContext {
-  public:
-    FiniteIntervalContext(IntervalContext *ctx);
-
-    FormulaParser::NumberContext *l = nullptr;
-    FormulaParser::NumberContext *u = nullptr;
-    std::vector<NumberContext *> number();
-    NumberContext* number(size_t i);
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  InfiniteIntervalContext : public IntervalContext {
-  public:
-    InfiniteIntervalContext(IntervalContext *ctx);
-
-    FormulaParser::NumberContext *l = nullptr;
-    antlr4::Token *u = nullptr;
     NumberContext *number();
 
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
+    virtual bool sempred(antlr4::RuleContext *_localctx, size_t ruleIndex, size_t predicateIndex) override;
+    bool exprSempred(ExprContext *_localctx, size_t predicateIndex);
 
-  IntervalContext* interval();
+  private:
+    static std::vector<antlr4::dfa::DFA> _decisionToDFA;
+    static antlr4::atn::PredictionContextCache _sharedContextCache;
+    static std::vector<std::string> _ruleNames;
+    static std::vector<std::string> _tokenNames;
 
-  class  AtomContext : public antlr4::ParserRuleContext {
-  public:
-    AtomContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    AtomContext() = default;
-    void copyFrom(AtomContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
+    static std::vector<std::string> _literalNames;
+    static std::vector<std::string> _symbolicNames;
+    static antlr4::dfa::Vocabulary _vocabulary;
+    static antlr4::atn::ATN _atn;
+    static std::vector<uint16_t> _serializedATN;
 
-    virtual size_t getRuleIndex() const override;
-
-   
-  };
-
-  class  BracketsContext : public AtomContext {
-  public:
-    BracketsContext(AtomContext *ctx);
-
-    FormulaParser::ExprContext *content = nullptr;
-    std::vector<ExprContext *> expr();
-    ExprContext* expr(size_t i);
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  AtomicContext : public AtomContext {
-  public:
-    AtomicContext(AtomContext *ctx);
-
-    antlr4::tree::TerminalNode *ATOMIC();
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  BooleanContext : public AtomContext {
-  public:
-    BooleanContext(AtomContext *ctx);
-
-    antlr4::tree::TerminalNode *BOOL();
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  AtomContext* atom();
-
-  class  NumberContext : public antlr4::ParserRuleContext {
-  public:
-    NumberContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    NumberContext() = default;
-    void copyFrom(NumberContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
-
-    virtual size_t getRuleIndex() const override;
-
-   
-  };
-
-  class  DigitContext : public NumberContext {
-  public:
-    DigitContext(NumberContext *ctx);
-
-    antlr4::tree::TerminalNode *DIGIT();
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  NumberContext* number();
-
-
-  virtual bool sempred(antlr4::RuleContext *_localctx, size_t ruleIndex, size_t predicateIndex) override;
-  bool exprSempred(ExprContext *_localctx, size_t predicateIndex);
-
-private:
-  static std::vector<antlr4::dfa::DFA> _decisionToDFA;
-  static antlr4::atn::PredictionContextCache _sharedContextCache;
-  static std::vector<std::string> _ruleNames;
-  static std::vector<std::string> _tokenNames;
-
-  static std::vector<std::string> _literalNames;
-  static std::vector<std::string> _symbolicNames;
-  static antlr4::dfa::Vocabulary _vocabulary;
-  static antlr4::atn::ATN _atn;
-  static std::vector<uint16_t> _serializedATN;
-
-
-  struct Initializer {
-    Initializer();
-  };
-  static Initializer _init;
+    struct Initializer {
+        Initializer();
+    };
+    static Initializer _init;
 };
-
