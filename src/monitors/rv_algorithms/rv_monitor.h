@@ -22,15 +22,38 @@ enum AlgorithmType { dynamic_programming_ltl, event_consuming_ltl, mt_fsm, btt_f
  * List of configuration parameters for the different monitoring algorithms.
  */
 struct MonitorConfiguration {
+  public:
+    /**
+     * Constructor defining all configuration variables.
+     *
+     * @param algorithm Algorithm type, e.g., hydra, event-consuming LTL, etc.
+     * @param past Only past evaluation (only relevant for certain algorithms, i.e. LTL algorithms)
+     * @param measurement Indicates whether evaluation with time measurement should be performed
+     * @param hydraConnectedEvaluation Indicates whether HYDRA monitor should perform connected evaluation
+     * @param hydraReordering Indicates whether HYDRA monitor should perform reordering
+     */
     MonitorConfiguration(AlgorithmType algorithm, bool past, bool measurement, bool hydraConnectedEvaluation,
                          bool hydraReordering);
+
+    /**
+     * Constructor defining only algorithm type, past evaluation, and performance evaluation.
+     *
+     * @param algorithm Algorithm type, e.g., hydra, event-consuming LTL, etc.
+     * @param past Only past evaluation (only relevant for certain algorithms, i.e. LTL algorithms)
+     * @param measurement Indicates whether evaluation with time measurement should be performed
+     */
     MonitorConfiguration(AlgorithmType algorithm, bool past, bool measurement);
+
+    /*
+     *
+     */
     MonitorConfiguration() = default;
-    AlgorithmType algorithm{AlgorithmType::hydra_mtl}; /**< Algorithm to use, e.g., Hydra, LTL event consuming, .... */
-    bool past{false}; /**< Set only past evaluation (only relevant for certain algorithms, i.e. LTL algorithms) */
-    bool performanceMeasurement{false};  /**< Indicates whether time measurement should be evaluated */
-    bool hydraConnectedEvaluation{true}; /**< Indicates whether Hydra monitor should perform connected evaluation */
-    bool hydraReordering{true};          /**< Indicates whether Hydra monitor should perform reordering */
+
+    const AlgorithmType algorithm{AlgorithmType::hydra_mtl}; /**< Algorithm to use, e.g., Hydra, LTL event consuming, .... */
+    const bool past{false}; /**< Set only past evaluation (only relevant for certain algorithms, i.e. LTL algorithms) */
+    const bool performanceMeasurement{false};  /**< Indicates whether evaluation with time measurement should be performed */
+    const bool hydraConnectedEvaluation{true}; /**< Indicates whether HYDRA monitor should perform connected evaluation */
+    const bool hydraReordering{true};          /**< Indicates whether HYDRA monitor should perform reordering */
 };
 
 class RVMonitor {
