@@ -159,7 +159,7 @@ class Visitor : public FormulaBaseVisitor {
      */
     antlrcpp::Any visitXor(FormulaParser::XorContext *ctx) override {
         // Not an xor -> continue with children
-        if ((ctx->op == nullptr) || (ctx->op->getText() != "xor" && ctx->op->getText() != "^")) {
+        if ((ctx->op == nullptr) || (ctx->op->getType() != FormulaParser::XOR)) {
             return visitChildren(ctx);
         }
         Xor::SetType_T xorSet;
@@ -181,13 +181,13 @@ class Visitor : public FormulaBaseVisitor {
      * @return Or if actual orExpr visited, result of visitChildren() otherwise.
      */
     antlrcpp::Any visitOr(FormulaParser::OrContext *ctx) override {
-        if ((ctx->op == nullptr) || (ctx->op->getText() != "or" && ctx->op->getText() != "|")) {
+        if ((ctx->op == nullptr) || (ctx->op->getType() != FormulaParser::OR)) {
             return visitChildren(ctx);
         }
         Or::SetType_T orSet;
         // Create multiset
         for (auto &child : ctx->children) {
-            if (child->getText() != "or" && child->getText() != "|") {
+            if (child->getText() != "OR" && child->getText() != "or" && child->getText() != "|") {
                 std::shared_ptr<Expression> newExpr = getType(visit(child));
                 orSet.merge(std::multiset<std::shared_ptr<Expression>>{newExpr});
             }
@@ -202,13 +202,13 @@ class Visitor : public FormulaBaseVisitor {
      * @return And if actual orExpr visited, result of visitChildren() otherwise.
      */
     antlrcpp::Any visitAnd(FormulaParser::AndContext *ctx) override {
-        if ((ctx->op == nullptr) || (ctx->op->getText() != "and" && ctx->op->getText() != "&")) {
+        if ((ctx->op == nullptr) || (ctx->op->getType() != FormulaParser::AND)) {
             return visitChildren(ctx);
         }
         And::SetType_T andSet;
         // Create multiset
         for (auto &child : ctx->children) {
-            if (child->getText() != "and" && child->getText() != "&") {
+            if (child->getText() != "AND" && child->getText() != "and" && child->getText() != "&") {
                 std::shared_ptr<Expression> newExpr = getType(visit(child));
                 andSet.merge(std::multiset<std::shared_ptr<Expression>>{newExpr});
             }
@@ -472,7 +472,8 @@ class Visitor : public FormulaBaseVisitor {
      * @return Constant according to given value.
      */
     antlrcpp::Any visitBoolean(FormulaParser::BooleanContext *ctx) override {
-        return std::make_shared<Constant>(Constant(ctx->getText() == "True" || ctx->getText() == "true"));
+        bool is_true = ctx->BOOL()->getSymbol()->getType() == FormulaParser::TRUE;
+        return std::make_shared<Constant>(Constant(is_true));
     }
 
     /**
@@ -500,7 +501,9 @@ class Visitor : public FormulaBaseVisitor {
         bool finite{false};
         if (visit(ctx->u).as<int>() > 0)
             finite = true;
-        return std::make_shared<Interval>(Interval(visit(ctx->l).as<int>(), visit(ctx->u).as<int>(), finite));
+        auto lower = visit(ctx->l).as<int>();
+        auto upper = visit(ctx->u).as<int>();
+        return std::make_shared<Interval>(lower, upper, finite);
     }
 
     /**
