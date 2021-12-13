@@ -68,7 +68,7 @@ number
  ;
 
  BOOL                       : TRUE|FALSE;
- INFINITY                   : 'INFINITY';
+ INFINITY                   : ('inf'|'INFINITY');
  NOT                        : ('!'|'not'|'NOT');
 
  GLOBALLY                   : 'G';
@@ -97,7 +97,7 @@ number
  //
  // Synchronize changes of LOWER_ALPHA_UNDERSCORE with the Log grammer (in Log.g4)!
  //
- fragment LOWER_ALPHA_UNDERSCORE : [a-z]+([_]?[a-z0-9]+)*;
+ fragment LOWER_ALPHA_UNDERSCORE : [a-z]+([_]?[a-zA-Z0-9]+)*;
 
  ATOMIC		                : LOWER_ALPHA_UNDERSCORE;
  PREDICATE                  : LOWER_ALPHA_UNDERSCORE'(';
