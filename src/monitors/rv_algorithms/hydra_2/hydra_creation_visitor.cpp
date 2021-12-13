@@ -159,7 +159,8 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitOr(Or &tlop, size_t par
         size_t idx{maxId++};
         for (const auto &expr : tlop.getExpressions())
             monitors.push_back(expr->accept(*this, idx, connectedEval));
-        resort(monitors, false);
+        if (reordering)
+            resort(monitors, false);
         auto newMonitor{std::make_shared<OrMonitor>(Formula(std::make_shared<Or>(tlop)), monitors, idx, connectedEval)};
         baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(tlop.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
@@ -176,7 +177,8 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitAnd(And &tlop, size_t p
         size_t idx{maxId++};
         for (const auto &expr : tlop.getExpressions())
             monitors.push_back(expr->accept(*this, idx, connectedEval));
-        resort(monitors, true);
+        if (reordering)
+            resort(monitors, true);
         auto newMonitor{
             std::make_shared<AndMonitor>(Formula(std::make_shared<And>(tlop)), monitors, idx, connectedEval)};
         baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(tlop.to_string(), newMonitor));

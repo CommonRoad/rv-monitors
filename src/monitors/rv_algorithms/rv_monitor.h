@@ -18,6 +18,21 @@
 
 enum AlgorithmType { dynamic_programming_ltl, event_consuming_ltl, mt_fsm, btt_fsm, hydra_mtl };
 
+/**
+ * List of configuration parameters for the different monitoring algorithms.
+ */
+struct MonitorConfiguration {
+    MonitorConfiguration(AlgorithmType algorithm, bool past, bool measurement, bool hydraConnectedEvaluation,
+                         bool hydraReordering);
+    MonitorConfiguration(AlgorithmType algorithm, bool past, bool measurement);
+    MonitorConfiguration() = default;
+    AlgorithmType algorithm{AlgorithmType::hydra_mtl}; /**< Algorithm to use, e.g., Hydra, LTL event consuming, .... */
+    bool past{false}; /**< Set only past evaluation (only relevant for certain algorithms, i.e. LTL algorithms) */
+    bool performanceMeasurement{false};  /**< Indicates whether time measurement should be evaluated */
+    bool hydraConnectedEvaluation{true}; /**< Indicates whether Hydra monitor should perform connected evaluation */
+    bool hydraReordering{true};          /**< Indicates whether Hydra monitor should perform reordering */
+};
+
 class RVMonitor {
   public:
     /**
@@ -29,7 +44,7 @@ class RVMonitor {
      * PLTLf).
      * @param measurement Boolean indicating whether performance evaluation should be performed.
      */
-    RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement,
+    RVMonitor(const Formula &formula, MonitorConfiguration configuration = {},
               const std::vector<std::tuple<std::string, double, double>> &predicateCosts = {});
 
     RVMonitor(const RVMonitor &obj);
@@ -45,7 +60,7 @@ class RVMonitor {
      * PLTLf).
      * @param measurement Boolean indicating whether performance evaluation should be performed.
      */
-    RVMonitor(AlgorithmType algorithm, const std::vector<Formula> &formula, bool past, bool measurement,
+    RVMonitor(const std::vector<Formula> &formula, MonitorConfiguration configuration,
               const std::vector<std::tuple<std::string, double, double>> &predicateCosts = {});
 
     /**
@@ -68,17 +83,17 @@ class RVMonitor {
   protected:
     std::unique_ptr<MonitorInterface> monitor; //**< Pointer to monitoring algorithm */
     ExecutionStatistic executionStatistic;     //**< Execution statistic object */
-    bool performanceMeasurement; //**< Boolean indicating whether performance evaluation should be performed. */
+    MonitorConfiguration configuration; //**< Boolean indicating whether performance evaluation should be performed. */
 };
 
 /**
  * Overridden << operator for console output of algorithm type.
  *
- * @param os Reference to OS stream
+ * @param stream Reference to OS stream
  * @param algorithm Algorithm type which should be outputted to terminal.
  * @return osstream for algorithm type.
  */
-std::ostream &operator<<(std::ostream &os, const AlgorithmType &algorithm);
+std::ostream &operator<<(std::ostream &stream, const AlgorithmType &algorithm);
 
 /**
  * Converts a string into the corresponding algorithm type enum element.

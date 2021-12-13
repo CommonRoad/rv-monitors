@@ -74,28 +74,29 @@ class HydraCreationVisitor {
 
     std::shared_ptr<HydraMonitor> createMonitor(Formula &formula, size_t parentId, bool connectedEval);
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> visitAtomic(Atomic &op, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<HydraMonitor> visitAtomic(Atomic &tlop, size_t parentId, bool connectedEval);
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> visitConstant(Constant &op, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<HydraMonitor> visitConstant(Constant &tlop, size_t parentId, bool connectedEval);
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> visitPreviously(Previously &op, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<HydraMonitor> visitPreviously(Previously &tlop, size_t parentId, bool connectedEval);
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> visitPredicate(Predicate &op, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<HydraMonitor> visitPredicate(Predicate &tlop, size_t parentId, bool connectedEval);
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> visitNext(NextStrong &op, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<HydraMonitor> visitNext(NextStrong &tlop, size_t parentId, bool connectedEval);
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> visitSince(Since &op, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<HydraMonitor> visitSince(Since &tlop, size_t parentId, bool connectedEval);
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> visitUntil(Until &op, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<HydraMonitor> visitUntil(Until &tlop, size_t parentId, bool connectedEval);
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> visitOr(Or &op, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<HydraMonitor> visitOr(Or &tlop, size_t parentId, bool connectedEval);
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> visitAnd(And &op, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<HydraMonitor> visitAnd(And &tlop, size_t parentId, bool connectedEval);
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> visitNot(Not &op, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<HydraMonitor> visitNot(Not &tlop, size_t parentId, bool connectedEval);
 
   private:
     size_t maxId{0};
+    bool reordering;
     std::map<std::string, std::shared_ptr<HydraMonitor>> baseline;
     std::vector<std::tuple<std::string, double, double>> predicateCosts;
 
