@@ -49,11 +49,14 @@ struct MonitorConfiguration {
      */
     MonitorConfiguration() = default;
 
-    const AlgorithmType algorithm{AlgorithmType::hydra_mtl}; /**< Algorithm to use, e.g., Hydra, LTL event consuming, .... */
+    const AlgorithmType algorithm{
+        AlgorithmType::hydra_mtl}; /**< Algorithm to use, e.g., Hydra, LTL event consuming, .... */
     const bool past{false}; /**< Set only past evaluation (only relevant for certain algorithms, i.e. LTL algorithms) */
-    const bool performanceMeasurement{false};  /**< Indicates whether evaluation with time measurement should be performed */
-    const bool hydraConnectedEvaluation{true}; /**< Indicates whether HYDRA monitor should perform connected evaluation */
-    const bool hydraReordering{true};          /**< Indicates whether HYDRA monitor should perform reordering */
+    const bool performanceMeasurement{
+        false}; /**< Indicates whether evaluation with time measurement should be performed */
+    const bool hydraConnectedEvaluation{
+        true};                        /**< Indicates whether HYDRA monitor should perform connected evaluation */
+    const bool hydraReordering{true}; /**< Indicates whether HYDRA monitor should perform reordering */
 };
 
 class RVMonitor {
