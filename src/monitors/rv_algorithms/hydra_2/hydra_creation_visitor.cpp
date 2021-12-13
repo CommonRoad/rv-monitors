@@ -202,8 +202,9 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitNot(Not &tlop, size_t p
     }
 }
 
-HydraCreationVisitor::HydraCreationVisitor(std::vector<std::tuple<std::string, double, double>> predicateCosts)
-    : predicateCosts(std::move(predicateCosts)) {}
+HydraCreationVisitor::HydraCreationVisitor(std::vector<std::tuple<std::string, double, double>> predicateCosts,
+                                           bool reordering)
+    : reordering(reordering), predicateCosts(std::move(predicateCosts)) {}
 
 void HydraCreationVisitor::resort(std::vector<std::shared_ptr<HydraMonitor>> &monitors, bool increasing) {
     std::vector<double> cost;

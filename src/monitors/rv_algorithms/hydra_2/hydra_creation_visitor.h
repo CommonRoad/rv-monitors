@@ -70,7 +70,7 @@ class Predicate;
 
 class HydraCreationVisitor {
   public:
-    HydraCreationVisitor(std::vector<std::tuple<std::string, double, double>> predicate_costs);
+    HydraCreationVisitor(std::vector<std::tuple<std::string, double, double>> predicate_costs, bool reordering = true);
 
     std::shared_ptr<HydraMonitor> createMonitor(Formula &formula, size_t parentId, bool connectedEval);
 
