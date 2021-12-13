@@ -511,6 +511,16 @@ class Visitor : public FormulaBaseVisitor {
      * @param ctx Context.
      * @return Atomic.
      */
+    antlrcpp::Any visitInfiniteInterval(FormulaParser::InfiniteIntervalContext *ctx) override {
+        auto lower = visit(ctx->l).as<int>();
+        return std::make_shared<Interval>(lower, -1, false);
+    }
+
+    /**
+     * Builds an Atomic from a string.
+     * @param ctx Context.
+     * @return Atomic.
+     */
     antlrcpp::Any visitDigit(FormulaParser::DigitContext *ctx) override { return std::stoi(ctx->getText()); }
 
     antlrcpp::Any visitPredicate(FormulaParser::PredicateContext *ctx) override {
