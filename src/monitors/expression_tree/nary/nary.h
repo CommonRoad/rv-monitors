@@ -1,9 +1,9 @@
 #pragma once
 
 #include <algorithm>
+#include <cassert>
 #include <sstream>
 #include <utility>
-#include <cassert>
 
 #include "nary_interface.h"
 
