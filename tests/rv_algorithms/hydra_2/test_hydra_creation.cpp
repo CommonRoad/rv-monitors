@@ -14,8 +14,8 @@ TEST(TestHydraCreation, testAnd) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "d(test) and a(test) and b(test) and c(test)");
 }
 
@@ -24,8 +24,8 @@ TEST(TestHydraCreation, testAndReorder) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "d(test) and a(test) and b(test) and c(test)");
 }
 
@@ -34,8 +34,8 @@ TEST(TestHydraCreation, testPreviousAnd) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "P(d(test)) and P(a(test)) and P(b(test)) and P(c(test))");
 }
 
@@ -44,8 +44,8 @@ TEST(TestHydraCreation, testPreviousAndReorder) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "P(d(test)) and P(a(test)) and P(b(test)) and P(c(test))");
 }
 
@@ -54,8 +54,8 @@ TEST(TestHydraCreation, testNextAnd) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "X(d(test)) and X(a(test)) and X(b(test)) and X(c(test))");
 }
 
@@ -64,8 +64,8 @@ TEST(TestHydraCreation, testNextAndReorder) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "X(d(test)) and X(a(test)) and X(b(test)) and X(c(test))");
 }
 
@@ -74,8 +74,8 @@ TEST(TestHydraCreation, testNotAnd) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "!(a(test)) and !(d(test)) and !(c(test)) and !(b(test))");
 }
 
@@ -84,8 +84,8 @@ TEST(TestHydraCreation, testNotAndReorder) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "!(a(test)) and !(d(test)) and !(c(test)) and !(b(test))");
 }
 
@@ -94,8 +94,8 @@ TEST(TestHydraCreation, testAndAnd) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "!(d(test) and a(test)) and !(b(test) and c(test))");
 }
 
@@ -104,8 +104,8 @@ TEST(TestHydraCreation, testAndAndReorder) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "!(d(test) and a(test)) and !(b(test) and c(test))");
 }
 
@@ -114,8 +114,8 @@ TEST(TestHydraCreation, testSinceAnd) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "(a(test))S(d(test)) and (c(test))S(b(test))");
 }
 
@@ -124,8 +124,8 @@ TEST(TestHydraCreation, testSinceAndReorder) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "(a(test))S(d(test)) and (c(test))S(b(test))");
 }
 
@@ -134,8 +134,8 @@ TEST(TestHydraCreation, testUntilAnd) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "(a(test))S(d(test)) and (c(test))S(b(test))");
 }
 
@@ -144,8 +144,8 @@ TEST(TestHydraCreation, testUntilAndReorder) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "(a(test))U(d(test)) and (c(test))U(b(test))");
 }
 
@@ -154,8 +154,8 @@ TEST(TestHydraCreation, testOr) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "a(test) or d(test) or c(test) or b(test)");
 }
 
@@ -164,8 +164,8 @@ TEST(TestHydraCreation, testOrReorder) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "a(test) or d(test) or c(test) or b(test)");
 }
 
@@ -174,8 +174,8 @@ TEST(TestHydraCreation, testPreviousOr) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "P(a(test)) or P(d(test)) or P(c(test)) or P(b(test))");
 }
 
@@ -184,8 +184,8 @@ TEST(TestHydraCreation, testPreviousOrReorder) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "P(a(test)) or P(d(test)) or P(c(test)) or P(b(test))");
 }
 
@@ -194,8 +194,8 @@ TEST(TestHydraCreation, testNextOr) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "X(a(test)) or X(d(test)) or X(c(test)) or X(b(test))");
 }
 
@@ -204,8 +204,8 @@ TEST(TestHydraCreation, testNextOrReorder) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "X(a(test)) or X(d(test)) or X(c(test)) or X(b(test))");
 }
 
@@ -214,8 +214,8 @@ TEST(TestHydraCreation, testNotOr) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "!(d(test)) or !(a(test)) or !(b(test)) or !(c(test))");
 }
 
@@ -224,8 +224,8 @@ TEST(TestHydraCreation, testNotOrReorder) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "!(d(test)) or !(a(test)) or !(b(test)) or !(c(test))");
 }
 
@@ -234,8 +234,8 @@ TEST(TestHydraCreation, testOrOr) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "!(a(test) or d(test)) or !(c(test) or b(test))");
 }
 
@@ -244,8 +244,8 @@ TEST(TestHydraCreation, testOrOrReorder) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "!(a(test) or d(test)) or !(c(test) or b(test))");
 }
 
@@ -254,8 +254,8 @@ TEST(TestHydraCreation, testSinceOr) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "(a(test))S(d(test)) or (c(test))S(b(test))");
 }
 
@@ -264,8 +264,8 @@ TEST(TestHydraCreation, testSinceOrReorder) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "(a(test))S(d(test)) or (c(test))S(b(test))");
 }
 
@@ -274,8 +274,8 @@ TEST(TestHydraCreation, testUntilOr) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "(a(test))S(d(test)) or (c(test))S(b(test))");
 }
 
@@ -284,7 +284,7 @@ TEST(TestHydraCreation, testUntilOrReorder) {
     formula.setId("R1");
     std::vector<std::tuple<std::string, double, double>> predicateCosts{
         {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
-    std::shared_ptr<HydraMonitor> mon = hc.createMonitor(formula, 0, true);
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
+    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(formula, 0, true);
     EXPECT_EQ(mon->to_string(), "(a(test))U(d(test)) or (b(test))U(c(test))");
 }
