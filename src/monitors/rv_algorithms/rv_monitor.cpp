@@ -142,7 +142,6 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
         }
         // TODO other algorithms
         executionStatistic = other.executionStatistic;
-        configuration = other.configuration;
     }
     return *this;
 }
