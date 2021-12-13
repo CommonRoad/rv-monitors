@@ -15,7 +15,7 @@ time : TIMESPEC DIGIT;
  //
  // Synchronize changes of LOWER_ALPHA_UNDERSCORE with the Formula grammer (in Formula.g4)!
  //
- fragment LOWER_ALPHA_UNDERSCORE : [a-z]+([_]?[a-z0-9]+)*;
+ fragment LOWER_ALPHA_UNDERSCORE : [a-z]+([_]?[a-zA-Z0-9]+)*;
 
  ATOMIC		                : LOWER_ALPHA_UNDERSCORE;
  PREDICATE                  : LOWER_ALPHA_UNDERSCORE'(';

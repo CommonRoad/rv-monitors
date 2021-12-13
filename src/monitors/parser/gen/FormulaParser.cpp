@@ -1574,7 +1574,7 @@ std::vector<uint16_t> FormulaParser::_serializedATN;
 std::vector<std::string> FormulaParser::_ruleNames = {
     "formula", "expr", "xor_expr", "or_expr", "and_expr", "release_until_expr", "unary", "interval", "atom", "number"};
 
-std::vector<std::string> FormulaParser::_literalNames = {"", "','", "')'", "'['", "']'", "'('", "",     "'INFINITY'",
+std::vector<std::string> FormulaParser::_literalNames = {"", "','", "')'", "'['", "']'", "'('", "",     "",
                                                          "", "'G'", "'F'", "'W'", "",    "",    "'R'",  "'O'",
                                                          "", "",    "'H'", "",    "",    "",    "'->'", "'<->'"};
 
