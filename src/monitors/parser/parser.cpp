@@ -1,10 +1,10 @@
 #include "parser.h"
+#include "log_visitor.h"
 #include "monitors/parser/gen/FormulaLexer.h"
 #include "monitors/parser/gen/FormulaParser.h"
-#include "monitors/parser/gen/LogParser.h"
 #include "monitors/parser/gen/LogLexer.h"
+#include "monitors/parser/gen/LogParser.h"
 #include "visitor.h"
-#include "log_visitor.h"
 #include <ANTLRInputStream.h>
 
 Formula Parser::parse(const std::string &formula, const std::string &formulaId) {
@@ -29,6 +29,6 @@ Trace Parser::parse_log(const std::string &log) {
     LogParser parser(&tokens);
     antlr4::tree::ParseTree *treePointer = parser.log();
     impl::LogVisitor visitor;
-    Trace trace {visitor.visit(treePointer).as<Trace>()};
+    Trace trace{visitor.visit(treePointer).as<Trace>()};
     return trace;
 }

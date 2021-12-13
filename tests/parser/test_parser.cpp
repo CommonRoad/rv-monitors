@@ -31,22 +31,20 @@ TEST(TestParser, ex_formula_parse_hydra_syntax) {
 }
 
 TEST(TestParser, ex_log_parse_hydra_syntax) {
-    std::string ex_log =
-        "@0 p1 p2\n"
-        "@0 p0 p2\n"
-        "@1\n"
-        "@4 p0 p1 p2\n"
-        "@4 p1 p2\n"
-        "@5 p0 p1 p2\n";
+    std::string ex_log = "@0 p1 p2\n"
+                         "@0 p0 p2\n"
+                         "@1\n"
+                         "@4 p0 p1 p2\n"
+                         "@4 p1 p2\n"
+                         "@5 p0 p1 p2\n";
     Trace trace = Parser::parse_log(ex_log);
 
-    std::string log_parsed =
-        "{p0: false; p1: true; p2: true; 0}\n"
-        "{p0: true; p1: false; p2: true; 0}\n"
-        "{p0: false; p1: false; p2: false; 0}\n"
-        "{p0: true; p1: true; p2: true; 0}\n"
-        "{p0: false; p1: true; p2: true; 0}\n"
-        "{p0: true; p1: true; p2: true; 1}\n";
+    std::string log_parsed = "{p0: false; p1: true; p2: true; 0}\n"
+                             "{p0: true; p1: false; p2: true; 0}\n"
+                             "{p0: false; p1: false; p2: false; 0}\n"
+                             "{p0: true; p1: true; p2: true; 0}\n"
+                             "{p0: false; p1: true; p2: true; 0}\n"
+                             "{p0: true; p1: true; p2: true; 1}\n";
     EXPECT_EQ(trace.to_string(), log_parsed);
 }
 
@@ -73,20 +71,17 @@ TEST(TestParser, ex_eval_rvm_syntax) {
     std::string ex_mtl = "p OR (q UNTIL[2,2] r)";
     Formula formula = Parser::parse(ex_mtl, "Ex1");
 
-    std::string ex_log =
-        "@0 q r\n"
-        "@0 p r\n"
-        "@1\n"
-        "@4 p q r\n"
-        "@4 q r\n"
-        "@5 p q r\n";
+    std::string ex_log = "@0 q r\n"
+                         "@0 p r\n"
+                         "@1\n"
+                         "@4 p q r\n"
+                         "@4 q r\n"
+                         "@5 p q r\n";
 
     Trace trace = Parser::parse_log(ex_log);
 
-    std::vector<Verdict> expSolution{
-        Verdict{0, false}, Verdict{0, true},  Verdict{1, false},
-        Verdict{4, true},  Verdict{4, false}, Verdict{5, true}
-    };
+    std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{0, true},  Verdict{1, false},
+                                     Verdict{4, true},  Verdict{4, false}, Verdict{5, true}};
     TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
@@ -94,18 +89,15 @@ TEST(TestParser, ex_eval_hydra_syntax) {
     std::string ex_mtl = "p0 OR (p1 UNTIL[2,2] p2)";
     Formula formula = Parser::parse(ex_mtl, "Ex1");
 
-    std::string ex_log =
-        "@0 p1 p2\n"
-        "@0 p0 p2\n"
-        "@1\n"
-        "@4 p0 p1 p2\n"
-        "@4 p1 p2\n"
-        "@5 p0 p1 p2\n";
+    std::string ex_log = "@0 p1 p2\n"
+                         "@0 p0 p2\n"
+                         "@1\n"
+                         "@4 p0 p1 p2\n"
+                         "@4 p1 p2\n"
+                         "@5 p0 p1 p2\n";
     Trace trace = Parser::parse_log(ex_log);
 
-    std::vector<Verdict> expSolution{
-        Verdict{0, false}, Verdict{0, true},  Verdict{1, false},
-        Verdict{4, true},  Verdict{4, false}, Verdict{5, true}
-    };
+    std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{0, true},  Verdict{1, false},
+                                     Verdict{4, true},  Verdict{4, false}, Verdict{5, true}};
     TestHydra::evalHydra(trace, {formula}, {expSolution});
 }

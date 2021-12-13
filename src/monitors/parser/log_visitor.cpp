@@ -21,12 +21,12 @@ antlrcpp::Any LogVisitor::visitLog(LogParser::LogContext *context) {
     std::vector<std::vector<std::string>> true_atomics;
     std::vector<size_t> time_steps;
 
-    for (auto& a_entry: context->entry()) {
+    for (auto &a_entry : context->entry()) {
         LogEntry entry = visit(a_entry).as<LogEntry>();
 
         time_steps.push_back(entry.time);
 
-        for (auto& atomic: entry.true_atomics) {
+        for (auto &atomic : entry.true_atomics) {
             atomics.insert(atomic);
         }
 
@@ -47,18 +47,13 @@ antlrcpp::Any LogVisitor::visitEntry(LogParser::EntryContext *context) {
         true_atomics.push_back(atomic);
     }
 
-    return LogEntry {
-      .time = time,
-      .true_atomics = true_atomics
-    };
+    return LogEntry{.time = time, .true_atomics = true_atomics};
 }
 
-antlrcpp::Any LogVisitor::visitIdentifier(LogParser::IdentifierContext *context) {
-    return context->getText();
-}
+antlrcpp::Any LogVisitor::visitIdentifier(LogParser::IdentifierContext *context) { return context->getText(); }
 
 antlrcpp::Any LogVisitor::visitTime(LogParser::TimeContext *context) {
     return static_cast<size_t>(std::stoi(context->DIGIT()->getText()));
 }
 
-};
+}; // namespace impl
