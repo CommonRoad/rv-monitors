@@ -46,7 +46,7 @@ void Hydra::setTraceMonitors(const Trace &tra) {
 
 void Hydra::createMonitor(const std::vector<Formula> &formulas, bool connectedEval, bool reordering,
                           std::vector<std::tuple<std::string, double, double>> predicateCosts) {
-    HydraCreationVisitor hcv{HydraCreationVisitor(reordering, std::move(predicateCosts))};
+    HydraCreationVisitor hcv{HydraCreationVisitor(std::move(predicateCosts), reordering)};
     for (const auto &form : formulas) {
         if (form.getId().empty())
             throw std::logic_error("Formula has no valid unique ID.");
