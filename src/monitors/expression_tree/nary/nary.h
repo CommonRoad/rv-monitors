@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <sstream>
 #include <utility>
+#include <cassert>
 
 #include "nary_interface.h"
 
@@ -27,6 +28,7 @@ template <class SetType, class Actual> class Nary : public NaryInterface {
      * @param expressions Set of expressions connected by this expression.
      */
     explicit Nary(const std::string &symbol, const SetType &expressions) : NaryInterface(symbol) {
+        assert(expressions.size() >= 1);
         Nary<SetType, Actual>::setExpressions(expressions.begin(), expressions.end());
     }
 
