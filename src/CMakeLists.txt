@@ -32,10 +32,8 @@ set(RV_MONITOR_SRC_FILES
         monitors/formula/formula.cpp
         monitors/formula/nff.cpp
         monitors/parser/parser.cpp
-        monitors/parser/gen/FormulaBaseListener.cpp
         monitors/parser/gen/FormulaBaseVisitor.cpp
         monitors/parser/gen/FormulaLexer.cpp
-        monitors/parser/gen/FormulaListener.cpp
         monitors/parser/gen/FormulaParser.cpp
         monitors/parser/gen/FormulaVisitor.cpp
         monitors/qmc/prime_term.cpp
