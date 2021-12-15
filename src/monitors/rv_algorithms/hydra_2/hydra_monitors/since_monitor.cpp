@@ -36,11 +36,11 @@ Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 
     int v = static_cast<int>(lastSatisfaction && positionMonitorF.ts - lastSatisfaction->first <= to &&
                              (!lastViolation || lastSatisfaction->second >= lastViolation->second));
-    return Verdict(positionMonitorF.ts, v != 0);
+    return {positionMonitorF.ts, v != 0};
 }
-void SinceMonitor::setTrace(const Trace &tr) {
-    subMonitorF->setTrace(tr);
-    subMonitorG->setTrace(tr);
+void SinceMonitor::setTrace(const Trace &tra) {
+    subMonitorF->setTrace(tra);
+    subMonitorG->setTrace(tra);
 }
 void SinceMonitor::reset() {
     HydraMonitor::reset();
@@ -54,5 +54,5 @@ void SinceMonitor::reset() {
     positionMonitorF.reset();
 }
 std::string SinceMonitor::to_string() {
-    return "(" + subMonitorF->to_string() + ")S(" + subMonitorG->to_string() + ")";
+    return "(" + subMonitorF->to_string() + " S " + subMonitorG->to_string() + ")";
 }

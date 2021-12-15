@@ -11,23 +11,23 @@ Verdict AndMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     Verdict verdict{subMonitors.at(0)->step(monitorId, stepNumber)};
     if (!verdict.b) {
         if (!verdict.ts.has_value())
-            return Verdict(false);
+            return {false};
         else
-            return Verdict(verdict.ts.value(), false);
+            return {verdict.ts.value(), false};
     }
     for (size_t i{1}; i < subMonitors.size(); ++i)
         if (!subMonitors.at(i)->step(monitorId, stepNumber).b) {
             if (!verdict.ts.has_value())
-                return Verdict(false);
+                return {false};
             else
-                return Verdict(verdict.ts.value(), false);
+                return {verdict.ts.value(), false};
         }
     return verdict;
 }
 
-void AndMonitor::setTrace(const Trace &tr) {
+void AndMonitor::setTrace(const Trace &tra) {
     for (const auto &mon : subMonitors)
-        mon->setTrace(tr);
+        mon->setTrace(tra);
 }
 
 void AndMonitor::reset() {
@@ -37,11 +37,12 @@ void AndMonitor::reset() {
 }
 
 std::string AndMonitor::to_string() {
-    std::string s;
+    std::string str{"("};
     for (const auto &mon : subMonitors)
-        s += mon->to_string() + " and ";
-    s.erase(s.size() - 5);
-    return s;
+        str += mon->to_string() + " & ";
+    str.erase(str.size() - 3);
+    str += ")";
+    return str;
 }
 
 double AndMonitor::computeCost(const std::vector<std::shared_ptr<HydraMonitor>> &monitors) {
