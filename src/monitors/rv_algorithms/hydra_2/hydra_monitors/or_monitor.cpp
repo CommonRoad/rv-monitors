@@ -8,24 +8,26 @@
 
 Verdict OrMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     Verdict verdict{subMonitors.at(0)->step(monitorId, stepNumber)};
-    for (size_t i{1}; i < subMonitors.size(); ++i)
-        verdict = verdict || subMonitors.at(i)->step(monitorId, stepNumber);
+    if (shortCircuiting) {
+        if (verdict.b) {
+            if (!verdict.ts.has_value())
+                return {true};
+            else
+                return {verdict.ts.value(), true};
+        }
+        for (size_t i{1}; i < subMonitors.size(); ++i)
+            if (subMonitors.at(i)->step(monitorId, stepNumber).b) {
+                if (!verdict.ts.has_value())
+                    return {true};
+                else
+                    return {verdict.ts.value(), true};
+            }
+
+    } else {
+        for (size_t i{1}; i < subMonitors.size(); ++i)
+            verdict = verdict || subMonitors.at(i)->step(monitorId, stepNumber);
+    }
     return verdict;
-//    Verdict verdict{subMonitors.at(0)->step(monitorId, stepNumber)};
-//    if (verdict.b) {
-//        if (!verdict.ts.has_value())
-//            return {true};
-//        else
-//            return {verdict.ts.value(), true};
-//    }
-//    for (size_t i{1}; i < subMonitors.size(); ++i)
-//        if (subMonitors.at(i)->step(monitorId, stepNumber).b) {
-//            if (!verdict.ts.has_value())
-//                return {true};
-//            else
-//                return {verdict.ts.value(), true};
-//        }
-//    return verdict;
 }
 
 void OrMonitor::setTrace(const Trace &tra) {

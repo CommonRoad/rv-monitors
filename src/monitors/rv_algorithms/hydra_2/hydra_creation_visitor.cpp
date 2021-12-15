@@ -161,7 +161,8 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitOr(Or &tlop, size_t par
             monitors.push_back(expr->accept(*this, idx, connectedEval));
         if (reordering)
             resort(monitors, false);
-        auto newMonitor{std::make_shared<OrMonitor>(Formula(std::make_shared<Or>(tlop)), monitors, idx, connectedEval)};
+        auto newMonitor{std::make_shared<OrMonitor>(Formula(std::make_shared<Or>(tlop)), monitors, idx, connectedEval,
+                                                    shortCircuiting)};
         baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(tlop.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
@@ -179,8 +180,8 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitAnd(And &tlop, size_t p
             monitors.push_back(expr->accept(*this, idx, connectedEval));
         if (reordering)
             resort(monitors, true);
-        auto newMonitor{
-            std::make_shared<AndMonitor>(Formula(std::make_shared<And>(tlop)), monitors, idx, connectedEval)};
+        auto newMonitor{std::make_shared<AndMonitor>(Formula(std::make_shared<And>(tlop)), monitors, idx, connectedEval,
+                                                     shortCircuiting)};
         baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(tlop.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
@@ -203,8 +204,8 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitNot(Not &tlop, size_t p
 }
 
 HydraCreationVisitor::HydraCreationVisitor(std::vector<std::tuple<std::string, double, double>> predicateCosts,
-                                           bool reordering)
-    : reordering(reordering), predicateCosts(std::move(predicateCosts)) {}
+                                           bool reordering, bool shortCircuiting)
+    : reordering(reordering), shortCircuiting(shortCircuiting), predicateCosts(std::move(predicateCosts)) {}
 
 void HydraCreationVisitor::resort(std::vector<std::shared_ptr<HydraMonitor>> &monitors, bool increasing) {
     std::vector<double> cost;

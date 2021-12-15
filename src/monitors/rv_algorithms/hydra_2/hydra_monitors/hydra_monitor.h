@@ -38,7 +38,7 @@ class HydraMonitor {
 
     const Formula &getFormula() const;
 
-    virtual void setTrace(const Trace &tr) = 0;
+    virtual void setTrace(const Trace &tra) = 0;
 
     virtual void reset();
 
