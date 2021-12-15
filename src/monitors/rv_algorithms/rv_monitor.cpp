@@ -79,8 +79,9 @@ RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration 
         monitor = std::make_unique<BttFsm>(formulas, configuration.past);
         break;
     case hydra_mtl:
-        monitor = std::make_unique<Hydra>(formulas, configuration.hydraConnectedEvaluation,
-                                          configuration.hydraReordering, predicateCosts);
+        monitor =
+            std::make_unique<Hydra>(formulas, configuration.hydraConnectedEvaluation, configuration.hydraReordering,
+                                    configuration.hydraShortCircuiting, predicateCosts);
         break;
     }
 }
@@ -102,8 +103,9 @@ RVMonitor::RVMonitor(const Formula &formula, MonitorConfiguration configuration,
         monitor = std::make_unique<BttFsm>(std::vector<Formula>{formula}, configuration.past);
         break;
     case hydra_mtl:
-        monitor = std::make_unique<Hydra>(std::vector<Formula>{formula}, configuration.hydraConnectedEvaluation,
-                                          configuration.hydraReordering, predicateCosts);
+        monitor =
+            std::make_unique<Hydra>(std::vector<Formula>{formula}, configuration.hydraConnectedEvaluation,
+                                    configuration.hydraReordering, configuration.hydraShortCircuiting, predicateCosts);
         break;
     }
 }
