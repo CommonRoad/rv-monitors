@@ -122,7 +122,8 @@ RVMonitor::RVMonitor(const RVMonitor &obj) : configuration(obj.configuration) {
             formulaCopy.setId(form.getId());
             formulas.push_back(formulaCopy);
         }
-        monitor = std::make_unique<Hydra>(formulas);
+        monitor = std::make_unique<Hydra>(formulas, configuration.hydraConnectedEvaluation,
+                                          configuration.hydraReordering, configuration.hydraShortCircuiting);
     }
     // TODO other algorithms
     executionStatistic = obj.executionStatistic;
@@ -140,7 +141,8 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
                 formulas.push_back(formulaCopy);
             }
 
-            monitor = std::make_unique<Hydra>(formulas);
+            monitor = std::make_unique<Hydra>(formulas, configuration.hydraConnectedEvaluation,
+                                              configuration.hydraReordering, configuration.hydraShortCircuiting);
         }
         // TODO other algorithms
         executionStatistic = other.executionStatistic;
