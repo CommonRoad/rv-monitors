@@ -45,8 +45,8 @@ void Hydra::setTraceMonitors(const Trace &tra) {
 }
 
 void Hydra::createMonitor(const std::vector<Formula> &formulas, bool connectedEval, bool reordering,
-                          std::vector<std::tuple<std::string, double, double>> predicateCosts) {
-    HydraCreationVisitor hcv{HydraCreationVisitor(std::move(predicateCosts), reordering)};
+                          bool shortCircuiting, std::vector<std::tuple<std::string, double, double>> predicateCosts) {
+    HydraCreationVisitor hcv{HydraCreationVisitor(std::move(predicateCosts), reordering, shortCircuiting)};
     for (const auto &form : formulas) {
         if (form.getId().empty())
             throw std::logic_error("Formula has no valid unique ID.");
@@ -61,8 +61,8 @@ void Hydra::createMonitor(const std::vector<Formula> &formulas, bool connectedEv
     }
 }
 
-Hydra::Hydra(const std::vector<Formula> &formulas, bool connectedEval, bool reordering,
+Hydra::Hydra(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting,
              std::vector<std::tuple<std::string, double, double>> predicateCosts)
     : MonitorInterface(formulas) {
-    createMonitor(formulas, connectedEval, reordering, std::move(predicateCosts));
+    createMonitor(formulas, connectedEval, reordering, shortCircuiting, std::move(predicateCosts));
 }

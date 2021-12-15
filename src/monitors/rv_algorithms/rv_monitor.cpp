@@ -148,8 +148,11 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
 
 std::string RVMonitor::to_string() { return monitor->to_string(); }
 MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool past, bool measurement,
-                                           bool hydraConnectedEvaluation, bool hydraReordering)
+                                           bool hydraConnectedEvaluation, bool hydraReordering,
+                                           bool hydraShortCircuiting)
     : algorithm(algorithm), past(past), performanceMeasurement(measurement),
-      hydraConnectedEvaluation(hydraConnectedEvaluation), hydraReordering(hydraReordering) {}
+      hydraConnectedEvaluation(hydraConnectedEvaluation), hydraReordering(hydraReordering),
+      hydraShortCircuiting(hydraShortCircuiting) {}
+
 MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool past, bool measurement)
     : algorithm(algorithm), past(past), performanceMeasurement(measurement) {}

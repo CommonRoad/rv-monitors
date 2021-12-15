@@ -31,9 +31,10 @@ struct MonitorConfiguration {
      * @param measurement Indicates whether evaluation with time measurement should be performed
      * @param hydraConnectedEvaluation Indicates whether HYDRA monitor should perform connected evaluation
      * @param hydraReordering Indicates whether HYDRA monitor should perform reordering
+     * @param hydraShortCircuiting Indicates whether HYDRA monitor should perform short circuiting
      */
     MonitorConfiguration(AlgorithmType algorithm, bool past, bool measurement, bool hydraConnectedEvaluation,
-                         bool hydraReordering);
+                         bool hydraReordering, bool hydraShortCircuiting);
 
     /**
      * Constructor defining only algorithm type, past evaluation, and performance evaluation.
@@ -55,8 +56,9 @@ struct MonitorConfiguration {
     const bool performanceMeasurement{
         false}; /**< Indicates whether evaluation with time measurement should be performed */
     const bool hydraConnectedEvaluation{
-        true};                        /**< Indicates whether HYDRA monitor should perform connected evaluation */
-    const bool hydraReordering{true}; /**< Indicates whether HYDRA monitor should perform reordering */
+        true};                             /**< Indicates whether HYDRA monitor should perform connected evaluation */
+    const bool hydraReordering{true};      /**< Indicates whether HYDRA monitor should perform reordering */
+    const bool hydraShortCircuiting{true}; /**< Indicates whether HYDRA monitor should perform short circuiting */
 };
 
 class RVMonitor {
