@@ -5,6 +5,7 @@ stages:
   - coverage
   - static-test
   - docs
+  - evaluation
 
 
 
@@ -77,6 +78,21 @@ build-test:
     - mkdir build && cd build
     - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Debug ..
     - make rvmonitors_test -j4
+  artifacts:
+    paths:
+      - ./build/
+    expire_in: 20 minutes
+
+build-evaluation:
+  stage: compile
+  script:
+    - mkdir build && cd build
+    - cmake
+      -DCMAKE_PREFIX_PATH=/commonroad/dist
+      -DCMAKE_BUILD_TYPE=RelWithDebInfo
+      -DCMAKE_CXX_FLAGS=-fsanitize=address,undefined
+      ..
+    - make rvmonitors_eval -j4
   artifacts:
     paths:
       - ./build/
@@ -163,3 +179,15 @@ docs:
       - build/doc_doxygen/html/
     expose_as: 'Doxygen Documentation'
     expire_in: 20 minutes
+
+### evaluate rvmonitors ###
+evaluation:
+  stage: evaluation
+  image: $CI_REGISTRY/maierhofer/rv-monitors/ci-hydra:0.5.0
+  allow_failure: true
+  when: manual
+  script:
+    - /commonroad/evaluate.sh "$(pwd)/build/rvmonitors_eval"
+  needs:
+    - job: build-evaluation
+      artifacts: true
