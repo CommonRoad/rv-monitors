@@ -16,8 +16,9 @@ Verdict AndMonitor::concreteStep(size_t parentId, size_t stepNumber) {
             else
                 return {verdict.ts.value(), false};
         }
+        auto current{subMonitors.at(0)->getTraceIdxByParentId(monitorId)};
         for (size_t i{1}; i < subMonitors.size(); ++i)
-            if (!subMonitors.at(i)->step(monitorId, stepNumber).b) {
+            if (!subMonitors.at(i)->step(monitorId, current - 1).b) {
                 if (!verdict.ts.has_value())
                     return {false};
                 else

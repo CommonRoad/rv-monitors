@@ -32,7 +32,7 @@ class HydraMonitor {
     HydraMonitor(Formula formula, size_t id, bool connectedEval = true, double evalCost = 0,
                  double satisfactionProbability = 100.0);
 
-    Verdict step(size_t parentId, size_t stepNumber, bool ret = false);
+    Verdict step(size_t parentId, size_t stepNumber, bool ret = false, size_t repeat = 0);
 
     virtual Verdict concreteStep(size_t parentId, size_t stepNumber) = 0;
 
@@ -53,6 +53,8 @@ class HydraMonitor {
     double getSatisfactionProbability() const;
 
     virtual std::string to_string() = 0;
+
+    size_t getTraceIdxByParentId(size_t parentId) const;
 
   protected:
     Formula formula;

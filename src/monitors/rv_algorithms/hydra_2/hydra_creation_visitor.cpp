@@ -35,7 +35,7 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::createMonitor(Formula &formu
 }
 
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitAtomic(Atomic &tlop, size_t parentId, bool connectedEval) {
-    if (baseline.find(tlop.to_string()) != baseline.end()) {
+    if (connectedEval and baseline.find(tlop.to_string()) != baseline.end()) {
         baseline.at(tlop.to_string())->registerParent(parentId);
         return baseline.at(tlop.to_string());
     } else {
@@ -48,7 +48,7 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitAtomic(Atomic &tlop, si
 }
 
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitConstant(Constant &tlop, size_t parentId, bool connectedEval) {
-    if (baseline.find(tlop.to_string()) != baseline.end()) {
+    if (connectedEval and baseline.find(tlop.to_string()) != baseline.end()) {
         baseline.at(tlop.to_string())->registerParent(parentId);
         return baseline.at(tlop.to_string());
     } else {
@@ -63,7 +63,7 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitConstant(Constant &tlop
 
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitPredicate(Predicate &tlop, size_t parentId,
                                                                    bool connectedEval) {
-    if (baseline.find(tlop.to_string()) != baseline.end()) {
+    if (connectedEval and baseline.find(tlop.to_string()) != baseline.end()) {
         baseline.at(tlop.to_string())->registerParent(parentId);
         return baseline.at(tlop.to_string());
     } else {
@@ -86,7 +86,7 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitPredicate(Predicate &tl
 
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitPreviously(Previously &tlop, size_t parentId,
                                                                     bool connectedEval) {
-    if (baseline.find(tlop.to_string()) != baseline.end()) {
+    if (connectedEval and baseline.find(tlop.to_string()) != baseline.end()) {
         baseline.at(tlop.to_string())->registerParent(parentId);
         return baseline.at(tlop.to_string());
     } else {
@@ -101,7 +101,7 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitPreviously(Previously &
 }
 
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitNext(NextStrong &tlop, size_t parentId, bool connectedEval) {
-    if (baseline.find(tlop.to_string()) != baseline.end()) {
+    if (connectedEval and baseline.find(tlop.to_string()) != baseline.end()) {
         baseline.at(tlop.to_string())->registerParent(parentId);
         return baseline.at(tlop.to_string());
     } else {
@@ -116,7 +116,7 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitNext(NextStrong &tlop, 
 }
 
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitSince(Since &tlop, size_t parentId, bool connectedEval) {
-    if (baseline.find(tlop.to_string()) != baseline.end()) {
+    if (connectedEval and baseline.find(tlop.to_string()) != baseline.end()) {
         baseline.at(tlop.to_string())->registerParent(parentId);
         return baseline.at(tlop.to_string());
     } else {
@@ -132,7 +132,7 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitSince(Since &tlop, size
 }
 
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitUntil(Until &tlop, size_t parentId, bool connectedEval) {
-    if (baseline.find(tlop.to_string()) != baseline.end()) {
+    if (connectedEval and baseline.find(tlop.to_string()) != baseline.end()) {
         baseline.at(tlop.to_string())->registerParent(parentId);
         return baseline.at(tlop.to_string());
     } else {
@@ -152,7 +152,7 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitUntil(Until &tlop, size
 
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitOr(Or &tlop, size_t parentId, bool connectedEval) {
     std::vector<std::shared_ptr<HydraMonitor>> monitors;
-    if (baseline.find(tlop.to_string()) != baseline.end()) {
+    if (connectedEval and baseline.find(tlop.to_string()) != baseline.end()) {
         baseline.at(tlop.to_string())->registerParent(parentId);
         return baseline.at(tlop.to_string());
     } else {
@@ -171,7 +171,7 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitOr(Or &tlop, size_t par
 
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitAnd(And &tlop, size_t parentId, bool connectedEval) {
     std::vector<std::shared_ptr<HydraMonitor>> monitors;
-    if (baseline.find(tlop.to_string()) != baseline.end()) {
+    if (connectedEval and baseline.find(tlop.to_string()) != baseline.end()) {
         baseline.at(tlop.to_string())->registerParent(parentId);
         return baseline.at(tlop.to_string());
     } else {
@@ -189,7 +189,7 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitAnd(And &tlop, size_t p
 }
 
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitNot(Not &tlop, size_t parentId, bool connectedEval) {
-    if (baseline.find(tlop.to_string()) != baseline.end()) {
+    if (connectedEval and baseline.find(tlop.to_string()) != baseline.end()) {
         baseline.at(tlop.to_string())->registerParent(parentId);
         return baseline.at(tlop.to_string());
     } else {

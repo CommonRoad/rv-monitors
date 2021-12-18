@@ -5,6 +5,7 @@
 // Credits: BMW Car@TUM
 //
 #include "since_monitor.h"
+#include <iostream>
 
 Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     subVerdictF = subMonitorF->step(monitorId, stepNumber);
@@ -14,7 +15,7 @@ Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         lastViolation = std::make_pair(positionMonitorF.ts, positionMonitorF.tp);
 
     if (positionMonitorG.tp == -1) {
-        subVerdictG = subMonitorG->step(monitorId, stepNumber);
+        subVerdictG = subMonitorG->step(monitorId, stepNumber, true);
         stepNumber += 1;
         if (subVerdictG->ts.has_value())
             positionMonitorG.update(subVerdictG->ts.value());

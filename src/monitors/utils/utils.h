@@ -18,27 +18,27 @@ struct Verdict {
 
     Verdict operator!() const {
         if (this->ts.has_value())
-            return Verdict(this->ts.value(), !this->b);
+            return {this->ts.value(), !this->b};
         else
-            return Verdict(!this->b);
+            return {!this->b};
     }
     Verdict operator&&(const Verdict &w) const {
         if (!this->ts.has_value() or !w.ts.has_value())
-            return Verdict(false);
+            return {false};
         if (this->ts.value() != w.ts.value())
             throw std::runtime_error(
                 "Verdict logical and: time steps do not match. Time step this: " + std::to_string(this->ts.value()) +
                 ". Time step w: " + std::to_string(w.ts.value()));
-        return Verdict(this->ts.value(), this->b && w.b);
+        return {this->ts.value(), this->b && w.b};
     }
     Verdict operator||(const Verdict &w) const {
         if (!this->ts.has_value() or !w.ts.has_value())
-            return Verdict(false);
+            return {false};
         if (this->ts.value() != w.ts.value())
             throw std::runtime_error(
                 "Verdict logical or: time steps do not match. Time step this: " + std::to_string(this->ts.value()) +
                 ". Time step w: " + std::to_string(w.ts.value()));
-        return Verdict(this->ts.value(), this->b || w.b);
+        return {this->ts.value(), this->b || w.b};
     }
 };
 
