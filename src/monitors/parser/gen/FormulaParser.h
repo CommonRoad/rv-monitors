@@ -13,8 +13,8 @@ class FormulaParser : public antlr4::Parser {
         T__2 = 3,
         T__3 = 4,
         T__4 = 5,
-        T__5 = 6,
-        BOOL = 7,
+        BOOL = 6,
+        INFINITY = 7,
         NOT = 8,
         GLOBALLY = 9,
         FUTURE = 10,
@@ -596,6 +596,7 @@ class FormulaParser : public antlr4::Parser {
         FormulaParser::NumberContext *l = nullptr;
         antlr4::Token *u = nullptr;
         NumberContext *number();
+        antlr4::tree::TerminalNode *INFINITY();
 
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };

@@ -1300,6 +1300,8 @@ FormulaParser::NumberContext *FormulaParser::InfiniteIntervalContext::number() {
     return getRuleContext<FormulaParser::NumberContext>(0);
 }
 
+tree::TerminalNode *FormulaParser::InfiniteIntervalContext::INFINITY() { return getToken(FormulaParser::INFINITY, 0); }
+
 FormulaParser::InfiniteIntervalContext::InfiniteIntervalContext(IntervalContext *ctx) { copyFrom(ctx); }
 
 antlrcpp::Any FormulaParser::InfiniteIntervalContext::accept(tree::ParseTreeVisitor *visitor) {
@@ -1349,7 +1351,7 @@ FormulaParser::IntervalContext *FormulaParser::interval() {
             setState(157);
             match(FormulaParser::T__0);
             setState(158);
-            antlrcpp::downCast<InfiniteIntervalContext *>(_localctx)->u = match(FormulaParser::T__4);
+            antlrcpp::downCast<InfiniteIntervalContext *>(_localctx)->u = match(FormulaParser::INFINITY);
             setState(159);
             match(FormulaParser::T__3);
             break;
@@ -1451,11 +1453,11 @@ FormulaParser::AtomContext *FormulaParser::atom() {
             break;
         }
 
-        case FormulaParser::T__5: {
+        case FormulaParser::T__4: {
             _localctx = _tracker.createInstance<FormulaParser::BracketsContext>(_localctx);
             enterOuterAlt(_localctx, 3);
             setState(165);
-            match(FormulaParser::T__5);
+            match(FormulaParser::T__4);
             setState(167);
             _errHandler->sync(this);
             _la = _input->LA(1);
@@ -1466,7 +1468,7 @@ FormulaParser::AtomContext *FormulaParser::atom() {
                 _errHandler->sync(this);
                 _la = _input->LA(1);
             } while ((((_la & ~0x3fULL) == 0) &&
-                      ((1ULL << _la) & ((1ULL << FormulaParser::T__5) | (1ULL << FormulaParser::BOOL) |
+                      ((1ULL << _la) & ((1ULL << FormulaParser::T__4) | (1ULL << FormulaParser::BOOL) |
                                         (1ULL << FormulaParser::NOT) | (1ULL << FormulaParser::GLOBALLY) |
                                         (1ULL << FormulaParser::FUTURE) | (1ULL << FormulaParser::NEXT_WEAK) |
                                         (1ULL << FormulaParser::NEXT_STRONG) | (1ULL << FormulaParser::ONCE) |
@@ -1572,9 +1574,9 @@ std::vector<uint16_t> FormulaParser::_serializedATN;
 std::vector<std::string> FormulaParser::_ruleNames = {
     "formula", "expr", "xor_expr", "or_expr", "and_expr", "release_until_expr", "unary", "interval", "atom", "number"};
 
-std::vector<std::string> FormulaParser::_literalNames = {"",    "','", "')'", "'['", "']'", "'inf'", "'('",  "",
-                                                         "",    "'G'", "'F'", "'W'", "'X'", "'U'",   "'R'",  "'O'",
-                                                         "'P'", "'S'", "'H'", "",    "",    "",      "'->'", "'<->'"};
+std::vector<std::string> FormulaParser::_literalNames = {"", "','", "')'", "'['", "']'", "'('", "",     "",
+                                                         "", "'G'", "'F'", "'W'", "",    "",    "'R'",  "'O'",
+                                                         "", "",    "'H'", "",    "",    "",    "'->'", "'<->'"};
 
 std::vector<std::string> FormulaParser::_symbolicNames = {"",
                                                           "",
@@ -1582,8 +1584,8 @@ std::vector<std::string> FormulaParser::_symbolicNames = {"",
                                                           "",
                                                           "",
                                                           "",
-                                                          "",
                                                           "BOOL",
+                                                          "INFINITY",
                                                           "NOT",
                                                           "GLOBALLY",
                                                           "FUTURE",
@@ -1717,10 +1719,10 @@ FormulaParser::Initializer::Initializer() {
         0x2,  0x2,    0x97,   0x98,   0x7,    0x5,    0x2,    0x2,    0x98,   0x99, 0x5,  0x14, 0xb,  0x2,  0x99, 0x9a,
         0x7,  0x3,    0x2,    0x2,    0x9a,   0x9b,   0x5,    0x14,   0xb,    0x2,  0x9b, 0x9c, 0x7,  0x6,  0x2,  0x2,
         0x9c, 0xa4,   0x3,    0x2,    0x2,    0x2,    0x9d,   0x9e,   0x7,    0x5,  0x2,  0x2,  0x9e, 0x9f, 0x5,  0x14,
-        0xb,  0x2,    0x9f,   0xa0,   0x7,    0x3,    0x2,    0x2,    0xa0,   0xa1, 0x7,  0x7,  0x2,  0x2,  0xa1, 0xa2,
+        0xb,  0x2,    0x9f,   0xa0,   0x7,    0x3,    0x2,    0x2,    0xa0,   0xa1, 0x7,  0x9,  0x2,  0x2,  0xa1, 0xa2,
         0x7,  0x6,    0x2,    0x2,    0xa2,   0xa4,   0x3,    0x2,    0x2,    0x2,  0xa3, 0x97, 0x3,  0x2,  0x2,  0x2,
-        0xa3, 0x9d,   0x3,    0x2,    0x2,    0x2,    0xa4,   0x11,   0x3,    0x2,  0x2,  0x2,  0xa5, 0xb0, 0x7,  0x9,
-        0x2,  0x2,    0xa6,   0xb0,   0x7,    0x1c,   0x2,    0x2,    0xa7,   0xa9, 0x7,  0x8,  0x2,  0x2,  0xa8, 0xaa,
+        0xa3, 0x9d,   0x3,    0x2,    0x2,    0x2,    0xa4,   0x11,   0x3,    0x2,  0x2,  0x2,  0xa5, 0xb0, 0x7,  0x8,
+        0x2,  0x2,    0xa6,   0xb0,   0x7,    0x1c,   0x2,    0x2,    0xa7,   0xa9, 0x7,  0x7,  0x2,  0x2,  0xa8, 0xaa,
         0x5,  0x4,    0x3,    0x2,    0xa9,   0xa8,   0x3,    0x2,    0x2,    0x2,  0xaa, 0xab, 0x3,  0x2,  0x2,  0x2,
         0xab, 0xa9,   0x3,    0x2,    0x2,    0x2,    0xab,   0xac,   0x3,    0x2,  0x2,  0x2,  0xac, 0xad, 0x3,  0x2,
         0x2,  0x2,    0xad,   0xae,   0x7,    0x4,    0x2,    0x2,    0xae,   0xb0, 0x3,  0x2,  0x2,  0x2,  0xaf, 0xa5,
