@@ -90,7 +90,6 @@ build-evaluation:
     - cmake
       -DCMAKE_PREFIX_PATH=/commonroad/dist
       -DCMAKE_BUILD_TYPE=RelWithDebInfo
-      -DCMAKE_CXX_FLAGS=-fsanitize=address,undefined
       ..
     - make rvmonitors_eval -j4
   artifacts:
