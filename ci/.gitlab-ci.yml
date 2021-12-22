@@ -191,3 +191,12 @@ evaluation:
   needs:
     - job: build-evaluation
       artifacts: true
+  artifacts:
+    name: evaluation_artifacts
+    paths:
+      - /opt/hydra/evaluation/output
+      - /opt/hydra/evaluation/fmlas
+      - /opt/hydra/evaluation/logs
+      - /opt/hydra/evaluation/error.log
+      - /opt/hydra/evaluation/bug*.mdl
+    expire_in: 20 minutes
