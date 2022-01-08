@@ -187,6 +187,7 @@ evaluation:
   when: manual
   script:
     - /commonroad/evaluate.sh "$(pwd)/build/rvmonitors_eval"
+  after_script:
     - mkdir -p eval_results
     - cp -r --target-directory=eval_results
       /opt/hydra/evaluation/output
