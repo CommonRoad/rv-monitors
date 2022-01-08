@@ -201,4 +201,3 @@ evaluation:
     name: evaluation_artifacts
     paths:
       - eval_results
-    expire_in: 20 minutes
