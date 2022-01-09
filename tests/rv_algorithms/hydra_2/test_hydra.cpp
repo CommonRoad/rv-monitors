@@ -526,13 +526,29 @@ TEST(TestHydra, testAndOnceInterval) {
     TestHydra::executeHydraEval(trace, {formula}, {expSolution});
 }
 
-TEST(TestHydra, testAndOnceIntervallAnd) {
+TEST(TestHydra, testAndOnceIntervallAnd1) {
     Trace trace = Utils::createTrace(
         {"in_same_lane", "in_single_lane"},
         {{"in_single_lane"}, {"in_single_lane"}, {"in_same_lane"}, {"in_same_lane"}, {"in_same_lane"}});
     Formula formula = Parser::parse("in_same_lane & !O[0,30](in_same_lane & !(in_single_lane) & P(in_single_lane))");
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, false}, Verdict{2, false}, Verdict{3, false},
+                                     Verdict{4, false}};
+    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, testAndOnceIntervallAnd2) {
+    Trace trace =
+        Utils::createTrace({"in_same_lane", "in_single_lane", "keeps_safe_distance_prec", "orientation_towards"},
+                           {{"in_same_lane", "keeps_safe_distance_prec"},
+                            {"in_same_lane", "keeps_safe_distance_prec"},
+                            {"in_same_lane", "in_single_lane"},
+                            {"in_same_lane", "in_single_lane"},
+                            {"in_same_lane", "in_single_lane"}});
+    Formula formula = Parser::parse("(in_same_lane & !O[0,30](in_same_lane & !(in_single_lane) & orientation_towards & "
+                                    "P(in_single_lane & orientation_towards))) -> keeps_safe_distance_prec");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, false}, Verdict{3, false},
                                      Verdict{4, false}};
     TestHydra::executeHydraEval(trace, {formula}, {expSolution});
 }
