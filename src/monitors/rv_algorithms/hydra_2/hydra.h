@@ -18,7 +18,7 @@
 class Hydra : public MonitorInterface {
   public:
     Hydra(const std::vector<Formula> &formulas, bool connectedEval = true, bool reordering = true,
-          bool shortCircuiting = true, std::vector<std::tuple<std::string, double, double>> predicateCosts = {});
+          bool shortCircuiting = true, const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
 
     /**
      * Evaluation function for monitor algorithms.
@@ -37,7 +37,7 @@ class Hydra : public MonitorInterface {
 
   private:
     void createMonitor(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting,
-                       std::vector<std::tuple<std::string, double, double>> predicateCosts);
+                       const std::map<std::string, std::array<double, 2>> &predicateCosts);
     void resetMonitors();
     void setTraceMonitors(const Trace &tra);
 

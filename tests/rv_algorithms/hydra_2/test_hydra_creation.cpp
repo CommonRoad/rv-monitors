@@ -12,7 +12,7 @@
 #include <utility>
 
 void executeTest(Formula inputFormula, const std::string &expectedFormulaStringReordered,
-                 const std::vector<std::tuple<std::string, double, double>> &predicateCosts) {
+                 const std::map<std::string, std::array<double, 2>> &predicateCosts) {
     HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts, false)};
     std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(inputFormula, 0, false);
     EXPECT_EQ(mon->to_string(), inputFormula.to_string());
@@ -33,8 +33,8 @@ void executeTest(Formula inputFormula, const std::string &expectedFormulaStringR
 TEST(TestHydraCreation, testAnd) {
     Formula formula = Parser::parse("(d(test) & a(test) & b(test) & c(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"(d(test) & a(test) & b(test) & c(test))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -42,8 +42,8 @@ TEST(TestHydraCreation, testAnd) {
 TEST(TestHydraCreation, testAndReorder) {
     Formula formula = Parser::parse("(a(test) & b(test) & c(test) & d(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"(d(test) & a(test) & b(test) & c(test))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -51,8 +51,8 @@ TEST(TestHydraCreation, testAndReorder) {
 TEST(TestHydraCreation, testPreviousAnd) {
     Formula formula = Parser::parse("P(d(test)) & P(a(test)) & P(b(test)) & P(c(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"(P(d(test)) & P(a(test)) & P(b(test)) & P(c(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -60,8 +60,8 @@ TEST(TestHydraCreation, testPreviousAnd) {
 TEST(TestHydraCreation, testPreviousAndReorder) {
     Formula formula = Parser::parse("P(a(test)) & P(b(test)) & P(c(test)) & P(d(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"(P(d(test)) & P(a(test)) & P(b(test)) & P(c(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -69,8 +69,8 @@ TEST(TestHydraCreation, testPreviousAndReorder) {
 TEST(TestHydraCreation, testNextAnd) {
     Formula formula = Parser::parse("X(d(test)) & X(a(test)) & X(b(test)) & X(c(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
     std::string expectedFormula{"(X(d(test)) & X(a(test)) & X(b(test)) & X(c(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
@@ -79,8 +79,8 @@ TEST(TestHydraCreation, testNextAnd) {
 TEST(TestHydraCreation, testNextAndReorder) {
     Formula formula = Parser::parse("X(a(test)) & X(b(test)) & X(c(test)) & X(d(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"(X(d(test)) & X(a(test)) & X(b(test)) & X(c(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -88,8 +88,8 @@ TEST(TestHydraCreation, testNextAndReorder) {
 TEST(TestHydraCreation, testNotAnd) {
     Formula formula = Parser::parse("!(a(test)) & !(d(test)) & !(c(test)) & !(b(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"(!(a(test)) & !(d(test)) & !(c(test)) & !(b(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -97,8 +97,8 @@ TEST(TestHydraCreation, testNotAnd) {
 TEST(TestHydraCreation, testNotAndReorder) {
     Formula formula = Parser::parse("!(a(test)) & !(b(test)) & !(c(test)) & !(d(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"(!(a(test)) & !(d(test)) & !(c(test)) & !(b(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -106,8 +106,8 @@ TEST(TestHydraCreation, testNotAndReorder) {
 TEST(TestHydraCreation, testAndAnd) {
     Formula formula = Parser::parse("!(d(test) & a(test)) & !(b(test) & c(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"(!((d(test) & a(test))) & !((b(test) & c(test))))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -115,8 +115,8 @@ TEST(TestHydraCreation, testAndAnd) {
 TEST(TestHydraCreation, testAndAndReorder) {
     Formula formula = Parser::parse("!(b(test) & c(test)) & !(d(test) & a(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"(!((d(test) & a(test))) & !((b(test) & c(test))))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -124,8 +124,8 @@ TEST(TestHydraCreation, testAndAndReorder) {
 TEST(TestHydraCreation, testSinceAnd) {
     Formula formula = Parser::parse("(a(test))S(d(test)) & (c(test))S(b(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"((a(test) S d(test)) & (c(test) S b(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -133,8 +133,8 @@ TEST(TestHydraCreation, testSinceAnd) {
 TEST(TestHydraCreation, testSinceAndReorder) {
     Formula formula = Parser::parse("(c(test))S(b(test)) & (a(test))S(d(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"((a(test) S d(test)) & (c(test) S b(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -142,8 +142,8 @@ TEST(TestHydraCreation, testSinceAndReorder) {
 TEST(TestHydraCreation, testUntilAnd) {
     Formula formula = Parser::parse("(a(test))S(d(test)) & (c(test))S(b(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"((a(test) S d(test)) & (c(test) S b(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -151,8 +151,8 @@ TEST(TestHydraCreation, testUntilAnd) {
 TEST(TestHydraCreation, testUntilAndReorder) {
     Formula formula = Parser::parse("(c(test))U(b(test)) & (a(test))U(d(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"((a(test) U d(test)) & (c(test) U b(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -160,8 +160,8 @@ TEST(TestHydraCreation, testUntilAndReorder) {
 TEST(TestHydraCreation, testOr) {
     Formula formula = Parser::parse("a(test) | d(test) | c(test) | b(test)");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"(a(test) | d(test) | c(test) | b(test))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -169,8 +169,8 @@ TEST(TestHydraCreation, testOr) {
 TEST(TestHydraCreation, testOrReorder) {
     Formula formula = Parser::parse("a(test) | b(test) | c(test) | d(test)");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"(a(test) | d(test) | c(test) | b(test))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -178,8 +178,8 @@ TEST(TestHydraCreation, testOrReorder) {
 TEST(TestHydraCreation, testPreviousOr) {
     Formula formula = Parser::parse("P(a(test)) | P(d(test)) | P(c(test)) | P(b(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"(P(a(test)) | P(d(test)) | P(c(test)) | P(b(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -187,8 +187,8 @@ TEST(TestHydraCreation, testPreviousOr) {
 TEST(TestHydraCreation, testPreviousOrReorder) {
     Formula formula = Parser::parse("P(a(test)) | P(b(test)) | P(c(test)) | P(d(test)))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"(P(a(test)) | P(d(test)) | P(c(test)) | P(b(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -196,8 +196,8 @@ TEST(TestHydraCreation, testPreviousOrReorder) {
 TEST(TestHydraCreation, testNextOr) {
     Formula formula = Parser::parse("X(a(test)) | X(d(test)) | X(c(test)) | X(b(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"(X(a(test)) | X(d(test)) | X(c(test)) | X(b(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -205,8 +205,8 @@ TEST(TestHydraCreation, testNextOr) {
 TEST(TestHydraCreation, testNextOrReorder) {
     Formula formula = Parser::parse("X(a(test)) | X(b(test)) | X(c(test)) | X(d(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"(X(a(test)) | X(d(test)) | X(c(test)) | X(b(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -214,8 +214,8 @@ TEST(TestHydraCreation, testNextOrReorder) {
 TEST(TestHydraCreation, testNotOr) {
     Formula formula = Parser::parse("!(a(test)) | !(d(test)) | !(c(test)) | !(b(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"(!(d(test)) | !(a(test)) | !(b(test)) | !(c(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -223,8 +223,8 @@ TEST(TestHydraCreation, testNotOr) {
 TEST(TestHydraCreation, testNotOrReorder) {
     Formula formula = Parser::parse("!(a(test)) | !(b(test)) | !(c(test)) | !(d(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"(!(d(test)) | !(a(test)) | !(b(test)) | !(c(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -232,8 +232,8 @@ TEST(TestHydraCreation, testNotOrReorder) {
 TEST(TestHydraCreation, testOrOr) {
     Formula formula = Parser::parse("!(a(test) | d(test)) | !(c(test) | b(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"(!((a(test) | d(test))) | !((c(test) | b(test))))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -241,8 +241,8 @@ TEST(TestHydraCreation, testOrOr) {
 TEST(TestHydraCreation, testOrOrReorder) {
     Formula formula = Parser::parse("!(c(test) | b(test)) | !(a(test) | d(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"(!((a(test) | d(test))) | !((c(test) | b(test))))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -250,8 +250,8 @@ TEST(TestHydraCreation, testOrOrReorder) {
 TEST(TestHydraCreation, testSinceOr) {
     Formula formula = Parser::parse("(a(test))S(d(test)) | (c(test))S(b(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"((a(test) S d(test)) | (c(test) S b(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -259,8 +259,8 @@ TEST(TestHydraCreation, testSinceOr) {
 TEST(TestHydraCreation, testSinceOrReorder) {
     Formula formula = Parser::parse("(c(test))S(b(test)) | (a(test))S(d(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"((a(test) S d(test)) | (c(test) S b(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -268,8 +268,8 @@ TEST(TestHydraCreation, testSinceOrReorder) {
 TEST(TestHydraCreation, testUntilOr) {
     Formula formula = Parser::parse("(a(test))S(d(test)) | (c(test))S(b(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"((a(test) S d(test)) | (c(test) S b(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -277,8 +277,8 @@ TEST(TestHydraCreation, testUntilOr) {
 TEST(TestHydraCreation, testUntilOrReorder) {
     Formula formula = Parser::parse("(b(test))U(c(test)) | (a(test))U(d(test))");
     formula.setId("R1");
-    std::vector<std::tuple<std::string, double, double>> predicateCosts{
-        {"a", 20.0, 80.0}, {"b", 100.0, 20.0}, {"c", 100.0, 80.0}, {"d", 20.0, 20.0}};
+    std::map<std::string, std::array<double, 2>> predicateCosts{
+        {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"((a(test) U d(test)) | (b(test) U c(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }

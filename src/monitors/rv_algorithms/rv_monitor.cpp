@@ -63,7 +63,7 @@ AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
 }
 
 RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration configuration,
-                     const std::vector<std::tuple<std::string, double, double>> &predicateCosts)
+                     const std::map<std::string, std::array<double, 2>> &predicateCosts)
     : configuration(configuration) {
     switch (configuration.algorithm) {
     case dynamic_programming_ltl:
@@ -87,7 +87,7 @@ RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration 
 }
 
 RVMonitor::RVMonitor(const Formula &formula, MonitorConfiguration configuration,
-                     const std::vector<std::tuple<std::string, double, double>> &predicateCosts)
+                     const std::map<std::string, std::array<double, 2>> &predicateCosts)
     : configuration(configuration) {
     switch (configuration.algorithm) {
     case dynamic_programming_ltl:
