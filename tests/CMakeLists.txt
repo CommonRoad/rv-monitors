@@ -33,7 +33,7 @@ set(RV_MONITOR_TEST_SRC_FILES
         )
 
 
-add_executable(rvmonitors_test ${RV_MONITOR_TEST_SRC_FILES})
+add_executable(rvmonitors_test ${RV_MONITOR_TEST_SRC_FILES} rv_algorithms/hydra_2/hydra_monitors/test_constant_monitor.cpp rv_algorithms/hydra_2/hydra_monitors/test_constant_monitor.h rv_algorithms/hydra_2/hydra_test_utils.cpp rv_algorithms/hydra_2/hydra_test_utils.h)
 target_compile_definitions(rvmonitors_test PRIVATE)
 target_link_libraries(
         rvmonitors_test

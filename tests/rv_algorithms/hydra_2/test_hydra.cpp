@@ -6,47 +6,15 @@
 //
 
 #include "test_hydra.h"
+#include "hydra_test_utils.h"
 #include "monitors/parser/parser.h"
-
-void TestHydra::executeHydraEval(Trace &trace, const std::vector<Formula> &formulas,
-                                 const std::vector<std::vector<Verdict>> &expSolution) {
-    auto monitor1{Hydra(formulas, false, false, false)};
-    evalHydra(formulas, expSolution, monitor1, trace, "fff");
-    auto monitor2{Hydra(formulas, false, false, true)};
-    evalHydra(formulas, expSolution, monitor2, trace, "fft");
-    auto monitor3{Hydra(formulas, false, true, false)};
-    evalHydra(formulas, expSolution, monitor3, trace, "ftf");
-    auto monitor4{Hydra(formulas, false, true, true)};
-    evalHydra(formulas, expSolution, monitor4, trace, "ftt");
-    auto monitor5{Hydra(formulas, true, false, false)};
-    evalHydra(formulas, expSolution, monitor5, trace, "tff");
-    auto monitor6{Hydra(formulas, true, false, true)};
-    evalHydra(formulas, expSolution, monitor6, trace, "tft");
-    auto monitor7{Hydra(formulas, true, true, false)};
-    evalHydra(formulas, expSolution, monitor7, trace, "ttf");
-    auto monitor9{Hydra(formulas, true, true, true)};
-    evalHydra(formulas, expSolution, monitor9, trace, "ttt");
-}
-
-void TestHydra::evalHydra(const std::vector<Formula> &formulas, const std::vector<std::vector<Verdict>> &expSolution,
-                          Hydra &monitor, Trace &trace, const std::string &evaluation) {
-    auto solution{monitor.evaluate(trace)};
-    for (int i{0}; i < formulas.size(); ++i) {
-        if (solution.at(formulas[i].getId()).size() != expSolution[i].size())
-            throw std::logic_error("Hydra Test /" + evaluation +
-                                   ": length of expected solution and solution does not match");
-        for (size_t j{0}; j < expSolution[i].size(); ++j)
-            EXPECT_TRUE(expSolution[i][j] == solution.at(formulas[i].getId())[j])
-                << evaluation + ": Mismatch at element index: " << j;
-    }
-}
 
 TEST(TestHydra, testEmptyTrace) {
     Trace trace = Utils::createTrace({"a", "b", "c"}, {}, std::vector<size_t>{});
     Formula formula = Parser::parse("P[0, 1](c)");
     formula.setId("R1");
     std::vector<Verdict> expSolution{};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testToString) {
@@ -71,7 +39,7 @@ TEST(TestHydra, testSinglePrevious) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{0, true}, Verdict{1, true},
                                      Verdict{4, false}, Verdict{4, true}, Verdict{5, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testSingleNext) {
@@ -82,7 +50,7 @@ TEST(TestHydra, testSingleNext) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{0, false}, Verdict{1, false},
                                      Verdict{4, true}, Verdict{4, true},  Verdict{5, false}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testSingleSince) {
@@ -92,7 +60,7 @@ TEST(TestHydra, testSingleSince) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{0, false}, Verdict{2, false},
                                      Verdict{4, true},  Verdict{5, true},  Verdict{10, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testSingleUntil1) {
@@ -102,7 +70,7 @@ TEST(TestHydra, testSingleUntil1) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{0, true},  Verdict{2, true},
                                      Verdict{4, true}, Verdict{5, false}, Verdict{10, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testSingleUntil2) {
@@ -112,7 +80,7 @@ TEST(TestHydra, testSingleUntil2) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true},
                                      Verdict{3, true}, Verdict{4, true}, Verdict{5, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testSingleUntil3) {
@@ -122,7 +90,7 @@ TEST(TestHydra, testSingleUntil3) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, false},
                                      Verdict{3, true}, Verdict{4, true}, Verdict{5, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testSingleUntil4) {
@@ -132,7 +100,7 @@ TEST(TestHydra, testSingleUntil4) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true},  Verdict{1, true},  Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, false}, Verdict{5, false}, Verdict{6, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testSingleUntilAnd) {
@@ -142,7 +110,7 @@ TEST(TestHydra, testSingleUntilAnd) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{0, true},  Verdict{2, true},
                                      Verdict{4, true}, Verdict{5, false}, Verdict{10, false}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testSinceUntilOr) {
@@ -152,7 +120,7 @@ TEST(TestHydra, testSinceUntilOr) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{0, true}, Verdict{2, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{10, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testSinceUntilAnd) {
@@ -162,7 +130,7 @@ TEST(TestHydra, testSinceUntilAnd) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{0, false}, Verdict{2, false},
                                      Verdict{4, true},  Verdict{5, false}, Verdict{10, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testSinceUntilNegated1) {
@@ -173,7 +141,7 @@ TEST(TestHydra, testSinceUntilNegated1) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{0, false}, Verdict{1, false},
                                      Verdict{4, true},  Verdict{4, false}, Verdict{5, false}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testImplication) {
@@ -182,7 +150,7 @@ TEST(TestHydra, testImplication) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true},  Verdict{5, true}, Verdict{6, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testFutureAsUntil) {
@@ -191,7 +159,7 @@ TEST(TestHydra, testFutureAsUntil) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testFuture) {
@@ -200,7 +168,7 @@ TEST(TestHydra, testFuture) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyAsUntil) {
@@ -209,7 +177,7 @@ TEST(TestHydra, testGloballyAsUntil) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballySatisfied) {
@@ -218,7 +186,7 @@ TEST(TestHydra, testGloballySatisfied) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyViolatedTwice) {
@@ -227,7 +195,7 @@ TEST(TestHydra, testGloballyViolatedTwice) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, false}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyFutureOnceIntervalViolatedOnce) {
@@ -236,7 +204,7 @@ TEST(TestHydra, testGloballyFutureOnceIntervalViolatedOnce) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, false},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyFutureOnceIntervalSatisfied) {
@@ -245,7 +213,7 @@ TEST(TestHydra, testGloballyFutureOnceIntervalSatisfied) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyFutureIntervalSatiesfied) {
@@ -254,7 +222,7 @@ TEST(TestHydra, testGloballyFutureIntervalSatiesfied) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyFutureIntervalViolated) {
@@ -263,7 +231,7 @@ TEST(TestHydra, testGloballyFutureIntervalViolated) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true},  Verdict{1, false}, Verdict{2, false}, Verdict{3, false},
                                      Verdict{4, false}, Verdict{5, false}, Verdict{6, false}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyOnceIntervalViolated) {
@@ -272,7 +240,7 @@ TEST(TestHydra, testGloballyOnceIntervalViolated) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, false}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyOnceIntervalSatisfied) {
@@ -281,7 +249,7 @@ TEST(TestHydra, testGloballyOnceIntervalSatisfied) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testOnceIntervalSatisfied) {
@@ -290,7 +258,7 @@ TEST(TestHydra, testOnceIntervalSatisfied) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testOnceIntervalViolated) {
@@ -299,7 +267,7 @@ TEST(TestHydra, testOnceIntervalViolated) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true},  Verdict{5, true}, Verdict{6, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyPreviousViolated) {
@@ -308,7 +276,7 @@ TEST(TestHydra, testGloballyPreviousViolated) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, false}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, false}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testOnceIntervallSatisfied) {
@@ -317,7 +285,7 @@ TEST(TestHydra, testOnceIntervallSatisfied) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testOnceIntervallViolated) {
@@ -326,7 +294,7 @@ TEST(TestHydra, testOnceIntervallViolated) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, false}, Verdict{2, false}, Verdict{3, true},
                                      Verdict{4, true},  Verdict{5, true},  Verdict{6, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testHistoricallyAsSinceViolated) {
@@ -335,7 +303,7 @@ TEST(TestHydra, testHistoricallyAsSinceViolated) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, false}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testHistoricallySatisfied) {
@@ -345,7 +313,7 @@ TEST(TestHydra, testHistoricallySatisfied) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testHistoricallyViolated) {
@@ -354,7 +322,7 @@ TEST(TestHydra, testHistoricallyViolated) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, false}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyOncePreviousViolated) {
@@ -363,7 +331,7 @@ TEST(TestHydra, testGloballyOncePreviousViolated) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, false}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testPreviousAndNegation) {
@@ -372,7 +340,7 @@ TEST(TestHydra, testPreviousAndNegation) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, true}, Verdict{2, false}, Verdict{3, false},
                                      Verdict{4, false}, Verdict{5, true}, Verdict{6, false}, Verdict{7, false}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyOncePrevious) {
@@ -381,7 +349,7 @@ TEST(TestHydra, testGloballyOncePrevious) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}, Verdict{7, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyOncePrevious2) {
@@ -390,7 +358,7 @@ TEST(TestHydra, testGloballyOncePrevious2) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true},  Verdict{5, true}, Verdict{6, true}, Verdict{7, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testPreviousAnd) {
@@ -399,7 +367,7 @@ TEST(TestHydra, testPreviousAnd) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, true}, Verdict{2, false}, Verdict{3, false},
                                      Verdict{4, false}, Verdict{5, true}, Verdict{6, false}, Verdict{7, false}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyAndOncePreviousImplicationViolatedOnce) {
@@ -408,7 +376,7 @@ TEST(TestHydra, testGloballyAndOncePreviousImplicationViolatedOnce) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, false},
                                      Verdict{4, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyAndOncePreviousImplicationSatisfied1) {
@@ -417,7 +385,7 @@ TEST(TestHydra, testGloballyAndOncePreviousImplicationSatisfied1) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyAndOncePreviousImplicationSatisfied2) {
@@ -425,7 +393,7 @@ TEST(TestHydra, testGloballyAndOncePreviousImplicationSatisfied2) {
     Formula formula = Parser::parse("G((a & O(b & P(!b))) -> c)");
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyImplicationOnceHistoricallySatisfied) {
@@ -436,7 +404,7 @@ TEST(TestHydra, testGloballyImplicationOnceHistoricallySatisfied) {
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}, Verdict{7, true},
                                      Verdict{8, true}, Verdict{9, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyImplicationOnceHistoricallyViolatedOnce) {
@@ -446,7 +414,7 @@ TEST(TestHydra, testGloballyImplicationOnceHistoricallyViolatedOnce) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true},  Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, false}, Verdict{7, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyImplicationOncePreviousViolatedOnce) {
@@ -455,7 +423,7 @@ TEST(TestHydra, testGloballyImplicationOncePreviousViolatedOnce) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true},  Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, false}, Verdict{7, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testOnceIntervalAnd) {
@@ -464,7 +432,7 @@ TEST(TestHydra, testOnceIntervalAnd) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, false}, Verdict{2, false}, Verdict{3, true},
                                      Verdict{4, true},  Verdict{5, true},  Verdict{6, false}, Verdict{7, false}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testNegationAndPrevious) {
@@ -473,7 +441,7 @@ TEST(TestHydra, testNegationAndPrevious) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, false}, Verdict{2, false}, Verdict{3, false},
                                      Verdict{4, false}, Verdict{5, false}, Verdict{6, true},  Verdict{7, false}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyImplicationOncePreviousSatisfied) {
@@ -482,7 +450,7 @@ TEST(TestHydra, testGloballyImplicationOncePreviousSatisfied) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true},
                                      Verdict{3, true}, Verdict{4, true}, Verdict{5, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyImplicationHistoricallySatisfied) {
@@ -491,7 +459,7 @@ TEST(TestHydra, testGloballyImplicationHistoricallySatisfied) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}, Verdict{5, true}, Verdict{6, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyImplicationHistoricallyViolatedOnce) {
@@ -500,7 +468,7 @@ TEST(TestHydra, testGloballyImplicationHistoricallyViolatedOnce) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, false},
                                      Verdict{3, true}, Verdict{4, true}, Verdict{5, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testGloballyNext) {
@@ -508,7 +476,7 @@ TEST(TestHydra, testGloballyNext) {
     Formula formula = Parser::parse("G(b -> (X(a)))");
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, false}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testCombinedSinceUntilFormulas) {
@@ -527,7 +495,7 @@ TEST(TestHydra, testCombinedSinceUntilFormulas) {
         {Verdict{0, true}, Verdict{0, true}, Verdict{2, true}, Verdict{4, true}, Verdict{5, false}, Verdict{10, true}},
         {Verdict{0, true}, Verdict{0, true}, Verdict{2, true}, Verdict{4, true}, Verdict{5, false}, Verdict{10, false}},
         {Verdict{0, true}, Verdict{0, true}, Verdict{2, true}, Verdict{4, true}, Verdict{5, true}, Verdict{10, true}}};
-    TestHydra::executeHydraEval(trace, formulas, expSolutions);
+    hydraTestUtils::executeHydraEval(trace, formulas, expSolutions);
 }
 
 TEST(TestHydra, testAndNegatedOnceInterval) {
@@ -536,7 +504,7 @@ TEST(TestHydra, testAndNegatedOnceInterval) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, false}, Verdict{2, false}, Verdict{3, false},
                                      Verdict{4, false}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testAndOnceInterval) {
@@ -545,7 +513,7 @@ TEST(TestHydra, testAndOnceInterval) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, false}, Verdict{2, true}, Verdict{3, true},
                                      Verdict{4, true}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testAndOnceIntervallAnd1) {
@@ -556,7 +524,7 @@ TEST(TestHydra, testAndOnceIntervallAnd1) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, false}, Verdict{2, false}, Verdict{3, false},
                                      Verdict{4, false}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testAndOnceIntervallAnd2) {
@@ -572,5 +540,5 @@ TEST(TestHydra, testAndOnceIntervallAnd2) {
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, false}, Verdict{3, false},
                                      Verdict{4, false}};
-    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }

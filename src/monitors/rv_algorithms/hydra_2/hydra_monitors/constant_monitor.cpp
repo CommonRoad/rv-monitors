@@ -14,8 +14,8 @@ Verdict ConstantMonitor::concreteStep(size_t parentId, size_t stepNumber) {
             Verdict(event.getTimeStep(), (*std::dynamic_pointer_cast<Constant>(formula.getExpr())).getValue())};
         return verdict;
     } else
-        return Verdict(false);
+        return {false};
 }
 
-void ConstantMonitor::setTrace(const Trace &tr) { trace = tr; }
+void ConstantMonitor::setTrace(const Trace &tra) { trace = tra; }
 std::string ConstantMonitor::to_string() { return formula.getExpr()->getSymbol(); }
