@@ -3,15 +3,15 @@
 #include "hydra_creation_visitor.h"
 #include "monitors/expression_tree/unary/temporal/globally.h"
 #include <iostream>
-#include <utility>
+#include <spdlog/spdlog.h>
 
 std::map<std::string, std::vector<Verdict>> Hydra::evaluate(Trace &trace) {
     std::map<std::string, std::vector<Verdict>> result;
     // Empty trace
     if (trace.getTrace().empty()) {
-        std::cout << "Trace is empty" << std::endl;
+        spdlog::info("Hydra::evaluate | Trace is empty");
         for (const auto &mon : monitors)
-            result[mon->getFormulaId()] = {Verdict{0, false}};
+            result[mon->getFormulaId()] = {};
         return result;
     }
 
@@ -30,7 +30,7 @@ std::map<std::string, std::vector<Verdict>> Hydra::evaluate(Trace &trace) {
 std::string Hydra::to_string() const {
     std::string str;
     for (const auto &mon : monitors)
-        str += mon->to_string() + '\n';
+        str += mon->to_string();
     return str;
 }
 

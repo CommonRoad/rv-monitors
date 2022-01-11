@@ -41,6 +41,34 @@ void TestHydra::evalHydra(const std::vector<Formula> &formulas, const std::vecto
     }
 }
 
+TEST(TestHydra, testEmptyTrace) {
+    Trace trace =
+        Utils::createTrace({"a", "b", "c"}, {},
+                           std::vector<size_t>{});
+    Formula formula = Parser::parse("P[0, 1](c)");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{};
+    TestHydra::executeHydraEval(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, testToString) {
+    Trace trace =
+        Utils::createTrace({"a", "b", "c"}, {},
+                           std::vector<size_t>{});
+    Formula formula = Parser::parse("P(c)");
+    formula.setId("R1");
+    auto monitor{Hydra({formula}, false, false, false)};
+    EXPECT_EQ(monitor.to_string(), "P(c)");
+}
+
+TEST(TestHydra, testNoValidId) {
+    Trace trace =
+        Utils::createTrace({"a", "b", "c"}, {},
+                           std::vector<size_t>{});
+    Formula formula = Parser::parse("P[0, 1](c)");
+    EXPECT_THROW(auto monitor{Hydra({formula}, false, false, false)}, std::logic_error);
+}
+
 TEST(TestHydra, testSinglePrevious) {
     Trace trace =
         Utils::createTrace({"a", "b", "c"}, {{"b", "c"}, {"a", "c"}, {}, {"a", "b", "c"}, {"b", "c"}, {"a", "b", "c"}},

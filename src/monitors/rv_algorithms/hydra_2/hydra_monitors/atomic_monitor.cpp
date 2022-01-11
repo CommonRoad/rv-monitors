@@ -13,9 +13,9 @@ Verdict AtomicMonitor::concreteStep(size_t parentId, size_t stepNumber) {
             Verdict(event.getTimeStep(), event.getValue(*std::dynamic_pointer_cast<Atomic>(formula.getExpr())))};
         return verdict;
     } else
-        return Verdict(false);
+        return {false};
 }
 
-void AtomicMonitor::setTrace(const Trace &tr) { trace = tr; }
+void AtomicMonitor::setTrace(const Trace &tra) { trace = tra; }
 
-std::string AtomicMonitor::to_string() { return std::string(); }
+std::string AtomicMonitor::to_string() { return formula.to_string(); }

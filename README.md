@@ -13,6 +13,23 @@ Tested with
 - GCC 10.2.0
 
 ### Dependencies
+These dependencies should be available as a system package.
+- cmake > 3.16
+- Boost
+- Eigen3
+- spdlog
+- OpenMP
+- Doxygen (for building the documentation)
+- Graphviz (for building the documentation)
+
+#### Debian/Ubuntu
+You require at least Ubuntu 20.04.
+On Debian/Ubuntu, you'll most likely need to install the following packages:  
+`build-essential git pkg-config wget libspdlog-dev`
+
+For building the documentation, you'll need to install `doxygen` and `graphviz`.
+
+For test coverage, you'll need to install `gcovr`.
 
 #### Bundled Dependencies:
 - [ANTLR4](https://www.antlr.org/) is used for parsing formulas. For this, the following files from [here](https://www.antlr.org/download/index.html) are used:

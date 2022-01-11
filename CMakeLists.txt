@@ -22,6 +22,8 @@ if(NOT CMAKE_BUILD_TYPE)
             STRING "Choose the type of build." FORCE)
 endif()
 
+# Include spdlog
+find_package(spdlog REQUIRED)
 
 # Appends dictionary where other cmake files are stored which install required Software
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/)
