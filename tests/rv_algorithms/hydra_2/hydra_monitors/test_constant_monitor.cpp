@@ -14,7 +14,7 @@ TEST(TestConstantMonitor, testSingleConstant) {
     Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("true");
     formula.setId("R1");
-    auto mon{ConstantMonitor(formula, 0, false)};
+    auto mon{ConstantMonitor(formula, 1, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).b, true);

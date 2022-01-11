@@ -21,8 +21,11 @@ set(RV_MONITOR_TEST_SRC_FILES
         rv_algorithms/event_consuming/test_event_consuming_past.cpp
         rv_algorithms/mt_fsm/test_mt_fsm_evaluation_future.cpp
         rv_algorithms/mt_fsm/test_mt_fsm_evaluation_past.cpp
+        rv_algorithms/hydra_2/hydra_test_utils.cpp
         rv_algorithms/hydra_2/test_hydra.cpp
         rv_algorithms/hydra_2/test_hydra_creation.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_constant_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_or_monitor.cpp
      #   rv_algorithms/mtl_event_consuming/test_mtl_event_consuming.cpp
         rv_algorithms/test_rv_monitors.cpp
         parser/test_parser.cpp
@@ -33,7 +36,7 @@ set(RV_MONITOR_TEST_SRC_FILES
         )
 
 
-add_executable(rvmonitors_test ${RV_MONITOR_TEST_SRC_FILES} rv_algorithms/hydra_2/hydra_monitors/test_constant_monitor.cpp rv_algorithms/hydra_2/hydra_monitors/test_constant_monitor.h rv_algorithms/hydra_2/hydra_test_utils.cpp rv_algorithms/hydra_2/hydra_test_utils.h)
+add_executable(rvmonitors_test ${RV_MONITOR_TEST_SRC_FILES})
 target_compile_definitions(rvmonitors_test PRIVATE)
 target_link_libraries(
         rvmonitors_test
