@@ -337,6 +337,6 @@ TEST(TestHydraCreation, testAndOrDuplicatedPredicate) {
     formula.setId("R1");
     std::map<std::string, std::array<double, 2>> predicateCosts{
         {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
-    std::string expectedFormula{"((a(test)) & ((a(test)) | (c(test)) | (b(test))))"};
+    std::string expectedFormula{"(a(test) & (a(test) | c(test) | b(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
