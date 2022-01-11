@@ -70,7 +70,7 @@ class Predicate;
 
 class HydraCreationVisitor {
   public:
-    HydraCreationVisitor(const std::map<std::string, std::array<double, 2>> &predicate_costs, bool reordering = true,
+    HydraCreationVisitor(std::map<std::string, std::array<double, 2>> predicate_costs, bool reordering = true,
                          bool shortCircuiting = true);
 
     std::shared_ptr<HydraMonitor> createMonitor(Formula &formula, size_t parentId, bool connectedEval);
@@ -102,5 +102,5 @@ class HydraCreationVisitor {
     std::map<std::string, std::shared_ptr<HydraMonitor>> baseline;
     std::map<std::string, std::array<double, 2>> predicateCosts;
 
-    void resort(std::vector<std::shared_ptr<HydraMonitor>> &monitors, bool increasing);
+    static void resort(std::vector<std::shared_ptr<HydraMonitor>> &monitors, bool increasing);
 };

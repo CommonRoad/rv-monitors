@@ -203,9 +203,9 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitNot(Not &tlop, size_t p
     }
 }
 
-HydraCreationVisitor::HydraCreationVisitor(const std::map<std::string, std::array<double, 2>> &predicateCosts,
-                                           bool reordering, bool shortCircuiting)
-    : reordering(reordering), shortCircuiting(shortCircuiting), predicateCosts(predicateCosts) {}
+HydraCreationVisitor::HydraCreationVisitor(std::map<std::string, std::array<double, 2>> predicateCosts, bool reordering,
+                                           bool shortCircuiting)
+    : reordering(reordering), shortCircuiting(shortCircuiting), predicateCosts(std::move(predicateCosts)) {}
 
 void HydraCreationVisitor::resort(std::vector<std::shared_ptr<HydraMonitor>> &monitors, bool increasing) {
     std::vector<double> cost;
