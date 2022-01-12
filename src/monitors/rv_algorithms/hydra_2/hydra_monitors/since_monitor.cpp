@@ -55,7 +55,7 @@ void SinceMonitor::reset() {
     positionMonitorF.reset();
 }
 std::string SinceMonitor::to_string() {
-    std::string interval;
+    std::string interval{" "};
     if (from != 0 or to != 10000)
         interval = "[" + std::to_string(from) + ", " + std::to_string(to) + "] ";
     return "(" + subMonitorF->to_string() + " S" + interval + subMonitorG->to_string() + ")";
