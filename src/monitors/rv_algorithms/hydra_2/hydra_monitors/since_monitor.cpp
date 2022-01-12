@@ -11,7 +11,7 @@ Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     subVerdictF = subMonitorF->step(monitorId, stepNumber);
     if (subVerdictF->ts.has_value())
         positionMonitorF.update(subVerdictF->ts.value());
-    else if (!subVerdictF->b)
+    if (!subVerdictF->b)
         lastViolation = std::make_pair(positionMonitorF.ts, positionMonitorF.tp);
 
     if (positionMonitorG.tp == -1) {
@@ -55,5 +55,8 @@ void SinceMonitor::reset() {
     positionMonitorF.reset();
 }
 std::string SinceMonitor::to_string() {
-    return "(" + subMonitorF->to_string() + " S " + subMonitorG->to_string() + ")";
+    std::string interval;
+    if (from != 0 or to != 10000)
+        interval = "[" + std::to_string(from) + ", " + std::to_string(to) + "] ";
+    return "(" + subMonitorF->to_string() + " S" + interval + subMonitorG->to_string() + ")";
 }

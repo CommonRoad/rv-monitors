@@ -13,14 +13,16 @@
 class SinceMonitor : public HydraMonitor {
   public:
     SinceMonitor(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitorF,
-                 std::shared_ptr<HydraMonitor> subMonitorG, size_t from, size_t to, size_t id, bool connectedEval)
-        : HydraMonitor(formula, id, connectedEval, (subMonitorG->getEvalCost() + subMonitorF->getEvalCost()) / 2,
+                 std::shared_ptr<HydraMonitor> subMonitorG, size_t intervalFrom, size_t intervalTo, size_t monitorId,
+                 bool connectedEval)
+        : HydraMonitor(formula, monitorId, connectedEval, (subMonitorG->getEvalCost() + subMonitorF->getEvalCost()) / 2,
                        (subMonitorG->getSatisfactionProbability() + subMonitorG->getSatisfactionProbability()) / 2),
-          subMonitorF(std::move(subMonitorF)), subMonitorG(std::move(subMonitorG)), from(from), to(to){};
+          subMonitorF(std::move(subMonitorF)), subMonitorG(std::move(subMonitorG)), from(intervalFrom),
+          to(intervalTo){};
 
     Verdict concreteStep(size_t parentId, size_t stepNumber) override;
 
-    void setTrace(const Trace &tr) override;
+    void setTrace(const Trace &tra) override;
 
     void reset() override;
 
