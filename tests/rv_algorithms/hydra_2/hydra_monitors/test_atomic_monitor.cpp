@@ -29,7 +29,7 @@ TEST(TestAtomicMonitor, testAtomicEvaluation) {
     EXPECT_EQ(mon.step(0, 4).b, false);
 }
 
-TEST(TestAtomicMonitor, testConstantToString) {
+TEST(TestAtomicMonitor, testToString) {
     Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"b"}, {"a"}, {}}, std::vector<size_t>{0, 1, 2, 3});
     Formula formula = Parser::parse("a");
     formula.setId("R1");

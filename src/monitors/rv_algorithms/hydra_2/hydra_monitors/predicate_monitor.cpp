@@ -14,8 +14,8 @@ Verdict PredicateMonitor::concreteStep(size_t parentId, size_t stepNumber) {
             Verdict(event.getTimeStep(), event.getValue(*std::dynamic_pointer_cast<Predicate>(formula.getExpr())))};
         return verdict;
     } else
-        return Verdict(false);
+        return {false};
 }
 
-void PredicateMonitor::setTrace(const Trace &tr) { trace = tr; }
+void PredicateMonitor::setTrace(const Trace &tra) { trace = tra; }
 std::string PredicateMonitor::to_string() { return formula.to_string(); }
