@@ -31,6 +31,7 @@ set(RV_MONITOR_TEST_SRC_FILES
         rv_algorithms/hydra_2/hydra_monitors/test_atomic_monitor.cpp
         rv_algorithms/hydra_2/hydra_monitors/test_predicate_monitor.cpp
         rv_algorithms/hydra_2/hydra_monitors/test_next_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_previous_monitor.cpp
         rv_algorithms/test_rv_monitors.cpp
         parser/test_parser.cpp
         qmc/test_qmc.cpp
