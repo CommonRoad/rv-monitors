@@ -11,7 +11,7 @@ Verdict AndMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     Verdict verdict{subMonitors.at(0)->step(monitorId, stepNumber)};
     if (shortCircuiting) {
         if (!verdict.b) {
-            if (!verdict.ts.has_value())
+            if (!verdict.ts.has_value()) // happens when we are behind last trace element with submonitor
                 return {false};
             else
                 return {verdict.ts.value(), false};
