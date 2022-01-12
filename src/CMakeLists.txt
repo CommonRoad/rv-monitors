@@ -32,12 +32,15 @@ set(RV_MONITOR_SRC_FILES
         monitors/formula/formula.cpp
         monitors/formula/nff.cpp
         monitors/parser/parser.cpp
-        monitors/parser/gen/FormulaBaseListener.cpp
         monitors/parser/gen/FormulaBaseVisitor.cpp
         monitors/parser/gen/FormulaLexer.cpp
-        monitors/parser/gen/FormulaListener.cpp
         monitors/parser/gen/FormulaParser.cpp
         monitors/parser/gen/FormulaVisitor.cpp
+        monitors/parser/gen/LogBaseVisitor.cpp
+        monitors/parser/gen/LogLexer.cpp
+        monitors/parser/gen/LogParser.cpp
+        monitors/parser/gen/LogVisitor.cpp
+        monitors/parser/log_visitor.cpp
         monitors/qmc/prime_term.cpp
         monitors/qmc/qmc.cpp
         monitors/qmc/qmc_table.cpp
@@ -106,6 +109,12 @@ target_include_directories(${LIBRARY_NAME}
 target_link_libraries(${LIBRARY_NAME} PRIVATE
         antlr4cpp
         )
+
+add_executable(rvmonitors_eval monitors/evaluation/evaluation.cpp)
+target_link_libraries(rvmonitors_eval
+    PUBLIC
+        rvmonitors
+    )
 
 # this adds many warnings to the build. They usually help to find some bugs
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")

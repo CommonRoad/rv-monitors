@@ -14,7 +14,7 @@ class OrMonitor : public HydraMonitor {
               bool shortCircuiting)
         : HydraMonitor(std::move(formula), id, connectedEval, computeCost(subMonitors),
                        computeSatisfactionProbability(subMonitors)),
-          subMonitors(std::move(subMonitors)), shortCircuiting(shortCircuiting){};
+          subMonitors(subMonitors), shortCircuiting(shortCircuiting){};
 
     Verdict concreteStep(size_t parentId, size_t stepNumber) override;
 
@@ -28,7 +28,7 @@ class OrMonitor : public HydraMonitor {
     std::vector<std::shared_ptr<HydraMonitor>> subMonitors;
     bool shortCircuiting;
 
-    double computeCost(const std::vector<std::shared_ptr<HydraMonitor>> &monitors);
+    static double computeCost(const std::vector<std::shared_ptr<HydraMonitor>> &monitors);
 
-    double computeSatisfactionProbability(const std::vector<std::shared_ptr<HydraMonitor>> &monitors);
+    static double computeSatisfactionProbability(const std::vector<std::shared_ptr<HydraMonitor>> &monitors);
 };
