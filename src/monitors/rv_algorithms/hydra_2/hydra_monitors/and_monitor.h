@@ -10,9 +10,9 @@
 
 class AndMonitor : public HydraMonitor {
   public:
-    AndMonitor(Formula formula, std::vector<std::shared_ptr<HydraMonitor>> subMonitors, size_t id, bool connectedEval,
-               bool shortCircuiting)
-        : HydraMonitor(std::move(formula), id, connectedEval, computeCost(subMonitors),
+    AndMonitor(Formula formula, const std::vector<std::shared_ptr<HydraMonitor>> &subMonitors, size_t monitorId,
+               bool connectedEval, bool shortCircuiting)
+        : HydraMonitor(std::move(formula), monitorId, connectedEval, computeCost(subMonitors),
                        computeSatisfactionProbability(subMonitors)),
           subMonitors(subMonitors), shortCircuiting(shortCircuiting){};
 

@@ -472,8 +472,7 @@ class Visitor : public FormulaBaseVisitor {
      * @return Constant according to given value.
      */
     antlrcpp::Any visitBoolean(FormulaParser::BooleanContext *ctx) override {
-        bool is_true = ctx->BOOL()->getSymbol()->getType() == FormulaParser::TRUE;
-        return std::make_shared<Constant>(Constant(is_true));
+        return std::make_shared<Constant>(Constant(ctx->getText() == "True" || ctx->getText() == "true"));
     }
 
     /**
