@@ -14,6 +14,14 @@ TEST(TestParser, interval) {
     //    EXPECT_EQ(formula.to_string(), "G(a -> F[0, 3](b))");
 }
 
+TEST(TestParser, parse_true) {
+    std::string ex_mtl = "true";
+    Formula formula = Parser::parse(ex_mtl, "Ex1");
+
+    std::string ex_mtl_parsed = "true";
+    EXPECT_EQ(formula.to_string(), ex_mtl_parsed);
+}
+
 TEST(TestParser, ex_formula_parse_rvm_syntax) {
     std::string ex_mtl = "p or (q U[2,2] r)";
     Formula formula = Parser::parse(ex_mtl, "Ex1");
