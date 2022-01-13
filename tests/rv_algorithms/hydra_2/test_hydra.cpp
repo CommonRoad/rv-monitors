@@ -120,6 +120,24 @@ TEST(TestHydra, testSingleUntilAnd) {
     hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
+TEST(TestHydra, testUntilAnd1) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"c"}, {"c"}, {"a", "b"}, {"a", "b"}, {"c"}});
+    Formula formula = Parser::parse("(a & b) U[0,2](c)");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+                                     Verdict{4, true}};
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, testUntilAnd2) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a", "b"}, {"c"}, {"c"}, {"a", "b"}, {"a", "b"}, {"c"}});
+    Formula formula = Parser::parse("(a & b) U[0,2](c)");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true},
+                                     Verdict{3, true}, Verdict{4, true}, Verdict{5, true}};
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
+}
+
 TEST(TestHydra, testSinceUntilOr) {
     Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"a"}, {"a"}, {"a", "b"}, {"a"}, {"b"}},
                                      std::vector<size_t>{0, 0, 2, 4, 5, 10});
