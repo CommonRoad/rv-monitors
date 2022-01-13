@@ -233,6 +233,24 @@ TEST(TestHydra, testGloballyOnceIntervalViolated) {
     TestHydra::evalHydra(trace, {formula}, {expSolution});
 }
 
+TEST(TestHydra, testUntil_1) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"c"},{"c"},{"a","b"},{"a","b"},{"c"}});
+    Formula formula = Parser::parse("(a & b) U[0,2](c)");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+                                     Verdict{4, true}};
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, testUntil_2) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a","b"},{"c"},{"c"},{"a","b"},{"a","b"},{"c"}});
+    Formula formula = Parser::parse("(a & b) U[0,2](c)");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+                                     Verdict{4, true}, Verdict{5, true}};
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
 TEST(TestHydra, testGloballyOnceIntervalSatisfied) {
     Trace trace = Utils::createTrace({"a", "b", "c"}, {{"b"}, {"c"}, {"a"}, {"b"}, {"b"}, {"a"}, {"b"}});
     Formula formula = Parser::parse("G(a -> O[0, 6](b))");
@@ -486,4 +504,315 @@ TEST(TestHydra, testCombinedSinceUntilFormulas) {
         {Verdict{0, true}, Verdict{0, true}, Verdict{2, true}, Verdict{4, true}, Verdict{5, false}, Verdict{10, false}},
         {Verdict{0, true}, Verdict{0, true}, Verdict{2, true}, Verdict{4, true}, Verdict{5, true}, Verdict{10, true}}};
     TestHydra::evalHydra(trace, formulas, expSolutions);
+}
+
+
+TEST(TestHydra, violated_single_until) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a","b"}, {"a","b"}, {"a","b"}, {"a","b"}, {"a"}, {"c"},{"a"},{"a"}}, std::vector<size_t>{0, 1, 2, 3, 4, 5, 6, 7});
+    Formula formula = Parser::parse("(a & b) U[0, 5] (c)");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true},
+                                     Verdict{3, true}, Verdict{4, true}, Verdict{5, true},
+                                     Verdict{6, true}, Verdict{7, true}};
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+/**** UNTIL ***/
+TEST(TestHydra, satisfied_single_until_3) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a","b"},{"c"},{"c"},{"a","b"},{"a","b"},{"c"}}, std::vector<size_t>{0, 1, 2, 3, 4, 5});
+    Formula formula = Parser::parse("(a & b) U[0, 2] c");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true},
+                                     Verdict{3, true}, Verdict{4, true}, Verdict{5, true}};
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, violated_single_until_4) {
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a"},{"a"},{"a"},{"b"}}, std::vector<size_t>{0, 1, 2, 3});
+    Formula formula = Parser::parse("a U[0, 2] b");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true}};
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, satisfied_single_until_long) {
+    Trace trace = Utils::createTrace({"a", "b","c"}, {{"a","b"},{"a","b"},{"a","b"},{"a","b"},{"c"},{"c"},{"c"},{"c"},{"c"},{"c"},{"c"}},
+                                     std::vector<size_t>{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+    Formula formula = Parser::parse("(a & b) U[1, 4] c");
+    formula.setId("R1");
+    std::cout<<trace.to_string()<<std::endl;
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+        Verdict{4, true}, Verdict{5, true}, Verdict{6, true}, Verdict{7, true},
+        Verdict{8, true}, Verdict{9, true}, Verdict{10, true}
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution}); // WHY ISN'T THIS CORRECT?
+}
+
+TEST(TestHydra, unsat_special_single_until_long_2) {
+    Trace trace = Utils::createTrace({"a", "b","c"}, {{"a","b"},{"a","b"},{"a","b"},{"a","b","c"},{"a","b"},{"a","b"},{"a","b","c"}},
+                                     std::vector<size_t>{0, 1, 2, 3, 4, 5,6});
+    Formula formula = Parser::parse("(a & b) U[1, 3] c");
+    formula.setId("R1");
+    std::cout<<trace.to_string()<<std::endl;
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+        Verdict{4, true}, Verdict{5, true}, Verdict{6, true}
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution}); // WHY ISN'T THIS CORRECT?
+}
+
+TEST(TestHydra, unsat_special_single_until_long_3) {
+    Trace trace = Utils::createTrace({"a", "b","c"}, {{"a","b"},{"a","b"},{"a","b"},{"a","b","c"},{"c"},{"c"},{"c"}},
+                                     std::vector<size_t>{0, 1, 2, 3, 4, 5,6});
+    Formula formula = Parser::parse("(a & b) U[1, 3] c");
+    formula.setId("R1");
+    std::cout<<trace.to_string()<<std::endl;
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+        Verdict{4, true}, Verdict{5, true}, Verdict{6, true}
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution}); // WHY ISN'T THIS CORRECT?
+}
+
+TEST(TestHydra, unsat_special_single_until_long_4) {
+    Trace trace = Utils::createTrace({"a", "b","c"}, {{"a","b"},{"a","b"},{"a","b"},{"a","b","c"},{"a","b","c"},{"a","b","c"},{"a","b","c"}},
+                                     std::vector<size_t>{0, 1, 2, 3, 4, 5,6});
+    Formula formula = Parser::parse("(a & b) U[1, 3] c");
+    formula.setId("R1");
+    std::cout<<trace.to_string()<<std::endl;
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+        Verdict{4, true}, Verdict{5, true}, Verdict{6, true}
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution}); // WHY ISN'T THIS CORRECT?
+}
+
+TEST(TestHydra, sat_special_single_until_extra_1) {
+    Trace trace = Utils::createTrace({"a", "b","c"}, {{"c"},{"c"},{"a","b"},{"a","b"},{"c"}},
+                                     std::vector<size_t>{0, 1, 2, 3, 4});
+    Formula formula = Parser::parse("(a & b) U[0, 2] c");
+    formula.setId("R1");
+    std::cout<<trace.to_string()<<std::endl;
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+        Verdict{4, true}
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution}); // WHY ISN'T THIS CORRECT?
+}
+
+TEST(TestHydra, unsat_special_single_until_extra_) {
+    Trace trace = Utils::createTrace({"a", "b","c"}, {{"c"},{"c"},{"a","b"},{"a","b"},{"a","b"}},
+                                     std::vector<size_t>{0, 1, 2, 3, 4});
+    Formula formula = Parser::parse("(a & b) U[0, 2] c");
+    formula.setId("R1");
+    std::cout<<trace.to_string()<<std::endl;
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+        Verdict{4, true}
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, unsat_special_single_until_extra_2) {
+    Trace trace = Utils::createTrace({"a", "b","c"}, {{"c"},{"c"},{"a","b"},{"c"},{"a","b"}},
+                                     std::vector<size_t>{0, 1, 2, 3, 4});
+    Formula formula = Parser::parse("(a & b) U[0, 2] c");
+    formula.setId("R1");
+    std::cout<<trace.to_string()<<std::endl;
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+        Verdict{4, true}
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, unsat_single_until_fin_1) {
+    Trace trace = Utils::createTrace({"a", "b","c"}, {{"c"},{"c"},{"a","b"},{"a","b"},{"a","b"}},
+                                     std::vector<size_t>{0, 1, 2, 3, 4});
+    Formula formula = Parser::parse("(a & b) U[0, 2] c");
+    formula.setId("R1");
+    std::cout<<trace.to_string()<<std::endl;
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+        Verdict{4, true}
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, sat_single_until_fin_1) {
+    Trace trace = Utils::createTrace({"a", "b","c"}, {{"c"},{"c"},{"a","b"},{"a","b"},{"c"}},
+                                     std::vector<size_t>{0, 1, 2, 3, 4});
+    Formula formula = Parser::parse("(a & b) U[0, 2] c");
+    formula.setId("R1");
+    std::cout<<trace.to_string()<<std::endl;
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+        Verdict{4, true}
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, sat_single_until_fin_2) {
+    Trace trace = Utils::createTrace({"a", "b","c"}, {{"c"},{"c"},{"a","b"},{"a","b"},{"c"},{"a","b"},{"a","b"},{"a","b","c"}},
+                                     std::vector<size_t>{0, 1, 2, 3, 4, 5, 6, 7});
+    Formula formula = Parser::parse("(a & b) U[0, 2] c");
+    formula.setId("R1");
+    std::cout<<trace.to_string()<<std::endl;
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+        Verdict{4, true}, Verdict{5, true}, Verdict{6, true}, Verdict{7, true}
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, sat_single_until_fin_3) {
+    Trace trace = Utils::createTrace({"a", "b","c"}, {{"a","b"},{"a","b"},{"c"},{"a","b"},{"a","b"},{"c"}},
+                                     std::vector<size_t>{0, 1, 2, 3, 4, 5});
+    Formula formula = Parser::parse("(a & b) U[0, 2] c");
+    formula.setId("R1");
+    std::cout<<trace.to_string()<<std::endl;
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+        Verdict{4, true}, Verdict{5, true}
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, unsat_single_until_fin_2) {
+    Trace trace = Utils::createTrace({"a", "b","c"}, {{"a","b"},{"a","b"},{"c"},{"a","b"},{"a","b"},{"a","b"}},
+                                     std::vector<size_t>{0, 1, 2, 3, 4, 5});
+    Formula formula = Parser::parse("(a & b) U[0, 2] c");
+    formula.setId("R1");
+    std::cout<<trace.to_string()<<std::endl;
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+        Verdict{4, true}, Verdict{5, true}
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, unsat_single_until_fin_3) {
+    Trace trace = Utils::createTrace({"a", "b","c"}, {{"a","b"},{"a","b"},{"c"},{"a","b"},{"c"}},
+                                     std::vector<size_t>{0, 1, 2, 3, 4});
+    Formula formula = Parser::parse("(a & b) U[0, 2] c");
+    formula.setId("R1");
+    std::cout<<trace.to_string()<<std::endl;
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+        Verdict{4, true}
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, unsat_single_until_fin_4) {
+    Trace trace = Utils::createTrace({"a", "b","c"}, {{"a","b"},{"c"},{"a","b"},{"a","b"},{"c"}},
+                                     std::vector<size_t>{0, 1, 2, 3, 4});
+    Formula formula = Parser::parse("(a & b) U[0, 2] c");
+    formula.setId("R1");
+    std::cout<<trace.to_string()<<std::endl;
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+        Verdict{4, true}
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, unsat_single_until_fin_5) {
+    Trace trace = Utils::createTrace({"a", "b","c"}, {{"a","b"},{"c"},{"c"},{"a","b"},{"a","b"},{"c"}},
+                                     std::vector<size_t>{0, 1, 2, 3, 4, 5});
+    Formula formula = Parser::parse("(a & b) U[0, 2] c");
+    formula.setId("R1");
+    std::cout<<trace.to_string()<<std::endl;
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+        Verdict{4, true}, Verdict{5, true}
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+/*** SINCE ***/
+TEST(TestHydra, violated_single_since_1) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"c"},{"c"},{"c"},{"a","b"},{"a","b"},{"a","b"}}, std::vector<size_t>{0, 1, 2, 3, 4, 5});
+    Formula formula = Parser::parse("(a & b) S[0, 2] c");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true},
+        Verdict{3, true}, Verdict{4, true}, Verdict{5, true}
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+/*** NEXT STRONG ***/
+TEST(TestHydra, satisfied_next_strong_1) {
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a"},{"a","b"},{"a","b"},{"a","b"},{"a","b"}}, std::vector<size_t>{0, 1, 2, 3, 4});
+    Formula formula = Parser::parse("X[0,1](a & b)");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true},
+        Verdict{3, true}, Verdict{4, true}
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+/*** PREVIOUSLY ***/
+TEST(TestHydra, satisfied_previously_1) {
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a","b"}, {"a","b"}, {"a","b"}, {"a", "b"},{"a","b"}}, std::vector<size_t>{0, 1, 2, 3, 4});
+    Formula formula = Parser::parse("P[0,1](a & b)");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true},
+        Verdict{3, true}, Verdict{4, true}
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+/*** GLOBALLY ***/
+TEST(TestHydra, satisfied_globally_1) {
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a","b"}, {"a","b"}, {"a","b"}, {"a", "b"},{"b"}}, std::vector<size_t>{0, 1, 2, 3, 4});
+    Formula formula = Parser::parse("G[0,2](a & b)");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true},
+        Verdict{3, true}, Verdict{4, true}
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+/*** FUTURE ***/
+TEST(TestHydra, satisfied_future_1) {
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"a","b"}, {"a","b"}, {"a", "b"},{"a","b"}}, std::vector<size_t>{0, 1, 2, 3, 4});
+    Formula formula = Parser::parse("F[1,3](a & b)");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true},
+        Verdict{3, true}, Verdict{4, true }
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+
+/*** HISTORICALLY ***/
+TEST(TestHydra, violated_historically_1) {
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a","b"}, {"a","b"}, {}, {"a"},{"b"}}, std::vector<size_t>{0, 1, 2, 3, 4});
+    Formula formula = Parser::parse("H[0,2](a & b)");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true},
+        Verdict{3, true}, Verdict{4, true}
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
+/*** ONCE ****/
+TEST(TestHydra, violated_once_1) {
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"b"}, {"b"}, {"a"}, {"a"}, {"a"}, {"a"}}, std::vector<size_t>{0, 1, 2, 3, 4, 5, 6});
+    Formula formula = Parser::parse("O[1,2](a)");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{
+        Verdict{0, true}, Verdict{1, true}, Verdict{2, true},
+        Verdict{3, true}, Verdict{4, true}, Verdict{5, true},
+        Verdict{6, true}
+    };
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
 }

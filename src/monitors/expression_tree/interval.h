@@ -17,6 +17,10 @@ class Interval {
 
     void reduceInterval();
 
+    void reduceIntervalByTimeStep(size_t timeStep);
+
+    void increaseIntervalByTimeStep(size_t timeStep);
+
     [[nodiscard]] int getStart() const;
 
     void setStart(int start);
@@ -30,6 +34,8 @@ class Interval {
     void setFinite(bool finite);
 
     [[nodiscard]] bool containsZero() const;
+
+    [[nodiscard]] bool getContainsZero(size_t index, bool stop_checking) const;
 
     [[nodiscard]] std::shared_ptr<Interval> clone() { return std::make_shared<Interval>(*this); }
 

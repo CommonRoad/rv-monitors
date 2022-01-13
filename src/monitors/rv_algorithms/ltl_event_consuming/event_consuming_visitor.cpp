@@ -40,17 +40,23 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitConstant(Constant &op, T
 }
 
 std::shared_ptr<Expression> EventConsumingVisitor::visitAnd(And &op, Trace &trace, size_t index) {
+    std::cout<<index<<": - Visit And "<<op.to_string()<<std::endl;
     visitExpression(op, trace, index);
+    std::cout<<index<<": - After Visit And "<<op.to_string()<<std::endl;
     return std::make_shared<And>(op);
 }
 
 std::shared_ptr<Expression> EventConsumingVisitor::visitOr(Or &op, Trace &trace, size_t index) {
+    std::cout<<index<<": - Visit Or "<<op.to_string()<<std::endl;
     visitExpression(op, trace, index);
+    std::cout<<index<<": - Visit Or "<<op.to_string()<<std::endl;
     return std::make_shared<Or>(op);
 }
 
 std::shared_ptr<Expression> EventConsumingVisitor::visitXor(Xor &op, Trace &trace, size_t index) {
+    std::cout<<index<<": - Visit XOr "<<op.to_string()<<std::endl;
     visitExpression(op, trace, index);
+    std::cout<<index<<": - Visit XOr "<<op.to_string()<<std::endl;
     return std::make_shared<Xor>(op);
 }
 
@@ -65,7 +71,9 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitEquivalence(Equivalence 
 }
 
 std::shared_ptr<Expression> EventConsumingVisitor::visitNot(Not &op, Trace &trace, size_t index) {
+    std::cout<<" Visit Node: "<<op.to_string()<<std::endl;
     visitExpression(op, trace, index);
+    std::cout<<"After Visit Node: "<<op.to_string()<<std::endl;
     return std::make_shared<Not>(op);
 }
 
@@ -154,6 +162,7 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitEventOperator(EventOpera
     }
     // And
     else if (auto andExpr = std::dynamic_pointer_cast<And>(op.getLeft())) {
+        std::cout<<index<<": - Visit Event Op [And]"<<op.getLeft()->to_string()<<std::endl;
         And::SetType_T newExprSet;
         for (const auto &itr : *andExpr) {
             auto eventConsumingExpr = std::make_shared<EventOperator>(itr, trace, index);
@@ -163,6 +172,7 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitEventOperator(EventOpera
     }
     // Or
     else if (auto orExpr = std::dynamic_pointer_cast<Or>(op.getLeft())) {
+        std::cout<<index<<": - Visit Event Op [Or]"<<op.getLeft()->to_string()<<std::endl;
         Or::SetType_T newExprSet;
         for (const auto &itr : *orExpr) {
             auto eventConsumingExpr = std::make_shared<EventOperator>(itr, trace, index);
@@ -172,20 +182,26 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitEventOperator(EventOpera
     }
     // Xor
     else if (auto xorExpr = std::dynamic_pointer_cast<Xor>(op.getLeft())) {
+        std::cout<<index<<": - Visit Event Op [XOR]"<<op.getLeft()->to_string()<<std::endl;
         Xor::SetType_T newExprSet;
         for (const auto &itr : *xorExpr) {
             auto eventConsumingExpr = std::make_shared<EventOperator>(itr, trace, index);
             newExprSet.emplace(eventConsumingExpr);
         }
         ret = std::make_shared<Xor>(newExprSet);
-
+        std::cout<<index<<"ret[XOR]: "<<ret->to_string()<<std::endl;
     }
     // Globally
     else if (auto globally = std::dynamic_pointer_cast<Globally>(op.getLeft())) {
+        std::cout<<index<<": - Visit Event Op [Globally]"<<op.getLeft()->to_string()<<std::endl;
         if (!trace.getEvent(index).isTerminal()) {
             And::SetType_T newSet;
+            std::cout<<index<<": - Left of Globally : "<<globally->getLeft()->to_string()<<std::endl;
+            // Propagating down the expression tree
             auto eventOperatorExpr = std::make_shared<EventOperator>(globally->getLeft(), trace, index);
+            std::cout<<index<<": - Globally eventOperatorExpr: "<<eventOperatorExpr->to_string()<<std::endl;
             newSet.emplace(eventOperatorExpr);
+            std::cout<<index<<": globally: "<<globally->to_string()<<std::endl;
             newSet.emplace(globally);
             ret = std::make_shared<And>(newSet);
         } else {
@@ -222,6 +238,7 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitEventOperator(EventOpera
     }
     // Until
     else if (auto until = std::dynamic_pointer_cast<Until>(op.getLeft())) {
+        std::cout<<index<<": - Visit Event Op [Until]"<<op.getLeft()->to_string()<<std::endl;
         if (!trace.getEvent(index).isTerminal()) {
             Or::SetType_T newSetOr;
             And::SetType_T newSetAnd;

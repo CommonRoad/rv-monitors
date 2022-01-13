@@ -11,6 +11,7 @@ EventConsumingLTL::EventConsumingLTL(const std::vector<Formula> &formulas, bool 
     : MonitorInterface((std::move(formulas))), pastEvaluation(pastEvaluation) {}
 
 Formula EventConsumingLTL::eventConsumingFuture(Trace &trace) {
+    std::cout<<"->eventConsumingFuture"<<std::endl;
     // Empty trace
     if (trace.getTrace().empty()) {
         std::cout << "Trace is empty" << std::endl;
@@ -21,17 +22,22 @@ Formula EventConsumingLTL::eventConsumingFuture(Trace &trace) {
     RewriteVisitor rw;
     EventConsumingVisitor ec;
 
+    std::cout<<"Formula at Start: "<<formulaCopy.to_string()<<std::endl;
+
     // Rewrite
     rw.rewrite(formulaCopy);
+    std::cout<<"Formula Rewritten: "<<formulaCopy.to_string()<<std::endl;
     for (size_t i = 0; i < trace.getLength(); ++i) {
         ec.consumeEvent(formulaCopy, trace, i);
         rw.rewrite(formulaCopy);
+        std::cout<<i<<" - Formula Copy rewritten: "<<formulaCopy.to_string()<<std::endl;
         if (formulaCopy.to_string() == "false") {
             break;
         }
         if (formulaCopy.to_string() == "true") {
             break;
         }
+        std::cout<<"\n";
     }
     return formulaCopy;
 }
@@ -68,6 +74,7 @@ Formula EventConsumingLTL::eventConsumingPast(Trace &trace) {
 
 std::map<std::string, std::vector<Verdict>> EventConsumingLTL::evaluate(Trace &trace) {
     std::map<std::string, std::vector<Verdict>> result;
+    std::cout<<"Past Evaluation: ["<<pastEvaluation<<"]"<<std::endl;
     if (!pastEvaluation)
         result[formulas.at(0).getId()] = {Verdict{eventConsumingFuture(trace).to_string() == "true"}};
     else

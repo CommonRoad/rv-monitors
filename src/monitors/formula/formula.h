@@ -151,6 +151,9 @@ class Formula {
      * @return ostream.
      */
     friend std::ostream &operator<<(std::ostream &os, const Formula &formula);
+
+
+    size_t indexOf(const Formula &otherFormula);
 };
 
 /**
