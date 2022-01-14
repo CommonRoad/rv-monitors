@@ -13,30 +13,29 @@ class FormulaParser : public antlr4::Parser {
         T__2 = 3,
         T__3 = 4,
         T__4 = 5,
-        BOOL = 6,
-        INFINITY = 7,
-        NOT = 8,
-        GLOBALLY = 9,
-        FUTURE = 10,
-        NEXT_WEAK = 11,
-        NEXT_STRONG = 12,
-        UNTIL = 13,
-        RELEASE = 14,
-        ONCE = 15,
-        PREVIOUSLY = 16,
-        SINCE = 17,
-        HISTORICALLY = 18,
-        AND = 19,
-        OR = 20,
-        XOR = 21,
-        IMPL = 22,
-        EQ = 23,
-        TRUE = 24,
-        FALSE = 25,
-        ATOMIC = 26,
-        PREDICATE = 27,
-        WS = 28,
-        DIGIT = 29
+        TRUE = 6,
+        FALSE = 7,
+        INFINITY = 8,
+        NOT = 9,
+        GLOBALLY = 10,
+        FUTURE = 11,
+        NEXT_WEAK = 12,
+        NEXT_STRONG = 13,
+        UNTIL = 14,
+        RELEASE = 15,
+        ONCE = 16,
+        PREVIOUSLY = 17,
+        SINCE = 18,
+        HISTORICALLY = 19,
+        AND = 20,
+        OR = 21,
+        XOR = 22,
+        IMPL = 23,
+        EQ = 24,
+        ATOMIC = 25,
+        PREDICATE = 26,
+        WS = 27,
+        DIGIT = 28
     };
 
     enum {
@@ -49,7 +48,8 @@ class FormulaParser : public antlr4::Parser {
         RuleUnary = 6,
         RuleInterval = 7,
         RuleAtom = 8,
-        RuleNumber = 9
+        RuleNumber = 9,
+        RuleBool_ = 10
     };
 
     explicit FormulaParser(antlr4::TokenStream *input);
@@ -73,6 +73,7 @@ class FormulaParser : public antlr4::Parser {
     class IntervalContext;
     class AtomContext;
     class NumberContext;
+    class Bool_Context;
 
     class FormulaContext : public antlr4::ParserRuleContext {
       public:
@@ -638,7 +639,7 @@ class FormulaParser : public antlr4::Parser {
       public:
         BooleanContext(AtomContext *ctx);
 
-        antlr4::tree::TerminalNode *BOOL();
+        Bool_Context *bool_();
 
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
@@ -666,6 +667,37 @@ class FormulaParser : public antlr4::Parser {
     };
 
     NumberContext *number();
+
+    class Bool_Context : public antlr4::ParserRuleContext {
+      public:
+        Bool_Context(antlr4::ParserRuleContext *parent, size_t invokingState);
+
+        Bool_Context() = default;
+        void copyFrom(Bool_Context *context);
+        using antlr4::ParserRuleContext::copyFrom;
+
+        virtual size_t getRuleIndex() const override;
+    };
+
+    class TrueBooleanContext : public Bool_Context {
+      public:
+        TrueBooleanContext(Bool_Context *ctx);
+
+        antlr4::tree::TerminalNode *TRUE();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    class FalseBooleanContext : public Bool_Context {
+      public:
+        FalseBooleanContext(Bool_Context *ctx);
+
+        antlr4::tree::TerminalNode *FALSE();
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    Bool_Context *bool_();
 
     virtual bool sempred(antlr4::RuleContext *_localctx, size_t ruleIndex, size_t predicateIndex) override;
     bool exprSempred(ExprContext *_localctx, size_t predicateIndex);
