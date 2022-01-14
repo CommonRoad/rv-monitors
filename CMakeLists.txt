@@ -5,6 +5,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+option(RVMONITORS_BUILD_DOXYGEN "Build doxygen" OFF)
+option(RVMONITORS_BUILD_TESTS "Build tests" ON)
+option(RVMONITORS_BUILD_PYBIND "Build python interface" OFF)
+option(RVMONITORS_BUILD_SHARED_LIBS "Build using shared libraries" OFF)
+option(RVMONITORS_BUILD_CODE_COVERAGE "Build code coverage" OFF)
+
 # Set a default build type if none was specified
 set(default_build_type "Release")
 if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
@@ -16,9 +22,8 @@ if(NOT CMAKE_BUILD_TYPE)
             STRING "Choose the type of build." FORCE)
 endif()
 
-option(BUILD_DOXYGEN "Build doxygen" OFF)
-option(BUILD_TESTS "Build tests" ON)
-option(BUILD_PYBIND "Build python interface" OFF)
+# Include spdlog
+find_package(spdlog REQUIRED)
 
 # Appends dictionary where other cmake files are stored which install required Software
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/)
@@ -29,19 +34,12 @@ set(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
 
 set(ANTLR4CPP_JAR_LOCATION ${CMAKE_SOURCE_DIR}/libs/antlr.jar)
 
-include(monitors_sanitizers)
-
 # get antlr4 as external project
 include(monitors_antlr4cpp)
 
-# Activate code coverage
-if (CODE_COVERAGE)
-    option(CodeCoverage "CodeCoverage" ON)
-endif()
-
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../)
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/../)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
@@ -49,15 +47,15 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 add_subdirectory(src)
 
 # Doxygen
-if(BUILD_DOXYGEN)
+if(RVMONITORS_BUILD_DOXYGEN)
     include(doxygen)
-endif(BUILD_DOXYGEN)
+endif(RVMONITORS_BUILD_DOXYGEN)
 
 # add unit testing
-if(BUILD_TESTS)
+if(RVMONITORS_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
-endif(BUILD_TESTS)
+endif(RVMONITORS_BUILD_TESTS)
 
 # Provides configure_package_config_file
 include(CMakePackageConfigHelpers)

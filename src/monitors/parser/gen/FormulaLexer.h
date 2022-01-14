@@ -1,5 +1,5 @@
 
-// Generated from Formula.g4 by ANTLR 4.7.2
+// Generated from Formula.g4 by ANTLR 4.9.3
 
 #pragma once
 
@@ -39,7 +39,7 @@ class FormulaLexer : public antlr4::Lexer {
         DIGIT = 29
     };
 
-    FormulaLexer(antlr4::CharStream *input);
+    explicit FormulaLexer(antlr4::CharStream *input);
     ~FormulaLexer();
 
     virtual std::string getGrammarFileName() const override;

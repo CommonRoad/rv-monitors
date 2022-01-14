@@ -92,7 +92,7 @@ class Formula {
      * @param exprOrig Expression to be deep copied.
      * @return Deep copy of exprOrig.
      */
-    template <class T>[[nodiscard]] static std::shared_ptr<T> deepCopy(const std::shared_ptr<T> &exprOrig) {
+    template <class T> [[nodiscard]] static std::shared_ptr<T> deepCopy(const std::shared_ptr<T> &exprOrig) {
         if (exprOrig) {
             auto ret = exprOrig->clone();
             // Nary

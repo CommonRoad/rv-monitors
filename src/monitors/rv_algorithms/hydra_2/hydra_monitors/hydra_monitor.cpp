@@ -35,7 +35,9 @@ size_t HydraMonitor::getMaxTraceIdx() {
             ->second;
 }
 
-Verdict HydraMonitor::step(size_t parentId, size_t stepNumber, bool ret) {
+size_t HydraMonitor::getTraceIdxByParentId(size_t parentId) const { return traceIdx.at(parentId); }
+
+Verdict HydraMonitor::step(size_t parentId, size_t stepNumber, bool ret, size_t repeat) {
     auto verdict{Verdict(0, false)};
     if (stepNumber < traceIdx[parentId] or ret) {
         if (!connectedEval) {
@@ -51,7 +53,7 @@ Verdict HydraMonitor::step(size_t parentId, size_t stepNumber, bool ret) {
         }
         return verdict;
     }
-    while (stepNumber >= traceIdx[parentId]) {
+    while (stepNumber + repeat >= traceIdx[parentId]) {
         if (!connectedEval) {
             verdict = concreteStep(parentId, traceIdx[parentId]);
             ++traceIdx[parentId];

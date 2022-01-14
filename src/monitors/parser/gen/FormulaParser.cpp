@@ -1,5 +1,5 @@
 
-// Generated from Formula.g4 by ANTLR 4.7.2
+// Generated from Formula.g4 by ANTLR 4.9.3
 
 #include "FormulaVisitor.h"
 
@@ -42,7 +42,13 @@ FormulaParser::FormulaContext *FormulaParser::formula() {
     FormulaContext *_localctx = _tracker.createInstance<FormulaContext>(_ctx, getState());
     enterRule(_localctx, 0, FormulaParser::RuleFormula);
 
-    auto onExit = finally([=] { exitRule(); });
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        exitRule();
+    });
     try {
         enterOuterAlt(_localctx, 1);
         setState(20);
@@ -132,7 +138,13 @@ FormulaParser::ExprContext *FormulaParser::expr(int precedence) {
     size_t startState = 2;
     enterRecursionRule(_localctx, 2, FormulaParser::RuleExpr, precedence);
 
-    auto onExit = finally([=] { unrollRecursionContexts(parentContext); });
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        unrollRecursionContexts(parentContext);
+    });
     try {
         size_t alt;
         enterOuterAlt(_localctx, 1);
@@ -165,9 +177,9 @@ FormulaParser::ExprContext *FormulaParser::expr(int precedence) {
                     if (!(precpred(_ctx, 3)))
                         throw FailedPredicateException(this, "precpred(_ctx, 3)");
                     setState(26);
-                    dynamic_cast<ImplicationContext *>(_localctx)->op = match(FormulaParser::IMPL);
+                    antlrcpp::downCast<ImplicationContext *>(_localctx)->op = match(FormulaParser::IMPL);
                     setState(27);
-                    dynamic_cast<ImplicationContext *>(_localctx)->right = expr(3);
+                    antlrcpp::downCast<ImplicationContext *>(_localctx)->right = expr(3);
                     break;
                 }
 
@@ -182,11 +194,14 @@ FormulaParser::ExprContext *FormulaParser::expr(int precedence) {
                     if (!(precpred(_ctx, 2)))
                         throw FailedPredicateException(this, "precpred(_ctx, 2)");
                     setState(29);
-                    dynamic_cast<EquivalenceContext *>(_localctx)->op = match(FormulaParser::EQ);
+                    antlrcpp::downCast<EquivalenceContext *>(_localctx)->op = match(FormulaParser::EQ);
                     setState(30);
-                    dynamic_cast<EquivalenceContext *>(_localctx)->right = expr(2);
+                    antlrcpp::downCast<EquivalenceContext *>(_localctx)->right = expr(2);
                     break;
                 }
+
+                default:
+                    break;
                 }
             }
             setState(35);
@@ -236,10 +251,16 @@ FormulaParser::Xor_exprContext *FormulaParser::xor_expr() {
     Xor_exprContext *_localctx = _tracker.createInstance<Xor_exprContext>(_ctx, getState());
     enterRule(_localctx, 4, FormulaParser::RuleXor_expr);
 
-    auto onExit = finally([=] { exitRule(); });
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        exitRule();
+    });
     try {
         size_t alt;
-        _localctx = dynamic_cast<Xor_exprContext *>(_tracker.createInstance<FormulaParser::XorContext>(_localctx));
+        _localctx = _tracker.createInstance<FormulaParser::XorContext>(_localctx);
         enterOuterAlt(_localctx, 1);
         setState(36);
         or_expr();
@@ -249,7 +270,7 @@ FormulaParser::Xor_exprContext *FormulaParser::xor_expr() {
         while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
             if (alt == 1) {
                 setState(37);
-                dynamic_cast<XorContext *>(_localctx)->op = match(FormulaParser::XOR);
+                antlrcpp::downCast<XorContext *>(_localctx)->op = match(FormulaParser::XOR);
                 setState(38);
                 or_expr();
             }
@@ -302,10 +323,16 @@ FormulaParser::Or_exprContext *FormulaParser::or_expr() {
     Or_exprContext *_localctx = _tracker.createInstance<Or_exprContext>(_ctx, getState());
     enterRule(_localctx, 6, FormulaParser::RuleOr_expr);
 
-    auto onExit = finally([=] { exitRule(); });
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        exitRule();
+    });
     try {
         size_t alt;
-        _localctx = dynamic_cast<Or_exprContext *>(_tracker.createInstance<FormulaParser::OrContext>(_localctx));
+        _localctx = _tracker.createInstance<FormulaParser::OrContext>(_localctx);
         enterOuterAlt(_localctx, 1);
         setState(44);
         and_expr();
@@ -315,7 +342,7 @@ FormulaParser::Or_exprContext *FormulaParser::or_expr() {
         while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
             if (alt == 1) {
                 setState(45);
-                dynamic_cast<OrContext *>(_localctx)->op = match(FormulaParser::OR);
+                antlrcpp::downCast<OrContext *>(_localctx)->op = match(FormulaParser::OR);
                 setState(46);
                 and_expr();
             }
@@ -368,10 +395,16 @@ FormulaParser::And_exprContext *FormulaParser::and_expr() {
     And_exprContext *_localctx = _tracker.createInstance<And_exprContext>(_ctx, getState());
     enterRule(_localctx, 8, FormulaParser::RuleAnd_expr);
 
-    auto onExit = finally([=] { exitRule(); });
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        exitRule();
+    });
     try {
         size_t alt;
-        _localctx = dynamic_cast<And_exprContext *>(_tracker.createInstance<FormulaParser::AndContext>(_localctx));
+        _localctx = _tracker.createInstance<FormulaParser::AndContext>(_localctx);
         enterOuterAlt(_localctx, 1);
         setState(52);
         release_until_expr();
@@ -381,7 +414,7 @@ FormulaParser::And_exprContext *FormulaParser::and_expr() {
         while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
             if (alt == 1) {
                 setState(53);
-                dynamic_cast<AndContext *>(_localctx)->op = match(FormulaParser::AND);
+                antlrcpp::downCast<AndContext *>(_localctx)->op = match(FormulaParser::AND);
                 setState(54);
                 release_until_expr();
             }
@@ -560,103 +593,105 @@ FormulaParser::Release_until_exprContext *FormulaParser::release_until_expr() {
     Release_until_exprContext *_localctx = _tracker.createInstance<Release_until_exprContext>(_ctx, getState());
     enterRule(_localctx, 10, FormulaParser::RuleRelease_until_expr);
 
-    auto onExit = finally([=] { exitRule(); });
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        exitRule();
+    });
     try {
         setState(88);
         _errHandler->sync(this);
         switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 5, _ctx)) {
         case 1: {
-            _localctx = dynamic_cast<Release_until_exprContext *>(
-                _tracker.createInstance<FormulaParser::ReleaseContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::ReleaseContext>(_localctx);
             enterOuterAlt(_localctx, 1);
             setState(60);
-            dynamic_cast<ReleaseContext *>(_localctx)->left = unary();
+            antlrcpp::downCast<ReleaseContext *>(_localctx)->left = unary();
             setState(61);
-            dynamic_cast<ReleaseContext *>(_localctx)->op = match(FormulaParser::RELEASE);
+            antlrcpp::downCast<ReleaseContext *>(_localctx)->op = match(FormulaParser::RELEASE);
             setState(62);
-            dynamic_cast<ReleaseContext *>(_localctx)->right = unary();
+            antlrcpp::downCast<ReleaseContext *>(_localctx)->right = unary();
             break;
         }
 
         case 2: {
-            _localctx = dynamic_cast<Release_until_exprContext *>(
-                _tracker.createInstance<FormulaParser::UntilContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::UntilContext>(_localctx);
             enterOuterAlt(_localctx, 2);
             setState(64);
-            dynamic_cast<UntilContext *>(_localctx)->left = unary();
+            antlrcpp::downCast<UntilContext *>(_localctx)->left = unary();
             setState(65);
-            dynamic_cast<UntilContext *>(_localctx)->op = match(FormulaParser::UNTIL);
+            antlrcpp::downCast<UntilContext *>(_localctx)->op = match(FormulaParser::UNTIL);
             setState(66);
-            dynamic_cast<UntilContext *>(_localctx)->right = unary();
+            antlrcpp::downCast<UntilContext *>(_localctx)->right = unary();
             break;
         }
 
         case 3: {
-            _localctx = dynamic_cast<Release_until_exprContext *>(
-                _tracker.createInstance<FormulaParser::ReleaseIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::ReleaseIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 3);
             setState(68);
-            dynamic_cast<ReleaseIntervalContext *>(_localctx)->left = unary();
+            antlrcpp::downCast<ReleaseIntervalContext *>(_localctx)->left = unary();
             setState(69);
-            dynamic_cast<ReleaseIntervalContext *>(_localctx)->op = match(FormulaParser::RELEASE);
+            antlrcpp::downCast<ReleaseIntervalContext *>(_localctx)->op = match(FormulaParser::RELEASE);
             setState(70);
-            dynamic_cast<ReleaseIntervalContext *>(_localctx)->iv = interval();
+            antlrcpp::downCast<ReleaseIntervalContext *>(_localctx)->iv = interval();
             setState(71);
-            dynamic_cast<ReleaseIntervalContext *>(_localctx)->right = unary();
+            antlrcpp::downCast<ReleaseIntervalContext *>(_localctx)->right = unary();
             break;
         }
 
         case 4: {
-            _localctx = dynamic_cast<Release_until_exprContext *>(
-                _tracker.createInstance<FormulaParser::UntilIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::UntilIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 4);
             setState(73);
-            dynamic_cast<UntilIntervalContext *>(_localctx)->left = unary();
+            antlrcpp::downCast<UntilIntervalContext *>(_localctx)->left = unary();
             setState(74);
-            dynamic_cast<UntilIntervalContext *>(_localctx)->op = match(FormulaParser::UNTIL);
+            antlrcpp::downCast<UntilIntervalContext *>(_localctx)->op = match(FormulaParser::UNTIL);
             setState(75);
-            dynamic_cast<UntilIntervalContext *>(_localctx)->iv = interval();
+            antlrcpp::downCast<UntilIntervalContext *>(_localctx)->iv = interval();
             setState(76);
-            dynamic_cast<UntilIntervalContext *>(_localctx)->right = unary();
+            antlrcpp::downCast<UntilIntervalContext *>(_localctx)->right = unary();
             break;
         }
 
         case 5: {
-            _localctx = dynamic_cast<Release_until_exprContext *>(
-                _tracker.createInstance<FormulaParser::SinceContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::SinceContext>(_localctx);
             enterOuterAlt(_localctx, 5);
             setState(78);
-            dynamic_cast<SinceContext *>(_localctx)->left = unary();
+            antlrcpp::downCast<SinceContext *>(_localctx)->left = unary();
             setState(79);
-            dynamic_cast<SinceContext *>(_localctx)->op = match(FormulaParser::SINCE);
+            antlrcpp::downCast<SinceContext *>(_localctx)->op = match(FormulaParser::SINCE);
             setState(80);
-            dynamic_cast<SinceContext *>(_localctx)->right = unary();
+            antlrcpp::downCast<SinceContext *>(_localctx)->right = unary();
             break;
         }
 
         case 6: {
-            _localctx = dynamic_cast<Release_until_exprContext *>(
-                _tracker.createInstance<FormulaParser::SinceIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::SinceIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 6);
             setState(82);
-            dynamic_cast<SinceIntervalContext *>(_localctx)->left = unary();
+            antlrcpp::downCast<SinceIntervalContext *>(_localctx)->left = unary();
             setState(83);
-            dynamic_cast<SinceIntervalContext *>(_localctx)->op = match(FormulaParser::SINCE);
+            antlrcpp::downCast<SinceIntervalContext *>(_localctx)->op = match(FormulaParser::SINCE);
             setState(84);
-            dynamic_cast<SinceIntervalContext *>(_localctx)->iv = interval();
+            antlrcpp::downCast<SinceIntervalContext *>(_localctx)->iv = interval();
             setState(85);
-            dynamic_cast<SinceIntervalContext *>(_localctx)->right = unary();
+            antlrcpp::downCast<SinceIntervalContext *>(_localctx)->right = unary();
             break;
         }
 
         case 7: {
-            _localctx = dynamic_cast<Release_until_exprContext *>(
-                _tracker.createInstance<FormulaParser::UnaryExprContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::UnaryExprContext>(_localctx);
             enterOuterAlt(_localctx, 7);
             setState(87);
             unary();
             break;
         }
+
+        default:
+            break;
         }
 
     } catch (RecognitionException &e) {
@@ -1002,200 +1037,193 @@ FormulaParser::UnaryContext *FormulaParser::unary() {
     enterRule(_localctx, 12, FormulaParser::RuleUnary);
     size_t _la = 0;
 
-    auto onExit = finally([=] { exitRule(); });
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        exitRule();
+    });
     try {
         setState(147);
         _errHandler->sync(this);
         switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 7, _ctx)) {
         case 1: {
-            _localctx =
-                dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::GloballyContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::GloballyContext>(_localctx);
             enterOuterAlt(_localctx, 1);
             setState(90);
-            dynamic_cast<GloballyContext *>(_localctx)->op = match(FormulaParser::GLOBALLY);
+            antlrcpp::downCast<GloballyContext *>(_localctx)->op = match(FormulaParser::GLOBALLY);
             setState(91);
-            dynamic_cast<GloballyContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<GloballyContext *>(_localctx)->right = atom();
             break;
         }
 
         case 2: {
-            _localctx = dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::FutureContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::FutureContext>(_localctx);
             enterOuterAlt(_localctx, 2);
             setState(92);
-            dynamic_cast<FutureContext *>(_localctx)->op = match(FormulaParser::FUTURE);
+            antlrcpp::downCast<FutureContext *>(_localctx)->op = match(FormulaParser::FUTURE);
             setState(93);
-            dynamic_cast<FutureContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<FutureContext *>(_localctx)->right = atom();
             break;
         }
 
         case 3: {
-            _localctx = dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::OnceContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::OnceContext>(_localctx);
             enterOuterAlt(_localctx, 3);
             setState(94);
-            dynamic_cast<OnceContext *>(_localctx)->op = match(FormulaParser::ONCE);
+            antlrcpp::downCast<OnceContext *>(_localctx)->op = match(FormulaParser::ONCE);
             setState(95);
-            dynamic_cast<OnceContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<OnceContext *>(_localctx)->right = atom();
             break;
         }
 
         case 4: {
-            _localctx =
-                dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::PreviouslyContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::PreviouslyContext>(_localctx);
             enterOuterAlt(_localctx, 4);
             setState(96);
-            dynamic_cast<PreviouslyContext *>(_localctx)->op = match(FormulaParser::PREVIOUSLY);
+            antlrcpp::downCast<PreviouslyContext *>(_localctx)->op = match(FormulaParser::PREVIOUSLY);
             setState(97);
-            dynamic_cast<PreviouslyContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<PreviouslyContext *>(_localctx)->right = atom();
             break;
         }
 
         case 5: {
-            _localctx =
-                dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::NextWeakContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::NextWeakContext>(_localctx);
             enterOuterAlt(_localctx, 5);
             setState(98);
-            dynamic_cast<NextWeakContext *>(_localctx)->op = match(FormulaParser::NEXT_WEAK);
+            antlrcpp::downCast<NextWeakContext *>(_localctx)->op = match(FormulaParser::NEXT_WEAK);
             setState(99);
-            dynamic_cast<NextWeakContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<NextWeakContext *>(_localctx)->right = atom();
             break;
         }
 
         case 6: {
-            _localctx =
-                dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::NextStrongContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::NextStrongContext>(_localctx);
             enterOuterAlt(_localctx, 6);
             setState(100);
-            dynamic_cast<NextStrongContext *>(_localctx)->op = match(FormulaParser::NEXT_STRONG);
+            antlrcpp::downCast<NextStrongContext *>(_localctx)->op = match(FormulaParser::NEXT_STRONG);
             setState(101);
-            dynamic_cast<NextStrongContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<NextStrongContext *>(_localctx)->right = atom();
             break;
         }
 
         case 7: {
-            _localctx = dynamic_cast<UnaryContext *>(
-                _tracker.createInstance<FormulaParser::GloballyIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::GloballyIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 7);
             setState(102);
-            dynamic_cast<GloballyIntervalContext *>(_localctx)->op = match(FormulaParser::GLOBALLY);
+            antlrcpp::downCast<GloballyIntervalContext *>(_localctx)->op = match(FormulaParser::GLOBALLY);
             setState(103);
-            dynamic_cast<GloballyIntervalContext *>(_localctx)->iv = interval();
+            antlrcpp::downCast<GloballyIntervalContext *>(_localctx)->iv = interval();
             setState(104);
-            dynamic_cast<GloballyIntervalContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<GloballyIntervalContext *>(_localctx)->right = atom();
             break;
         }
 
         case 8: {
-            _localctx =
-                dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::FutureIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::FutureIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 8);
             setState(106);
-            dynamic_cast<FutureIntervalContext *>(_localctx)->op = match(FormulaParser::FUTURE);
+            antlrcpp::downCast<FutureIntervalContext *>(_localctx)->op = match(FormulaParser::FUTURE);
             setState(107);
-            dynamic_cast<FutureIntervalContext *>(_localctx)->iv = interval();
+            antlrcpp::downCast<FutureIntervalContext *>(_localctx)->iv = interval();
             setState(108);
-            dynamic_cast<FutureIntervalContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<FutureIntervalContext *>(_localctx)->right = atom();
             break;
         }
 
         case 9: {
-            _localctx =
-                dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::OnceIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::OnceIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 9);
             setState(110);
-            dynamic_cast<OnceIntervalContext *>(_localctx)->op = match(FormulaParser::ONCE);
+            antlrcpp::downCast<OnceIntervalContext *>(_localctx)->op = match(FormulaParser::ONCE);
             setState(111);
-            dynamic_cast<OnceIntervalContext *>(_localctx)->iv = interval();
+            antlrcpp::downCast<OnceIntervalContext *>(_localctx)->iv = interval();
             setState(112);
-            dynamic_cast<OnceIntervalContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<OnceIntervalContext *>(_localctx)->right = atom();
             break;
         }
 
         case 10: {
-            _localctx = dynamic_cast<UnaryContext *>(
-                _tracker.createInstance<FormulaParser::PreviouslyIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::PreviouslyIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 10);
             setState(114);
-            dynamic_cast<PreviouslyIntervalContext *>(_localctx)->op = match(FormulaParser::PREVIOUSLY);
+            antlrcpp::downCast<PreviouslyIntervalContext *>(_localctx)->op = match(FormulaParser::PREVIOUSLY);
             setState(115);
-            dynamic_cast<PreviouslyIntervalContext *>(_localctx)->iv = interval();
+            antlrcpp::downCast<PreviouslyIntervalContext *>(_localctx)->iv = interval();
             setState(116);
-            dynamic_cast<PreviouslyIntervalContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<PreviouslyIntervalContext *>(_localctx)->right = atom();
             break;
         }
 
         case 11: {
-            _localctx = dynamic_cast<UnaryContext *>(
-                _tracker.createInstance<FormulaParser::NextWeakIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::NextWeakIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 11);
             setState(118);
-            dynamic_cast<NextWeakIntervalContext *>(_localctx)->op = match(FormulaParser::NEXT_WEAK);
+            antlrcpp::downCast<NextWeakIntervalContext *>(_localctx)->op = match(FormulaParser::NEXT_WEAK);
             setState(119);
-            dynamic_cast<NextWeakIntervalContext *>(_localctx)->iv = interval();
+            antlrcpp::downCast<NextWeakIntervalContext *>(_localctx)->iv = interval();
             setState(120);
-            dynamic_cast<NextWeakIntervalContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<NextWeakIntervalContext *>(_localctx)->right = atom();
             break;
         }
 
         case 12: {
-            _localctx = dynamic_cast<UnaryContext *>(
-                _tracker.createInstance<FormulaParser::NextStrongIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::NextStrongIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 12);
             setState(122);
-            dynamic_cast<NextStrongIntervalContext *>(_localctx)->op = match(FormulaParser::NEXT_STRONG);
+            antlrcpp::downCast<NextStrongIntervalContext *>(_localctx)->op = match(FormulaParser::NEXT_STRONG);
             setState(123);
-            dynamic_cast<NextStrongIntervalContext *>(_localctx)->iv = interval();
+            antlrcpp::downCast<NextStrongIntervalContext *>(_localctx)->iv = interval();
             setState(124);
-            dynamic_cast<NextStrongIntervalContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<NextStrongIntervalContext *>(_localctx)->right = atom();
             break;
         }
 
         case 13: {
-            _localctx =
-                dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::HistoricallyContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::HistoricallyContext>(_localctx);
             enterOuterAlt(_localctx, 13);
             setState(126);
-            dynamic_cast<HistoricallyContext *>(_localctx)->op = match(FormulaParser::HISTORICALLY);
+            antlrcpp::downCast<HistoricallyContext *>(_localctx)->op = match(FormulaParser::HISTORICALLY);
             setState(127);
-            dynamic_cast<HistoricallyContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<HistoricallyContext *>(_localctx)->right = atom();
             break;
         }
 
         case 14: {
-            _localctx = dynamic_cast<UnaryContext *>(
-                _tracker.createInstance<FormulaParser::HistoricallyIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::HistoricallyIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 14);
             setState(128);
-            dynamic_cast<HistoricallyIntervalContext *>(_localctx)->op = match(FormulaParser::HISTORICALLY);
+            antlrcpp::downCast<HistoricallyIntervalContext *>(_localctx)->op = match(FormulaParser::HISTORICALLY);
             setState(129);
-            dynamic_cast<HistoricallyIntervalContext *>(_localctx)->iv = interval();
+            antlrcpp::downCast<HistoricallyIntervalContext *>(_localctx)->iv = interval();
             setState(130);
-            dynamic_cast<HistoricallyIntervalContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<HistoricallyIntervalContext *>(_localctx)->right = atom();
             break;
         }
 
         case 15: {
-            _localctx = dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::NotContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::NotContext>(_localctx);
             enterOuterAlt(_localctx, 15);
             setState(132);
-            dynamic_cast<NotContext *>(_localctx)->op = match(FormulaParser::NOT);
+            antlrcpp::downCast<NotContext *>(_localctx)->op = match(FormulaParser::NOT);
             setState(133);
-            dynamic_cast<NotContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<NotContext *>(_localctx)->right = atom();
             break;
         }
 
         case 16: {
-            _localctx = dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::NotExprContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::NotExprContext>(_localctx);
             enterOuterAlt(_localctx, 16);
             setState(134);
-            dynamic_cast<NotExprContext *>(_localctx)->op = match(FormulaParser::NOT);
+            antlrcpp::downCast<NotExprContext *>(_localctx)->op = match(FormulaParser::NOT);
             setState(135);
-            dynamic_cast<NotExprContext *>(_localctx)->right = expr(0);
+            antlrcpp::downCast<NotExprContext *>(_localctx)->right = expr(0);
             break;
         }
 
         case 17: {
-            _localctx =
-                dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::AtomExprContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::AtomExprContext>(_localctx);
             enterOuterAlt(_localctx, 17);
             setState(136);
             atom();
@@ -1203,13 +1231,12 @@ FormulaParser::UnaryContext *FormulaParser::unary() {
         }
 
         case 18: {
-            _localctx =
-                dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::PredicateContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::PredicateContext>(_localctx);
             enterOuterAlt(_localctx, 18);
             setState(137);
-            dynamic_cast<PredicateContext *>(_localctx)->op = match(FormulaParser::PREDICATE);
+            antlrcpp::downCast<PredicateContext *>(_localctx)->op = match(FormulaParser::PREDICATE);
             setState(138);
-            dynamic_cast<PredicateContext *>(_localctx)->right = match(FormulaParser::ATOMIC);
+            antlrcpp::downCast<PredicateContext *>(_localctx)->right = match(FormulaParser::ATOMIC);
             setState(143);
             _errHandler->sync(this);
             _la = _input->LA(1);
@@ -1226,6 +1253,9 @@ FormulaParser::UnaryContext *FormulaParser::unary() {
             match(FormulaParser::T__1);
             break;
         }
+
+        default:
+            break;
         }
 
     } catch (RecognitionException &e) {
@@ -1282,44 +1312,51 @@ FormulaParser::IntervalContext *FormulaParser::interval() {
     IntervalContext *_localctx = _tracker.createInstance<IntervalContext>(_ctx, getState());
     enterRule(_localctx, 14, FormulaParser::RuleInterval);
 
-    auto onExit = finally([=] { exitRule(); });
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        exitRule();
+    });
     try {
         setState(161);
         _errHandler->sync(this);
         switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 8, _ctx)) {
         case 1: {
-            _localctx = dynamic_cast<IntervalContext *>(
-                _tracker.createInstance<FormulaParser::FiniteIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::FiniteIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 1);
             setState(149);
             match(FormulaParser::T__2);
             setState(150);
-            dynamic_cast<FiniteIntervalContext *>(_localctx)->l = number();
+            antlrcpp::downCast<FiniteIntervalContext *>(_localctx)->l = number();
             setState(151);
             match(FormulaParser::T__0);
             setState(152);
-            dynamic_cast<FiniteIntervalContext *>(_localctx)->u = number();
+            antlrcpp::downCast<FiniteIntervalContext *>(_localctx)->u = number();
             setState(153);
             match(FormulaParser::T__3);
             break;
         }
 
         case 2: {
-            _localctx = dynamic_cast<IntervalContext *>(
-                _tracker.createInstance<FormulaParser::InfiniteIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::InfiniteIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 2);
             setState(155);
             match(FormulaParser::T__2);
             setState(156);
-            dynamic_cast<InfiniteIntervalContext *>(_localctx)->l = number();
+            antlrcpp::downCast<InfiniteIntervalContext *>(_localctx)->l = number();
             setState(157);
             match(FormulaParser::T__0);
             setState(158);
-            dynamic_cast<InfiniteIntervalContext *>(_localctx)->u = match(FormulaParser::T__4);
+            antlrcpp::downCast<InfiniteIntervalContext *>(_localctx)->u = match(FormulaParser::T__4);
             setState(159);
             match(FormulaParser::T__3);
             break;
         }
+
+        default:
+            break;
         }
 
     } catch (RecognitionException &e) {
@@ -1387,13 +1424,19 @@ FormulaParser::AtomContext *FormulaParser::atom() {
     enterRule(_localctx, 16, FormulaParser::RuleAtom);
     size_t _la = 0;
 
-    auto onExit = finally([=] { exitRule(); });
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        exitRule();
+    });
     try {
         setState(173);
         _errHandler->sync(this);
         switch (_input->LA(1)) {
         case FormulaParser::BOOL: {
-            _localctx = dynamic_cast<AtomContext *>(_tracker.createInstance<FormulaParser::BooleanContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::BooleanContext>(_localctx);
             enterOuterAlt(_localctx, 1);
             setState(163);
             match(FormulaParser::BOOL);
@@ -1401,7 +1444,7 @@ FormulaParser::AtomContext *FormulaParser::atom() {
         }
 
         case FormulaParser::ATOMIC: {
-            _localctx = dynamic_cast<AtomContext *>(_tracker.createInstance<FormulaParser::AtomicContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::AtomicContext>(_localctx);
             enterOuterAlt(_localctx, 2);
             setState(164);
             match(FormulaParser::ATOMIC);
@@ -1409,7 +1452,7 @@ FormulaParser::AtomContext *FormulaParser::atom() {
         }
 
         case FormulaParser::T__5: {
-            _localctx = dynamic_cast<AtomContext *>(_tracker.createInstance<FormulaParser::BracketsContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::BracketsContext>(_localctx);
             enterOuterAlt(_localctx, 3);
             setState(165);
             match(FormulaParser::T__5);
@@ -1418,7 +1461,7 @@ FormulaParser::AtomContext *FormulaParser::atom() {
             _la = _input->LA(1);
             do {
                 setState(166);
-                dynamic_cast<BracketsContext *>(_localctx)->content = expr(0);
+                antlrcpp::downCast<BracketsContext *>(_localctx)->content = expr(0);
                 setState(169);
                 _errHandler->sync(this);
                 _la = _input->LA(1);
@@ -1472,9 +1515,15 @@ FormulaParser::NumberContext *FormulaParser::number() {
     NumberContext *_localctx = _tracker.createInstance<NumberContext>(_ctx, getState());
     enterRule(_localctx, 18, FormulaParser::RuleNumber);
 
-    auto onExit = finally([=] { exitRule(); });
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        exitRule();
+    });
     try {
-        _localctx = dynamic_cast<NumberContext *>(_tracker.createInstance<FormulaParser::DigitContext>(_localctx));
+        _localctx = _tracker.createInstance<FormulaParser::DigitContext>(_localctx);
         enterOuterAlt(_localctx, 1);
         setState(175);
         match(FormulaParser::DIGIT);
@@ -1491,7 +1540,7 @@ FormulaParser::NumberContext *FormulaParser::number() {
 bool FormulaParser::sempred(RuleContext *context, size_t ruleIndex, size_t predicateIndex) {
     switch (ruleIndex) {
     case 1:
-        return exprSempred(dynamic_cast<ExprContext *>(context), predicateIndex);
+        return exprSempred(antlrcpp::downCast<ExprContext *>(context), predicateIndex);
 
     default:
         break;
@@ -1576,7 +1625,7 @@ FormulaParser::Initializer::Initializer() {
         }
     }
 
-    _serializedATN = {
+    static const uint16_t serializedATNSegment0[] = {
         0x3,  0x608b, 0xa72a, 0x8133, 0xb9ed, 0x417c, 0x3be7, 0x7786, 0x5964, 0x3,  0x1f, 0xb4, 0x4,  0x2,  0x9,  0x2,
         0x4,  0x3,    0x9,    0x3,    0x4,    0x4,    0x9,    0x4,    0x4,    0x5,  0x9,  0x5,  0x4,  0x6,  0x9,  0x6,
         0x4,  0x7,    0x9,    0x7,    0x4,    0x8,    0x9,    0x8,    0x4,    0x9,  0x9,  0x9,  0x4,  0xa,  0x9,  0xa,
@@ -1679,6 +1728,9 @@ FormulaParser::Initializer::Initializer() {
         0xb0, 0x13,   0x3,    0x2,    0x2,    0x2,    0xb1,   0xb2,   0x7,    0x1f, 0x2,  0x2,  0xb2, 0x15, 0x3,  0x2,
         0x2,  0x2,    0xd,    0x21,   0x23,   0x2b,   0x33,   0x3b,   0x5a,   0x91, 0x95, 0xa3, 0xab, 0xaf,
     };
+
+    _serializedATN.insert(_serializedATN.end(), serializedATNSegment0,
+                          serializedATNSegment0 + sizeof(serializedATNSegment0) / sizeof(serializedATNSegment0[0]));
 
     atn::ATNDeserializer deserializer;
     _atn = deserializer.deserialize(_serializedATN);

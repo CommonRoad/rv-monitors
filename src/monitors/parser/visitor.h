@@ -5,21 +5,21 @@
 #include "monitors/expression_tree/atomic/predicate.h"
 #include "monitors/expression_tree/binary/bool/equivalence.h"
 #include "monitors/expression_tree/binary/bool/implication.h"
-#include "monitors/expression_tree/binary/temporal/ltlf/release.h"
-#include "monitors/expression_tree/binary/temporal/ltlf/until.h"
-#include "monitors/expression_tree/binary/temporal/ptlf/since.h"
+#include "monitors/expression_tree/binary/temporal/release.h"
+#include "monitors/expression_tree/binary/temporal/since.h"
+#include "monitors/expression_tree/binary/temporal/until.h"
 #include "monitors/expression_tree/interval.h"
 #include "monitors/expression_tree/nary/bool/and.h"
 #include "monitors/expression_tree/nary/bool/or.h"
 #include "monitors/expression_tree/nary/bool/xor.h"
 #include "monitors/expression_tree/unary/bool/not.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/future.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/globally.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/next_strong.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/next_weak.h"
-#include "monitors/expression_tree/unary/temporal/ptlf/historically.h"
-#include "monitors/expression_tree/unary/temporal/ptlf/once.h"
-#include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
+#include "monitors/expression_tree/unary/temporal/future.h"
+#include "monitors/expression_tree/unary/temporal/globally.h"
+#include "monitors/expression_tree/unary/temporal/historically.h"
+#include "monitors/expression_tree/unary/temporal/next_strong.h"
+#include "monitors/expression_tree/unary/temporal/next_weak.h"
+#include "monitors/expression_tree/unary/temporal/once.h"
+#include "monitors/expression_tree/unary/temporal/previously.h"
 #include "monitors/parser/gen/FormulaBaseVisitor.h"
 
 /**
@@ -498,9 +498,9 @@ class Visitor : public FormulaBaseVisitor {
      */
     antlrcpp::Any visitFiniteInterval(FormulaParser::FiniteIntervalContext *ctx) override {
         bool finite{false};
-        if ((int)visit(ctx->u) > 0)
+        if (visit(ctx->u).as<int>() > 0)
             finite = true;
-        return std::make_shared<Interval>(Interval(visit(ctx->l), visit(ctx->u), finite));
+        return std::make_shared<Interval>(Interval(visit(ctx->l).as<int>(), visit(ctx->u).as<int>(), finite));
     }
 
     /**

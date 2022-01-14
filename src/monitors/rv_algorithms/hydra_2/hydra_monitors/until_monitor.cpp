@@ -61,12 +61,12 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     }
 
     int v = static_cast<int>(lastSatisfaction && lastSatisfaction->first - positionMonitorH.ts >= from);
-    return Verdict(positionMonitorH.ts, v != 0);
+    return {positionMonitorH.ts, v != 0};
 }
-void UntilMonitor::setTrace(const Trace &tr) {
-    subMonitorF->setTrace(tr);
-    subMonitorG->setTrace(tr);
-    subMonitorH->setTrace(tr);
+void UntilMonitor::setTrace(const Trace &tra) {
+    subMonitorF->setTrace(tra);
+    subMonitorG->setTrace(tra);
+    subMonitorH->setTrace(tra);
 }
 void UntilMonitor::reset() {
     HydraMonitor::reset();
@@ -83,5 +83,5 @@ void UntilMonitor::reset() {
     positionMonitorH.reset();
 }
 std::string UntilMonitor::to_string() {
-    return "(" + subMonitorF->to_string() + ")U(" + subMonitorG->to_string() + ")";
+    return "(" + subMonitorF->to_string() + " U " + subMonitorG->to_string() + ")";
 }

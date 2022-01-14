@@ -1,5 +1,5 @@
 
-// Generated from Formula.g4 by ANTLR 4.7.2
+// Generated from Formula.g4 by ANTLR 4.9.3
 
 #include "FormulaLexer.h"
 
@@ -36,18 +36,18 @@ atn::ATN FormulaLexer::_atn;
 std::vector<uint16_t> FormulaLexer::_serializedATN;
 
 std::vector<std::string> FormulaLexer::_ruleNames = {
-    u8"T__0",     u8"T__1",         u8"T__2",      u8"T__3",        u8"T__4",  u8"T__5",    u8"BOOL", u8"NOT",
-    u8"GLOBALLY", u8"FUTURE",       u8"NEXT_WEAK", u8"NEXT_STRONG", u8"UNTIL", u8"RELEASE", u8"ONCE", u8"PREVIOUSLY",
-    u8"SINCE",    u8"HISTORICALLY", u8"AND",       u8"OR",          u8"XOR",   u8"IMPL",    u8"EQ",   u8"TRUE",
-    u8"FALSE",    u8"ATOMIC",       u8"PREDICATE", u8"WS",          u8"DIGIT"};
+    "T__0",     "T__1",         "T__2",      "T__3",        "T__4",  "T__5",    "BOOL", "NOT",
+    "GLOBALLY", "FUTURE",       "NEXT_WEAK", "NEXT_STRONG", "UNTIL", "RELEASE", "ONCE", "PREVIOUSLY",
+    "SINCE",    "HISTORICALLY", "AND",       "OR",          "XOR",   "IMPL",    "EQ",   "TRUE",
+    "FALSE",    "ATOMIC",       "PREDICATE", "WS",          "DIGIT"};
 
 std::vector<std::string> FormulaLexer::_channelNames = {"DEFAULT_TOKEN_CHANNEL", "HIDDEN"};
 
-std::vector<std::string> FormulaLexer::_modeNames = {u8"DEFAULT_MODE"};
+std::vector<std::string> FormulaLexer::_modeNames = {"DEFAULT_MODE"};
 
-std::vector<std::string> FormulaLexer::_literalNames = {
-    "",      u8"','", u8"')'", u8"'['", u8"']'", u8"'inf'", u8"'('", "", "", u8"'G'", u8"'F'",  u8"'W'",
-    u8"'X'", u8"'U'", u8"'R'", u8"'O'", u8"'P'", u8"'S'",   u8"'H'", "", "", "",      u8"'->'", u8"'<->'"};
+std::vector<std::string> FormulaLexer::_literalNames = {"",    "','", "')'", "'['", "']'", "'inf'", "'('",  "",
+                                                        "",    "'G'", "'F'", "'W'", "'X'", "'U'",   "'R'",  "'O'",
+                                                        "'P'", "'S'", "'H'", "",    "",    "",      "'->'", "'<->'"};
 
 std::vector<std::string> FormulaLexer::_symbolicNames = {"",
                                                          "",
@@ -56,29 +56,29 @@ std::vector<std::string> FormulaLexer::_symbolicNames = {"",
                                                          "",
                                                          "",
                                                          "",
-                                                         u8"BOOL",
-                                                         u8"NOT",
-                                                         u8"GLOBALLY",
-                                                         u8"FUTURE",
-                                                         u8"NEXT_WEAK",
-                                                         u8"NEXT_STRONG",
-                                                         u8"UNTIL",
-                                                         u8"RELEASE",
-                                                         u8"ONCE",
-                                                         u8"PREVIOUSLY",
-                                                         u8"SINCE",
-                                                         u8"HISTORICALLY",
-                                                         u8"AND",
-                                                         u8"OR",
-                                                         u8"XOR",
-                                                         u8"IMPL",
-                                                         u8"EQ",
-                                                         u8"TRUE",
-                                                         u8"FALSE",
-                                                         u8"ATOMIC",
-                                                         u8"PREDICATE",
-                                                         u8"WS",
-                                                         u8"DIGIT"};
+                                                         "BOOL",
+                                                         "NOT",
+                                                         "GLOBALLY",
+                                                         "FUTURE",
+                                                         "NEXT_WEAK",
+                                                         "NEXT_STRONG",
+                                                         "UNTIL",
+                                                         "RELEASE",
+                                                         "ONCE",
+                                                         "PREVIOUSLY",
+                                                         "SINCE",
+                                                         "HISTORICALLY",
+                                                         "AND",
+                                                         "OR",
+                                                         "XOR",
+                                                         "IMPL",
+                                                         "EQ",
+                                                         "TRUE",
+                                                         "FALSE",
+                                                         "ATOMIC",
+                                                         "PREDICATE",
+                                                         "WS",
+                                                         "DIGIT"};
 
 dfa::Vocabulary FormulaLexer::_vocabulary(_literalNames, _symbolicNames);
 
@@ -100,7 +100,7 @@ FormulaLexer::Initializer::Initializer() {
         }
     }
 
-    _serializedATN = {
+    static const uint16_t serializedATNSegment0[] = {
         0x3,  0x608b, 0xa72a, 0x8133, 0xb9ed, 0x417c, 0x3be7, 0x7786, 0x5964, 0x2,  0x1f, 0xcd, 0x8,  0x1,  0x4,  0x2,
         0x9,  0x2,    0x4,    0x3,    0x9,    0x3,    0x4,    0x4,    0x9,    0x4,  0x4,  0x5,  0x9,  0x5,  0x4,  0x6,
         0x9,  0x6,    0x4,    0x7,    0x9,    0x7,    0x4,    0x8,    0x9,    0x8,  0x4,  0x9,  0x9,  0x9,  0x4,  0xa,
@@ -220,6 +220,9 @@ FormulaLexer::Initializer::Initializer() {
         0x6d, 0x72,   0x78,   0x89,   0x95,   0x9a,   0x9d,   0xa2,   0xa6,   0xac, 0xaf, 0xb4, 0xb8, 0xc0, 0xc9, 0xcb,
         0x3,  0x8,    0x2,    0x2,
     };
+
+    _serializedATN.insert(_serializedATN.end(), serializedATNSegment0,
+                          serializedATNSegment0 + sizeof(serializedATNSegment0) / sizeof(serializedATNSegment0[0]));
 
     atn::ATNDeserializer deserializer;
     _atn = deserializer.deserialize(_serializedATN);

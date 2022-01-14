@@ -223,7 +223,7 @@ template <class OriginalType, class DistributiveType>
                                         const std::map<std::string, std::vector<std::string>> &primeTermsRelevant,
                                         const std::set<std::string> &atomics);
 
-template <class F>[[nodiscard]] std::shared_ptr<Expression> apply(const std::shared_ptr<Expression> &expr, F f) {
+template <class F> [[nodiscard]] std::shared_ptr<Expression> apply(const std::shared_ptr<Expression> &expr, F f) {
     auto ret = f(expr);
     if (ret->getLeft()) {
         ret->setLeft(apply(ret->getLeft(), f));

@@ -8,25 +8,32 @@
 
 Verdict OrMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     Verdict verdict{subMonitors.at(0)->step(monitorId, stepNumber)};
-    if (verdict.b) {
-        if (!verdict.ts.has_value())
-            return Verdict(true);
-        else
-            return Verdict(verdict.ts.value(), true);
-    }
-    for (size_t i{1}; i < subMonitors.size(); ++i)
-        if (subMonitors.at(i)->step(monitorId, stepNumber).b) {
+    if (shortCircuiting) {
+        if (verdict.b) {
             if (!verdict.ts.has_value())
-                return Verdict(true);
+                return {true};
             else
-                return Verdict(verdict.ts.value(), true);
+                return {verdict.ts.value(), true};
         }
+        auto current{subMonitors.at(0)->getTraceIdxByParentId(monitorId)};
+        for (size_t i{1}; i < subMonitors.size(); ++i) {
+            if (subMonitors.at(i)->step(monitorId, current - 1).b) {
+                if (!verdict.ts.has_value())
+                    return {true};
+                else
+                    return {verdict.ts.value(), true};
+            }
+        }
+    } else {
+        for (size_t i{1}; i < subMonitors.size(); ++i)
+            verdict = verdict || subMonitors.at(i)->step(monitorId, stepNumber);
+    }
     return verdict;
 }
 
-void OrMonitor::setTrace(const Trace &tr) {
+void OrMonitor::setTrace(const Trace &tra) {
     for (const auto &mon : subMonitors)
-        mon->setTrace(tr);
+        mon->setTrace(tra);
 }
 void OrMonitor::reset() {
     HydraMonitor::reset();
@@ -35,11 +42,12 @@ void OrMonitor::reset() {
 }
 
 std::string OrMonitor::to_string() {
-    std::string s;
+    std::string str{"("};
     for (const auto &mon : subMonitors)
-        s += mon->to_string() + " or ";
-    s.erase(s.size() - 4);
-    return s;
+        str += mon->to_string() + " | ";
+    str.erase(str.size() - 3);
+    str += ")";
+    return str;
 }
 
 double OrMonitor::computeCost(const std::vector<std::shared_ptr<HydraMonitor>> &monitors) {

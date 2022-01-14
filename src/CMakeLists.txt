@@ -11,9 +11,9 @@ set(RV_MONITOR_SRC_FILES
         monitors/expression_tree/binary/binary.cpp
         monitors/expression_tree/binary/bool/equivalence.cpp
         monitors/expression_tree/binary/bool/implication.cpp
-        monitors/expression_tree/binary/temporal/ltlf/until.cpp
-        monitors/expression_tree/binary/temporal/ltlf/release.cpp
-        monitors/expression_tree/binary/temporal/ptlf/since.cpp
+        monitors/expression_tree/binary/temporal/until.cpp
+        monitors/expression_tree/binary/temporal/release.cpp
+        monitors/expression_tree/binary/temporal/since.cpp
         monitors/expression_tree/nary/bool/and.cpp
         monitors/expression_tree/nary/bool/or.cpp
         monitors/expression_tree/nary/bool/xor.cpp
@@ -22,13 +22,13 @@ set(RV_MONITOR_SRC_FILES
         monitors/expression_tree/unary/resolving_operator.cpp
         monitors/expression_tree/unary/unary.cpp
         monitors/expression_tree/unary/bool/not.cpp
-        monitors/expression_tree/unary/temporal/ltlf/future.cpp
-        monitors/expression_tree/unary/temporal/ltlf/globally.cpp
-        monitors/expression_tree/unary/temporal/ltlf/next_strong.cpp
-        monitors/expression_tree/unary/temporal/ltlf/next_weak.cpp
-        monitors/expression_tree/unary/temporal/ptlf/historically.cpp
-        monitors/expression_tree/unary/temporal/ptlf/once.cpp
-        monitors/expression_tree/unary/temporal/ptlf/previously.cpp
+        monitors/expression_tree/unary/temporal/future.cpp
+        monitors/expression_tree/unary/temporal/globally.cpp
+        monitors/expression_tree/unary/temporal/next_strong.cpp
+        monitors/expression_tree/unary/temporal/next_weak.cpp
+        monitors/expression_tree/unary/temporal/historically.cpp
+        monitors/expression_tree/unary/temporal/once.cpp
+        monitors/expression_tree/unary/temporal/previously.cpp
         monitors/formula/formula.cpp
         monitors/formula/nff.cpp
         monitors/parser/parser.cpp
@@ -88,7 +88,11 @@ set(RV_MONITOR_SRC_FILES
 
 
 # create library of this project
-add_library(${LIBRARY_NAME} SHARED ${RV_MONITOR_SRC_FILES})
+if(RVMONITORS_BUILD_SHARED_LIBS)
+    add_library(${LIBRARY_NAME} SHARED ${RV_MONITOR_SRC_FILES})
+else()
+    add_library(${LIBRARY_NAME} STATIC ${RV_MONITOR_SRC_FILES})
+endif()
 
 target_compile_features(${LIBRARY_NAME}
         PUBLIC cxx_lambdas cxx_auto_type
@@ -104,7 +108,7 @@ target_include_directories(${LIBRARY_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
-target_link_libraries(${LIBRARY_NAME}
+target_link_libraries(${LIBRARY_NAME} PRIVATE
         antlr4cpp
         )
 

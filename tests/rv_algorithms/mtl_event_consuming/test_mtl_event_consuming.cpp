@@ -11,7 +11,6 @@
 #include "monitors/trace/trace.h"
 #include "monitors/utils/utils.h"
 #include "monitors/parser/visitor.h"
-#include <ANTLRInputStream.h>
 
  TEST(TestMTL, violated1) {
     Trace trace = Utils::createTrace({"a", "b", "c"}, {{"b"}, {"b"}, {"b"}, {"a"}, {"b"}, {"b"}, {"b"}});
