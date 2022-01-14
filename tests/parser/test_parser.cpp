@@ -49,10 +49,10 @@ TEST(TestParser, ex_log_parse_hydra_syntax) {
 
     std::string log_parsed = "{p0: false; p1: true; p2: true; 0}\n"
                              "{p0: true; p1: false; p2: true; 0}\n"
-                             "{p0: false; p1: false; p2: false; 1}\n"
-                             "{p0: true; p1: true; p2: true; 4}\n"
-                             "{p0: false; p1: true; p2: true; 4}\n"
-                             "{p0: true; p1: true; p2: true; 5}\n";
+                             "{p0: false; p1: false; p2: false; 0}\n"
+                             "{p0: true; p1: true; p2: true; 0}\n"
+                             "{p0: false; p1: true; p2: true; 0}\n"
+                             "{p0: true; p1: true; p2: true; 1}\n";
     EXPECT_EQ(trace.to_string(), log_parsed);
 }
 
