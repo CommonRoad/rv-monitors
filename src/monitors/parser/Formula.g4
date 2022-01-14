@@ -58,7 +58,7 @@ interval
 ;
 
 atom
- : BOOL                                            #Boolean
+ : bool_                                           #Boolean
  | ATOMIC                                          #Atomic
  | '(' content=expr+ ')'                           #Brackets
  ;
@@ -67,7 +67,14 @@ number
  : DIGIT                 #Digit
  ;
 
- BOOL                       : TRUE|FALSE;
+bool_
+  : TRUE                 # TrueBoolean
+  | FALSE                # FalseBoolean
+  ;
+
+ TRUE                       : ('True'|'true');
+ FALSE                      : ('False'|'false');
+
  INFINITY                   : ('inf'|'INFINITY');
  NOT                        : ('!'|'not'|'NOT');
 
@@ -88,8 +95,6 @@ number
  IMPL       	            : '->';
  EQ                         : '<->';
 
- TRUE       	            : ('True'|'true');
- FALSE      	            : ('False'|'false');
 
  // *********
  // IMPORTANT
