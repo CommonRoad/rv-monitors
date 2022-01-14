@@ -19,6 +19,8 @@ TEXT_BOLD=$(tput bold)
 TEXT_DIM=$'\x1B[2m'
 TEXT_RESET=$'\x1B[0m'
 
+ARTIFACTS_PATH="artifacts/file/eval_results"
+
 function cleanup() {
     # Make sure we leave the shell in a sane state
     printf "%b" "$TEXT_RESET"
@@ -38,6 +40,13 @@ function compare_output() {
             printf "...and %d additional lines\n" $(( DIFF_LINES - "$HEAD_LINES" ))
         fi
         cp "$FML_FILE" "bug_${FID}.mdl"
+
+        printf "%bNOTE%b: In order to review this test case, run the following command after this job has finished:\n\t%s %s %s\n" \
+            "${TEXT_BOLD}" \
+            "${TEXT_RESET}" \
+            "rvmonitors_eval" \
+            "\"${CI_JOB_URL}/${ARTIFACTS_PATH}/${FML_FILE}\"" \
+            "\"${CI_JOB_URL}/${ARTIFACTS_PATH}/${LOG_FILE}\""
     else
         printf "%bOK%b\n" \
             "${TEXT_RESET}${TEXT_GREEN}" \
@@ -49,14 +58,14 @@ function test_single() {
     local SIZE=${1}
     local MAXR=${2}
     local SEED=${3}
-    local FID="${1}_${2}_${3}"
+    FID="${1}_${2}_${3}"
     local LOG="logs/shared"
     local APS=8
     # See gen_fmla sources for meaning of TYPE
     local TYPE=2
 
-    local FML_FILE="fmlas/z_${FID}.mdl"
-    local LOG_FILE="${LOG}.log"
+    FML_FILE="fmlas/z_${FID}.mdl"
+    LOG_FILE="${LOG}.log"
 
     #gen_fmla PREFIX SIZE MAXR TYPE SCALE SEED APS
     ./gen_fmla "fmlas/z_${FID}" "${SIZE}" "${MAXR}" "${TYPE}" 1 "${SEED}" ${APS}
