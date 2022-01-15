@@ -1,3 +1,9 @@
+//
+// Created by Sebastian Maierhofer and Evald Nexhipi.
+// Technical University of Munich - Cyber-Physical Systems Group
+// Copyright (c) 2021 Technical University of Munich. All rights reserved.
+// Credits: BMW Car@TUM
+//
 #pragma once
 
 #include "monitors/formula/formula.h"
@@ -9,7 +15,7 @@ class RewriteVisitor : public ExpressionVisitor {
   public:
     void rewrite(Formula &formula);
 
-    // void visitExpression(Expression &expr, Trace &trace, size_t index);
+//     void visitExpression(Expression &expr, Trace &trace, size_t index);
 
     [[nodiscard]] std::shared_ptr<Expression> visitAtomic(Atomic &op, Trace &trace, size_t index) override;
 

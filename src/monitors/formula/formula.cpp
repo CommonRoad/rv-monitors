@@ -46,6 +46,47 @@ const std::string &Formula::getId() const { return id; }
 
 void Formula::setId(const std::string &identifier) { id = identifier; }
 
+size_t Formula::indexOf(const Formula &otherFormula) {
+    /*
+    if (*this) {
+        auto ret = *this->clone();
+        // Nary
+        if (auto nary = std::dynamic_pointer_cast<NaryInterface>(ret)) {
+            if (auto curXor = std::dynamic_pointer_cast<Xor>(nary)) {
+                std::multiset<std::shared_ptr<Expression>> newSet;
+                for (const auto &itr : *nary)
+                    newSet.emplace(deepCopy(itr->clone()));
+                nary->setExpressions(newSet.begin(), newSet.end());
+            } else {
+                std::set<std::shared_ptr<Expression>> newSet;
+                for (const auto &itr : *nary)
+                    newSet.emplace(deepCopy(itr->clone()));
+                nary->setExpressions(newSet.begin(), newSet.end());
+            }
+            ret = nary;
+        }
+
+        // Binary
+        else if (auto binary = std::dynamic_pointer_cast<Binary>(ret)) {
+            auto tmpLeft = deepCopy(binary->getLeft()->clone());
+            binary->setLeft(tmpLeft);
+            auto tmpRight = deepCopy(binary->getRight()->clone());
+            binary->setRight(tmpRight);
+            ret = binary;
+        }
+
+        // Unary
+        else if (auto unary = std::dynamic_pointer_cast<Unary>(ret)) {
+            auto tmpLeft = deepCopy(unary->getLeft()->clone());
+            unary->setLeft(tmpLeft);
+            ret = unary;
+        }
+
+        return ret;
+    }
+     */
+}
+
 bool operator==(const Formula &f1, const Formula &f2) { return *(f1.getExpr()) == *(f2.getExpr()); }
 
 bool operator<(const Formula &f1, const Formula &f2) { return *(f1.getExpr()) < *(f2.getExpr()); }

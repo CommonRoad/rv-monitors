@@ -56,7 +56,6 @@ TEST(TestFormulaGenerator, testNoIntervals) {
     fg.addOperator(globallySymbol, 2.0);
 
     auto f = fg.generateFormula(7);
-
     EXPECT_TRUE(true);
 }
 
