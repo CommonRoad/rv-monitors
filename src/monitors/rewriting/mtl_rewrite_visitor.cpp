@@ -1,5 +1,5 @@
 //
-// Created by Sebastian Maierhofer.
+// Created by Sebastian Maierhofer and Evald Nexhipi.
 // Technical University of Munich - Cyber-Physical Systems Group
 // Copyright (c) 2021 Technical University of Munich. All rights reserved.
 // Credits: BMW Car@TUM
@@ -317,10 +317,10 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitFuture(Future &op, Trace &tr
 //    auto globalExpr = std::make_shared<Globally>(negateFormula, op.getInterval());
 //    return std::make_shared<Not>(globalExpr);
 
-    // F(a) = true U a
-    // Until until{std::make_shared<Constant>(true), op.getLeft(), op.getInterval()};
-    // return std::make_shared<Until>(until);
-       return std::make_shared<Future>(op.getLeft(), op.getInterval());
+//     F(a) = true U a
+     Until until{std::make_shared<Constant>(true), op.getLeft(), op.getInterval()};
+     return std::make_shared<Until>(until);
+//       return std::make_shared<Future>(op.getLeft(), op.getInterval());
 }
 
 std::shared_ptr<Expression> MtlRewriteVisitor::visitGlobally(Globally &op, Trace &trace, size_t index) {
@@ -333,10 +333,10 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitGlobally(Globally &op, Trace
     if (op.getLeft()->isConstTrue()) {
         return std::make_shared<Constant>(true);
     }
-    // Idempotence
-    if ( auto globally = std::dynamic_pointer_cast<Globally>(op.getLeft()) ) {
-        return globally;
-    }
+//    // Idempotence
+//    if ( auto globally = std::dynamic_pointer_cast<Globally>(op.getLeft()) ) {
+//        return globally;
+//    }
 
     //    // Absorption G(F(G(a))) = F(G(a))
 //    if (auto future = std::dynamic_pointer_cast<Future>(op.getLeft())) {
@@ -391,8 +391,12 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitHistorically(Historically &o
 //    auto once{std::make_shared<Once>(std::make_shared<Not>(op.getLeft()), op.getInterval())};
 //    return std::make_shared<Not>(once);
 
-    // H(a) = !a S a
-    return std::make_shared<Since>(std::make_shared<Not>(op.getLeft()), op.getLeft(), op.getInterval());
+    // H(a) = !a S a  // I dont think this rewriting is correct
+    // H(a) = !(true S (!a))
+    return std::make_shared<Not>(std::make_shared<Since>(
+        std::make_shared<Constant>(true),
+            std::make_shared<Not>(op.getLeft()),
+                op.getInterval()));
 
     //   return std::make_shared<Historically>(op);
 }
@@ -407,9 +411,8 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitNextStrong(NextStrong &op, T
     }
 
 //     X(a) = false U a
-     return std::make_shared<Until>(false_constant, op.getLeft(), op.getInterval());
-
-//    return std::make_shared<NextStrong>(op);
+     // return std::make_shared<Until>(false_constant, op.getLeft(), op.getInterval());
+    return std::make_shared<NextStrong>(op);
 }
 
 std::shared_ptr<Expression> MtlRewriteVisitor::visitNextWeak(NextWeak &op, Trace &trace, size_t index) {
@@ -430,16 +433,14 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitOnce(Once &op, Trace &trace,
     }
 
     // O(a) = true S a
-    Since since{std::make_shared<Constant>(true), op.getLeft(), op.getInterval()};
-    return std::make_shared<Since>(since);
+    //Since since{std::make_shared<Constant>(true), op.getLeft(), op.getInterval()};
+    return std::make_shared<Since>(std::make_shared<Constant>(true), op.getLeft(), op.getInterval());
     // return std::make_shared<Once>(op.getLeft(), op.getInterval());
 }
 
 std::shared_ptr<Expression> MtlRewriteVisitor::visitPreviously(Previously &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
-    return std::make_shared<Since>(std::make_shared<Constant>(false), op.getLeft(), op.getInterval());
-
-    // return std::make_shared<Previously>(op);
+    return std::make_shared<Previously>(op);
 }
 
 std::shared_ptr<Expression> MtlRewriteVisitor::visitRelease(Release &op, Trace &trace, size_t index) {
@@ -466,7 +467,7 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitRelease(Release &op, Trace &
     }
 
     // f1 R f2 = !f1 U !f2
-    //return std::make_shared<Until>(std::make_shared<Not>(op.getLeft()), std::make_shared<Not>(op.getRight()), op.getInterval());
+    return std::make_shared<Until>(std::make_shared<Not>(op.getLeft()), std::make_shared<Not>(op.getRight()), op.getInterval());
 
     return std::make_shared<Release>(op);
 }

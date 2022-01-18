@@ -10,6 +10,7 @@
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/unary/event_operator.h"
 #include "monitors/rewriting/rewrite_visitor.h"
+#include "monitors/expression_tree/unary/temporal/ltlf/globally.h"
 #include <iostream>
 #include <memory>
 #include <utility>
@@ -26,20 +27,18 @@ std::map<std::string, std::vector<Verdict>> MTLEventConsuming::evaluate(Trace &t
   }
   // Copy formula before working on it
   auto formulaCopy = formulas.at(0).deepCopy();
-  std::cout<<"Original Formula: "<<formulaCopy.to_string()<<std::endl;
   MtlRewriteVisitor rw;
   MTLEventConsumingVisitor ev;
+
+  auto formulaToGlobally = std::make_shared<Globally>(formulaCopy.getExpr(), std::make_shared<Interval>(0,10000));
+  formulaCopy.setExpr(formulaToGlobally);
+
   // Rewrite
   rw.rewrite(formulaCopy);
+
   for (size_t i = 0; i < trace.getLength(); ++i) {
-      Formula rArrayFormula = static_cast<Formula>(nullptr);
-      Formula dArrayFormula = static_cast<Formula>(nullptr);
-      std::cout<<"MTL["<<i<<"] Formula to Work: "<<formulaCopy.to_string()<<std::endl;
-      std::cout<<"--- I'm Consuming an Event ---- \n "<<std::endl;
       ev.consumeEvent(formulaCopy, trace, i);
-      std::cout<<"----I'm Rewriting --------"<<std::endl;
       rw.rewrite(formulaCopy);
-      std::cout<<"\n Formula after Iteration: "<<formulaCopy.to_string()<<"\n"<<std::endl;
       if (formulaCopy.to_string() == "false") {
           break;
       }
@@ -49,7 +48,6 @@ std::map<std::string, std::vector<Verdict>> MTLEventConsuming::evaluate(Trace &t
   }
   result[formulas.at(0).getId()] = {Verdict{formulaCopy.to_string() == "true"}};
   return result;
-
 
 }
 std::string MTLEventConsuming::to_string() const { return "TODO"; }

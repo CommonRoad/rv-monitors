@@ -13,7 +13,7 @@
 #include "monitors/parser/visitor.h"
 #include <ANTLRInputStream.h>
 
- TEST(TestMTL, violated1) {
+TEST(TestMTL, violated1) {
     Trace trace = Utils::createTrace({"a", "b", "c"}, {{"b"}, {"b"}, {"b"}, {"a"}, {"b"}, {"b"}, {"b"}});
     Formula formula = Parser::parse("G(a -> F[0, 6](b & O[0, 6](c)))");
     auto monitor{MTLEventConsuming(formula)};
@@ -38,7 +38,7 @@ TEST(TestMTL, satisfied2) {
     Trace trace = Utils::createTrace({"a", "b"}, {{"b"}, {"b"}, {"b"}, {"b"}, {"a"}, {"a"}, {"b"}});
     Formula formula = Parser::parse("G(a -> F[2, 5](b))");
     auto monitor{MTLEventConsuming(formula)};
-    EXPECT_TRUE(monitor.evaluate(trace)[formula.getId()].at(0).b); // should be false?
+    EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b); // should be EXPECT_FALSE?
 }
 
 TEST(TestMTL, satisfied2_p) {
@@ -244,15 +244,15 @@ TEST(TestMTL, violated_single_until_0) {
     Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a","b"}, {"a","b"}, {"a","b"}, {"a","b"}, {"a","b", "c"},{"c"},{"a","c"}});
     Formula formula = Parser::parse("(a & b) U[2, 4] (c)");
     auto monitor{MTLEventConsuming(formula)};
-    EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b); // fails at 4, 5, 6
-} // fails
+    EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b);
+}
 
 TEST(TestMTL, satisfied_single_until_2) {
     Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a"}, {"a"}, {"a"}, {"a", "b"}, {"a"}, {"b"}});
     Formula formula = Parser::parse("(a)U[0, 4](b)");
     auto monitor{MTLEventConsuming(formula)};
     EXPECT_TRUE(monitor.evaluate(trace)[formula.getId()].at(0).b);
-} // fails
+}
 
 TEST(TestMTL, violated_single_until_7) {
     Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a"}, {"a","b"}, {"a","b"}, {"c"},{"c"}});
@@ -376,7 +376,6 @@ TEST(TestMTL, sat_special_single_until_5) {
 
 TEST(TestMTL, unsat_special_single_until_3) {
     Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a","b"},{"c"},{"c"},{"a","b"},{"a","b"},{"c"}});
-    std::cout<<trace.to_string()<<std::endl;
     Formula formula = Parser::parse("(a & b) U[0, 2] c");
     auto monitor{MTLEventConsuming(formula)};
     EXPECT_TRUE(monitor.evaluate(trace)[formula.getId()].at(0).b);
@@ -439,7 +438,6 @@ TEST(TestMTL, violated_since_as_historically) {
     EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b);
 }
 
-
 /*** Next Strong ***/   // Considers the absolute case
 TEST(TestMTL, satisfied_single_next_strong_1) {
     Trace trace = Utils::createTrace({"a", "b"}, {{"a"},{"a","b"},{"a","b"},{"a","b"},{"a","b"}});
@@ -470,11 +468,11 @@ TEST(TestMTL, violated_single_next_strong_3) {
 }
 
 /*** Previously ***/
-TEST(TestMTL, satisfied_single_previously_1){
+TEST(TestMTL, unsatisfied_single_previousl){
     Trace trace = Utils::createTrace({"a", "b"}, {{"a","b"}, {"a","b"}, {"a","b"}, {"a", "b"},{"b"}});
     Formula formula = Parser::parse("P[0,1](a & b)");
     auto monitor{MTLEventConsuming(formula)};
-    EXPECT_TRUE(monitor.evaluate(trace)[formula.getId()].at(0).b); // should be true?
+    EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b);
 }
 
 TEST(TestMTL, unsatisfied_single_previously_1){
@@ -541,12 +539,11 @@ TEST(TESTMTL, unsat_viol_twice_globally_x){
     EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b);
 }
 
-// same
 TEST(TESTMTL, unsat_viol_twice_globally_2){
     Trace trace = Utils::createTrace({"a", "b"}, {{"b"}, {"a"}, {"a"}, {"a"}, {"b"}, {"a"}, {"a"}});
     Formula formula = Parser::parse("true U a");
     auto monitor{MTLEventConsuming(formula)};
-    EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b); // check this in until
+    EXPECT_TRUE(monitor.evaluate(trace)[formula.getId()].at(0).b);
 }
 
 TEST(TESTMTL, violated_single_globally_1){
@@ -555,14 +552,13 @@ TEST(TESTMTL, violated_single_globally_1){
     auto monitor{MTLEventConsuming(formula)};
     EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b); // violated at last index 4
 }
-//opposite of:
+
 TEST(TESTMTL, violated_single_globally_1_x){
     Trace trace = Utils::createTrace({"a", "b"}, {{"a","b"}, {"a","b"}, {"a","b"}, {"a", "b"},{"b"}});
     Formula formula = Parser::parse("true U[0,2] !(a & b)");
     auto monitor{MTLEventConsuming(formula)};
     EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b); // violated at last index 4
 }
-
 
 TEST(TESTMTL, violated_single_globally_2){
     Trace trace = Utils::createTrace({"a", "b"}, {{"a","b"}, {"a"}, {"a"},{"a","b"}, {"a", "b"},{"b"}});
@@ -575,7 +571,7 @@ TEST(TESTMTL, violated_single_globally_3){
     Trace trace = Utils::createTrace({"a", "b"}, {{"b"}, {"a"}, {"a","b"}, {"a", "b"},{"b"}});
     Formula formula = Parser::parse("G[0,2](a & b)");
     auto monitor{MTLEventConsuming(formula)};
-    EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b); //violated at index 1
+    EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b); //violated
 }
 
 TEST(TESTMTL, violated_single_globally_4){
@@ -660,7 +656,7 @@ TEST(TESTMTL, violated_single_future_3){
     Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"b"},{"a","b"}, {"a", "b"},{"a","b"},{"a"}});
     Formula formula = Parser::parse("F[0,2](a & b)");
     auto monitor{MTLEventConsuming(formula)};
-    EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b); //violated at index 5 HYDRA DOESNT ANSWER
+    EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b); //violated at index 5
 }
 
 /*** Once ***/
@@ -732,7 +728,7 @@ TEST(TESTMTL, satisfied_single_historically_1){
     Trace trace = Utils::createTrace({"a", "b"}, {{"a","b"}, {"a","b"}, {"a","b"}, {"a", "b"},{"b"}});
     Formula formula = Parser::parse("H[0,2](a & b)");
     auto monitor{MTLEventConsuming(formula)};
-    EXPECT_TRUE(monitor.evaluate(trace)[formula.getId()].at(0).b);
+    EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b); //maybe false?
 }
 
 TEST(TESTMTL, violated_single_historically_1){
@@ -771,8 +767,8 @@ TEST(TESTMTL, unsat_since_until_and){
     EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b);
 }
 
-TEST(TestMTL, unsatisfied_implication_previously){
-    Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"b"}, {"a"}, {"b"}, {"b"}, {"a"}, {"b"}});
+TEST(TestMTL, unsatisfied_previously_single_example){
+    Trace trace = Utils::createTrace({"a", "b","c"}, {{"a"}, {"b"}, {"a"}, {"b"}, {"b"}, {"a"}, {"b"}});
     Formula formula = Parser::parse("P[0,4](!c)");
     auto monitor{MTLEventConsuming(formula)};
     EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b);
@@ -876,7 +872,7 @@ TEST(TESTMTL, sat_globally_and_once_historically_inplication){
     EXPECT_TRUE(monitor.evaluate(trace)[formula.getId()].at(0).b);
 }
 
-TEST(TESTMTL, unsat_globally_and_once_historically_inplication){
+TEST(TESTMTL, unsat_globally_and_once_historically_implication){
     Trace trace = Utils::createTrace({"a", "b","c"}, {{"c"}, {"a"}, {"a", "b"}, {"a", "b"}, {"a"}, {"a"}, {"c"}, {"c"}});
     Formula formula = Parser::parse("G((!a & P(a)) -> (O[1,5](H[0,2](a & b))))");
     auto monitor{MTLEventConsuming(formula)};
@@ -926,18 +922,18 @@ TEST(TESTMTL, unsat_since){
     EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b);
 }
 
-TEST(TESTMTL, unsat_until){
+TEST(TESTMTL, sat_until_single_example){
     Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"a"}, {"a"}, {"a", "b"}, {"a"}, {"b"}});
     Formula formula = Parser::parse("(a)U[0, 4](b)");
     auto monitor{MTLEventConsuming(formula)};
-    EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b); // should be true?
+    EXPECT_TRUE(monitor.evaluate(trace)[formula.getId()].at(0).b);
 }
 
 TEST(TESTMTL, unsat_until_and_since){
     Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"a"}, {"a"}, {"a", "b"}, {"a"}, {"b"}});
     Formula formula = Parser::parse("((a)U[0, 4](b)) and a");
     auto monitor{MTLEventConsuming(formula)};
-    EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b); // should be true? as above?
+    EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b);
 }
 
 TEST(TESTMTL, sat_combined_since_until_formulas){
@@ -951,33 +947,32 @@ TEST(TESTMTL, unsat_negated_and_once_interval){
     Trace trace = Utils::createTrace({"a", "b"}, {{}, {}, {"a", "b"}, {"a"}, {"a"}});
     Formula formula = Parser::parse("a & !O[0,30](b)");
     auto monitor{MTLEventConsuming(formula)};
-    EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b); // should be true? as above?
+    EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b);
 }
 
 TEST(TESTMTL, unsat_negated_and_once_interval_2){
     Trace trace = Utils::createTrace({"a", "b"}, {{}, {}, {"a", "b"}, {"a"}, {"a"}});
     Formula formula = Parser::parse("a & O[0,30](b)");
     auto monitor{MTLEventConsuming(formula)};
-    EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b); // should be true? as above?
+    EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b);
 }
 
 TEST(TESTMTL, unsat_negated_and_once_interval_and_1){
     Trace trace = Utils::createTrace({"in_same_lane", "in_single_lane"}, {{"in_single_lane"}, {"in_single_lane"}, {"in_same_lane"}, {"in_same_lane"}, {"in_same_lane"}});
     Formula formula = Parser::parse("in_same_lane & !O[0,30](in_same_lane & !(in_single_lane) & P(in_single_lane))");
     auto monitor{MTLEventConsuming(formula)};
-    EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b); // should be true? as above?
+    EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b);
 }
 
-TEST(TESTMTL, unsat_negated_and_once_interval_and_2){
-    Trace trace = Utils::createTrace({"in_same_lane", "in_single_lane", "keeps_safe_distance_prec", "orientation_towards"},
-                                     {{"in_same_lane", "keeps_safe_distance_prec"},
-                                      {"in_same_lane", "keeps_safe_distance_prec"},
-                                      {"in_same_lane", "in_single_lane"},
-                                      {"in_same_lane", "in_single_lane"},
-                                      {"in_same_lane", "in_single_lane"}
-                                     });
+TEST(TESTMTL, unsat_negated_and_once_interval_and_2) {
+    Trace trace =
+        Utils::createTrace({"in_same_lane", "in_single_lane", "keeps_safe_distance_prec", "orientation_towards"},
+                           {{"in_same_lane", "keeps_safe_distance_prec"},
+                            {"in_same_lane", "keeps_safe_distance_prec"},
+                            {"in_same_lane", "in_single_lane"},
+                            {"in_same_lane", "in_single_lane"},
+                            {"in_same_lane", "in_single_lane"}});
     Formula formula = Parser::parse("(in_same_lane & !O[0,30](in_same_lane & !(in_single_lane) & orientation_towards & P(in_single_lane & orientation_towards))) -> keeps_safe_distance_prec");
     auto monitor{MTLEventConsuming(formula)};
-    EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b); // should be true? as above?
+    EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b);
 }
-//
