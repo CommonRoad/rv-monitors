@@ -87,28 +87,3 @@ TEST(TestECFuture, atomic) {
     auto eventConsuming{EventConsumingLTL({formula})};
     EXPECT_FALSE(eventConsuming.evaluate(trace)[formula.getId()].at(0).b);
 }
-
-/**** TESTS ADDED BY EVALD ****/
-TEST(TestECFuture, satisfied_ev_1) {
-    Trace trace = Utils::createTrace({"a","b","c"},
-                                     {{"a","b"},{"a","b"},{"a","b"},{"a","c"},{"a","c"},{"a","c"},{"a","c"}});
-    Formula formula = Parser::parse("G(a -> b U c)");
-    auto eventConsuming{EventConsumingLTL({formula})};
-    EXPECT_TRUE(eventConsuming.evaluate(trace)[formula.getId()].at(0).b);
-}
-
-TEST(TestECFuture, violated_ev_1) {
-    Trace trace = Utils::createTrace({"a","b","c"},
-                                     {{"a","b"},{"a","b"},{"a","b"},{"a"},{"a","c"},{"a","c"},{"a","c"}});
-    Formula formula = Parser::parse("G(a -> b U c)");
-    auto eventConsuming{EventConsumingLTL({formula})};
-    EXPECT_FALSE(eventConsuming.evaluate(trace)[formula.getId()].at(0).b);
-}
-
-TEST(TestECFuture, violated_ev_2) {
-    Trace trace = Utils::createTrace({"a","b","c"},
-                                     {{"a","b"},{"a","b"},{"a","b"},{"a"},{"a","c"},{"a","c"},{"a","c"}});
-    Formula formula = Parser::parse("a | b");
-    auto eventConsuming{EventConsumingLTL({formula})};
-    EXPECT_FALSE(eventConsuming.evaluate(trace)[formula.getId()].at(0).b);
-}

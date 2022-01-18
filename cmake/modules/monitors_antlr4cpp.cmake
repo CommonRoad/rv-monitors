@@ -5,15 +5,15 @@ include(ExternalProject)
 ExternalProject_ADD(
         antlr4cpp_bundled
         PREFIX      antlr4cppPrefix
-        URL ../../../libs/antlr4/antlr4-cpp-runtime-4.8-source.zip
-        URL_HASH    MD5=7a0d422e522e90be8d1615d17aa2c114
+        URL ${PROJECT_SOURCE_DIR}/libs/antlr4/antlr4-cpp-runtime-4.9.3-source.zip
+        URL_HASH    MD5=eafa4fef583e12e963062882773461be
         BUILD_BYPRODUCTS ${CMAKE_BINARY_DIR}/antlr4cppPrefix/install/lib/libantlr4-runtime.so
-        CMAKE_ARGS  -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/antlr4cppPrefix/install -DCMAKE_CXX_FLAGS=-w
+        CMAKE_ARGS  -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/antlr4cppPrefix/install -DCMAKE_CXX_FLAGS=-w
 )
 
 # create dummy target that contains all information to easily link against
 add_library(antlr4cpp
-        SHARED
+        STATIC
         IMPORTED
         GLOBAL
         )
@@ -23,7 +23,7 @@ add_dependencies(antlr4cpp antlr4cpp_bundled)
 ExternalProject_Get_Property(antlr4cpp_bundled install_dir)
 set_target_properties(
         antlr4cpp
-        PROPERTIES "IMPORTED_LOCATION" "${install_dir}/install/lib/libantlr4-runtime.so"
+        PROPERTIES "IMPORTED_LOCATION" "${install_dir}/install/lib/libantlr4-runtime.a"
 )
 
 # create directory otherwise cmake will complain during generate step since this is only generated during make

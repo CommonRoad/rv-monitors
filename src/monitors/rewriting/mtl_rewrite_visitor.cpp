@@ -11,9 +11,9 @@
 #include "monitors/expression_tree/binary/binary.h"
 #include "monitors/expression_tree/binary/bool/equivalence.h"
 #include "monitors/expression_tree/binary/bool/implication.h"
-#include "monitors/expression_tree/binary/temporal/ltlf/release.h"
-#include "monitors/expression_tree/binary/temporal/ltlf/until.h"
-#include "monitors/expression_tree/binary/temporal/ptlf/since.h"
+#include "monitors/expression_tree/binary/temporal/release.h"
+#include "monitors/expression_tree/binary/temporal/since.h"
+#include "monitors/expression_tree/binary/temporal/until.h"
 #include "monitors/expression_tree/nary/bool/and.h"
 #include "monitors/expression_tree/nary/bool/or.h"
 #include "monitors/expression_tree/nary/bool/xor.h"
@@ -22,13 +22,13 @@
 #include "monitors/expression_tree/unary/deriving_operator.h"
 #include "monitors/expression_tree/unary/event_operator.h"
 #include "monitors/expression_tree/unary/resolving_operator.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/future.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/globally.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/next_strong.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/next_weak.h"
-#include "monitors/expression_tree/unary/temporal/ptlf/historically.h"
-#include "monitors/expression_tree/unary/temporal/ptlf/once.h"
-#include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
+#include "monitors/expression_tree/unary/temporal/future.h"
+#include "monitors/expression_tree/unary/temporal/globally.h"
+#include "monitors/expression_tree/unary/temporal/historically.h"
+#include "monitors/expression_tree/unary/temporal/next_strong.h"
+#include "monitors/expression_tree/unary/temporal/next_weak.h"
+#include "monitors/expression_tree/unary/temporal/once.h"
+#include "monitors/expression_tree/unary/temporal/previously.h"
 #include "monitors/expression_tree/unary/unary.h"
 #include "monitors/rewriting/rewrite_visitor_utils.h"
 #include "monitors/trace/event.h"
@@ -257,11 +257,11 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitImplication(Implication &op,
     Xor::SetType_T xorSet{std::make_shared<Constant>(true), op.getLeft(), andExpr};
     return std::make_shared<Xor>(xorSet);
 
-//    // a -> b = a v !b
-//    auto negExpr{std::make_shared<Not>(op.getLeft())};
-//    Or::SetType_T orSet{op.getRight(), negExpr};
-//    auto orExpr{std::make_shared<Or>(orSet)};
-//    return orExpr;
+    //    // a -> b = a v !b
+    //    auto negExpr{std::make_shared<Not>(op.getLeft())};
+    //    Or::SetType_T orSet{op.getRight(), negExpr};
+    //    auto orExpr{std::make_shared<Or>(orSet)};
+    //    return orExpr;
 }
 
 std::shared_ptr<Expression> MtlRewriteVisitor::visitEquivalence(Equivalence &op, Trace &trace, size_t index) {
@@ -291,7 +291,7 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitNot(Not &op, Trace &trace, s
     // !a = true ^ a
     Xor::SetType_T xorSet{std::make_shared<Constant>(true), op.getLeft()};
     return std::make_shared<Xor>(xorSet);
-//    return std::make_shared<Not>(op);
+    //    return std::make_shared<Not>(op);
 }
 
 std::shared_ptr<Expression> MtlRewriteVisitor::visitFuture(Future &op, Trace &trace, size_t index) {
@@ -312,15 +312,15 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitFuture(Future &op, Trace &tr
         }
     }
 
-//    // F(a) = !G(!a) <- might not be correct (not sure)
-//    auto negateFormula = std::make_shared<Not>(op.getLeft());
-//    auto globalExpr = std::make_shared<Globally>(negateFormula, op.getInterval());
-//    return std::make_shared<Not>(globalExpr);
+    //    // F(a) = !G(!a) <- might not be correct (not sure)
+    //    auto negateFormula = std::make_shared<Not>(op.getLeft());
+    //    auto globalExpr = std::make_shared<Globally>(negateFormula, op.getInterval());
+    //    return std::make_shared<Not>(globalExpr);
 
-//     F(a) = true U a
-     Until until{std::make_shared<Constant>(true), op.getLeft(), op.getInterval()};
-     return std::make_shared<Until>(until);
-//       return std::make_shared<Future>(op.getLeft(), op.getInterval());
+    //     F(a) = true U a
+    Until until{std::make_shared<Constant>(true), op.getLeft(), op.getInterval()};
+    return std::make_shared<Until>(until);
+    //       return std::make_shared<Future>(op.getLeft(), op.getInterval());
 }
 
 std::shared_ptr<Expression> MtlRewriteVisitor::visitGlobally(Globally &op, Trace &trace, size_t index) {
@@ -333,28 +333,28 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitGlobally(Globally &op, Trace
     if (op.getLeft()->isConstTrue()) {
         return std::make_shared<Constant>(true);
     }
-//    // Idempotence
-//    if ( auto globally = std::dynamic_pointer_cast<Globally>(op.getLeft()) ) {
-//        return globally;
-//    }
+    //    // Idempotence
+    //    if ( auto globally = std::dynamic_pointer_cast<Globally>(op.getLeft()) ) {
+    //        return globally;
+    //    }
 
     //    // Absorption G(F(G(a))) = F(G(a))
-//    if (auto future = std::dynamic_pointer_cast<Future>(op.getLeft())) {
-//        if (std::dynamic_pointer_cast<Globally>(future->getLeft())) {
-//            return future;
-//        }
-//    }
+    //    if (auto future = std::dynamic_pointer_cast<Future>(op.getLeft())) {
+    //        if (std::dynamic_pointer_cast<Globally>(future->getLeft())) {
+    //            return future;
+    //        }
+    //    }
 
-     // G(a) = not F(not a) = true ^ F(true ^ a)
-//    Xor::SetType_T xorSetOne{std::make_shared<Constant>(true), op.getLeft()};
-//    auto future {std::make_shared<Future>(std::make_shared<Xor>(xorSetOne), op.getInterval())};
-//    Xor::SetType_T xorSetTwo{std::make_shared<Constant>(true), future};
-//    return std::make_shared<Xor>(xorSetTwo);
+    // G(a) = not F(not a) = true ^ F(true ^ a)
+    //    Xor::SetType_T xorSetOne{std::make_shared<Constant>(true), op.getLeft()};
+    //    auto future {std::make_shared<Future>(std::make_shared<Xor>(xorSetOne), op.getInterval())};
+    //    Xor::SetType_T xorSetTwo{std::make_shared<Constant>(true), future};
+    //    return std::make_shared<Xor>(xorSetTwo);
 
-//     G(a) = not F(not a) = ! (true U ! a)
-//    auto future{std::make_shared<Future>(std::make_shared<Not>(op.getLeft()), op.getInterval())};
-//    return std::make_shared<Not>(future);
-//    return std::make_shared<Not>(std::make_shared<Until>(std::make_shared<Constant>(true), std::make_shared<Not>(op.getLeft()),op.getInterval()));
+    //     G(a) = not F(not a) = ! (true U ! a)
+    //    auto future{std::make_shared<Future>(std::make_shared<Not>(op.getLeft()), op.getInterval())};
+    //    return std::make_shared<Not>(future);
+    //    return std::make_shared<Not>(std::make_shared<Until>(std::make_shared<Constant>(true), std::make_shared<Not>(op.getLeft()),op.getInterval()));
 
     return std::make_shared<Globally>(op.getLeft(), op.getInterval());
 }
@@ -380,23 +380,23 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitHistorically(Historically &o
         }
     }
 
-     //H(a) = not O(not a) = true ^ O(true ^ a)
-//    Xor::SetType_T xorSetOne{std::make_shared<Constant>(true), op.getLeft()};
-//    auto once {std::make_shared<Once>(std::make_shared<Xor>(xorSetOne), op.getInterval())};
-//    Xor::SetType_T xorSetTwo{std::make_shared<Constant>(true), once};
-//
-//    return std::make_shared<Xor>(xorSetTwo);
+    //H(a) = not O(not a) = true ^ O(true ^ a)
+    //    Xor::SetType_T xorSetOne{std::make_shared<Constant>(true), op.getLeft()};
+    //    auto once {std::make_shared<Once>(std::make_shared<Xor>(xorSetOne), op.getInterval())};
+    //    Xor::SetType_T xorSetTwo{std::make_shared<Constant>(true), once};
+    //
+    //    return std::make_shared<Xor>(xorSetTwo);
 
     // H(a) = not O(not a)
-//    auto once{std::make_shared<Once>(std::make_shared<Not>(op.getLeft()), op.getInterval())};
-//    return std::make_shared<Not>(once);
+    //    auto once{std::make_shared<Once>(std::make_shared<Not>(op.getLeft()), op.getInterval())};
+    //    return std::make_shared<Not>(once);
 
     // H(a) = !a S a  // I dont think this rewriting is correct
     // H(a) = !(true S (!a))
     return std::make_shared<Not>(std::make_shared<Since>(
         std::make_shared<Constant>(true),
-            std::make_shared<Not>(op.getLeft()),
-                op.getInterval()));
+        std::make_shared<Not>(op.getLeft()),
+        op.getInterval()));
 
     //   return std::make_shared<Historically>(op);
 }
@@ -410,8 +410,8 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitNextStrong(NextStrong &op, T
         return false_constant;
     }
 
-//     X(a) = false U a
-     // return std::make_shared<Until>(false_constant, op.getLeft(), op.getInterval());
+    //     X(a) = false U a
+    // return std::make_shared<Until>(false_constant, op.getLeft(), op.getInterval());
     return std::make_shared<NextStrong>(op);
 }
 

@@ -15,12 +15,12 @@ void TestRVMonitors::SetUp() {
 }
 
 std::vector<Verdict> TestRVMonitors::executeRVMonitor(AlgorithmType algorithm) {
-    Trace tr{*trace};
-    Formula fm{*formula};
-    auto monitor{RVMonitor(algorithm, {fm}, false, false)};
+    Trace tra{*trace};
+    Formula form{*formula};
+    auto monitor{RVMonitor({form, MonitorConfiguration(algorithm, false, false)})};
     std::cout << algorithm;
 
-    return monitor.verify(tr)[fm.getId()];
+    return monitor.verify(tra)[form.getId()];
 }
 
 TEST_F(TestRVMonitors, EventConsumingLTL) {
@@ -71,11 +71,11 @@ TEST_F(TestRVMonitors, StringToAlgorithm) {
 }
 
 TEST_F(TestRVMonitors, PerformanceMeasurement) {
-    Trace tr{*trace};
-    Formula fm{*formula};
-    auto monitor{RVMonitor(AlgorithmType::dynamic_programming_ltl, {fm}, false, true)};
+    Trace tra{*trace};
+    Formula form{*formula};
+    auto monitor{RVMonitor({form, MonitorConfiguration(AlgorithmType::hydra_mtl, false, true)})};
 
-    monitor.verify(tr);
+    monitor.verify(tra);
 
     EXPECT_EQ(monitor.getExecutionStatistic().getTotalTraceLength(), 3);
     EXPECT_EQ(monitor.getExecutionStatistic().getNumExecutions(), 1);
@@ -85,12 +85,12 @@ TEST_F(TestRVMonitors, PerformanceMeasurement) {
 }
 
 TEST_F(TestRVMonitors, CopyAndAssignmentConstructor) {
-    Trace tr{*trace};
-    Formula fm{Formula(Parser::parse("G(!(a | b) & !c)"))};
-    fm.setId("R_U1");
-    auto monitor{RVMonitor(AlgorithmType::hydra_mtl, {fm}, false, true)};
+    Trace tra{*trace};
+    Formula form{Formula(Parser::parse("G(!(a | b) & !c)"))};
+    form.setId("R_U1");
+    auto monitor{RVMonitor({form})};
     auto mon2{monitor};
-    mon2.verify(tr);
+    mon2.verify(tra);
     RVMonitor mon3 = monitor;
-    mon3.verify(tr);
+    mon3.verify(tra);
 }

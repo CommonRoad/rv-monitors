@@ -6,7 +6,7 @@
 //
 
 #pragma once
-
+#include <utility>
 #include "monitors/formula/formula.h"
 
 #include "monitors/expression_tree/atomic/atomic.h"
@@ -18,17 +18,18 @@
 
 #include "monitors/expression_tree/nary/bool/xor.h"
 #include "monitors/expression_tree/unary/bool/not.h"
-#include <utility>
 
-#include "monitors/expression_tree/unary/temporal/ltlf/future.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/globally.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/next_strong.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/next_weak.h"
+#include "monitors/expression_tree/unary/temporal/future.h"
+#include "monitors/expression_tree/unary/temporal/globally.h"
+#include "monitors/expression_tree/unary/temporal/next_strong.h"
+#include "monitors/expression_tree/unary/temporal/next_weak.h"
+#include "monitors/expression_tree/unary/temporal/historically.h"
+#include "monitors/expression_tree/unary/temporal/once.h"
+#include "monitors/expression_tree/unary/temporal/previously.h"
 
-#include "monitors/expression_tree/binary/temporal/ptlf/since.h"
-#include "monitors/expression_tree/unary/temporal/ptlf/historically.h"
-#include "monitors/expression_tree/unary/temporal/ptlf/once.h"
-#include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
+#include "monitors/expression_tree/binary/temporal/since.h"
+#include "monitors/expression_tree/binary/temporal/until.h"
+#include "monitors/expression_tree/binary/temporal/release.h"
 
 #include "monitors/symbols/symbols.h"
 

@@ -1,5 +1,5 @@
 
-// Generated from Formula.g4 by ANTLR 4.7.2
+// Generated from Formula.g4 by ANTLR 4.9.3
 
 #pragma once
 
@@ -52,7 +52,7 @@ class FormulaParser : public antlr4::Parser {
         RuleNumber = 9
     };
 
-    FormulaParser(antlr4::TokenStream *input);
+    explicit FormulaParser(antlr4::TokenStream *input);
     ~FormulaParser();
 
     virtual std::string getGrammarFileName() const override;
@@ -106,6 +106,7 @@ class FormulaParser : public antlr4::Parser {
         std::vector<ExprContext *> expr();
         ExprContext *expr(size_t i);
         antlr4::tree::TerminalNode *EQ();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -114,6 +115,7 @@ class FormulaParser : public antlr4::Parser {
         XorExprContext(ExprContext *ctx);
 
         Xor_exprContext *xor_expr();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -127,6 +129,7 @@ class FormulaParser : public antlr4::Parser {
         std::vector<ExprContext *> expr();
         ExprContext *expr(size_t i);
         antlr4::tree::TerminalNode *IMPL();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -152,6 +155,7 @@ class FormulaParser : public antlr4::Parser {
         Or_exprContext *or_expr(size_t i);
         std::vector<antlr4::tree::TerminalNode *> XOR();
         antlr4::tree::TerminalNode *XOR(size_t i);
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -177,6 +181,7 @@ class FormulaParser : public antlr4::Parser {
         And_exprContext *and_expr(size_t i);
         std::vector<antlr4::tree::TerminalNode *> OR();
         antlr4::tree::TerminalNode *OR(size_t i);
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -202,6 +207,7 @@ class FormulaParser : public antlr4::Parser {
         Release_until_exprContext *release_until_expr(size_t i);
         std::vector<antlr4::tree::TerminalNode *> AND();
         antlr4::tree::TerminalNode *AND(size_t i);
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -230,6 +236,7 @@ class FormulaParser : public antlr4::Parser {
         UnaryContext *unary(size_t i);
         antlr4::tree::TerminalNode *SINCE();
         IntervalContext *interval();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -245,6 +252,7 @@ class FormulaParser : public antlr4::Parser {
         UnaryContext *unary(size_t i);
         antlr4::tree::TerminalNode *RELEASE();
         IntervalContext *interval();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -258,6 +266,7 @@ class FormulaParser : public antlr4::Parser {
         std::vector<UnaryContext *> unary();
         UnaryContext *unary(size_t i);
         antlr4::tree::TerminalNode *SINCE();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -273,6 +282,7 @@ class FormulaParser : public antlr4::Parser {
         UnaryContext *unary(size_t i);
         antlr4::tree::TerminalNode *UNTIL();
         IntervalContext *interval();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -281,6 +291,7 @@ class FormulaParser : public antlr4::Parser {
         UnaryExprContext(Release_until_exprContext *ctx);
 
         UnaryContext *unary();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -294,6 +305,7 @@ class FormulaParser : public antlr4::Parser {
         std::vector<UnaryContext *> unary();
         UnaryContext *unary(size_t i);
         antlr4::tree::TerminalNode *RELEASE();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -307,6 +319,7 @@ class FormulaParser : public antlr4::Parser {
         std::vector<UnaryContext *> unary();
         UnaryContext *unary(size_t i);
         antlr4::tree::TerminalNode *UNTIL();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -331,6 +344,7 @@ class FormulaParser : public antlr4::Parser {
         FormulaParser::AtomContext *right = nullptr;
         antlr4::tree::TerminalNode *GLOBALLY();
         AtomContext *atom();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -342,6 +356,7 @@ class FormulaParser : public antlr4::Parser {
         FormulaParser::AtomContext *right = nullptr;
         antlr4::tree::TerminalNode *ONCE();
         AtomContext *atom();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -355,6 +370,7 @@ class FormulaParser : public antlr4::Parser {
         antlr4::tree::TerminalNode *GLOBALLY();
         IntervalContext *interval();
         AtomContext *atom();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -368,6 +384,7 @@ class FormulaParser : public antlr4::Parser {
         antlr4::tree::TerminalNode *PREVIOUSLY();
         IntervalContext *interval();
         AtomContext *atom();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -381,6 +398,7 @@ class FormulaParser : public antlr4::Parser {
         antlr4::tree::TerminalNode *HISTORICALLY();
         IntervalContext *interval();
         AtomContext *atom();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -392,6 +410,7 @@ class FormulaParser : public antlr4::Parser {
         FormulaParser::AtomContext *right = nullptr;
         antlr4::tree::TerminalNode *PREVIOUSLY();
         AtomContext *atom();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -403,6 +422,7 @@ class FormulaParser : public antlr4::Parser {
         FormulaParser::AtomContext *right = nullptr;
         antlr4::tree::TerminalNode *NEXT_WEAK();
         AtomContext *atom();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -416,6 +436,7 @@ class FormulaParser : public antlr4::Parser {
         antlr4::tree::TerminalNode *NEXT_WEAK();
         IntervalContext *interval();
         AtomContext *atom();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -424,6 +445,7 @@ class FormulaParser : public antlr4::Parser {
         AtomExprContext(UnaryContext *ctx);
 
         AtomContext *atom();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -435,6 +457,7 @@ class FormulaParser : public antlr4::Parser {
         FormulaParser::AtomContext *right = nullptr;
         antlr4::tree::TerminalNode *HISTORICALLY();
         AtomContext *atom();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -448,6 +471,7 @@ class FormulaParser : public antlr4::Parser {
         antlr4::tree::TerminalNode *NEXT_STRONG();
         IntervalContext *interval();
         AtomContext *atom();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -460,6 +484,7 @@ class FormulaParser : public antlr4::Parser {
         antlr4::tree::TerminalNode *PREDICATE();
         std::vector<antlr4::tree::TerminalNode *> ATOMIC();
         antlr4::tree::TerminalNode *ATOMIC(size_t i);
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -471,6 +496,7 @@ class FormulaParser : public antlr4::Parser {
         FormulaParser::AtomContext *right = nullptr;
         antlr4::tree::TerminalNode *NEXT_STRONG();
         AtomContext *atom();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -484,6 +510,7 @@ class FormulaParser : public antlr4::Parser {
         antlr4::tree::TerminalNode *ONCE();
         IntervalContext *interval();
         AtomContext *atom();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -497,6 +524,7 @@ class FormulaParser : public antlr4::Parser {
         antlr4::tree::TerminalNode *FUTURE();
         IntervalContext *interval();
         AtomContext *atom();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -508,6 +536,7 @@ class FormulaParser : public antlr4::Parser {
         FormulaParser::AtomContext *right = nullptr;
         antlr4::tree::TerminalNode *NOT();
         AtomContext *atom();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -519,6 +548,7 @@ class FormulaParser : public antlr4::Parser {
         FormulaParser::AtomContext *right = nullptr;
         antlr4::tree::TerminalNode *FUTURE();
         AtomContext *atom();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -530,6 +560,7 @@ class FormulaParser : public antlr4::Parser {
         FormulaParser::ExprContext *right = nullptr;
         antlr4::tree::TerminalNode *NOT();
         ExprContext *expr();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -554,6 +585,7 @@ class FormulaParser : public antlr4::Parser {
         FormulaParser::NumberContext *u = nullptr;
         std::vector<NumberContext *> number();
         NumberContext *number(size_t i);
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -564,6 +596,7 @@ class FormulaParser : public antlr4::Parser {
         FormulaParser::NumberContext *l = nullptr;
         antlr4::Token *u = nullptr;
         NumberContext *number();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -587,6 +620,7 @@ class FormulaParser : public antlr4::Parser {
         FormulaParser::ExprContext *content = nullptr;
         std::vector<ExprContext *> expr();
         ExprContext *expr(size_t i);
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -595,6 +629,7 @@ class FormulaParser : public antlr4::Parser {
         AtomicContext(AtomContext *ctx);
 
         antlr4::tree::TerminalNode *ATOMIC();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -603,6 +638,7 @@ class FormulaParser : public antlr4::Parser {
         BooleanContext(AtomContext *ctx);
 
         antlr4::tree::TerminalNode *BOOL();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
@@ -624,6 +660,7 @@ class FormulaParser : public antlr4::Parser {
         DigitContext(NumberContext *ctx);
 
         antlr4::tree::TerminalNode *DIGIT();
+
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 

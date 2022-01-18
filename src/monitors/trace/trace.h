@@ -52,7 +52,7 @@ class Trace {
      * To_string().
      * @return String representation of the trace.
      */
-    [[nodiscard]] std::string to_string() {
+    [[nodiscard]] std::string to_string() const {
         std::stringstream ret;
         for (const Event &event : trace) {
             ret << event.to_string() << std::endl;

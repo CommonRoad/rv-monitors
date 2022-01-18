@@ -12,35 +12,35 @@
 
 std::map<std::string, std::vector<Verdict>> RVMonitor::verify(Trace trace) {
     std::chrono::high_resolution_clock::time_point startTime;
-    if (performanceMeasurement)
+    if (configuration.performanceMeasurement)
         startTime = ExecutionStatistic::start();
 
     auto verdict{monitor->evaluate(trace)};
 
-    if (performanceMeasurement)
+    if (configuration.performanceMeasurement)
         executionStatistic.stop(startTime, trace.getLength());
     return verdict;
 }
 
-std::ostream &operator<<(std::ostream &os, const AlgorithmType &algorithm) {
+std::ostream &operator<<(std::ostream &stream, const AlgorithmType &algorithm) {
     switch (algorithm) {
     case dynamic_programming_ltl:
-        os << "DynamicProgramming";
+        stream << "DynamicProgramming";
         break;
     case event_consuming_ltl:
-        os << "EventConsuming-LTL";
+        stream << "EventConsuming-LTL";
         break;
     case mt_fsm:
-        os << "MT-FSM*";
+        stream << "MT-FSM*";
         break;
     case btt_fsm:
-        os << "BTT-FSM*";
+        stream << "BTT-FSM*";
         break;
     case hydra_mtl:
-        os << "Hydra-MTL";
+        stream << "Hydra-MTL";
         break;
     }
-    return os;
+    return stream;
 }
 
 AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
@@ -62,53 +62,57 @@ AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
     }
 }
 
-RVMonitor::RVMonitor(AlgorithmType algorithm, const std::vector<Formula> &formulas, bool past, bool measurement,
+RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration configuration,
                      const std::vector<std::tuple<std::string, double, double>> &predicateCosts)
-    : performanceMeasurement(measurement) {
-    switch (algorithm) {
+    : configuration(configuration) {
+    switch (configuration.algorithm) {
     case dynamic_programming_ltl:
-        monitor = std::make_unique<DynamicProgrammingLTL>(formulas, past);
+        monitor = std::make_unique<DynamicProgrammingLTL>(formulas, configuration.past);
         break;
     case event_consuming_ltl:
-        monitor = std::make_unique<EventConsumingLTL>(formulas, past);
+        monitor = std::make_unique<EventConsumingLTL>(formulas, configuration.past);
         break;
     case mt_fsm:
-        monitor = std::make_unique<MtFsm>(formulas, past);
+        monitor = std::make_unique<MtFsm>(formulas, configuration.past);
         break;
     case btt_fsm:
-        monitor = std::make_unique<BttFsm>(formulas, past);
+        monitor = std::make_unique<BttFsm>(formulas, configuration.past);
         break;
     case hydra_mtl:
-        monitor = std::make_unique<Hydra>(formulas, true, predicateCosts);
+        monitor =
+            std::make_unique<Hydra>(formulas, configuration.hydraConnectedEvaluation, configuration.hydraReordering,
+                                    configuration.hydraShortCircuiting, predicateCosts);
         break;
     }
 }
 
-RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement,
+RVMonitor::RVMonitor(const Formula &formula, MonitorConfiguration configuration,
                      const std::vector<std::tuple<std::string, double, double>> &predicateCosts)
-    : performanceMeasurement(measurement) {
-    switch (algorithm) {
+    : configuration(configuration) {
+    switch (configuration.algorithm) {
     case dynamic_programming_ltl:
-        monitor = std::make_unique<DynamicProgrammingLTL>(std::vector<Formula>{formula}, past);
+        monitor = std::make_unique<DynamicProgrammingLTL>(std::vector<Formula>{formula}, configuration.past);
         break;
     case event_consuming_ltl:
-        monitor = std::make_unique<EventConsumingLTL>(std::vector<Formula>{formula}, past);
+        monitor = std::make_unique<EventConsumingLTL>(std::vector<Formula>{formula}, configuration.past);
         break;
     case mt_fsm:
-        monitor = std::make_unique<MtFsm>(std::vector<Formula>{formula}, past);
+        monitor = std::make_unique<MtFsm>(std::vector<Formula>{formula}, configuration.past);
         break;
     case btt_fsm:
-        monitor = std::make_unique<BttFsm>(std::vector<Formula>{formula}, past);
+        monitor = std::make_unique<BttFsm>(std::vector<Formula>{formula}, configuration.past);
         break;
     case hydra_mtl:
-        monitor = std::make_unique<Hydra>(std::vector<Formula>{formula}, true, predicateCosts);
+        monitor =
+            std::make_unique<Hydra>(std::vector<Formula>{formula}, configuration.hydraConnectedEvaluation,
+                                    configuration.hydraReordering, configuration.hydraShortCircuiting, predicateCosts);
         break;
     }
 }
 
 const ExecutionStatistic &RVMonitor::getExecutionStatistic() const { return executionStatistic; }
 
-RVMonitor::RVMonitor(const RVMonitor &obj) {
+RVMonitor::RVMonitor(const RVMonitor &obj) : configuration(obj.configuration) {
     if (auto *dynLTL = dynamic_cast<DynamicProgrammingLTL *>(obj.monitor.get()))
         monitor = std::make_unique<DynamicProgrammingLTL>(dynLTL->getFormulas(), dynLTL->isPastEvaluation());
     else if (auto *hydra = dynamic_cast<Hydra *>(obj.monitor.get())) {
@@ -118,11 +122,11 @@ RVMonitor::RVMonitor(const RVMonitor &obj) {
             formulaCopy.setId(form.getId());
             formulas.push_back(formulaCopy);
         }
-        monitor = std::make_unique<Hydra>(formulas);
+        monitor = std::make_unique<Hydra>(formulas, configuration.hydraConnectedEvaluation,
+                                          configuration.hydraReordering, configuration.hydraShortCircuiting);
     }
     // TODO other algorithms
     executionStatistic = obj.executionStatistic;
-    performanceMeasurement = obj.performanceMeasurement;
 }
 
 RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
@@ -137,13 +141,22 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
                 formulas.push_back(formulaCopy);
             }
 
-            monitor = std::make_unique<Hydra>(formulas);
+            monitor = std::make_unique<Hydra>(formulas, configuration.hydraConnectedEvaluation,
+                                              configuration.hydraReordering, configuration.hydraShortCircuiting);
         }
         // TODO other algorithms
         executionStatistic = other.executionStatistic;
-        performanceMeasurement = other.performanceMeasurement;
     }
     return *this;
 }
 
 std::string RVMonitor::to_string() { return monitor->to_string(); }
+MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool past, bool measurement,
+                                           bool hydraConnectedEvaluation, bool hydraReordering,
+                                           bool hydraShortCircuiting)
+    : algorithm(algorithm), past(past), performanceMeasurement(measurement),
+      hydraConnectedEvaluation(hydraConnectedEvaluation), hydraReordering(hydraReordering),
+      hydraShortCircuiting(hydraShortCircuiting) {}
+
+MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool past, bool measurement)
+    : algorithm(algorithm), past(past), performanceMeasurement(measurement) {}

@@ -22,7 +22,7 @@ std::string Event::to_string() const {
     for (const auto &[key, value] : eventMap) {
         res << key << ": " << value << "; ";
     }
-    res << terminal << "}";
+    res << timeStep << "}";
     return res.str();
 }
 

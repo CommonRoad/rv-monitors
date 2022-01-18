@@ -1,8 +1,9 @@
 #include "hydra.h"
 #include "../../rewriting/mtl_rewrite_visitor.h"
 #include "hydra_creation_visitor.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/globally.h"
+#include "monitors/expression_tree/unary/temporal/globally.h"
 #include <iostream>
+#include <utility>
 
 std::map<std::string, std::vector<Verdict>> Hydra::evaluate(Trace &trace) {
     std::map<std::string, std::vector<Verdict>> result;
@@ -25,11 +26,12 @@ std::map<std::string, std::vector<Verdict>> Hydra::evaluate(Trace &trace) {
 
     return result;
 }
+
 std::string Hydra::to_string() const {
-    std::string s;
+    std::string str;
     for (const auto &mon : monitors)
-        s += mon->to_string() + '\n';
-    return s;
+        str += mon->to_string() + '\n';
+    return str;
 }
 
 void Hydra::resetMonitors() {
@@ -37,30 +39,30 @@ void Hydra::resetMonitors() {
         mon->reset();
 }
 
-void Hydra::setTraceMonitors(const Trace &tr) {
+void Hydra::setTraceMonitors(const Trace &tra) {
     for (const auto &mon : monitors)
-        mon->setTrace(tr);
+        mon->setTrace(tra);
 }
 
-void Hydra::createMonitor(const std::vector<Formula> &formulas, bool connectedEval,
-                          std::vector<std::tuple<std::string, double, double>> predicateCosts) {
-    HydraCreationVisitor hc{HydraCreationVisitor(predicateCosts)};
+void Hydra::createMonitor(const std::vector<Formula> &formulas, bool connectedEval, bool reordering,
+                          bool shortCircuiting, std::vector<std::tuple<std::string, double, double>> predicateCosts) {
+    HydraCreationVisitor hcv{HydraCreationVisitor(std::move(predicateCosts), reordering, shortCircuiting)};
     for (const auto &form : formulas) {
         if (form.getId().empty())
             throw std::logic_error("Formula has no valid unique ID.");
         auto formulaCopy{form.deepCopy()};
         if (auto globally = std::dynamic_pointer_cast<Globally>(formulaCopy.getExpr()))
             formulaCopy = Formula(globally->getLeft());
-        MtlRewriteVisitor rw;
-        rw.rewrite(formulaCopy);
+        MtlRewriteVisitor rwv;
+        rwv.rewrite(formulaCopy);
         formulaCopy.setId(form.getId());
 
-        monitors.push_back(hc.createMonitor(formulaCopy, 0, connectedEval));
+        monitors.push_back(hcv.createMonitor(formulaCopy, 0, connectedEval));
     }
 }
 
-Hydra::Hydra(const std::vector<Formula> &formulas, bool connectedEval,
+Hydra::Hydra(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting,
              std::vector<std::tuple<std::string, double, double>> predicateCosts)
     : MonitorInterface(formulas) {
-    createMonitor(formulas, connectedEval, predicateCosts);
+    createMonitor(formulas, connectedEval, reordering, shortCircuiting, std::move(predicateCosts));
 }
