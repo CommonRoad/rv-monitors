@@ -6,8 +6,8 @@
 //
 
 #pragma once
-#include <utility>
 #include "monitors/formula/formula.h"
+#include <utility>
 
 #include "monitors/expression_tree/atomic/atomic.h"
 #include "monitors/expression_tree/atomic/predicate.h"
@@ -21,15 +21,15 @@
 
 #include "monitors/expression_tree/unary/temporal/future.h"
 #include "monitors/expression_tree/unary/temporal/globally.h"
+#include "monitors/expression_tree/unary/temporal/historically.h"
 #include "monitors/expression_tree/unary/temporal/next_strong.h"
 #include "monitors/expression_tree/unary/temporal/next_weak.h"
-#include "monitors/expression_tree/unary/temporal/historically.h"
 #include "monitors/expression_tree/unary/temporal/once.h"
 #include "monitors/expression_tree/unary/temporal/previously.h"
 
+#include "monitors/expression_tree/binary/temporal/release.h"
 #include "monitors/expression_tree/binary/temporal/since.h"
 #include "monitors/expression_tree/binary/temporal/until.h"
-#include "monitors/expression_tree/binary/temporal/release.h"
 
 #include "monitors/symbols/symbols.h"
 

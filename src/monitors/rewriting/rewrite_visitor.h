@@ -15,7 +15,7 @@ class RewriteVisitor : public ExpressionVisitor {
   public:
     void rewrite(Formula &formula);
 
-//     void visitExpression(Expression &expr, Trace &trace, size_t index);
+    //     void visitExpression(Expression &expr, Trace &trace, size_t index);
 
     [[nodiscard]] std::shared_ptr<Expression> visitAtomic(Atomic &op, Trace &trace, size_t index) override;
 

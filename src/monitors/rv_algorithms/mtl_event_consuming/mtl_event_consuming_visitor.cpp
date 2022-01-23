@@ -11,8 +11,8 @@
 #include "monitors/expression_tree/binary/bool/equivalence.h"
 #include "monitors/expression_tree/binary/bool/implication.h"
 #include "monitors/expression_tree/binary/temporal/release.h"
-#include "monitors/expression_tree/binary/temporal/until.h"
 #include "monitors/expression_tree/binary/temporal/since.h"
+#include "monitors/expression_tree/binary/temporal/until.h"
 #include "monitors/expression_tree/nary/bool/and.h"
 #include "monitors/expression_tree/nary/bool/or.h"
 #include "monitors/expression_tree/nary/bool/xor.h"
@@ -22,9 +22,9 @@
 #include "monitors/expression_tree/unary/resolving_operator.h"
 #include "monitors/expression_tree/unary/temporal/future.h"
 #include "monitors/expression_tree/unary/temporal/globally.h"
+#include "monitors/expression_tree/unary/temporal/historically.h"
 #include "monitors/expression_tree/unary/temporal/next_strong.h"
 #include "monitors/expression_tree/unary/temporal/next_weak.h"
-#include "monitors/expression_tree/unary/temporal/historically.h"
 #include "monitors/expression_tree/unary/temporal/once.h"
 #include "monitors/expression_tree/unary/temporal/previously.h"
 #include <iostream>
@@ -88,7 +88,7 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitGlobally(Globally &op
 }
 
 std::shared_ptr<Expression> MTLEventConsumingVisitor::visitHistorically(Historically &op, Trace &trace, size_t index) {
-    //visitExpression(op, trace, index);
+    // visitExpression(op, trace, index);
     visitExpression(op, trace, index);
     return std::make_shared<Historically>(op);
 }
@@ -163,7 +163,7 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
         ret = std::make_shared<Constant>(trace.getEvent(index).getValue(*predicate));
     }
     // Deriving
-    else if (auto deriving = std::dynamic_pointer_cast<DerivingOperator>(op.getLeft())){
+    else if (auto deriving = std::dynamic_pointer_cast<DerivingOperator>(op.getLeft())) {
         ret = std::make_shared<EventOperator>(deriving->getLeft(), trace, index);
     }
     // And
@@ -220,21 +220,20 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
 
         if (index + interval_start >= trace_length) { // we can't have a look at all at the trace
             ret = std::make_shared<Constant>(false);
-        }
-        else { // we can have a look at the trace
+        } else { // we can have a look at the trace
             auto interval_length = (interval_end - interval_start) + 1;
-            auto remaining_trace_length = ( trace_length - (index + interval_start) );
+            auto remaining_trace_length = (trace_length - (index + interval_start));
             auto min = (remaining_trace_length < interval_length) ? remaining_trace_length : interval_length;
             Or::SetType_T orSet{};
-            for (size_t i=0; i<min; ++i) {
+            for (size_t i = 0; i < min; ++i) {
                 And::SetType_T andSet{};
-                for (size_t k=0; k<interval_start; ++k) {
+                for (size_t k = 0; k < interval_start; ++k) {
                     auto evalExprK = std::make_shared<EventOperator>(until->getLeft(), trace, index);
                     auto evalExprKSol = evalExprK->accept(*this, trace, index + k);
                     andSet.emplace(evalExprKSol);
                 }
                 size_t j = 0;
-                while (j < min - 1 - i ) {
+                while (j < min - 1 - i) {
                     auto evalExprJ = std::make_shared<EventOperator>(until->getLeft(), trace, index);
                     auto evalExprJSol = evalExprJ->accept(*this, trace, index + interval_start + j);
                     andSet.emplace(evalExprJSol);
@@ -255,17 +254,16 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
         auto interval_end = since->getInterval()->getEnd();
         long difference = index - static_cast<long>(interval_start);
 
-        if (difference < 0 ) { // we can't have a look at all at the trace
+        if (difference < 0) { // we can't have a look at all at the trace
             ret = std::make_shared<Constant>(false);
-        }
-        else {
+        } else {
             auto interval_length = (interval_end - interval_start) + 1;
             auto remaining_trace_length = index + 1 - interval_start;
             auto min = (remaining_trace_length < interval_length) ? remaining_trace_length : interval_length;
             Or::SetType_T orSet{};
-            for (size_t i=0; i<min; ++i) {
+            for (size_t i = 0; i < min; ++i) {
                 And::SetType_T andSet{};
-                for (size_t k=0; k<interval_start; ++k) {
+                for (size_t k = 0; k < interval_start; ++k) {
                     auto evalExprK = std::make_shared<EventOperator>(since->getLeft(), trace, index);
                     auto evalExprKSol = evalExprK->accept(*this, trace, index - k);
                     andSet.emplace(evalExprKSol);
@@ -293,13 +291,12 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
 
         if (index + interval_start >= trace_length) { // we can't have a look at all at the trace
             ret = std::make_shared<Constant>(false);
-        }
-        else {
+        } else {
             auto interval_length = (interval_end - interval_start) + 1;
-            auto remaining_trace_length = ( trace_length - (index + interval_start) );
+            auto remaining_trace_length = (trace_length - (index + interval_start));
             auto min = (remaining_trace_length < interval_length) ? remaining_trace_length : interval_length;
             And::SetType_T andSet{};
-            for (size_t i=0; i<min; ++i){
+            for (size_t i = 0; i < min; ++i) {
                 auto evalExprI = std::make_shared<EventOperator>(globally->getLeft(), trace, index);
                 auto evalExprISol = evalExprI->accept(*this, trace, index + interval_start + i);
                 andSet.emplace(evalExprISol);
@@ -315,8 +312,7 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
         if (index > 0) {
             auto prevExprOpr = std::make_shared<EventOperator>(previously->getLeft(), trace, index /* - 1 */);
             ret = prevExprOpr->accept(*this, trace, index - 1);
-        }
-        else {
+        } else {
             ret = std::make_shared<Constant>(false);
         }
     }

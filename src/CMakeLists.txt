@@ -47,6 +47,8 @@ set(RV_MONITOR_SRC_FILES
         monitors/rewriting/basic_rewrite_visitor.cpp
         monitors/rewriting/expression_visitor.cpp
         monitors/rewriting/rewrite_visitor.cpp
+        monitors/rewriting/mtl_rewrite_visitor.cpp
+        monitors/rewriting/hydra_rewrite_visitor.cpp
         monitors/rv_algorithms/monitor_interface.cpp
         monitors/rv_algorithms/rv_monitor.cpp
         monitors/rv_algorithms/btt_fsm/btt_fsm.cpp
@@ -61,7 +63,6 @@ set(RV_MONITOR_SRC_FILES
         monitors/rv_algorithms/mt_fsm/state_mt_fsm.cpp
         monitors/rv_algorithms/mtl_event_consuming/mtl_event_consuming.cpp
         monitors/rv_algorithms/mtl_event_consuming/mtl_event_consuming_visitor.cpp
-        monitors/rewriting/mtl_rewrite_visitor.cpp
         monitors/rv_algorithms/hydra_2/hydra.cpp
         monitors/rv_algorithms/hydra_2/hydra_monitors/hydra_monitor.cpp
         monitors/rv_algorithms/hydra_2/hydra_monitors/previous_monitor.cpp

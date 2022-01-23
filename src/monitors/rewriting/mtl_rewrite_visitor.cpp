@@ -162,7 +162,7 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitOr(Or &op, Trace &trace, siz
         return *expressions.begin();
     }
 
-    //a | b = a & b ^ a ^ b
+    // a | b = a & b ^ a ^ b
     And::SetType_T andSet;
     Xor::SetType_T xorSet;
 
@@ -180,7 +180,7 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitOr(Or &op, Trace &trace, siz
     xorSet.emplace(andExpr);
     auto xorExpr = std::make_shared<Xor>(xorSet);
 
-    //At least one element left
+    // At least one element left
     if (!expressions.empty()) {
         expressions.emplace(xorExpr);
         return std::make_shared<Or>(expressions);
@@ -287,7 +287,6 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitNot(Not &op, Trace &trace, s
         return std::make_shared<Constant>(true);
     }
 
-
     // !a = true ^ a
     Xor::SetType_T xorSet{std::make_shared<Constant>(true), op.getLeft()};
     return std::make_shared<Xor>(xorSet);
@@ -354,7 +353,8 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitGlobally(Globally &op, Trace
     //     G(a) = not F(not a) = ! (true U ! a)
     //    auto future{std::make_shared<Future>(std::make_shared<Not>(op.getLeft()), op.getInterval())};
     //    return std::make_shared<Not>(future);
-    //    return std::make_shared<Not>(std::make_shared<Until>(std::make_shared<Constant>(true), std::make_shared<Not>(op.getLeft()),op.getInterval()));
+    //    return std::make_shared<Not>(std::make_shared<Until>(std::make_shared<Constant>(true),
+    //    std::make_shared<Not>(op.getLeft()),op.getInterval()));
 
     return std::make_shared<Globally>(op.getLeft(), op.getInterval());
 }
@@ -380,7 +380,7 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitHistorically(Historically &o
         }
     }
 
-    //H(a) = not O(not a) = true ^ O(true ^ a)
+    // H(a) = not O(not a) = true ^ O(true ^ a)
     //    Xor::SetType_T xorSetOne{std::make_shared<Constant>(true), op.getLeft()};
     //    auto once {std::make_shared<Once>(std::make_shared<Xor>(xorSetOne), op.getInterval())};
     //    Xor::SetType_T xorSetTwo{std::make_shared<Constant>(true), once};
@@ -393,10 +393,8 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitHistorically(Historically &o
 
     // H(a) = !a S a  // I dont think this rewriting is correct
     // H(a) = !(true S (!a))
-    return std::make_shared<Not>(std::make_shared<Since>(
-        std::make_shared<Constant>(true),
-        std::make_shared<Not>(op.getLeft()),
-        op.getInterval()));
+    return std::make_shared<Not>(std::make_shared<Since>(std::make_shared<Constant>(true),
+                                                         std::make_shared<Not>(op.getLeft()), op.getInterval()));
 
     //   return std::make_shared<Historically>(op);
 }
@@ -433,7 +431,7 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitOnce(Once &op, Trace &trace,
     }
 
     // O(a) = true S a
-    //Since since{std::make_shared<Constant>(true), op.getLeft(), op.getInterval()};
+    // Since since{std::make_shared<Constant>(true), op.getLeft(), op.getInterval()};
     return std::make_shared<Since>(std::make_shared<Constant>(true), op.getLeft(), op.getInterval());
     // return std::make_shared<Once>(op.getLeft(), op.getInterval());
 }
@@ -467,7 +465,8 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitRelease(Release &op, Trace &
     }
 
     // f1 R f2 = !f1 U !f2
-    return std::make_shared<Until>(std::make_shared<Not>(op.getLeft()), std::make_shared<Not>(op.getRight()), op.getInterval());
+    return std::make_shared<Until>(std::make_shared<Not>(op.getLeft()), std::make_shared<Not>(op.getRight()),
+                                   op.getInterval());
 
     return std::make_shared<Release>(op);
 }
@@ -513,7 +512,7 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitSince(Since &op, Trace &trac
         }
     }
 
-    return std::make_shared<Since>(op.getLeft(),op.getRight(), op.getInterval());
+    return std::make_shared<Since>(op.getLeft(), op.getRight(), op.getInterval());
 }
 
 std::shared_ptr<Expression> MtlRewriteVisitor::visitEventOperator(EventOperator &op, Trace &trace, size_t index) {

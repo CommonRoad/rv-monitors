@@ -24,7 +24,6 @@ class TemporalOperator {
 
     void increaseIntervalByTimeStep(size_t timeStep) { interval->increaseIntervalByTimeStep(timeStep); }
 
-
     [[nodiscard]] const std::shared_ptr<Interval> &getInterval() const { return interval; }
 
     TemporalOperator(const TemporalOperator &old) {

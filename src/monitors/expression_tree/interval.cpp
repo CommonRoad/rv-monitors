@@ -36,9 +36,9 @@ bool Interval::containsZero() const {
         return true;
     else
         return false;
-  //  return (start<=0 and end>=0);
+    //  return (start<=0 and end>=0);
     // return (start>=-1 or end>=-1); // to include the interval extremes
-//    return (start>=0 or end>=0); // not to include the interval extremes
+    //    return (start>=0 or end>=0); // not to include the interval extremes
 }
 void Interval::reduceIntervalByTimeStep(size_t timeStep) {
     start -= timeStep;
@@ -49,13 +49,12 @@ void Interval::increaseIntervalByTimeStep(size_t timeStep) {
     end += timeStep;
 }
 bool Interval::getContainsZero(size_t index, bool stop_checking) const {
-    if (!stop_checking){
+    if (!stop_checking) {
         if (static_cast<unsigned long>(start) + index == 0 or static_cast<unsigned long>(end) + index == 0)
             return true;
         else
             return false;
-    }
-    else {
+    } else {
         return false;
     }
 }
