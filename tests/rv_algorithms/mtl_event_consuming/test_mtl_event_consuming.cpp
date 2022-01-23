@@ -7,7 +7,6 @@
 
 #include "test_mtl_event_consuming.h"
 #include "monitors/parser/parser.h"
-#include "monitors/parser/visitor.h"
 #include "monitors/rv_algorithms/mtl_event_consuming//mtl_event_consuming.h"
 #include "monitors/trace/trace.h"
 #include "monitors/utils/utils.h"

@@ -1,5 +1,5 @@
 # RV-Monitors
-A `C++17` Implementation of four runtime verification monitor synthesis algorithms [[1]](#1) for LTLf and PLTLf formulas on finite traces:
+A `C++17` Implementation of five runtime verification monitor synthesis algorithms [[1]](#1) for LTLf and PLTLf formulas on finite traces:
 - Dynamic Programming
 - Event Consuming
 - MTL Event Consuming
