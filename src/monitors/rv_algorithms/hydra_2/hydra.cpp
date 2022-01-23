@@ -3,15 +3,15 @@
 #include "hydra_creation_visitor.h"
 #include "monitors/expression_tree/unary/temporal/globally.h"
 #include <iostream>
-#include <utility>
+#include <spdlog/spdlog.h>
 
 std::map<std::string, std::vector<Verdict>> Hydra::evaluate(Trace &trace) {
     std::map<std::string, std::vector<Verdict>> result;
     // Empty trace
     if (trace.getTrace().empty()) {
-        std::cout << "Trace is empty" << std::endl;
+        spdlog::info("Hydra::evaluate | Trace is empty");
         for (const auto &mon : monitors)
-            result[mon->getFormulaId()] = {Verdict{0, false}};
+            result[mon->getFormulaId()] = {};
         return result;
     }
 
@@ -30,7 +30,7 @@ std::map<std::string, std::vector<Verdict>> Hydra::evaluate(Trace &trace) {
 std::string Hydra::to_string() const {
     std::string str;
     for (const auto &mon : monitors)
-        str += mon->to_string() + '\n';
+        str += mon->to_string();
     return str;
 }
 
@@ -45,8 +45,8 @@ void Hydra::setTraceMonitors(const Trace &tra) {
 }
 
 void Hydra::createMonitor(const std::vector<Formula> &formulas, bool connectedEval, bool reordering,
-                          bool shortCircuiting, std::vector<std::tuple<std::string, double, double>> predicateCosts) {
-    HydraCreationVisitor hcv{HydraCreationVisitor(std::move(predicateCosts), reordering, shortCircuiting)};
+                          bool shortCircuiting, const std::map<std::string, std::array<double, 2>> &predicateCosts) {
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts, reordering, shortCircuiting)};
     for (const auto &form : formulas) {
         if (form.getId().empty())
             throw std::logic_error("Formula has no valid unique ID.");
@@ -62,7 +62,7 @@ void Hydra::createMonitor(const std::vector<Formula> &formulas, bool connectedEv
 }
 
 Hydra::Hydra(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting,
-             std::vector<std::tuple<std::string, double, double>> predicateCosts)
+             const std::map<std::string, std::array<double, 2>> &predicateCosts)
     : MonitorInterface(formulas) {
-    createMonitor(formulas, connectedEval, reordering, shortCircuiting, std::move(predicateCosts));
+    createMonitor(formulas, connectedEval, reordering, shortCircuiting, predicateCosts);
 }

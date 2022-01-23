@@ -73,7 +73,7 @@ class RVMonitor {
      * @param measurement Boolean indicating whether performance evaluation should be performed.
      */
     RVMonitor(const Formula &formula, MonitorConfiguration configuration = {},
-              const std::vector<std::tuple<std::string, double, double>> &predicateCosts = {});
+              const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
 
     RVMonitor(const RVMonitor &obj);
 
@@ -89,7 +89,7 @@ class RVMonitor {
      * @param measurement Boolean indicating whether performance evaluation should be performed.
      */
     RVMonitor(const std::vector<Formula> &formula, MonitorConfiguration configuration,
-              const std::vector<std::tuple<std::string, double, double>> &predicateCosts = {});
+              const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
 
     /**
      * Evaluates trace based on temporal logic formula.

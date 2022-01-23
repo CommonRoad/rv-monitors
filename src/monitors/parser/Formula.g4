@@ -1,4 +1,5 @@
 grammar Formula;
+
 formula: expr;
 expr
  : <assoc=right> left=expr op=IMPL right=expr   #Implication
@@ -52,12 +53,12 @@ unary
  ;
 
 interval
-: '[' l=number ',' u=number ']'      #FiniteInterval
-| '[' l=number ',' u='inf' ']'       #InfiniteInterval
+: '[' l=number ',' u=number   ']'      #FiniteInterval
+| '[' l=number ',' u=INFINITY ']'       #InfiniteInterval
 ;
 
 atom
- : BOOL                                            #Boolean
+ : bool_                                           #Boolean
  | ATOMIC                                          #Atomic
  | '(' content=expr+ ')'                           #Brackets
  ;
@@ -66,27 +67,46 @@ number
  : DIGIT                 #Digit
  ;
 
- BOOL		                : TRUE|FALSE;
- NOT                        : ('!'|'not');
- GLOBALLY	                : 'G';
- FUTURE		                : 'F';
- NEXT_WEAK	                : 'W';
- NEXT_STRONG	            : 'X';
- UNTIL		                : 'U';
- RELEASE		            : 'R';
+bool_
+  : TRUE                 # TrueBoolean
+  | FALSE                # FalseBoolean
+  ;
+
+ TRUE                       : ('True'|'true');
+ FALSE                      : ('False'|'false');
+
+ INFINITY                   : ('inf'|'INFINITY');
+ NOT                        : ('!'|'not'|'NOT');
+
+ GLOBALLY                   : 'G';
+ FUTURE                     : 'F';
+ NEXT_WEAK                  : 'W';
+ NEXT_STRONG                : ('X'|'NEXT');
+ UNTIL                      : ('U'|'UNTIL');
+ RELEASE                    : 'R';
  ONCE                       : 'O';
- PREVIOUSLY                 : 'P';
- SINCE                      : 'S';
+ PREVIOUSLY                 : ('P'|'PREV');
+ SINCE                      : ('S'|'SINCE');
  HISTORICALLY               : 'H';
- AND        	            : ('&'|'and');
- OR         	            : ('|'|'or');
+
+ AND        	            : ('&'|'and'|'AND');
+ OR         	            : ('|'|'or'|'OR');
  XOR                        : ('^'|'xor');
  IMPL       	            : '->';
  EQ                         : '<->';
- TRUE       	            : ('True'|'true');
- FALSE      	            : ('False'|'false');
- ATOMIC		                : [a-z]+([_]?[a-z]+)*;
- PREDICATE                  : [a-z]+([_]?[a-z]+)*'(';
- WS                         : [ \t\n]+ -> skip;       //Skip whitespaces
- DIGIT                      : [0-9] | [1-9][0-9]+;
 
+
+ // *********
+ // IMPORTANT
+ // *********
+ //
+ // Synchronize changes of LOWER_ALPHA_UNDERSCORE with the Log grammer (in Log.g4)!
+ //
+ fragment LOWER_ALPHA_UNDERSCORE : [a-z]+([_]?[a-zA-Z0-9]+)*;
+
+ ATOMIC		                : LOWER_ALPHA_UNDERSCORE;
+ PREDICATE                  : LOWER_ALPHA_UNDERSCORE'(';
+
+ WS                         : [ \t\n]+ -> skip;       //Skip whitespaces
+
+ DIGIT                      : [0-9] | [1-9][0-9]+;

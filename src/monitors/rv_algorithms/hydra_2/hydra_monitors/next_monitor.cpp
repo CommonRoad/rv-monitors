@@ -14,22 +14,27 @@ Verdict NextMonitor::concreteStep(size_t parentId, size_t stepNumber) {
             size_t lastTime = *currentTime;
             currentTime = subVerdict.ts;
             if (Utils::isInInterval(subVerdict.ts.value() - lastTime, from, to))
-                return Verdict(lastTime, subVerdict.b);
+                return {lastTime, subVerdict.b};
             else
-                return Verdict(lastTime, false);
+                return {lastTime, false};
         } else if (!subVerdict.ts.has_value()) {
-            return Verdict(*currentTime, false);
+            return {*currentTime, false};
         } else {
             currentTime = subVerdict.ts;
         }
     } while (true);
 }
 
-void NextMonitor::setTrace(const Trace &tr) { subMonitor->setTrace(tr); }
+void NextMonitor::setTrace(const Trace &tra) { subMonitor->setTrace(tra); }
 
 void NextMonitor::reset() {
     HydraMonitor::reset();
     currentTime = {};
     subMonitor->reset();
 }
-std::string NextMonitor::to_string() { return "X(" + subMonitor->to_string() + ")"; }
+std::string NextMonitor::to_string() {
+    std::string interval;
+    if (from != 0 or to != 10000)
+        interval = "[" + std::to_string(from) + ", " + std::to_string(to) + "]";
+    return std::string{"X"} + interval + "(" + subMonitor->to_string() + ")";
+}

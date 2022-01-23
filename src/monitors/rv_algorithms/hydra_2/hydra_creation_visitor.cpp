@@ -72,8 +72,8 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitPredicate(Predicate &tl
         double prob;
         for (const auto &pred : predicateCosts)
             if (std::get<0>(pred) == tlop.getName()) {
-                cost = std::get<1>(pred);
-                prob = std::get<2>(pred);
+                cost = pred.second[0];
+                prob = pred.second[1];
                 break;
             }
         auto newMonitor{std::make_shared<PredicateMonitor>(Formula(std::make_shared<Predicate>(tlop)), idx,
@@ -203,8 +203,8 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitNot(Not &tlop, size_t p
     }
 }
 
-HydraCreationVisitor::HydraCreationVisitor(std::vector<std::tuple<std::string, double, double>> predicateCosts,
-                                           bool reordering, bool shortCircuiting)
+HydraCreationVisitor::HydraCreationVisitor(std::map<std::string, std::array<double, 2>> predicateCosts, bool reordering,
+                                           bool shortCircuiting)
     : reordering(reordering), shortCircuiting(shortCircuiting), predicateCosts(std::move(predicateCosts)) {}
 
 void HydraCreationVisitor::resort(std::vector<std::shared_ptr<HydraMonitor>> &monitors, bool increasing) {

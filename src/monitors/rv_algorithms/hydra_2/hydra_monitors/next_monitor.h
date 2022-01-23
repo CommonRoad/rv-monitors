@@ -12,14 +12,15 @@
 
 class NextMonitor : public HydraMonitor {
   public:
-    NextMonitor(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitor, size_t from, size_t to, size_t id,
-                bool connectedEval)
-        : HydraMonitor(formula, id, connectedEval, subMonitor->getEvalCost(), subMonitor->getSatisfactionProbability()),
-          subMonitor(std::move(subMonitor)), from(from), to(to){};
+    NextMonitor(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitor, size_t intervalFrom,
+                size_t intervalTo, size_t monitorId, bool connectedEval)
+        : HydraMonitor(formula, monitorId, connectedEval, subMonitor->getEvalCost(),
+                       subMonitor->getSatisfactionProbability()),
+          subMonitor(std::move(subMonitor)), from(intervalFrom), to(intervalTo){};
 
     Verdict concreteStep(size_t parentId, size_t stepNumber) override;
 
-    void setTrace(const Trace &tr) override;
+    void setTrace(const Trace &tra) override;
 
     void reset() override;
 

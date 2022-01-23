@@ -11,12 +11,4 @@
 #include "monitors/utils/utils.h"
 #include <gtest/gtest.h>
 
-class TestHydra : public testing::Test {
-  public:
-    static void executeHydraEval(Trace &trace, const std::vector<Formula> &formulas,
-                                 const std::vector<std::vector<Verdict>> &expSolution);
-    static void hydraEval(Trace &trace, const std::vector<Formula> &formulas,
-                          const std::vector<std::vector<Verdict>> &expSolution);
-    static void evalHydra(const std::vector<Formula> &formulas, const std::vector<std::vector<Verdict>> &expSolution,
-                          Hydra &monitor, Trace &trac, const std::string &evaluation);
-};
+class TestHydra : public testing::Test {};

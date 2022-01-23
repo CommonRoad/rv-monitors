@@ -90,4 +90,8 @@ class FormulaVisitor : public antlr4::tree::AbstractParseTreeVisitor {
     virtual antlrcpp::Any visitBrackets(FormulaParser::BracketsContext *context) = 0;
 
     virtual antlrcpp::Any visitDigit(FormulaParser::DigitContext *context) = 0;
+
+    virtual antlrcpp::Any visitTrueBoolean(FormulaParser::TrueBooleanContext *context) = 0;
+
+    virtual antlrcpp::Any visitFalseBoolean(FormulaParser::FalseBooleanContext *context) = 0;
 };

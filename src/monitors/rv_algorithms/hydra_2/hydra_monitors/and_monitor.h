@@ -9,11 +9,11 @@
 
 class AndMonitor : public HydraMonitor {
   public:
-    AndMonitor(Formula formula, std::vector<std::shared_ptr<HydraMonitor>> subMonitors, size_t id, bool connectedEval,
-               bool shortCircuiting)
-        : HydraMonitor(std::move(formula), id, connectedEval, computeCost(subMonitors),
+    AndMonitor(Formula formula, const std::vector<std::shared_ptr<HydraMonitor>> &subMonitors, size_t monitorId,
+               bool connectedEval, bool shortCircuiting)
+        : HydraMonitor(std::move(formula), monitorId, connectedEval, computeCost(subMonitors),
                        computeSatisfactionProbability(subMonitors)),
-          subMonitors(std::move(subMonitors)), shortCircuiting(shortCircuiting){};
+          subMonitors(subMonitors), shortCircuiting(shortCircuiting){};
 
     Verdict concreteStep(size_t parentId, size_t stepNumber) override;
 
@@ -27,7 +27,7 @@ class AndMonitor : public HydraMonitor {
     std::vector<std::shared_ptr<HydraMonitor>> subMonitors;
     bool shortCircuiting;
 
-    double computeCost(const std::vector<std::shared_ptr<HydraMonitor>> &monitors);
+    static double computeCost(const std::vector<std::shared_ptr<HydraMonitor>> &monitors);
 
-    double computeSatisfactionProbability(const std::vector<std::shared_ptr<HydraMonitor>> &monitors);
+    static double computeSatisfactionProbability(const std::vector<std::shared_ptr<HydraMonitor>> &monitors);
 };
