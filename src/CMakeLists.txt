@@ -86,7 +86,7 @@ set(RV_MONITOR_SRC_FILES
         monitors/utils/generators/trace_generator/trace_generator.h
         monitors/utils/generators/trace_generator/trace_generator.cpp
         monitors/utils/generators/computation_time_generator/computation_time_generator.h
-        monitors/utils/generators/computation_time_generator/computation_time_generator.cpp ../build-release/sdfet.cpp)
+        monitors/utils/generators/computation_time_generator/computation_time_generator.cpp)
 
 
 # create library of this project
