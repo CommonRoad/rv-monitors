@@ -1,5 +1,5 @@
 //
-// Created by Sebastian Maierhofer.
+// Created by Sebastian Maierhofer and Evald Nexhipi.
 // Technical University of Munich - Cyber-Physical Systems Group
 // Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
 // Credits: BMW Car@TUM
@@ -222,6 +222,8 @@ void executeEvaluate2(const std::vector<Formula> &formulas1, size_t numExecution
 void test_0();
 
 void test_1();
+
+void test_2();
 
 int main() { test_1(); }
 
