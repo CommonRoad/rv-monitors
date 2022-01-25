@@ -108,6 +108,7 @@ target_include_directories(${LIBRARY_NAME}
 
 target_link_libraries(${LIBRARY_NAME} PRIVATE
         antlr4cpp
+        spdlog::spdlog
         )
 
 add_executable(rvmonitors_eval monitors/evaluation/evaluation.cpp)
