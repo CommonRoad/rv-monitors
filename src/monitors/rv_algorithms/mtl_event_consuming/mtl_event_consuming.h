@@ -15,7 +15,7 @@
  */
 class MTLEventConsuming : public MonitorInterface {
   public:
-    MTLEventConsuming(const Formula &formula);
+    MTLEventConsuming(const std::vector<Formula> &formulas);
     /**
      * Evaluation function for monitor algorithms.
      *

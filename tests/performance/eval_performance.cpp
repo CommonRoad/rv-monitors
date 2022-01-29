@@ -7,13 +7,17 @@
 
 #include "monitors/parser/parser.h"
 #include "monitors/rv_algorithms/hydra_2/hydra.h"
+#include "monitors/rv_algorithms/mtl_event_consuming/mtl_event_consuming.h"
+#include "monitors/rv_algorithms/ltl_event_consuming/event_consuming.h"
 #include "monitors/trace/trace.h"
 #include "monitors/utils/generators/formula_generator/formula_generator.h"
 #include "monitors/utils/generators/trace_generator/trace_generator.h"
+#include "monitors/utils/generators/computation_time_generator/computation_time_generator.h"
 #include <chrono>
 #include <iostream>
 #include <random>
 #include <thread>
+#include <fstream>
 
 typedef std::mt19937 MyRNG;
 uint32_t seed_val = 123456789;
@@ -219,10 +223,72 @@ void executeEvaluate2(const std::vector<Formula> &formulas1, size_t numExecution
     std::cout << '\n';
 }
 
+double evaluateMTLSingle(const std::vector<Formula> &formulas, Trace &trace){
+    std::cout<<"Formula: "<<formulas.at(0).to_string()<<std::endl;
+//   Formula formula = Parser::parse("((a -> c) -> (((b -> c) -> ((c S a) -> a)) -> c))");
+//   Formula formula = Parser::parse("G(((a -> c) -> (((b -> c) -> ((c & a) -> a)) -> c)))");
+//    Formula formula = Parser::parse("(((c S q(params1, params2, params3)) -> G(p(params1, params2))) & (p(params1, params2) -> ((b -> q(params1, params2, params3)) & p(params1, params2))))");
+//    Formula formula = Parser::parse("(((((!(p(params1, params2)) | c) & p(params1, params2)) -> p(params1, params2)) & b & q(params1, params2, params3)) -> q(params1, params2, params3))");
+    auto monitor{MTLEventConsuming(formulas.at(0))};
+//    auto monitor{MTLEventConsuming(formula)};
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+    monitor.evaluate(trace);
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+    return std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+}
+
+void executeEvaluateMTL(const std::vector<Formula> &formulas1, size_t numExecutions, Trace &trace) {
+    std::vector<double> avgCompTime;
+    std::cout<<"Trace : \n "<<trace.to_string()<<std::endl;
+    for (size_t i{0}; i < numExecutions; ++i) {
+        avgCompTime.push_back(evaluateMTLSingle(formulas1, trace));
+        std::cout<<"Exe ["<<i<<"]"<<std::endl;
+    }
+    std::cout << "[MTL] Single: " << std::accumulate(avgCompTime.begin(), avgCompTime.end(), 0) / numExecutions
+              << '\n';
+    for (const auto &val : avgCompTime)
+        std::cout << val << ", ";
+    std::cout << '\n';
+}
+
+double evaluateLTLSingle(const std::vector<Formula> &formulas, Trace &trace){
+    std::cout<<"Formula: "<<formulas.at(0).to_string()<<std::endl;
+//    Formula formula = Parser::parse("(((c S q(params1, params2, params3)) -> G(p(params1, params2))) & (p(params1, params2) -> ((b -> q(params1, params2, params3)) & p(params1, params2))))");
+    //    auto monitor{MTLEventConsuming(formulas.at(0))};
+    //    auto monitor{EventConsumingLTL(formulas)};
+    //    auto monitor{MTLEventConsuming(formula)};
+    auto monitor{EventConsumingLTL({formulas})};
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+    monitor.evaluate(trace);
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+    return std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+}
+
+void executeEvaluateLTL(const std::vector<Formula> &formulas1, size_t numExecutions, Trace &trace) {
+    std::vector<double> avgCompTime;
+    for (size_t i{0}; i < numExecutions; ++i) {
+        avgCompTime.push_back(evaluateLTLSingle(formulas1, trace));
+        std::cout<<"Exe ["<<i<<"]"<<std::endl;
+    }
+    std::cout << "[LTL] Single: " << std::accumulate(avgCompTime.begin(), avgCompTime.end(), 0) / numExecutions
+              << '\n';
+    for (const auto &val : avgCompTime)
+        std::cout << val << ", ";
+    std::cout << '\n';
+}
+
 void test_0();
 
 void test_1();
 
+/*
+ * We add a few predicates, then at delay i we generate the list of the predicates Pi
+ * and we use this list to generate the formula and the trace (normal or a long trace)
+ * and then for each delay we compare the results.
+ * Then we store the result in a file
+ */
 void test_2();
 
 int main() { test_1(); }
@@ -271,8 +337,8 @@ void test_1() {
     auto a = std::make_shared<Atomic>("a");
     auto b = std::make_shared<Atomic>("b");
     auto c = std::make_shared<Atomic>("c");
-    auto p = std::make_shared<Predicate>("p", "p", std::vector<std::string>{"params1", "params2"});
-    auto q = std::make_shared<Predicate>("q", "q", std::vector<std::string>{"params1", "params2", "params3"});
+    auto p = std::make_shared<Atomic>("p");// std::make_shared<Predicate>("p", "p", std::vector<std::string>{"params1", "params2"});
+    auto q = std::make_shared<Atomic>("q"); //std::make_shared<Predicate>("q", "q", std::vector<std::string>{"params1", "params2", "params3"});
 
     fg.addAtomic(a, 1.0);
     tg.addAtomic(a, 2.0);
@@ -280,17 +346,21 @@ void test_1() {
     tg.addAtomic(b, 1.0);
     fg.addAtomic(c, 3.0);
     tg.addAtomic(c, 3.0);
-    fg.addPredicate(p, 3.0);
-    tg.addPredicate(p, 1.0);
-    fg.addPredicate(q, 2.0);
-    tg.addPredicate(q, 2.0);
+    //fg.addPredicate(p, 3.0);
+    fg.addAtomic(p, 3.0);
+    //tg.addPredicate(p, 1.0);
+    tg.addAtomic(p, 1.0);
+    //fg.addPredicate(q, 2.0);
+    fg.addAtomic(q, 2.0);
+    //tg.addPredicate(q, 2.0);
+    tg.addAtomic(q, 2.0);
 
     fg.addOperator(notSymbol, 1.0);
     fg.addOperator(implicationSymbol, 5.0);
     fg.addOperator(andSymbol, 3.0);
     fg.addOperator(orSymbol, 2.0);
-    fg.addOperator(sinceSymbol, 1.0);
-    fg.addOperator(globallySymbol, 1.0);
+    fg.addOperator(untilSymbol, 1.0);
+    fg.addOperator(previousSymbol, 1.0);
 
     Formula f1 = fg.generateFormula(7);
     f1.setId("R1");
@@ -300,12 +370,14 @@ void test_1() {
     f3.setId("R3");
     std::vector<Formula> formulas = {f1, f2, f3};
 
-    Trace trace = tg.generateTrace(60);
-    size_t numExecutions{1000};
+    Trace trace = tg.generateTrace(10);
+    size_t numExecutions{10};
 
     // call the evaluator
     std::cout << "Test Running ... " << std::endl;
-    executeEvaluate2(formulas, numExecutions, trace);
+    //executeEvaluate2(formulas, numExecutions, trace);
+//     executeEvaluateLTL(formulas, numExecutions, trace);
+    executeEvaluateMTL(formulas, numExecutions, trace);
     std::cout << "Test Finished" << std::endl;
 }
 

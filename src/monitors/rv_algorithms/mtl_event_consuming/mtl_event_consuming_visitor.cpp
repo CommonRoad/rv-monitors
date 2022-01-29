@@ -224,27 +224,36 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
             auto interval_length = (interval_end - interval_start) + 1;
             auto remaining_trace_length = (trace_length - (index + interval_start));
             auto min = (remaining_trace_length < interval_length) ? remaining_trace_length : interval_length;
-            Or::SetType_T orSet{};
-            for (size_t i = 0; i < min; ++i) {
-                And::SetType_T andSet{};
-                for (size_t k = 0; k < interval_start; ++k) {
-                    auto evalExprK = std::make_shared<EventOperator>(until->getLeft(), trace, index);
-                    auto evalExprKSol = evalExprK->accept(*this, trace, index + k);
-                    andSet.emplace(evalExprKSol);
-                }
-                size_t j = 0;
-                while (j < min - 1 - i) {
-                    auto evalExprJ = std::make_shared<EventOperator>(until->getLeft(), trace, index);
-                    auto evalExprJSol = evalExprJ->accept(*this, trace, index + interval_start + j);
-                    andSet.emplace(evalExprJSol);
-                    j = j + 1;
-                }
-                auto evalExprRight = std::make_shared<EventOperator>(until->getRight(), trace, index);
-                auto evalExprRightSol = evalExprRight->accept(*this, trace, index + interval_start + j);
-                andSet.emplace(evalExprRightSol);
-                orSet.emplace(std::make_shared<And>(andSet));
+
+            And::SetType_T andSet{};
+            /** Check if the left expr holds from current time step to when the interval starts **/
+            for (size_t k = 0; k < interval_start; ++k) {
+                auto evalExprK = std::make_shared<EventOperator>(until->getLeft(), trace, index);
+                auto evalExprKSol = evalExprK->accept(*this, trace, index + k);
+                andSet.emplace(evalExprKSol);
             }
-            ret = std::make_shared<Or>(orSet);
+            /** Check if the right expr holds at time steps t + i, ensuring the left expr holds for the earlier time steps **/
+            And::SetType_T andSet_i{};
+            Or::SetType_T orSet_i{};
+            auto evalExprLeftInitial = std::make_shared<EventOperator>(until->getRight(), trace, index);
+            auto evalExprLeftInitialSol = evalExprLeftInitial->accept(*this, trace, index + interval_start + min - 1);
+            orSet_i.emplace(evalExprLeftInitialSol);
+            for (int i = min - 1; i >= 0; --i) {
+                andSet_i.clear();
+                auto evalExprLeft = std::make_shared<EventOperator>(until->getLeft(), trace, index);
+                auto evalExprLeftSol = evalExprLeft->accept(*this, trace, index + interval_start + i);
+                andSet_i.emplace(evalExprLeftSol);
+                andSet_i.emplace(std::make_shared<Or>(orSet_i));
+
+                orSet_i.clear();
+                auto evalExprRight = std::make_shared<EventOperator>(until->getRight(), trace, index);
+                auto evalExprRightSol = evalExprRight->accept(*this, trace, index + interval_start + i);
+                orSet_i.emplace(evalExprRightSol);
+                orSet_i.emplace(std::make_shared<And>(andSet_i));
+            }
+            auto orExprAsIntervalWithZero = std::make_shared<Or>(orSet_i);
+            andSet.emplace(orExprAsIntervalWithZero);
+            ret = std::make_shared<And>(andSet);
         }
     }
     // Since
@@ -252,60 +261,64 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
         size_t trace_length = trace.getLength();
         auto interval_start = since->getInterval()->getStart();
         auto interval_end = since->getInterval()->getEnd();
-        long difference = index - static_cast<long>(interval_start);
+        long difference = static_cast<long>(index) - interval_start;
 
         if (difference < 0) { // we can't have a look at all at the trace
             ret = std::make_shared<Constant>(false);
-        } else {
+        } else { // we can have a look at the trace
             auto interval_length = (interval_end - interval_start) + 1;
-            auto remaining_trace_length = index + 1 - interval_start;
+            long remaining_trace_length = static_cast<long>(index) + 1 - interval_start;
             auto min = (remaining_trace_length < interval_length) ? remaining_trace_length : interval_length;
-            Or::SetType_T orSet{};
-            for (size_t i = 0; i < min; ++i) {
-                And::SetType_T andSet{};
-                for (size_t k = 0; k < interval_start; ++k) {
-                    auto evalExprK = std::make_shared<EventOperator>(since->getLeft(), trace, index);
-                    auto evalExprKSol = evalExprK->accept(*this, trace, index - k);
-                    andSet.emplace(evalExprKSol);
-                }
-                size_t j = 0;
-                while (j < min - 1 - i) {
-                    auto evalExprJ = std::make_shared<EventOperator>(since->getLeft(), trace, index);
-                    auto evalExprJSol = evalExprJ->accept(*this, trace, index - interval_start - j);
-                    andSet.emplace(evalExprJSol);
-                    j = j + 1;
-                }
-                auto evalExprRight = std::make_shared<EventOperator>(since->getRight(), trace, index);
-                auto evalExprRightSol = evalExprRight->accept(*this, trace, index - interval_start - j);
-                andSet.emplace(evalExprRightSol);
-                orSet.emplace(std::make_shared<And>(andSet));
+            And::SetType_T andSet{};
+            /** Check if the left expr holds from current time step to when the interval starts **/
+            for (size_t k = 0; k < interval_start; ++k) {
+                auto evalExprK = std::make_shared<EventOperator>(since->getLeft(), trace, index);
+                auto evalExprKSol = evalExprK->accept(*this, trace, index - k);
+                andSet.emplace(evalExprKSol);
             }
-            ret = std::make_shared<Or>(orSet);
+            /** Check if the right expr holds at time steps t - i, ensuring the left expr holds for the later time steps **/
+            And::SetType_T andSet_i{};
+            Or::SetType_T orSet_i{};
+            auto evalExprLeftInitial = std::make_shared<EventOperator>(since->getRight(), trace, index);
+            auto evalExprLeftInitialSol = evalExprLeftInitial->accept(*this, trace, index - interval_start - min + 1);
+            orSet_i.emplace(evalExprLeftInitialSol);
+            for (int i = min - 1; i >= 0; --i) {
+                andSet_i.clear();
+                auto evalExprLeft = std::make_shared<EventOperator>(since->getLeft(), trace, index);
+                auto evalExprLeftSol = evalExprLeft->accept(*this, trace, index - interval_start - i);
+                andSet_i.emplace(evalExprLeftSol);
+                andSet_i.emplace(std::make_shared<Or>(orSet_i));
+
+                orSet_i.clear();
+                auto evalExprRight = std::make_shared<EventOperator>(since->getRight(), trace, index);
+                auto evalExprRightSol = evalExprRight->accept(*this, trace, index - interval_start - i);
+                orSet_i.emplace(evalExprRightSol);
+                orSet_i.emplace(std::make_shared<And>(andSet_i));
+            }
+            auto orExprAsIntervalWithZero = std::make_shared<Or>(orSet_i);
+            andSet.emplace(orExprAsIntervalWithZero);
+            ret = std::make_shared<And>(andSet);
         }
     }
     // Globally
     else if (auto globally = std::dynamic_pointer_cast<Globally>(op.getLeft())) {
-        size_t trace_length = trace.getLength();
-        auto interval_start = static_cast<size_t>(globally->getInterval()->getStart());
-        auto interval_end = static_cast<size_t>(globally->getInterval()->getEnd());
-
-        if (index + interval_start >= trace_length) { // we can't have a look at all at the trace
-            ret = std::make_shared<Constant>(false);
-        } else {
-            auto interval_length = (interval_end - interval_start) + 1;
-            auto remaining_trace_length = (trace_length - (index + interval_start));
-            auto min = (remaining_trace_length < interval_length) ? remaining_trace_length : interval_length;
-            And::SetType_T andSet{};
-            for (size_t i = 0; i < min; ++i) {
-                auto evalExprI = std::make_shared<EventOperator>(globally->getLeft(), trace, index);
-                auto evalExprISol = evalExprI->accept(*this, trace, index + interval_start + i);
-                andSet.emplace(evalExprISol);
+        if (!trace.getEvent(index).isTerminal()) {
+            if (globally->getInterval()->containsZero()) {
+                And::SetType_T newSet;
+                auto eventOperatorExpr = std::make_shared<EventOperator>(globally->getLeft(), trace, index);
+                newSet.emplace(eventOperatorExpr);
+                globally->reduceInterval();
+                newSet.emplace(globally);
+                ret = std::make_shared<And>(newSet);
             }
-            ret = std::make_shared<And>(andSet);
+            else {
+                globally->reduceInterval();
+                ret = globally;
+            }
         }
-    }
-    // Future
-    else if (auto future = std::dynamic_pointer_cast<Future>(op.getLeft())) {
+        else {
+            ret = std::make_shared<EventOperator>(globally->getLeft(), trace, index);
+        }
     }
     // Previously
     else if (auto previously = std::dynamic_pointer_cast<Previously>(op.getLeft())) {
@@ -316,12 +329,14 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
             ret = std::make_shared<Constant>(false);
         }
     }
+    // Future
+    else if (auto future = std::dynamic_pointer_cast<Future>(op.getLeft())) {
+    }
     // Once
     else if (auto once = std::dynamic_pointer_cast<Once>(op.getLeft())) {
     }
     // Historically
     else if (auto historically = std::dynamic_pointer_cast<Historically>(op.getLeft())) {
     }
-
     return ret->accept(*this, trace, index);
 }

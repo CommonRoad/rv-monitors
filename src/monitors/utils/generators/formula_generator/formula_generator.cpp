@@ -77,6 +77,10 @@ std::shared_ptr<Expression> FormulaGenerator::generateBinaryExpression(const std
         return std::make_shared<Equivalence>(exprRight, exprLeft);
     else if (op == sinceSymbol)
         return std::make_shared<Since>(exprRight, exprLeft);
+    else if (op == untilSymbol)
+        return std::make_shared<Until>(exprRight, exprLeft);
+    else if (op == releaseSymbol)
+        return std::make_shared<Release>(exprRight, exprLeft);
     else
         throw std::logic_error("FormulaGenerator::generateBinaryExpression: Unknown operator!");
 }
@@ -144,7 +148,8 @@ std::shared_ptr<Expression> FormulaGenerator::generateExpression(const size_t nr
          * If binary operator
          */
         else if (oi.m_name == andSymbol || oi.m_name == orSymbol || oi.m_name == xorSymbol ||
-                 oi.m_name == implicationSymbol || oi.m_name == equivalenceSymbol || oi.m_name == sinceSymbol) {
+                 oi.m_name == implicationSymbol || oi.m_name == equivalenceSymbol || oi.m_name == sinceSymbol ||
+                 oi.m_name == untilSymbol || oi.m_name == releaseSymbol) {
             auto nrLeft = rInt(0, nrOperators - 1);
             auto exprLeft = generateExpression(nrLeft);
             auto exprRight = generateExpression(nrOperators - 1 - nrLeft);

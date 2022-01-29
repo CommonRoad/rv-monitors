@@ -15,7 +15,8 @@
 #include <memory>
 #include <utility>
 
-MTLEventConsuming::MTLEventConsuming(const Formula &formula) : MonitorInterface((formula)) {}
+MTLEventConsuming::MTLEventConsuming(const std::vector<Formula> &formulas) : MonitorInterface((std::move(formulas))) {}
+//MTLEventConsuming::MTLEventConsuming(const Formula &formula) : MonitorInterface((formula)) {}
 
 std::map<std::string, std::vector<Verdict>> MTLEventConsuming::evaluate(Trace &trace) {
     std::map<std::string, std::vector<Verdict>> result;
@@ -49,4 +50,4 @@ std::map<std::string, std::vector<Verdict>> MTLEventConsuming::evaluate(Trace &t
     result[formulas.at(0).getId()] = {Verdict{formulaCopy.to_string() == "true"}};
     return result;
 }
-std::string MTLEventConsuming::to_string() const { return "TODO"; }
+std::string MTLEventConsuming::to_string() const { return "TODO MTL Event Consuming"; }

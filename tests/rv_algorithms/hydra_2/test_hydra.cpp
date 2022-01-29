@@ -541,6 +541,15 @@ TEST(TestHydra, testAndOnceInterval) {
     hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
+TEST(TestHydra, testGloballySingle) {
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a","b"}, {"a", "b"}, {"a", "b"}, {"a", "b"}, {"a", "b"}});
+    Formula formula = Parser::parse("G[1,2](a & b)");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+                                     Verdict{4, true}};
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
+}
+
 TEST(TestHydra, testAndOnceIntervallAnd1) {
     Trace trace = Utils::createTrace(
         {"in_same_lane", "in_single_lane"},
