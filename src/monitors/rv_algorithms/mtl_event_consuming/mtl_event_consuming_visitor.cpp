@@ -239,7 +239,7 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
             auto evalExprLeftInitial = std::make_shared<EventOperator>(until->getRight(), trace, index);
             auto evalExprLeftInitialSol = evalExprLeftInitial->accept(*this, trace, index + interval_start + min - 1);
             orSet_i.emplace(evalExprLeftInitialSol);
-            for (size_t i{min - 1}; i >= 0; --i) {
+            for (int i = min - 1; i >= 0; --i) {
                 andSet_i.clear();
                 auto evalExprLeft = std::make_shared<EventOperator>(until->getLeft(), trace, index);
                 auto evalExprLeftSol = evalExprLeft->accept(*this, trace, index + interval_start + i);
