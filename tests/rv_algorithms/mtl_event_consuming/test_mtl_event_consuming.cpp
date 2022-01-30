@@ -535,7 +535,7 @@ TEST(TESTMTL, satisfiedSingleGlobally1) {
 }
 
 TEST(TESTMTL, satisfiedSingleGloballyIntervalStartingFromTimeStep2) {
-    Trace trace = Utils::createTrace({"a", "b"}, {{"a"},{}, {"b"}, {"a", "b"}, {"a", "b"}});
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {}, {"b"}, {"a", "b"}, {"a", "b"}});
     Formula formula = Parser::parse("G[2,4](b)");
     auto monitor{MTLEventConsuming({formula})};
     EXPECT_TRUE(monitor.evaluate(trace)[formula.getId()].at(0).b);
@@ -605,14 +605,24 @@ TEST(TESTMTL, satisfiedGloballyAsUntil) {
 }
 
 TEST(TESTMTL, satisfiedGlobally3) {
-    Trace trace = Utils::createTrace({"a", "b"}, {{"a,""b"},{"a", "b"},{"a", "b"},{"a", "b"},{"a", "b"}});
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a,"
+                                                   "b"},
+                                                  {"a", "b"},
+                                                  {"a", "b"},
+                                                  {"a", "b"},
+                                                  {"a", "b"}});
     Formula formula = Parser::parse("G[1,2](a & b)");
     auto monitor{MTLEventConsuming({formula})};
     EXPECT_TRUE(monitor.evaluate(trace)[formula.getId()].at(0).b);
 }
 
 TEST(TESTMTL, satisfiedGloballyAsUntil2) {
-    Trace trace = Utils::createTrace({"a", "b"}, {{"a,""b"},{"a", "b"},{"a", "b"},{"a", "b"},{"a", "b"}});
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a,"
+                                                   "b"},
+                                                  {"a", "b"},
+                                                  {"a", "b"},
+                                                  {"a", "b"},
+                                                  {"a", "b"}});
     Formula formula = Parser::parse("!((true) U[1,2] (!(a & b)))");
     auto monitor{MTLEventConsuming({formula})};
     EXPECT_TRUE(monitor.evaluate(trace)[formula.getId()].at(0).b);
@@ -1001,20 +1011,25 @@ TEST(TESTMTL, unsatisfiedNegatedAndOnceIntervalAnd2) {
 }
 
 TEST(TESTMTL, largeTraceSizeOneHundred) {
-    Trace trace =
-        Utils::createTrace({"a","b","c","p","q"},
-                           {
-                               {"p","q"},{"a","p","q"},{"p","q"},{"p","q"},{"p","q"},{"p","q"},{"a","p","q"},{"p","q"},{"p","q"},{"p","q"},
-                               {"p","q"},{"a","p","q"},{"p","q","b"},{"p","q"},{"p","q"},{"p","q"},{"a","p","q"},{"p","q"},{"p","q"},{"p","q"},
-                               {"p","q"},{"a","p","q"},{"p","q","c"},{"p","q"},{"p","q"},{"p","q"},{"a","p","q"},{"p","q"},{"p","q"},{"p","q"},
-                               {"p","q"},{"a","p","q"},{"p","q","d"},{"p","q"},{"p","q"},{"p","q"},{"a","p","q"},{"p","q"},{"p","q"},{"p","q"},
-                               {"p","q"},{"a","p","q"},{"p","q"},{"p","q"},{"p","q"},{"p","q"},{"a","p","q"},{"p","q"},{"p","q"},{"p","q"},
-                               {"p","q"},{"a","p","q"},{"p","q"},{"p","q"},{"p"},{"p","q"},{"a","p","q"},{"p","q"},{"p","q"},{"p","q"},
-                               {"p","q"},{"a","p","q"},{"p","q"},{"p","q"},{"p","q"},{"p","q"},{"a","p","q"},{"p","q"},{"p","q"},{"p","q"},
-                               {"p","q"},{"a","p","q"},{"p","q"},{"p","q"},{"p","q"},{"p","q"},{"a","p","q"},{"p","q"},{"p","q"},{"p","q"},
-                               {"p","q"},{"a","p","q"},{"p","q"},{"p","q"},{"p","q"},{"p","q"},{"a","p","q"},{"p","q"},{"p","q"},{"p","q"},
-                               {"p","q"},{"a","p","q"},{"p","q"},{"p","q"},{"p","q"},{"p","q"},{"a","p","q"},{"p","q"},{"p","q"},{"p","q"}
-                           });
+    Trace trace = Utils::createTrace(
+        {"a", "b", "c", "p", "q"},
+        {{"p", "q"},      {"a", "p", "q"}, {"p", "q"},      {"p", "q"},      {"p", "q"},      {"p", "q"},
+         {"a", "p", "q"}, {"p", "q"},      {"p", "q"},      {"p", "q"},      {"p", "q"},      {"a", "p", "q"},
+         {"p", "q", "b"}, {"p", "q"},      {"p", "q"},      {"p", "q"},      {"a", "p", "q"}, {"p", "q"},
+         {"p", "q"},      {"p", "q"},      {"p", "q"},      {"a", "p", "q"}, {"p", "q", "c"}, {"p", "q"},
+         {"p", "q"},      {"p", "q"},      {"a", "p", "q"}, {"p", "q"},      {"p", "q"},      {"p", "q"},
+         {"p", "q"},      {"a", "p", "q"}, {"p", "q", "d"}, {"p", "q"},      {"p", "q"},      {"p", "q"},
+         {"a", "p", "q"}, {"p", "q"},      {"p", "q"},      {"p", "q"},      {"p", "q"},      {"a", "p", "q"},
+         {"p", "q"},      {"p", "q"},      {"p", "q"},      {"p", "q"},      {"a", "p", "q"}, {"p", "q"},
+         {"p", "q"},      {"p", "q"},      {"p", "q"},      {"a", "p", "q"}, {"p", "q"},      {"p", "q"},
+         {"p"},           {"p", "q"},      {"a", "p", "q"}, {"p", "q"},      {"p", "q"},      {"p", "q"},
+         {"p", "q"},      {"a", "p", "q"}, {"p", "q"},      {"p", "q"},      {"p", "q"},      {"p", "q"},
+         {"a", "p", "q"}, {"p", "q"},      {"p", "q"},      {"p", "q"},      {"p", "q"},      {"a", "p", "q"},
+         {"p", "q"},      {"p", "q"},      {"p", "q"},      {"p", "q"},      {"a", "p", "q"}, {"p", "q"},
+         {"p", "q"},      {"p", "q"},      {"p", "q"},      {"a", "p", "q"}, {"p", "q"},      {"p", "q"},
+         {"p", "q"},      {"p", "q"},      {"a", "p", "q"}, {"p", "q"},      {"p", "q"},      {"p", "q"},
+         {"p", "q"},      {"a", "p", "q"}, {"p", "q"},      {"p", "q"},      {"p", "q"},      {"p", "q"},
+         {"a", "p", "q"}, {"p", "q"},      {"p", "q"},      {"p", "q"}});
     Formula formula = Parser::parse("((((P(p) -> b) U c) -> q) -> ((q U p) & c))");
     auto monitor{MTLEventConsuming({formula})};
     EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b);

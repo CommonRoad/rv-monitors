@@ -32,9 +32,9 @@ bool Interval::isFinite() const { return finite; }
 void Interval::setFinite(bool fin) { finite = fin; }
 
 bool Interval::containsZero() const {
-//    if (start == 0 or end == 0)
-//        return true;
-//    else
-//        return false;
-    return (start<=0 and 0<=end);
+    //    if (start == 0 or end == 0)
+    //        return true;
+    //    else
+    //        return false;
+    return (start <= 0 and 0 <= end);
 }

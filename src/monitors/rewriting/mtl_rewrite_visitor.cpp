@@ -353,8 +353,8 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitGlobally(Globally &op, Trace
     //     G(a) = not F(not a) = ! (true U ! a)
     //    auto future{std::make_shared<Future>(std::make_shared<Not>(op.getLeft()), op.getInterval())};
     //    return std::make_shared<Not>(future);
-//        return std::make_shared<Not>(std::make_shared<Until>(std::make_shared<Constant>(true),
-//        std::make_shared<Not>(op.getLeft()),op.getInterval()));
+    //        return std::make_shared<Not>(std::make_shared<Until>(std::make_shared<Constant>(true),
+    //        std::make_shared<Not>(op.getLeft()),op.getInterval()));
 
     return std::make_shared<Globally>(op.getLeft(), op.getInterval());
 }

@@ -232,13 +232,14 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
                 auto evalExprKSol = evalExprK->accept(*this, trace, index + k);
                 andSet.emplace(evalExprKSol);
             }
-            /** Check if the right expr holds at time steps t + i, ensuring the left expr holds for the earlier time steps **/
+            /** Check if the right expr holds at time steps t + i, ensuring the left expr holds for the earlier time
+             * steps **/
             And::SetType_T andSet_i{};
             Or::SetType_T orSet_i{};
             auto evalExprLeftInitial = std::make_shared<EventOperator>(until->getRight(), trace, index);
             auto evalExprLeftInitialSol = evalExprLeftInitial->accept(*this, trace, index + interval_start + min - 1);
             orSet_i.emplace(evalExprLeftInitialSol);
-            for (int i = min - 1; i >= 0; --i) {
+            for (size_t i{min - 1}; i >= 0; --i) {
                 andSet_i.clear();
                 auto evalExprLeft = std::make_shared<EventOperator>(until->getLeft(), trace, index);
                 auto evalExprLeftSol = evalExprLeft->accept(*this, trace, index + interval_start + i);
@@ -276,7 +277,8 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
                 auto evalExprKSol = evalExprK->accept(*this, trace, index - k);
                 andSet.emplace(evalExprKSol);
             }
-            /** Check if the right expr holds at time steps t - i, ensuring the left expr holds for the later time steps **/
+            /** Check if the right expr holds at time steps t - i, ensuring the left expr holds for the later time steps
+             * **/
             And::SetType_T andSet_i{};
             Or::SetType_T orSet_i{};
             auto evalExprLeftInitial = std::make_shared<EventOperator>(since->getRight(), trace, index);
@@ -310,13 +312,11 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
                 globally->reduceInterval();
                 newSet.emplace(globally);
                 ret = std::make_shared<And>(newSet);
-            }
-            else {
+            } else {
                 globally->reduceInterval();
                 ret = globally;
             }
-        }
-        else {
+        } else {
             ret = std::make_shared<EventOperator>(globally->getLeft(), trace, index);
         }
     }
