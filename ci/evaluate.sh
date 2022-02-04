@@ -59,7 +59,7 @@ function test_single() {
     local MAXR=${2}
     local SEED=${3}
     FID="${1}_${2}_${3}"
-    local LOG="logs/shared"
+    LOG="logs/shared"
     local APS=8
     # See gen_fmla sources for meaning of TYPE
     local TYPE=2
