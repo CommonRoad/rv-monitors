@@ -66,6 +66,7 @@ function test_single() {
 
     FML_FILE="fmlas/z_${FID}.mdl"
     LOG_FILE="${LOG}.log"
+    ERROR_LOG_FILE="error.log"
 
     #gen_fmla PREFIX SIZE MAXR TYPE SCALE SEED APS
     ./gen_fmla "fmlas/z_${FID}" "${SIZE}" "${MAXR}" "${TYPE}" 1 "${SEED}" ${APS}
@@ -78,7 +79,8 @@ function test_single() {
 
     RVM_START="$(date +%s.%N)"
     if ! "$RVM_HYDRA_CMD" "$FML_FILE" "$LOG_FILE" \
-        > "output/z_${FID}.rvm_hydra"; then
+        > "output/z_${FID}.rvm_hydra" \
+        2>> "$ERROR_LOG_FILE"; then
         cp "$FML_FILE" "bug_${FID}.mdl"
         printf "Running %s failed on %s!\n" "$RVM_HYDRA_CMD" "$FML_FILE"
         return 1
@@ -87,7 +89,8 @@ function test_single() {
 
     HYDRA_START="$(date +%s.%N)"
     if ! $HYDRA_CMD "$FML_FILE" "$LOG_FILE" \
-        > "output/z_${FID}.hydra"; then
+        > "output/z_${FID}.hydra" \
+        2>> "$ERROR_LOG_FILE"; then
         cp "$FML_FILE" "bug_${FID}.mdl"
         printf "Running %s failed on %s!\n" "$HYDRA_CMD" "$FML_FILE"
         return 1
@@ -96,7 +99,9 @@ function test_single() {
     sed -i "/^[A-Z]/d" "output/z_${FID}.hydra"
 
     VYDRA_START="$(date +%s.%N)"
-    if ! $VYDRA_CMD -fmla "$FML_FILE" -log "$LOG_FILE" > "output/z_${FID}.vydra"; then
+    if ! $VYDRA_CMD -fmla "$FML_FILE" -log "$LOG_FILE" \
+        > "output/z_${FID}.vydra" \
+        2>> "$ERROR_LOG_FILE"; then
         cp "$FML_FILE" "bug_${FID}.mdl"
         printf "Running %s failed on %s!\n" "$VYDRA_CMD" "$FML_FILE"
         return 1
