@@ -41,13 +41,13 @@ function compare_output() {
         fi
         cp "$FML_FILE" "bug_${FID}.mdl"
 
-        printf "%bNOTE%b: In order to review this test case, run the following command after this job has finished:\n\t%s %s %s %s\n\n" \
+        printf "%bNOTE%b: In order to review this test case, first download the relevant formula and log files from the following URLs:\n\t%s\n\t%s\n then run the evaluation command like this:\n\trvmonitors_eval %s %s\n\n" \
             "${TEXT_BOLD}" \
             "${TEXT_RESET}" \
-            "ci/review-ci-test.sh" \
-            "${FID}" \
             "\"${CI_JOB_URL}/${ARTIFACTS_PATH}/${FML_FILE}\"" \
-            "\"${CI_JOB_URL}/${ARTIFACTS_PATH}/${LOG_FILE}\""
+            "\"${CI_JOB_URL}/${ARTIFACTS_PATH}/${LOG_FILE}\"" \
+            "$(basename "$FML_FILE")" \
+            "$(basename "$LOG_FILE")"
     else
         printf "%bOK%b\n" \
             "${TEXT_RESET}${TEXT_GREEN}" \
