@@ -110,6 +110,12 @@ target_link_libraries(${LIBRARY_NAME} PRIVATE
         antlr4cpp
         )
 
+add_executable(rvmonitors_eval monitors/evaluation/evaluation.cpp)
+target_link_libraries(rvmonitors_eval
+    PUBLIC
+        rvmonitors
+    )
+
 # this adds many warnings to the build. They usually help to find some bugs
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
     target_compile_options(${LIBRARY_NAME}  PRIVATE -Wall -Wextra -Wconversion
