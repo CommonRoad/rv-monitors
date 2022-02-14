@@ -542,7 +542,7 @@ TEST(TestHydra, testAndOnceInterval) {
 }
 
 TEST(TestHydra, testGloballySingle) {
-    Trace trace = Utils::createTrace({"a", "b"}, {{"a","b"}, {"a", "b"}, {"a", "b"}, {"a", "b"}, {"a", "b"}});
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a", "b"}, {"a", "b"}, {"a", "b"}, {"a", "b"}, {"a", "b"}});
     Formula formula = Parser::parse("G[1,2](a & b)");
     formula.setId("R1");
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},

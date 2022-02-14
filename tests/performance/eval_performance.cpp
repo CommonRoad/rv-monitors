@@ -7,20 +7,20 @@
 
 #include "monitors/parser/parser.h"
 #include "monitors/rv_algorithms/hydra_2/hydra.h"
-#include "monitors/rv_algorithms/mtl_event_consuming/mtl_event_consuming.h"
 #include "monitors/rv_algorithms/ltl_event_consuming/event_consuming.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
 #include "monitors/rv_algorithms/btt_fsm/btt_fsm.h"
 #include "monitors/rv_algorithms/dynamic_programming/dynamic.h"
+#include "monitors/rv_algorithms/mtl_event_consuming/mtl_event_consuming.h"
 #include "monitors/trace/trace.h"
+#include "monitors/utils/generators/computation_time_generator/computation_time_generator.h"
 #include "monitors/utils/generators/formula_generator/formula_generator.h"
 #include "monitors/utils/generators/trace_generator/trace_generator.h"
-#include "monitors/utils/generators/computation_time_generator/computation_time_generator.h"
 #include <chrono>
+#include <fstream>
 #include <iostream>
 #include <random>
 #include <thread>
-#include <fstream>
 
 
 typedef std::mt19937 MyRNG;
@@ -239,7 +239,7 @@ void executeEvaluate2(const std::vector<Formula> &formulas1, size_t numExecution
     std::cout << '\n';
 }
 
-double evaluateSingleHydra(const Formula &formula, Trace &trace){
+double evaluateSingleHydra(const Formula &formula, Trace &trace) {
     auto monitor{Hydra({formula})};
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     monitor.evaluate(trace);
@@ -367,7 +367,7 @@ double evaluateDynamicLTLSingle(const Formula &formula, Trace &trace){
 double executeEvaluateDynamicLTL(const Formula &formula, size_t numExecutions, Trace &trace,  std::ofstream &out) {
     std::vector<double> avgCompTime;
     for (size_t i{0}; i < numExecutions; ++i) {
-        avgCompTime.push_back(evaluateBTTFsmSingle(formula, trace));
+        avgCompTime.push_back(evaluateDynamicLTLSingle(formula, trace));
     }
     double result = std::accumulate(avgCompTime.begin(), avgCompTime.end(), 0) / numExecutions;
     out << "[DynamicLTL] Results: " << result << '\n';
@@ -925,7 +925,6 @@ void test_6(std::ofstream &out) {
 
     createFormulasAndTracesFromPredicates(allPredicates, formulaGenerator, traceGenerator, {5, 4, 3}, {10, 30, 50},
                                           5, 5, generatedFormulas, generatedTraces);
-
     size_t numExecutions{10};
     testFormulasOnTraces(generatedFormulas, generatedTraces, numExecutions, out);
 }

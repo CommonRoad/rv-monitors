@@ -549,7 +549,7 @@ TEST(TESTMTL, satisfiedSingleGlobally1) {
 }
 
 TEST(TESTMTL, satisfiedSingleGloballyIntervalStartingFromTimeStep2) {
-    Trace trace = Utils::createTrace({"a", "b"}, {{"a"},{}, {"b"}, {"a", "b"}, {"a", "b"}});
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {}, {"b"}, {"a", "b"}, {"a", "b"}});
     Formula formula = Parser::parse("G[2,4](b)");
     auto monitor{MTLEventConsuming({formula})};
     EXPECT_TRUE(monitor.evaluate(trace)[formula.getId()].at(0).b);

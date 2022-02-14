@@ -14,7 +14,7 @@
 #include <utility>
 
 MTLEventConsuming::MTLEventConsuming(const std::vector<Formula> &formulas) : MonitorInterface((std::move(formulas))) {}
-//MTLEventConsuming::MTLEventConsuming(const Formula &formula) : MonitorInterface((formula)) {}
+// MTLEventConsuming::MTLEventConsuming(const Formula &formula) : MonitorInterface((formula)) {}
 
 std::map<std::string, std::vector<Verdict>> MTLEventConsuming::evaluate(Trace &trace) {
     std::map<std::string, std::vector<Verdict>> result;
