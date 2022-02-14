@@ -9,10 +9,8 @@
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/unary/event_operator.h"
 #include "monitors/expression_tree/unary/temporal/globally.h"
-#include "monitors/rewriting/rewrite_visitor.h"
 #include "mtl_event_consuming_visitor.h"
 #include <iostream>
-#include <memory>
 #include <utility>
 
 MTLEventConsuming::MTLEventConsuming(const std::vector<Formula> &formulas) : MonitorInterface((std::move(formulas))) {}
@@ -31,13 +29,16 @@ std::map<std::string, std::vector<Verdict>> MTLEventConsuming::evaluate(Trace &t
     MtlRewriteVisitor rw;
     MTLEventConsumingVisitor ev;
 
-    auto formulaToGlobally = std::make_shared<Globally>(formulaCopy.getExpr(), std::make_shared<Interval>(0, 10000));
-    formulaCopy.setExpr(formulaToGlobally);
-
-    // Rewrite
+    if (auto globalExpr = std::dynamic_pointer_cast<Globally>(formulaCopy.getExpr())) {
+        if (globalExpr->getInterval()->isFinite())
+            formulaCopy.setExpr(std::make_shared<Globally>(formulaCopy.getExpr()));
+    }
+    else {
+        formulaCopy.setExpr(std::make_shared<Globally>(formulaCopy.getExpr()));
+    }
     rw.rewrite(formulaCopy);
 
-    for (size_t i = 0; i < trace.getLength(); ++i) {
+    for (size_t i{0}; i < trace.getLength(); ++i) {
         ev.consumeEvent(formulaCopy, trace, i);
         rw.rewrite(formulaCopy);
         if (formulaCopy.to_string() == "false") {
@@ -47,7 +48,8 @@ std::map<std::string, std::vector<Verdict>> MTLEventConsuming::evaluate(Trace &t
             break;
         }
     }
+
     result[formulas.at(0).getId()] = {Verdict{formulaCopy.to_string() == "true"}};
     return result;
 }
-std::string MTLEventConsuming::to_string() const { return "TODO MTL Event Consuming"; }
+std::string MTLEventConsuming::to_string() const { return "MTL Event Consuming"; }

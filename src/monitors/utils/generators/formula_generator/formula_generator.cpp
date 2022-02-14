@@ -16,6 +16,16 @@ std::shared_ptr<Expression> FormulaGenerator::generateUnaryExpression(const std:
         return generateUnaryExpressionWithoutInterval(op, exprLeft);
 }
 
+std::shared_ptr<Expression> FormulaGenerator::generateBinaryExpression(const std::string &op,
+                                                                       const std::shared_ptr<Expression> &exprLeft,
+                                                                       const std::shared_ptr<Expression> &exprRight,
+                                                                       bool hasInterval, size_t tStart, size_t tEnd) {
+    if (hasInterval)
+        return generateBinaryExpressionWithInterval(op, exprLeft, exprRight, tStart, tEnd);
+    else
+        return generateBinaryExpressionWithoutInterval(op, exprLeft, exprRight);
+}
+
 std::shared_ptr<Expression> FormulaGenerator::generateUnaryExpressionWithInterval(
     const std::string &op, const std::shared_ptr<Expression> &exprLeft, size_t tStart, size_t tEnd) {
     if (op == futureSymbol)
@@ -59,7 +69,21 @@ FormulaGenerator::generateUnaryExpressionWithoutInterval(const std::string &op,
         throw std::logic_error("FormulaGenerator::generateUnaryExpressionWithoutInterval: Unknown operator!");
 }
 
-std::shared_ptr<Expression> FormulaGenerator::generateBinaryExpression(const std::string &op,
+std::shared_ptr<Expression> FormulaGenerator::generateBinaryExpressionWithInterval(const std::string &op,
+                                                                                      const std::shared_ptr<Expression> &exprLeft,
+                                                                                      const std::shared_ptr<Expression> &exprRight,
+                                                                                      size_t tStart, size_t tEnd) {
+    if (op == sinceSymbol)
+        return std::make_shared<Since>(exprRight, exprLeft, std::make_shared<Interval>(tStart, tEnd));
+    else if (op == untilSymbol)
+        return std::make_shared<Until>(exprRight, exprLeft, std::make_shared<Interval>(tStart, tEnd));
+    else if (op == releaseSymbol)
+        return std::make_shared<Release>(exprRight, exprLeft, std::make_shared<Interval>(tStart, tEnd));
+    else
+        throw std::logic_error("FormulaGenerator::generateBinaryExpressionWithInterval: Unknown operator!");
+}
+
+std::shared_ptr<Expression> FormulaGenerator::generateBinaryExpressionWithoutInterval(const std::string &op,
                                                                        const std::shared_ptr<Expression> &exprLeft,
                                                                        const std::shared_ptr<Expression> &exprRight) {
     if (op == andSymbol)
@@ -82,7 +106,7 @@ std::shared_ptr<Expression> FormulaGenerator::generateBinaryExpression(const std
     else if (op == releaseSymbol)
         return std::make_shared<Release>(exprRight, exprLeft);
     else
-        throw std::logic_error("FormulaGenerator::generateBinaryExpression: Unknown operator!");
+        throw std::logic_error("FormulaGenerator::generateBinaryExpressionWithoutInterval: Unknown operator!");
 }
 
 std::shared_ptr<Expression> FormulaGenerator::generateAtomOrPredicate() {
@@ -101,6 +125,7 @@ std::shared_ptr<Expression> FormulaGenerator::generateAtomOrPredicate() {
 
     return m_predicates[rInt(0, m_predicates.size() - 1)].m_predicate;
 }
+
 void FormulaGenerator::pickOperator(size_t &pos) {
     double coin = rReal(0, m_sumWeightsOperator);
     pos = m_operators.size() - 1;
@@ -154,7 +179,7 @@ std::shared_ptr<Expression> FormulaGenerator::generateExpression(const size_t nr
             auto exprLeft = generateExpression(nrLeft);
             auto exprRight = generateExpression(nrOperators - 1 - nrLeft);
 
-            return generateBinaryExpression(oi.m_name, exprLeft, exprRight);
+            return generateBinaryExpression(oi.m_name, exprLeft, exprRight, oi.m_hasInterval, tStart, tEnd);
         }
     }
 

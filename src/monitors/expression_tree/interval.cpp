@@ -38,3 +38,6 @@ bool Interval::containsZero() const {
 //        return false;
     return (start<=0 and 0<=end);
 }
+int Interval::getLength() const {
+    return end - start;
+}

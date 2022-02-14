@@ -190,10 +190,10 @@ class FormulaGenerator {
      * Operators added on intervals
      * @param name Name of the operator
      * @param w Associated weight of the operator
-     * @param minStart
-     * @param maxStart
-     * @param minDuration
-     * @param maxDuration
+     * @param minStart Minimum value for the interval start
+     * @param maxStart Maximum value for the interval end
+     * @param minDuration Minimum value for the duration of the interval
+     * @param maxDuration Maximum value for the duration of the interval
      */
     virtual void addOperatorWithInterval(const std::string &name, const double w, const size_t minStart,
                                          const size_t maxStart, const size_t minDuration, const size_t maxDuration) {
@@ -213,7 +213,7 @@ class FormulaGenerator {
      * Helper Function to generate Unary Expression
      * @param op operator name
      * @param exprLeft expression on the left
-     * @param hasInterval check if the operator has an interval
+     * @param hasInterval checks if the operator has an interval
      * @param tStart start time step of the operator
      * @param tEnd end time step of the operator
      * @return a unary expression
@@ -248,12 +248,40 @@ class FormulaGenerator {
      * @param op operator name
      * @param exprLeft expression on the left
      * @param exprRight expression on the right
+     * @param hasInterval checks if the operator has an interval
+     * @param tStart start time of the operator
+     * @param tEnd end time of the operator
      * @return a binary expression
      */
     static std::shared_ptr<Expression> generateBinaryExpression(const std::string &op,
                                                                 const std::shared_ptr<Expression> &exprLeft,
-                                                                const std::shared_ptr<Expression> &exprRight);
+                                                                const std::shared_ptr<Expression> &exprRight,
+                                                                bool hasInterval, size_t tStart, size_t tEnd);
 
+    /**
+     * Helper function to generate Binary Expression with Interval
+     * @param op operator name
+     * @param exprLeft expression on the left
+     * @param exprRight expression on the right
+     * @param tStart start time of the operator
+     * @param tEnd end time of the operator
+     * @return a binary expression with interval
+     */
+    static std::shared_ptr<Expression> generateBinaryExpressionWithInterval(const std::string &op,
+                                                                            const std::shared_ptr<Expression> &exprLeft,
+                                                                            const std::shared_ptr<Expression> &exprRight,
+                                                                            size_t tStart, size_t tEnd);
+
+    /**
+     * Helper function to generate Binary Expression without Interval
+     * @param op operator name
+     * @param exprLeft expression on the left
+     * @param exprRight expression on the right
+     * @return a binary expression without interval
+     */
+    static std::shared_ptr<Expression> generateBinaryExpressionWithoutInterval(const std::string &op,
+                                                                               const std::shared_ptr<Expression> &exprLeft,
+                                                                               const std::shared_ptr<Expression> &exprRight);
     /**
      * Generates either an atom or predicate
      * @return an atom or predicate
@@ -265,7 +293,7 @@ class FormulaGenerator {
      * @param pos index in the operators vector
      */
     void pickOperator(size_t &pos);
-
+    
     /**
      * Expression is generated based on the given number of operators
      * @param nrOperators number of operators to be added in the Formula

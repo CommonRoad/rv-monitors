@@ -26,7 +26,7 @@ TEST(TestFormulaGenerator, generalTest) {
     fg.addOperator(implicationSymbol, 2.0);
     fg.addOperator(equivalenceSymbol, 2.0);
     fg.addOperator(sinceSymbol, 2.0);
-    fg.addOperatorWithInterval(futureSymbol, 2.0, 0, 3, 10, 30);
+    fg.addOperatorWithInterval(untilSymbol, 2.0, 0, 3, 10, 30);
     fg.addOperator(globallySymbol, 2.0);
 
     auto f = fg.generateFormula(7);
