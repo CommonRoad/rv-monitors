@@ -67,7 +67,6 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitAnd(And &op, Trace &trace, s
         return std::make_shared<Constant>(false);
     }
 
-
     // Remove true
     auto ret = expressions.equal_range(std::make_shared<Constant>(true));
     expressions.erase(ret.first, ret.second);

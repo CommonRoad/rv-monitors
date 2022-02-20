@@ -8,6 +8,7 @@
 #include "monitors/expression_tree/atomic/atomic.h"
 #include "monitors/expression_tree/atomic/predicate.h"
 #include "monitors/utils/generators/trace_generator/trace_generator.h"
+
 TEST(TestTraceGenerator, testGeneral) {
     TraceGenerator tg;
     TraceGenerator::rSeed();

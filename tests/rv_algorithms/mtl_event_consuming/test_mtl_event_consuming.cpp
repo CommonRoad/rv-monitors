@@ -1000,7 +1000,7 @@ TEST(TESTMTL, unsatisfiedNegatedAndOnceIntervalAnd1) {
     EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b);
 }
 
-TEST(TESTMTL, unsatisfiedNegatedAndOnceIntervalAnd2) {
+TEST(TESTMTL, unsatisfiedComplex) {
     Trace trace =
         Utils::createTrace({"in_same_lane", "in_single_lane", "keeps_safe_distance_prec", "orientation_towards"},
                            {{"in_same_lane", "keeps_safe_distance_prec"},

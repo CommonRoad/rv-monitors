@@ -12,9 +12,9 @@ TEST(TestFormulaGenerator, generalTest) {
     FormulaGenerator fg;
     FormulaGenerator::rSeed();
 
-    auto a1 = std::make_shared<Atomic>("a1");
-    auto a2 = std::make_shared<Atomic>("a2");
-    auto p1 = std::make_shared<Predicate>("p1", "p1", std::vector<std::string>{"params1", "params2"});
+    auto a1 = std::make_shared<Atomic>("a");
+    auto a2 = std::make_shared<Atomic>("b");
+    auto p1 = std::make_shared<Predicate>("p", "p", std::vector<std::string>{"p1", "p2"});
 
     fg.addAtomic(a1, 1.0);
     fg.addAtomic(a2, 1.0);
@@ -26,10 +26,11 @@ TEST(TestFormulaGenerator, generalTest) {
     fg.addOperator(implicationSymbol, 2.0);
     fg.addOperator(equivalenceSymbol, 2.0);
     fg.addOperator(sinceSymbol, 2.0);
-    fg.addOperatorWithInterval(untilSymbol, 2.0, 0, 3, 10, 30);
+    fg.addOperatorWithInterval(untilSymbol, 2.0, 0, 3, 5, 10);
     fg.addOperator(globallySymbol, 2.0);
 
-    auto f = fg.generateFormula(7);
+    //auto f = fg.generateFormula(7);
+    auto f = fg.generateFormula(4);
     std::cout << f.to_string() << std::endl;
 
     EXPECT_TRUE(true);
