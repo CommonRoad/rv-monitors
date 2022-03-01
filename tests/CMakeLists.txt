@@ -19,6 +19,7 @@ set(RV_MONITOR_TEST_SRC_FILES
         rv_algorithms/dynamic_programming/test_dynamic_programming_ltl.cpp
         rv_algorithms/event_consuming/test_event_consuming_future.cpp
         rv_algorithms/event_consuming/test_event_consuming_past.cpp
+        rv_algorithms/mtl_event_consuming/test_mtl_event_consuming.cpp
         rv_algorithms/mt_fsm/test_mt_fsm_evaluation_future.cpp
         rv_algorithms/mt_fsm/test_mt_fsm_evaluation_past.cpp
         rv_algorithms/hydra_2/hydra_test_utils.cpp
@@ -40,6 +41,13 @@ set(RV_MONITOR_TEST_SRC_FILES
         rewriting/test_basic_rewrite_visitor.cpp
         rewriting/test_rewrite_visitor.cpp
         utils/test_lazy_bool.cpp
+        utils/generators/formula_generator/test_formula_generator.cpp
+        utils/generators/formula_generator/test_formula_generator.cpp
+        utils/generators/trace_generator/test_trace_generator.cpp
+        utils/generators/trace_generator/test_trace_generator.cpp
+        utils/generators/computation_time_generator/test_computation_time_generator.cpp
+        utils/generators/computation_time_generator/test_computation_time_generator.cpp
+
         )
 
 

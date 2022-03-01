@@ -1,7 +1,7 @@
 //
-// Created by Sebastian Maierhofer.
+// Created by Sebastian Maierhofer and Evald Nexhipi.
 // Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
+// Copyright (c) 2021 Technical University of Munich. All rights reserved.
 // Credits: BMW Car@TUM
 //
 #pragma once
@@ -15,7 +15,7 @@
  */
 class MTLEventConsuming : public MonitorInterface {
   public:
-    MTLEventConsuming(const Formula &formula);
+    MTLEventConsuming(const std::vector<Formula> &formulas);
     /**
      * Evaluation function for monitor algorithms.
      *

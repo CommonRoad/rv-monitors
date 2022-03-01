@@ -5,8 +5,7 @@
 // Credits: BMW Car@TUM
 //
 #pragma once
-
-#include "monitors/rv_algorithms/hydra_2/hydra_monitors/hydra_monitor.h"
+#include "hydra_monitor.h"
 
 class AndMonitor : public HydraMonitor {
   public:

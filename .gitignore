@@ -1,7 +1,6 @@
 .idea
 cmake-*/
-build/
-/build-cpp/
+build-*/
 
 rvmonitors_test
 rvmonitors_test_coverage

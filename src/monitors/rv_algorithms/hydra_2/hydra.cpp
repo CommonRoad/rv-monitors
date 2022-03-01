@@ -1,5 +1,5 @@
 #include "hydra.h"
-#include "../../rewriting/mtl_rewrite_visitor.h"
+#include "../../rewriting/hydra_rewrite_visitor.h"
 #include "hydra_creation_visitor.h"
 #include "monitors/expression_tree/unary/temporal/globally.h"
 #include <iostream>
@@ -53,7 +53,7 @@ void Hydra::createMonitor(const std::vector<Formula> &formulas, bool connectedEv
         auto formulaCopy{form.deepCopy()};
         if (auto globally = std::dynamic_pointer_cast<Globally>(formulaCopy.getExpr()))
             formulaCopy = Formula(globally->getLeft());
-        MtlRewriteVisitor rwv;
+        HydraRewriteVisitor rwv;
         rwv.rewrite(formulaCopy);
         formulaCopy.setId(form.getId());
 

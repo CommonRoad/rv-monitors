@@ -8,7 +8,7 @@
 
 #include <utility>
 
-#include "monitors/rv_algorithms/hydra_2/hydra_monitors/hydra_monitor.h"
+#include "hydra_monitor.h"
 
 class UntilMonitor : public HydraMonitor {
   public:
