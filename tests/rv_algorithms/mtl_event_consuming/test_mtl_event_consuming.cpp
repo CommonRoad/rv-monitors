@@ -33,7 +33,7 @@ TEST(TestMTL, weakNext) {
 }
 
 TEST(TestMTL, satisfied2) {
-    Trace trace = Utils::createTrace({"a", "b"}, { {"a"}, {"b"}});
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"b"}});
     Formula formula = Parser::parse("G(a -> F[2, 5](b))");
     auto monitor{MTLEventConsuming({formula})};
     EXPECT_FALSE(monitor.evaluate(trace)[formula.getId()].at(0).b);
@@ -375,7 +375,7 @@ TEST(TestMTL, satisfiedSingleUntilExtra4) {
 }
 
 TEST(TestMTL, satisfiedSingleUntilExtraTest4) {
-    Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"b"}, {"a"}, {"b"} });
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"b"}, {"a"}, {"b"}});
     Formula formula = Parser::parse("a U[0, 2] b");
     auto monitor{MTLEventConsuming({formula})};
     EXPECT_TRUE(monitor.evaluate(trace)[formula.getId()].at(0).b);
@@ -619,14 +619,24 @@ TEST(TESTMTL, satisfiedGloballyAsUntil) {
 }
 
 TEST(TESTMTL, satisfiedGlobally3) {
-    Trace trace = Utils::createTrace({"a", "b"}, {{"a,""b"},{"a", "b"},{"a", "b"},{"a", "b"},{"a", "b"}});
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a,"
+                                                   "b"},
+                                                  {"a", "b"},
+                                                  {"a", "b"},
+                                                  {"a", "b"},
+                                                  {"a", "b"}});
     Formula formula = Parser::parse("G[1,2](a & b)");
     auto monitor{MTLEventConsuming({formula})};
     EXPECT_TRUE(monitor.evaluate(trace)[formula.getId()].at(0).b);
 }
 
 TEST(TESTMTL, satisfiedGloballyAsUntil2) {
-    Trace trace = Utils::createTrace({"a", "b"}, {{"a,""b"},{"a", "b"},{"a", "b"},{"a", "b"},{"a", "b"}});
+    Trace trace = Utils::createTrace({"a", "b"}, {{"a,"
+                                                   "b"},
+                                                  {"a", "b"},
+                                                  {"a", "b"},
+                                                  {"a", "b"},
+                                                  {"a", "b"}});
     Formula formula = Parser::parse("!((true) U[1,2] (!(a & b)))");
     auto monitor{MTLEventConsuming({formula})};
     EXPECT_TRUE(monitor.evaluate(trace)[formula.getId()].at(0).b);

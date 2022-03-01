@@ -6,11 +6,11 @@
 //
 
 #include "monitors/parser/parser.h"
+#include "monitors/rv_algorithms/btt_fsm/btt_fsm.h"
+#include "monitors/rv_algorithms/dynamic_programming/dynamic.h"
 #include "monitors/rv_algorithms/hydra_2/hydra.h"
 #include "monitors/rv_algorithms/ltl_event_consuming/event_consuming.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
-#include "monitors/rv_algorithms/btt_fsm/btt_fsm.h"
-#include "monitors/rv_algorithms/dynamic_programming/dynamic.h"
 #include "monitors/rv_algorithms/mtl_event_consuming/mtl_event_consuming.h"
 #include "monitors/trace/trace.h"
 #include "monitors/utils/generators/computation_time_generator/computation_time_generator.h"
@@ -21,7 +21,6 @@
 #include <iostream>
 #include <random>
 #include <thread>
-
 
 typedef std::mt19937 MyRNG;
 uint32_t seed_val = 123456789;
@@ -248,7 +247,7 @@ double evaluateSingleHydra(const Formula &formula, Trace &trace) {
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 }
 
-double executeEvaluateHydra(const Formula &formulas, size_t numExecutions, Trace &trace,  std::ofstream &out) {
+double executeEvaluateHydra(const Formula &formulas, size_t numExecutions, Trace &trace, std::ofstream &out) {
     std::vector<double> avgCompTime;
     for (size_t i{0}; i < numExecutions; ++i) {
         avgCompTime.push_back(evaluateSingleHydra(formulas, trace));
@@ -262,7 +261,7 @@ double executeEvaluateHydra(const Formula &formulas, size_t numExecutions, Trace
     return result;
 }
 
-double evaluateMTLSingle(const Formula &formula, Trace &trace){
+double evaluateMTLSingle(const Formula &formula, Trace &trace) {
     auto monitor{MTLEventConsuming({formula})};
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     monitor.evaluate(trace);
@@ -271,7 +270,7 @@ double evaluateMTLSingle(const Formula &formula, Trace &trace){
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 }
 
-double executeEvaluateMTL(const Formula &formula, size_t numExecutions, Trace &trace,  std::ofstream &out) {
+double executeEvaluateMTL(const Formula &formula, size_t numExecutions, Trace &trace, std::ofstream &out) {
     std::vector<double> avgCompTime;
     for (size_t i{0}; i < numExecutions; ++i) {
         avgCompTime.push_back(evaluateMTLSingle(formula, trace));
@@ -285,7 +284,7 @@ double executeEvaluateMTL(const Formula &formula, size_t numExecutions, Trace &t
     return result;
 }
 
-double evaluateLTLSingle(const Formula &formula, Trace &trace){
+double evaluateLTLSingle(const Formula &formula, Trace &trace) {
     auto monitor{EventConsumingLTL({formula})};
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     monitor.evaluate(trace);
@@ -294,7 +293,7 @@ double evaluateLTLSingle(const Formula &formula, Trace &trace){
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 }
 
-double executeEvaluateLTL(const Formula &formula, size_t numExecutions, Trace &trace,  std::ofstream &out) {
+double executeEvaluateLTL(const Formula &formula, size_t numExecutions, Trace &trace, std::ofstream &out) {
     std::vector<double> avgCompTime;
     for (size_t i{0}; i < numExecutions; ++i) {
         avgCompTime.push_back(evaluateLTLSingle(formula, trace));
@@ -309,7 +308,7 @@ double executeEvaluateLTL(const Formula &formula, size_t numExecutions, Trace &t
     return result;
 }
 
-double evaluateMTFsmSingle(const Formula &formula, Trace &trace){
+double evaluateMTFsmSingle(const Formula &formula, Trace &trace) {
     auto monitor{MtFsm({formula})};
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     monitor.evaluate(trace);
@@ -318,7 +317,7 @@ double evaluateMTFsmSingle(const Formula &formula, Trace &trace){
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 }
 
-double executeEvaluateMTFsm(const Formula &formula, size_t numExecutions, Trace &trace,  std::ofstream &out) {
+double executeEvaluateMTFsm(const Formula &formula, size_t numExecutions, Trace &trace, std::ofstream &out) {
     std::vector<double> avgCompTime;
     for (size_t i{0}; i < numExecutions; ++i) {
         avgCompTime.push_back(evaluateMTFsmSingle(formula, trace));
@@ -332,7 +331,7 @@ double executeEvaluateMTFsm(const Formula &formula, size_t numExecutions, Trace 
     return result;
 }
 
-double evaluateBTTFsmSingle(const Formula &formula, Trace &trace){
+double evaluateBTTFsmSingle(const Formula &formula, Trace &trace) {
     auto monitor{BttFsm({formula})};
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     monitor.evaluate(trace);
@@ -341,7 +340,7 @@ double evaluateBTTFsmSingle(const Formula &formula, Trace &trace){
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 }
 
-double executeEvaluateBTTFsm(const Formula &formulas, size_t numExecutions, Trace &trace,  std::ofstream &out) {
+double executeEvaluateBTTFsm(const Formula &formulas, size_t numExecutions, Trace &trace, std::ofstream &out) {
     std::vector<double> avgCompTime;
     for (size_t i{0}; i < numExecutions; ++i) {
         avgCompTime.push_back(evaluateBTTFsmSingle(formulas, trace));
@@ -355,7 +354,7 @@ double executeEvaluateBTTFsm(const Formula &formulas, size_t numExecutions, Trac
     return result;
 }
 
-double evaluateDynamicLTLSingle(const Formula &formula, Trace &trace){
+double evaluateDynamicLTLSingle(const Formula &formula, Trace &trace) {
     auto monitor{DynamicProgrammingLTL({formula})};
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     monitor.evaluate(trace);
@@ -364,7 +363,7 @@ double evaluateDynamicLTLSingle(const Formula &formula, Trace &trace){
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 }
 
-double executeEvaluateDynamicLTL(const Formula &formula, size_t numExecutions, Trace &trace,  std::ofstream &out) {
+double executeEvaluateDynamicLTL(const Formula &formula, size_t numExecutions, Trace &trace, std::ofstream &out) {
     std::vector<double> avgCompTime;
     for (size_t i{0}; i < numExecutions; ++i) {
         avgCompTime.push_back(evaluateDynamicLTLSingle(formula, trace));
@@ -379,8 +378,7 @@ double executeEvaluateDynamicLTL(const Formula &formula, size_t numExecutions, T
 }
 
 void createFormulasAndTracesFromPredicates(std::vector<std::vector<std::shared_ptr<Expression>> *> &allPredicates,
-                                           FormulaGenerator &formulaGenerator,
-                                           TraceGenerator &traceGenerator,
+                                           FormulaGenerator &formulaGenerator, TraceGenerator &traceGenerator,
                                            std::vector<size_t> formulaSizes, std::vector<size_t> traceSizes,
                                            size_t maxPredicateFormulaWeight, size_t maxPredicateTraceWeight,
                                            std::vector<Formula> &generatedFormulas,
@@ -408,12 +406,14 @@ void createFormulasAndTracesFromPredicates(std::vector<std::vector<std::shared_p
             ++index;
         }
     } else {
-        throw std::logic_error("eval_performance::createFormulasAndTracesFromPredicates: "
-                               "The number of entries for the formula and trace sizes should match the number of delays!");
+        throw std::logic_error(
+            "eval_performance::createFormulasAndTracesFromPredicates: "
+            "The number of entries for the formula and trace sizes should match the number of delays!");
     }
 };
 
-void testFormulasOnTraces(std::vector<Formula> &formulas, std::vector<Trace> &traces, size_t numExecutions,  std::ofstream &out) {
+void testFormulasOnTraces(std::vector<Formula> &formulas, std::vector<Trace> &traces, size_t numExecutions,
+                          std::ofstream &out) {
     if (formulas.size() == traces.size()) {
         size_t iterations = formulas.size();
 
@@ -422,30 +422,45 @@ void testFormulasOnTraces(std::vector<Formula> &formulas, std::vector<Trace> &tr
             averageResults[i] = 0;
 
         /* Uncomment the monitors you'd like to use in the performance evaluation */
-        for (size_t iterIndex{0}; iterIndex < iterations; ++iterIndex){
-            out<<"Formula["<<iterIndex<<"]: "<<formulas.at(iterIndex).to_string()<<std::endl;
-            out<<"Trace Length: "<<traces.at(iterIndex).getLength()<<std::endl;
+        for (size_t iterIndex{0}; iterIndex < iterations; ++iterIndex) {
+            out << "Formula[" << iterIndex << "]: " << formulas.at(iterIndex).to_string() << std::endl;
+            out << "Trace Length: " << traces.at(iterIndex).getLength() << std::endl;
             averageResults[0] += executeEvaluateMTL(formulas.at(iterIndex), numExecutions, traces.at(iterIndex), out);
-            //averageResults[1] += executeEvaluateMTFsm(formulas.at(iterIndex), numExecutions, traces.at(iterIndex), out);
-            //averageResults[2] += executeEvaluateDynamicLTL(formulas.at(iterIndex), numExecutions, traces.at(iterIndex), out);
-            //averageResults[3] += executeEvaluateLTL(formulas.at(iterIndex), numExecutions, traces.at(iterIndex), out);
+            // averageResults[1] += executeEvaluateMTFsm(formulas.at(iterIndex), numExecutions, traces.at(iterIndex),
+            // out); averageResults[2] += executeEvaluateDynamicLTL(formulas.at(iterIndex), numExecutions,
+            // traces.at(iterIndex), out); averageResults[3] += executeEvaluateLTL(formulas.at(iterIndex), numExecutions,
+            // traces.at(iterIndex), out);
             averageResults[4] += executeEvaluateHydra(formulas.at(iterIndex), numExecutions, traces.at(iterIndex), out);
-            // averageResults[5] += executeEvaluateBTTFsm(formulas.at(iterIndex), numExecutions, traces.at(iterIndex), out);
-            out<<std::endl;
+            // averageResults[5] += executeEvaluateBTTFsm(formulas.at(iterIndex), numExecutions, traces.at(iterIndex),
+            // out);
+            out << std::endl;
         }
 
         for (size_t i{0}; i < 5; ++i) {
             averageResults[i] = averageResults[i] / iterations;
             switch (i) {
-            case 0: out<<"[MTL]"; break;
-            case 1: out<<"[MTFsm]"; break;
-            case 2: out<<"[DynamicLTL]"; break;
-            case 3: out<<"[LTL]"; break;
-            case 4: out<<"[Hydra]"; break;
-            case 5: out<<"[BTTFsm]"; break;
-            default: out<<"[Unkown RV Algorithm]";
+            case 0:
+                out << "[MTL]";
+                break;
+            case 1:
+                out << "[MTFsm]";
+                break;
+            case 2:
+                out << "[DynamicLTL]";
+                break;
+            case 3:
+                out << "[LTL]";
+                break;
+            case 4:
+                out << "[Hydra]";
+                break;
+            case 5:
+                out << "[BTTFsm]";
+                break;
+            default:
+                out << "[Unkown RV Algorithm]";
             }
-            out<<" Averaged Running Time: "<<averageResults[i]<<std::endl;
+            out << " Averaged Running Time: " << averageResults[i] << std::endl;
         }
 
     } else {
@@ -477,27 +492,60 @@ int main() {
     std::ofstream outStream;
     outStream.open("eval_performance_results.txt");
 
-    std::cout<<"Type in the number of the corresponding test"<<std::endl;
-    std::cout<<"[1] Mixed Operators, Large Formula Sizes "<<std::endl;
-    std::cout<<"[2] Simple Operators, Large Trace Sizes "<<std::endl;
-    std::cout<<"[3] Mixed Operators, Large Trace Sizes "<<std::endl;
-    std::cout<<"[4] Simple Operators, Large Formula Sizes "<<std::endl;
-    std::cout<<"[5] Small Intervals, Small Trace Sizes "<<std::endl;
-    std::cout<<"[6] Large Intervals, Small Trace Sizes "<<std::endl;
-    std::cout<<"[7] Small Intervals, Large Trace Sizes "<<std::endl;
-    std::cout<<"[8] Large Intervals, Large Trace Sizes "<<std::endl;
-    std::cin>>testNumber;
+    std::cout << "Type in the number of the corresponding test" << std::endl;
+    std::cout << "[1] Mixed Operators, Large Formula Sizes " << std::endl;
+    std::cout << "[2] Simple Operators, Large Trace Sizes " << std::endl;
+    std::cout << "[3] Mixed Operators, Large Trace Sizes " << std::endl;
+    std::cout << "[4] Simple Operators, Large Formula Sizes " << std::endl;
+    std::cout << "[5] Small Intervals, Small Trace Sizes " << std::endl;
+    std::cout << "[6] Large Intervals, Small Trace Sizes " << std::endl;
+    std::cout << "[7] Small Intervals, Large Trace Sizes " << std::endl;
+    std::cout << "[8] Large Intervals, Large Trace Sizes " << std::endl;
+    std::cin >> testNumber;
 
-    switch(testNumber){
-    case 1: std::cout<<"Test [1] running..."<<std::endl; test_1(outStream); std::cout<<"Test Finished! Check results in eval_performance_results.txt"; break;
-    case 2: std::cout<<"Test [2] running..."<<std::endl; test_2(outStream); std::cout<<"Test Finished! Check results in eval_performance_results.txt"; break;
-    case 3: std::cout<<"Test [3] running..."<<std::endl; test_3(outStream); std::cout<<"Test Finished! Check results in eval_performance_results.txt"; break;
-    case 4: std::cout<<"Test [4] running..."<<std::endl; test_4(outStream); std::cout<<"Test Finished! Check results in eval_performance_results.txt"; break;
-    case 5: std::cout<<"Test [5] running..."<<std::endl; test_5(outStream); std::cout<<"Test Finished! Check results in eval_performance_results.txt"; break;
-    case 6: std::cout<<"Test [6] running..."<<std::endl; test_6(outStream); std::cout<<"Test Finished! Check results in eval_performance_results.txt"; break;
-    case 7: std::cout<<"Test [7] running..."<<std::endl; test_7(outStream); std::cout<<"Test Finished! Check results in eval_performance_results.txt"; break;
-    case 8: std::cout<<"Test [8] running..."<<std::endl; test_8(outStream); std::cout<<"Test Finished! Check results in eval_performance_results.txt"; break;
-    default: std::cout<<"Unkown Test!";
+    switch (testNumber) {
+    case 1:
+        std::cout << "Test [1] running..." << std::endl;
+        test_1(outStream);
+        std::cout << "Test Finished! Check results in eval_performance_results.txt";
+        break;
+    case 2:
+        std::cout << "Test [2] running..." << std::endl;
+        test_2(outStream);
+        std::cout << "Test Finished! Check results in eval_performance_results.txt";
+        break;
+    case 3:
+        std::cout << "Test [3] running..." << std::endl;
+        test_3(outStream);
+        std::cout << "Test Finished! Check results in eval_performance_results.txt";
+        break;
+    case 4:
+        std::cout << "Test [4] running..." << std::endl;
+        test_4(outStream);
+        std::cout << "Test Finished! Check results in eval_performance_results.txt";
+        break;
+    case 5:
+        std::cout << "Test [5] running..." << std::endl;
+        test_5(outStream);
+        std::cout << "Test Finished! Check results in eval_performance_results.txt";
+        break;
+    case 6:
+        std::cout << "Test [6] running..." << std::endl;
+        test_6(outStream);
+        std::cout << "Test Finished! Check results in eval_performance_results.txt";
+        break;
+    case 7:
+        std::cout << "Test [7] running..." << std::endl;
+        test_7(outStream);
+        std::cout << "Test Finished! Check results in eval_performance_results.txt";
+        break;
+    case 8:
+        std::cout << "Test [8] running..." << std::endl;
+        test_8(outStream);
+        std::cout << "Test Finished! Check results in eval_performance_results.txt";
+        break;
+    default:
+        std::cout << "Unkown Test!";
     }
     outStream.close();
 }
@@ -603,8 +651,8 @@ void test_1(std::ofstream &out) {
     std::vector<Formula> generatedFormulas{};
     std::vector<Trace> generatedTraces{};
 
-    createFormulasAndTracesFromPredicates(allPredicates, formulaGenerator, traceGenerator, {5, 10, 15, 20}, {10, 10, 10, 10},
-                                          5, 5, generatedFormulas, generatedTraces);
+    createFormulasAndTracesFromPredicates(allPredicates, formulaGenerator, traceGenerator, {5, 10, 15, 20},
+                                          {10, 10, 10, 10}, 5, 5, generatedFormulas, generatedTraces);
 
     size_t numExecutions{5};
     testFormulasOnTraces(generatedFormulas, generatedTraces, numExecutions, out);
@@ -791,8 +839,8 @@ void test_4(std::ofstream &out) {
     std::vector<Formula> generatedFormulas{};
     std::vector<Trace> generatedTraces{};
 
-    createFormulasAndTracesFromPredicates(allPredicates, formulaGenerator, traceGenerator, {5, 10, 15}, {10, 10, 10},
-                                          5, 5, generatedFormulas, generatedTraces);
+    createFormulasAndTracesFromPredicates(allPredicates, formulaGenerator, traceGenerator, {5, 10, 15}, {10, 10, 10}, 5,
+                                          5, generatedFormulas, generatedTraces);
 
     size_t numExecutions{1};
     testFormulasOnTraces(generatedFormulas, generatedTraces, numExecutions, out);
@@ -857,8 +905,8 @@ void test_5(std::ofstream &out) {
     std::vector<Formula> generatedFormulas{};
     std::vector<Trace> generatedTraces{};
 
-    createFormulasAndTracesFromPredicates(allPredicates, formulaGenerator, traceGenerator, {5, 4, 3}, {10, 30, 50},
-                                          5, 5, generatedFormulas, generatedTraces);
+    createFormulasAndTracesFromPredicates(allPredicates, formulaGenerator, traceGenerator, {5, 4, 3}, {10, 30, 50}, 5,
+                                          5, generatedFormulas, generatedTraces);
 
     size_t numExecutions{10};
     testFormulasOnTraces(generatedFormulas, generatedTraces, numExecutions, out);
@@ -879,9 +927,9 @@ void test_6(std::ofstream &out) {
     formulaGenerator.addOperator(implicationSymbol, 2.0);
     formulaGenerator.addOperator(notSymbol, 2.0);
     formulaGenerator.addOperatorWithInterval(untilSymbol, 3.0, 0, 1, 10, 30);
-     formulaGenerator.addOperatorWithInterval(sinceSymbol, 3.0, 0, 1, 10, 30);
+    formulaGenerator.addOperatorWithInterval(sinceSymbol, 3.0, 0, 1, 10, 30);
     formulaGenerator.addOperatorWithInterval(futureSymbol, 1.0, 0, 1, 10, 30);
-     formulaGenerator.addOperatorWithInterval(onceSymbol, 1.0, 0, 1, 10, 30);
+    formulaGenerator.addOperatorWithInterval(onceSymbol, 1.0, 0, 1, 10, 30);
 
     std::vector<std::vector<std::shared_ptr<Expression>> *> allPredicates;
 
@@ -923,8 +971,8 @@ void test_6(std::ofstream &out) {
     std::vector<Formula> generatedFormulas{};
     std::vector<Trace> generatedTraces{};
 
-    createFormulasAndTracesFromPredicates(allPredicates, formulaGenerator, traceGenerator, {5, 4, 3}, {10, 30, 50},
-                                          5, 5, generatedFormulas, generatedTraces);
+    createFormulasAndTracesFromPredicates(allPredicates, formulaGenerator, traceGenerator, {5, 4, 3}, {10, 30, 50}, 5,
+                                          5, generatedFormulas, generatedTraces);
     size_t numExecutions{10};
     testFormulasOnTraces(generatedFormulas, generatedTraces, numExecutions, out);
 }

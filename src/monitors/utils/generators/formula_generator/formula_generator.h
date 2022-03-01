@@ -267,10 +267,9 @@ class FormulaGenerator {
      * @param tEnd end time of the operator
      * @return a binary expression with interval
      */
-    static std::shared_ptr<Expression> generateBinaryExpressionWithInterval(const std::string &op,
-                                                                            const std::shared_ptr<Expression> &exprLeft,
-                                                                            const std::shared_ptr<Expression> &exprRight,
-                                                                            size_t tStart, size_t tEnd);
+    static std::shared_ptr<Expression>
+    generateBinaryExpressionWithInterval(const std::string &op, const std::shared_ptr<Expression> &exprLeft,
+                                         const std::shared_ptr<Expression> &exprRight, size_t tStart, size_t tEnd);
 
     /**
      * Helper function to generate Binary Expression without Interval
@@ -279,9 +278,9 @@ class FormulaGenerator {
      * @param exprRight expression on the right
      * @return a binary expression without interval
      */
-    static std::shared_ptr<Expression> generateBinaryExpressionWithoutInterval(const std::string &op,
-                                                                               const std::shared_ptr<Expression> &exprLeft,
-                                                                               const std::shared_ptr<Expression> &exprRight);
+    static std::shared_ptr<Expression>
+    generateBinaryExpressionWithoutInterval(const std::string &op, const std::shared_ptr<Expression> &exprLeft,
+                                            const std::shared_ptr<Expression> &exprRight);
     /**
      * Generates either an atom or predicate
      * @return an atom or predicate
@@ -293,7 +292,7 @@ class FormulaGenerator {
      * @param pos index in the operators vector
      */
     void pickOperator(size_t &pos);
-    
+
     /**
      * Expression is generated based on the given number of operators
      * @param nrOperators number of operators to be added in the Formula

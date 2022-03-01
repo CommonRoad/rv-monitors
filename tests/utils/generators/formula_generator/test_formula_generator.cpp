@@ -29,7 +29,7 @@ TEST(TestFormulaGenerator, generalTest) {
     fg.addOperatorWithInterval(untilSymbol, 2.0, 0, 3, 5, 10);
     fg.addOperator(globallySymbol, 2.0);
 
-    //auto f = fg.generateFormula(7);
+    // auto f = fg.generateFormula(7);
     auto f = fg.generateFormula(4);
     std::cout << f.to_string() << std::endl;
 

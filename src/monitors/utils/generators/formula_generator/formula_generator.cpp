@@ -69,10 +69,9 @@ FormulaGenerator::generateUnaryExpressionWithoutInterval(const std::string &op,
         throw std::logic_error("FormulaGenerator::generateUnaryExpressionWithoutInterval: Unknown operator!");
 }
 
-std::shared_ptr<Expression> FormulaGenerator::generateBinaryExpressionWithInterval(const std::string &op,
-                                                                                      const std::shared_ptr<Expression> &exprLeft,
-                                                                                      const std::shared_ptr<Expression> &exprRight,
-                                                                                      size_t tStart, size_t tEnd) {
+std::shared_ptr<Expression> FormulaGenerator::generateBinaryExpressionWithInterval(
+    const std::string &op, const std::shared_ptr<Expression> &exprLeft, const std::shared_ptr<Expression> &exprRight,
+    size_t tStart, size_t tEnd) {
     if (op == sinceSymbol)
         return std::make_shared<Since>(exprRight, exprLeft, std::make_shared<Interval>(tStart, tEnd));
     else if (op == untilSymbol)
@@ -83,9 +82,8 @@ std::shared_ptr<Expression> FormulaGenerator::generateBinaryExpressionWithInterv
         throw std::logic_error("FormulaGenerator::generateBinaryExpressionWithInterval: Unknown operator!");
 }
 
-std::shared_ptr<Expression> FormulaGenerator::generateBinaryExpressionWithoutInterval(const std::string &op,
-                                                                       const std::shared_ptr<Expression> &exprLeft,
-                                                                       const std::shared_ptr<Expression> &exprRight) {
+std::shared_ptr<Expression> FormulaGenerator::generateBinaryExpressionWithoutInterval(
+    const std::string &op, const std::shared_ptr<Expression> &exprLeft, const std::shared_ptr<Expression> &exprRight) {
     if (op == andSymbol)
         return std::make_shared<And>(
             std::set<std::shared_ptr<Expression>, NaryInterface::SharedPtrExprCompare>{exprLeft, exprRight});

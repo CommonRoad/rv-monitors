@@ -33,8 +33,7 @@ std::map<std::string, std::vector<Verdict>> MTLEventConsuming::evaluate(Trace &t
     if (auto globalExpr = std::dynamic_pointer_cast<Globally>(formulaCopy.getExpr())) {
         if (globalExpr->getInterval()->isFinite())
             formulaCopy.setExpr(std::make_shared<Globally>(formulaCopy.getExpr()));
-    }
-    else {
+    } else {
         formulaCopy.setExpr(std::make_shared<Globally>(formulaCopy.getExpr()));
     }
     rw.rewrite(formulaCopy);
