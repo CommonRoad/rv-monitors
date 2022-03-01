@@ -428,8 +428,8 @@ void testFormulasOnTraces(std::vector<Formula> &formulas, std::vector<Trace> &tr
             averageResults[0] += executeEvaluateMTL(formulas.at(iterIndex), numExecutions, traces.at(iterIndex), out);
             // averageResults[1] += executeEvaluateMTFsm(formulas.at(iterIndex), numExecutions, traces.at(iterIndex),
             // out); averageResults[2] += executeEvaluateDynamicLTL(formulas.at(iterIndex), numExecutions,
-            // traces.at(iterIndex), out); averageResults[3] += executeEvaluateLTL(formulas.at(iterIndex), numExecutions,
-            // traces.at(iterIndex), out);
+            // traces.at(iterIndex), out); averageResults[3] += executeEvaluateLTL(formulas.at(iterIndex),
+            // numExecutions, traces.at(iterIndex), out);
             averageResults[4] += executeEvaluateHydra(formulas.at(iterIndex), numExecutions, traces.at(iterIndex), out);
             // averageResults[5] += executeEvaluateBTTFsm(formulas.at(iterIndex), numExecutions, traces.at(iterIndex),
             // out);
