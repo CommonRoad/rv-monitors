@@ -33,4 +33,5 @@ class SinceMonitor : public HydraMonitor {
     HeadPos positionMonitorF, positionMonitorG;
     std::optional<std::pair<size_t, int>> lastSatisfaction;
     std::optional<std::pair<size_t, int>> lastViolation;
+    size_t stepNumberG{0};
 };
