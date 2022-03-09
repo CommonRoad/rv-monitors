@@ -10,7 +10,7 @@ Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     subVerdictF = subMonitorF->step(monitorId, stepNumber);
     if (subVerdictF->ts.has_value())
         positionMonitorF.update(subVerdictF->ts.value());
-    else if (!subVerdictF->b)
+    if (!subVerdictF->b)
         lastViolation = std::make_pair(positionMonitorF.ts, positionMonitorF.tp);
 
     if (positionMonitorG.tp == -1) {
