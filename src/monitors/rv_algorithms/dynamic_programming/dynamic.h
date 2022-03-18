@@ -32,7 +32,7 @@ class DynamicProgrammingLTL : public MonitorInterface {
      * @param eventMap Map of events with truth values of all predicates.
      * @param subformulas Vector of all subformulas of the formula to be verified.
      */
-    void initialize(size_t j, std::vector<bool> &initVector, std::map<std::string, lazy_bool> &eventMap,
+    void initialize(size_t j, std::vector<bool> &initVector, event_map_t &eventMap,
                     const std::vector<std::shared_ptr<Expression>> &subformulas);
 
     /**
@@ -44,7 +44,7 @@ class DynamicProgrammingLTL : public MonitorInterface {
      * @param subformulas Vector of all subformulas of the formula to be verified.
      */
     void update(size_t j, std::vector<bool> &updateVector, std::vector<bool> oldVector,
-                std::map<std::string, lazy_bool> &eventMap,
+                event_map_t &eventMap,
                 const std::vector<std::shared_ptr<Expression>> &subformulas);
 
     /**

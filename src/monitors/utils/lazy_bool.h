@@ -9,8 +9,8 @@
 class lazy_bool {
 
   private:
-    bool value{false};
-    bool initialized{false};
+    mutable bool value{false};
+    mutable bool initialized{false};
     std::function<bool()> valueFetcher{};
 
   public:
@@ -28,6 +28,12 @@ class lazy_bool {
      */
     explicit lazy_bool(std::function<bool()> valueFetcher);
 
+    lazy_bool(const lazy_bool&) = default;
+    lazy_bool(lazy_bool&&) noexcept = default;
+
+    lazy_bool& operator=(const lazy_bool&) = default;
+    lazy_bool& operator=(lazy_bool&&) noexcept = default;
+
     /**
      * Implicit cast to bool that fetches the value if necessary.
      * @return
@@ -38,7 +44,7 @@ class lazy_bool {
      * Fetches the value.
      * @return value
      */
-    bool get();
+    bool get() const;
 
     /**
      * Const to_string that indicates the value or not-initialized.

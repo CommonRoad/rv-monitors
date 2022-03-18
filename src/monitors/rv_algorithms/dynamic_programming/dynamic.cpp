@@ -19,7 +19,7 @@ DynamicProgrammingLTL::DynamicProgrammingLTL(const std::vector<Formula> &formula
     : MonitorInterface((formulas)), pastEvaluation(pastEvaluation) {}
 
 void DynamicProgrammingLTL::initialize(size_t j, std::vector<bool> &initVector,
-                                       std::map<std::string, lazy_bool> &eventMap,
+                                       event_map_t &eventMap,
                                        const std::vector<std::shared_ptr<Expression>> &subformulas) {
     // Atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(subformulas[j])) {
@@ -72,7 +72,7 @@ void DynamicProgrammingLTL::initialize(size_t j, std::vector<bool> &initVector,
 }
 
 void DynamicProgrammingLTL::update(size_t j, std::vector<bool> &updateVector, std::vector<bool> oldVector,
-                                   std::map<std::string, lazy_bool> &eventMap,
+                                   event_map_t &eventMap,
                                    const std::vector<std::shared_ptr<Expression>> &subformulas) {
     // Atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(subformulas[j])) {
@@ -136,7 +136,7 @@ std::map<std::string, std::vector<Verdict>> DynamicProgrammingLTL::evaluate(Trac
 std::vector<bool> DynamicProgrammingLTL::initializePre(Event &event,
                                                        const std::vector<std::shared_ptr<Expression>> &subformulas) {
     std::vector<bool> pre;
-    std::map<std::string, lazy_bool> eventMap = event.getEventMap();
+    event_map_t eventMap = event.getEventMap();
     pre.resize(subformulas.size());
     // Fill pre backwards
     for (size_t j = subformulas.size() - 1; j < subformulas.size(); --j) {
@@ -161,7 +161,7 @@ std::vector<bool> DynamicProgrammingLTL::updateNowPast(Event &event,
                                                        const std::vector<bool> &pre) {
     std::vector<bool> now;
     now.resize(pre.size());
-    std::map<std::string, lazy_bool> eventMap = event.getEventMap();
+    event_map_t eventMap = event.getEventMap();
 
     // j >= 0 && j < subformulas.size() to avoid underflow
     for (size_t j = subformulas.size() - 1; j < subformulas.size(); --j) {
@@ -203,7 +203,7 @@ bool DynamicProgrammingLTL::checkTraceDynamicallyPast(Trace &trace) {
 std::vector<bool> DynamicProgrammingLTL::initializeNext(Event &event,
                                                         const std::vector<std::shared_ptr<Expression>> &subformulas) {
     std::vector<bool> next;
-    std::map<std::string, lazy_bool> eventMap = event.getEventMap();
+    event_map_t eventMap = event.getEventMap();
     next.resize(subformulas.size());
     // Fill next backwards
     for (size_t j = subformulas.size() - 1; j < subformulas.size(); --j) {
@@ -240,7 +240,7 @@ std::vector<bool> DynamicProgrammingLTL::updateNowFuture(Event &event,
                                                          const std::vector<bool> &next) {
     std::vector<bool> now;
     now.resize(next.size());
-    std::map<std::string, lazy_bool> eventMap = event.getEventMap();
+    event_map_t eventMap = event.getEventMap();
 
     // j >= 0 && j < subformulas.size() to avoid underflow
     for (size_t j = subformulas.size() - 1; j < subformulas.size(); --j) {

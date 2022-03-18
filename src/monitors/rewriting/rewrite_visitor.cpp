@@ -29,9 +29,9 @@
 #include <iostream>
 
 void RewriteVisitor::rewrite(Formula &formula) {
-    std::map<std::string, lazy_bool> map;
+    event_map_t map;
     // Dummy eventMap
-    Event event(map, 0, false);
+    Event event(std::move(map), 0, false);
     auto trace = Trace(std::vector<Event>{event});
 
     auto before = Formula::deepCopy(formula.getExpr());
