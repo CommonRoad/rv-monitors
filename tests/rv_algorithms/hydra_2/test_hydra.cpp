@@ -90,7 +90,7 @@ TEST(TestHydra, testSingleSinceInfinity) {
                                      Verdict{13, true}, Verdict{13, true},  Verdict{13, false}, Verdict{13, false},
                                      Verdict{15, true}, Verdict{15, true},  Verdict{15, false}, Verdict{15, false},
                                      Verdict{16, true}, Verdict{16, false}, Verdict{16, false}, Verdict{16, false}};
-    TestHydra::evalHydra(trace, {formula}, {expSolution});
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestHydra, testSingleUntil1) {
