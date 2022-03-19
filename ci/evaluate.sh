@@ -41,12 +41,13 @@ function compare_output() {
         fi
         cp "$FML_FILE" "bug_${FID}.mdl"
 
-        printf "%bNOTE%b: In order to review this test case, run the following command after this job has finished:\n\t%s %s %s\n" \
+        printf "%bNOTE%b: In order to review this test case, first download the relevant formula and log files from the following URLs:\n\t%s\n\t%s\n then run the evaluation command like this:\n\trvmonitors_eval %s %s\n\n" \
             "${TEXT_BOLD}" \
             "${TEXT_RESET}" \
-            "rvmonitors_eval" \
             "\"${CI_JOB_URL}/${ARTIFACTS_PATH}/${FML_FILE}\"" \
-            "\"${CI_JOB_URL}/${ARTIFACTS_PATH}/${LOG_FILE}\""
+            "\"${CI_JOB_URL}/${ARTIFACTS_PATH}/${LOG_FILE}\"" \
+            "$(basename "$FML_FILE")" \
+            "$(basename "$LOG_FILE")"
     else
         printf "%bOK%b\n" \
             "${TEXT_RESET}${TEXT_GREEN}" \
@@ -59,13 +60,14 @@ function test_single() {
     local MAXR=${2}
     local SEED=${3}
     FID="${1}_${2}_${3}"
-    local LOG="logs/shared"
+    LOG="logs/shared"
     local APS=8
     # See gen_fmla sources for meaning of TYPE
     local TYPE=2
 
     FML_FILE="fmlas/z_${FID}.mdl"
     LOG_FILE="${LOG}.log"
+    ERROR_LOG_FILE="error.log"
 
     #gen_fmla PREFIX SIZE MAXR TYPE SCALE SEED APS
     ./gen_fmla "fmlas/z_${FID}" "${SIZE}" "${MAXR}" "${TYPE}" 1 "${SEED}" ${APS}
@@ -78,7 +80,8 @@ function test_single() {
 
     RVM_START="$(date +%s.%N)"
     if ! "$RVM_HYDRA_CMD" "$FML_FILE" "$LOG_FILE" \
-        > "output/z_${FID}.rvm_hydra"; then
+        > "output/z_${FID}.rvm_hydra" \
+        2>> "$ERROR_LOG_FILE"; then
         cp "$FML_FILE" "bug_${FID}.mdl"
         printf "Running %s failed on %s!\n" "$RVM_HYDRA_CMD" "$FML_FILE"
         return 1
@@ -87,7 +90,8 @@ function test_single() {
 
     HYDRA_START="$(date +%s.%N)"
     if ! $HYDRA_CMD "$FML_FILE" "$LOG_FILE" \
-        > "output/z_${FID}.hydra"; then
+        > "output/z_${FID}.hydra" \
+        2>> "$ERROR_LOG_FILE"; then
         cp "$FML_FILE" "bug_${FID}.mdl"
         printf "Running %s failed on %s!\n" "$HYDRA_CMD" "$FML_FILE"
         return 1
@@ -96,7 +100,9 @@ function test_single() {
     sed -i "/^[A-Z]/d" "output/z_${FID}.hydra"
 
     VYDRA_START="$(date +%s.%N)"
-    if ! $VYDRA_CMD -fmla "$FML_FILE" -log "$LOG_FILE" > "output/z_${FID}.vydra"; then
+    if ! $VYDRA_CMD -fmla "$FML_FILE" -log "$LOG_FILE" \
+        > "output/z_${FID}.vydra" \
+        2>> "$ERROR_LOG_FILE"; then
         cp "$FML_FILE" "bug_${FID}.mdl"
         printf "Running %s failed on %s!\n" "$VYDRA_CMD" "$FML_FILE"
         return 1

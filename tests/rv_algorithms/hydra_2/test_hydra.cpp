@@ -70,6 +70,29 @@ TEST(TestHydra, testSingleSince) {
     hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
+TEST(TestHydra, testSingleSinceInfinity) {
+    Trace trace =
+        Utils::createTrace({"a", "b"}, {{},         {"a"},      {"a"},      {"a"},      {},         {"a"}, {"b"},
+                                        {"a"},      {"a"},      {"a", "b"}, {"a", "b"}, {"a", "b"}, {"a"}, {"a", "b"},
+                                        {"a", "b"}, {"a", "b"}, {"a"},      {"a"},      {"a", "b"}, {"a"},
+
+                                        {"a", "b"}, {"a", "b"}, {"b"},      {"a", "b"}, {"a"},      {"a"}, {"b"},
+                                        {"b"},      {"a", "b"}, {},         {"b"},      {"a", "b"}},
+                           std::vector<size_t>{0,  0,  0,  0,  4,  4,  4,  4,  8,  8,  8,  8,  9,  9,  9,  9,
+                                               10, 10, 10, 10, 13, 13, 13, 13, 15, 15, 15, 15, 16, 16, 16, 16});
+    Formula formula = Parser::parse("(a)S[1, inf](b)");
+    formula.setId("R1");
+    std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{0, false},  Verdict{0, false},  Verdict{0, false},
+                                     Verdict{4, false}, Verdict{4, false},  Verdict{4, false},  Verdict{4, false},
+                                     Verdict{8, true},  Verdict{8, true},   Verdict{8, true},   Verdict{8, true},
+                                     Verdict{9, true},  Verdict{9, true},   Verdict{9, true},   Verdict{9, true},
+                                     Verdict{10, true}, Verdict{10, true},  Verdict{10, true},  Verdict{10, true},
+                                     Verdict{13, true}, Verdict{13, true},  Verdict{13, false}, Verdict{13, false},
+                                     Verdict{15, true}, Verdict{15, true},  Verdict{15, false}, Verdict{15, false},
+                                     Verdict{16, true}, Verdict{16, false}, Verdict{16, false}, Verdict{16, false}};
+    TestHydra::evalHydra(trace, {formula}, {expSolution});
+}
+
 TEST(TestHydra, testSingleUntil1) {
     Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"a"}, {"a"}, {"a", "b"}, {"a"}, {"b"}},
                                      std::vector<size_t>{0, 0, 2, 4, 5, 10});
