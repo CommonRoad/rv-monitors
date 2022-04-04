@@ -34,9 +34,9 @@ Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         }
     }
 
-    int v = static_cast<int>(lastSatisfaction && positionMonitorF.ts - lastSatisfaction->first <= to &&
-                             (!lastViolation || lastSatisfaction->second >= lastViolation->second));
-    return {positionMonitorF.ts, v != 0};
+    int verdict = static_cast<int>(lastSatisfaction && positionMonitorF.ts - lastSatisfaction->first <= to &&
+                                   (!lastViolation || lastSatisfaction->second >= lastViolation->second));
+    return {positionMonitorF.ts, verdict != 0};
 }
 void SinceMonitor::setTrace(const Trace &tra) {
     subMonitorF->setTrace(tra);
@@ -52,6 +52,7 @@ void SinceMonitor::reset() {
     lastViolation = {};
     positionMonitorG.reset();
     positionMonitorF.reset();
+    stepNumberG = 0;
 }
 std::string SinceMonitor::to_string() {
     std::string interval{" "};
