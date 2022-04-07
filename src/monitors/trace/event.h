@@ -28,8 +28,8 @@ class Event {
 
     Event(const Event&) = default;
     Event& operator=(const Event&) = default;
-    Event(Event&&) noexcept = default;
-    Event& operator=(Event&&) noexcept = default;
+    Event(Event&&) = default;
+    Event& operator=(Event&&) = default;
 
     /**
      * Getter for the truth value of an atomic.
