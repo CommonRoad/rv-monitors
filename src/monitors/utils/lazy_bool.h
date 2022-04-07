@@ -28,10 +28,10 @@ class lazy_bool {
      */
     explicit lazy_bool(std::function<bool()> valueFetcher);
 
-    lazy_bool(const lazy_bool&) = default;
+    lazy_bool(const lazy_bool&) noexcept = default;
     lazy_bool(lazy_bool&&) noexcept = default;
 
-    lazy_bool& operator=(const lazy_bool&) = default;
+    lazy_bool& operator=(const lazy_bool&) noexcept = default;
     lazy_bool& operator=(lazy_bool&&) noexcept = default;
 
     /**
