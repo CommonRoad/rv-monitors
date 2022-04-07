@@ -26,8 +26,8 @@ class Event {
     explicit Event(event_map_t event, size_t time, bool terminal) noexcept
         : eventMap(std::move(event)), timeStep(time), terminal(terminal) {}
 
-    Event(const Event&) noexcept = default;
-    Event& operator=(const Event&) noexcept = default;
+    Event(const Event&) = default;
+    Event& operator=(const Event&) = default;
     Event(Event&&) noexcept = default;
     Event& operator=(Event&&) noexcept = default;
 
