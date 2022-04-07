@@ -66,8 +66,7 @@ template <typename T> bool isInInterval(const T &value, const T &low, const T &h
  * @param eventMap Event.
  * @return True if @param expr is true in @param eventMap, false otherwise.
  */
-[[nodiscard]] bool evaluateBooleanExpression(const std::shared_ptr<Expression> &expr,
-                                             event_map_t &eventMap);
+[[nodiscard]] bool evaluateBooleanExpression(const std::shared_ptr<Expression> &expr, event_map_t &eventMap);
 
 /**
  * Creates a Trace.

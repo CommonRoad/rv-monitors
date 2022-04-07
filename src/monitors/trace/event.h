@@ -3,8 +3,8 @@
 #include "monitors/expression_tree/atomic/atomic.h"
 #include "monitors/expression_tree/atomic/predicate.h"
 #include "monitors/utils/lazy_bool.h"
-#include <unordered_map>
 #include <sstream>
+#include <unordered_map>
 
 using event_map_t = std::unordered_map<std::string, lazy_bool>;
 
@@ -26,10 +26,10 @@ class Event {
     explicit Event(event_map_t event, size_t time, bool terminal) noexcept
         : eventMap(std::move(event)), timeStep(time), terminal(terminal) {}
 
-    Event(const Event&) = default;
-    Event& operator=(const Event&) = default;
-    Event(Event&&) = default;
-    Event& operator=(Event&&) = default;
+    Event(const Event &) = default;
+    Event &operator=(const Event &) = default;
+    Event(Event &&) = default;
+    Event &operator=(Event &&) = default;
 
     /**
      * Getter for the truth value of an atomic.

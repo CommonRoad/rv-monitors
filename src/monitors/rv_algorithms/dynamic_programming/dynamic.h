@@ -43,8 +43,7 @@ class DynamicProgrammingLTL : public MonitorInterface {
      * @param eventMap Map of events with truth values of all predicates.
      * @param subformulas Vector of all subformulas of the formula to be verified.
      */
-    void update(size_t j, std::vector<bool> &updateVector, std::vector<bool> oldVector,
-                event_map_t &eventMap,
+    void update(size_t j, std::vector<bool> &updateVector, std::vector<bool> oldVector, event_map_t &eventMap,
                 const std::vector<std::shared_ptr<Expression>> &subformulas);
 
     /**

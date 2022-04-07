@@ -18,8 +18,7 @@
 DynamicProgrammingLTL::DynamicProgrammingLTL(const std::vector<Formula> &formulas, bool pastEvaluation)
     : MonitorInterface((formulas)), pastEvaluation(pastEvaluation) {}
 
-void DynamicProgrammingLTL::initialize(size_t j, std::vector<bool> &initVector,
-                                       event_map_t &eventMap,
+void DynamicProgrammingLTL::initialize(size_t j, std::vector<bool> &initVector, event_map_t &eventMap,
                                        const std::vector<std::shared_ptr<Expression>> &subformulas) {
     // Atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(subformulas[j])) {
@@ -72,8 +71,7 @@ void DynamicProgrammingLTL::initialize(size_t j, std::vector<bool> &initVector,
 }
 
 void DynamicProgrammingLTL::update(size_t j, std::vector<bool> &updateVector, std::vector<bool> oldVector,
-                                   event_map_t &eventMap,
-                                   const std::vector<std::shared_ptr<Expression>> &subformulas) {
+                                   event_map_t &eventMap, const std::vector<std::shared_ptr<Expression>> &subformulas) {
     // Atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(subformulas[j])) {
         updateVector[j] = eventMap.at(atomic->to_string());

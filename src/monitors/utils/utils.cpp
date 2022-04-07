@@ -16,8 +16,7 @@
 #include "monitors/trace/trace.h"
 #include "utils.h"
 
-bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr,
-                                      event_map_t &eventMap) {
+bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr, event_map_t &eventMap) {
     // Atomic
     if (auto atomicExpr = std::dynamic_pointer_cast<Atomic>(expr)) {
         return eventMap.at(atomicExpr->to_string());
@@ -90,7 +89,8 @@ Trace Utils::createTrace(const std::set<std::string> &atomics, const std::vector
             event[atomic] = lazy_bool(atomicValue);
         }
         if (timeSteps)
-            finalTrace.emplace_back(std::move(event), timeSteps.value()[timeStepIdx], &trueAtomic == &trueAtomics.back());
+            finalTrace.emplace_back(std::move(event), timeSteps.value()[timeStepIdx],
+                                    &trueAtomic == &trueAtomics.back());
         else
             finalTrace.emplace_back(std::move(event), timeStepIdx, &trueAtomic == &trueAtomics.back());
         ++timeStepIdx;
