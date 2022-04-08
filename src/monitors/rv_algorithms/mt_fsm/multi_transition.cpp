@@ -16,7 +16,7 @@ std::string MultiTransition::to_string() const {
     return ret.str();
 }
 
-size_t MultiTransition::evaluate(std::map<std::string, lazy_bool> &eventMap) const {
+size_t MultiTransition::evaluate(event_map_t &eventMap) const {
     for (const auto &[formula, state] : transitions) {
         if (Utils::evaluateBooleanExpression(formula.getExpr(), eventMap)) {
             return state;

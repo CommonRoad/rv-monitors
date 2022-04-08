@@ -146,7 +146,7 @@ std::shared_ptr<node> BTT_FSMUtilsCreation::findNextNode(const MultiTransition &
                         if (weights.size() == 1) {
                             auto left = std::make_shared<StateBttFsm>(nextState);
 
-                            std::map<std::string, lazy_bool> eventMap;
+                            event_map_t eventMap;
 
                             eventMap.emplace(atomic->to_string(), lazy_bool(not constant));
                             auto right = std::make_shared<StateBttFsm>(multiTransition.evaluate(eventMap));

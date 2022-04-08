@@ -66,8 +66,7 @@ template <typename T> bool isInInterval(const T &value, const T &low, const T &h
  * @param eventMap Event.
  * @return True if @param expr is true in @param eventMap, false otherwise.
  */
-[[nodiscard]] bool evaluateBooleanExpression(const std::shared_ptr<Expression> &expr,
-                                             std::map<std::string, lazy_bool> &eventMap);
+[[nodiscard]] bool evaluateBooleanExpression(const std::shared_ptr<Expression> &expr, event_map_t &eventMap);
 
 /**
  * Creates a Trace.
@@ -87,6 +86,15 @@ createTrace(const std::set<std::string> &atomics, const std::vector<std::vector<
  * @return
  */
 [[nodiscard]] Trace createLazyTrace(const std::map<std::string, std::function<bool(size_t)>> &atomicsAndFunctions,
+                                    const std::vector<size_t> &timeSteps);
+
+/**
+ * Creates a Trace with lazy evaluation of the predicates.
+ * @param atomicsAndFunctions map containing lazy predicates
+ * @param timeSteps time steps for which predicates should be evaluated
+ * @return
+ */
+[[nodiscard]] Trace createLazyTrace(std::map<std::string, std::function<bool(size_t)>> &&atomicsAndFunctions,
                                     const std::vector<size_t> &timeSteps);
 
 /**

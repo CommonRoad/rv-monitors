@@ -87,7 +87,7 @@ Trace createRandomTrace(const std::set<std::string> &atomics, size_t length) {
     rng.seed(seed_val);
 
     for (; timeStepIdx < length; ++timeStepIdx) {
-        std::map<std::string, lazy_bool> event;
+        event_map_t event;
         for (const auto &atom : atomics) {
             bool atomicValue{uint_dist2(rng) == 1};
             event[atom] = lazy_bool(atomicValue);
@@ -107,7 +107,7 @@ Trace createRandomLazyTrace(size_t length) {
     rng.seed(seed_val);
 
     for (; timeStepIdx < length; ++timeStepIdx) {
-        std::map<std::string, lazy_bool> event;
+        event_map_t event;
         for (auto const &[atomic, valueFetcher] : atomicsAndFunctions) {
             auto valueFetcherBound = std::bind(valueFetcher, 0);
             event[atomic] = lazy_bool(valueFetcherBound);

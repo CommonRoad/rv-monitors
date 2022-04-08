@@ -29,7 +29,7 @@ Trace createTrace() {
     std::vector<Event> eventList;
     const std::map<std::string, std::function<bool(size_t)>> atomicsAndFunctions{{"a(dummy)", a}};
     for (size_t timeStepIdx{0}; timeStepIdx < 4; ++timeStepIdx) {
-        std::map<std::string, lazy_bool> event;
+        event_map_t event;
         for (auto const &[atomic, valueFetcher] : atomicsAndFunctions) {
             auto valueFetcherBound = std::bind(valueFetcher, timeStepIdx);
             event[atomic] = lazy_bool(valueFetcherBound);

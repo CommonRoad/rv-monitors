@@ -14,7 +14,7 @@ Trace TraceGenerator ::generateTrace(const size_t length) {
     for (size_t i = 0; i < length; ++i) {
         coin = rReal(0, m_sumWeightsAtomic + m_sumWeightsPredicate);
         double w = 0.0;
-        std::map<std::string, lazy_bool> eventMap;
+        event_map_t eventMap;
         for (auto &iter : m_atoms) {
             w += iter.m_weight;
             if (w >= coin) {
