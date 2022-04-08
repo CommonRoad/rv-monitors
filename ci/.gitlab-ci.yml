@@ -37,7 +37,6 @@ cppcheck:
 build-compile-commands:
   stage: compile
   script:
-    - cc -v
     # run CMake in order to get compile_commands.json
     - mkdir build && cd build
     - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON  ..
@@ -51,7 +50,6 @@ build-compile-commands:
 build-clang:
   stage: compile
   script:
-    - clang -v
     - export CC=clang
     - export CXX=clang++
     - mkdir build && cd build
@@ -64,7 +62,6 @@ build-clang:
 build-gcc:
   stage: compile
   script:
-    - gcc -v
     - export CC=gcc
     - export CXX=g++
     - mkdir build && cd build
@@ -77,7 +74,6 @@ build-gcc:
 build-test:
   stage: compile
   script:
-    - cc -v
     - mkdir build && cd build
     - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Debug ..
     - make rvmonitors_test -j4
@@ -89,7 +85,6 @@ build-test:
 build-evaluation:
   stage: compile
   script:
-    - cc -v
     - mkdir build && cd build
     - cmake
       -DCMAKE_PREFIX_PATH=/commonroad/dist
@@ -104,7 +99,6 @@ build-evaluation:
 build-run-coverage:
   stage: compile
   script:
-    - cc -v
     - mkdir build && cd build
     - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DRVMONITORS_BUILD_CODE_COVERAGE=ON -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_BUILD_TYPE=Debug ..
     - make rvmonitors_coverage -j4
