@@ -1,5 +1,5 @@
 
-// Generated from Formula.g4 by ANTLR 4.7.2
+// Generated from Formula.g4 by ANTLR 4.9.3
 
 #include "FormulaVisitor.h"
 
@@ -42,10 +42,16 @@ FormulaParser::FormulaContext *FormulaParser::formula() {
     FormulaContext *_localctx = _tracker.createInstance<FormulaContext>(_ctx, getState());
     enterRule(_localctx, 0, FormulaParser::RuleFormula);
 
-    auto onExit = finally([=] { exitRule(); });
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        exitRule();
+    });
     try {
         enterOuterAlt(_localctx, 1);
-        setState(20);
+        setState(22);
         expr(0);
 
     } catch (RecognitionException &e) {
@@ -132,7 +138,13 @@ FormulaParser::ExprContext *FormulaParser::expr(int precedence) {
     size_t startState = 2;
     enterRecursionRule(_localctx, 2, FormulaParser::RuleExpr, precedence);
 
-    auto onExit = finally([=] { unrollRecursionContexts(parentContext); });
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        unrollRecursionContexts(parentContext);
+    });
     try {
         size_t alt;
         enterOuterAlt(_localctx, 1);
@@ -140,10 +152,10 @@ FormulaParser::ExprContext *FormulaParser::expr(int precedence) {
         _ctx = _localctx;
         previousContext = _localctx;
 
-        setState(23);
+        setState(25);
         xor_expr();
         _ctx->stop = _input->LT(-1);
-        setState(33);
+        setState(35);
         _errHandler->sync(this);
         alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 1, _ctx);
         while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
@@ -151,7 +163,7 @@ FormulaParser::ExprContext *FormulaParser::expr(int precedence) {
                 if (!_parseListeners.empty())
                     triggerExitRuleEvent();
                 previousContext = _localctx;
-                setState(31);
+                setState(33);
                 _errHandler->sync(this);
                 switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 0, _ctx)) {
                 case 1: {
@@ -160,14 +172,14 @@ FormulaParser::ExprContext *FormulaParser::expr(int precedence) {
                     _localctx = newContext;
                     newContext->left = previousContext;
                     pushNewRecursionContext(newContext, startState, RuleExpr);
-                    setState(25);
+                    setState(27);
 
                     if (!(precpred(_ctx, 3)))
                         throw FailedPredicateException(this, "precpred(_ctx, 3)");
-                    setState(26);
-                    dynamic_cast<ImplicationContext *>(_localctx)->op = match(FormulaParser::IMPL);
-                    setState(27);
-                    dynamic_cast<ImplicationContext *>(_localctx)->right = expr(3);
+                    setState(28);
+                    antlrcpp::downCast<ImplicationContext *>(_localctx)->op = match(FormulaParser::IMPL);
+                    setState(29);
+                    antlrcpp::downCast<ImplicationContext *>(_localctx)->right = expr(3);
                     break;
                 }
 
@@ -177,19 +189,22 @@ FormulaParser::ExprContext *FormulaParser::expr(int precedence) {
                     _localctx = newContext;
                     newContext->left = previousContext;
                     pushNewRecursionContext(newContext, startState, RuleExpr);
-                    setState(28);
+                    setState(30);
 
                     if (!(precpred(_ctx, 2)))
                         throw FailedPredicateException(this, "precpred(_ctx, 2)");
-                    setState(29);
-                    dynamic_cast<EquivalenceContext *>(_localctx)->op = match(FormulaParser::EQ);
-                    setState(30);
-                    dynamic_cast<EquivalenceContext *>(_localctx)->right = expr(2);
+                    setState(31);
+                    antlrcpp::downCast<EquivalenceContext *>(_localctx)->op = match(FormulaParser::EQ);
+                    setState(32);
+                    antlrcpp::downCast<EquivalenceContext *>(_localctx)->right = expr(2);
                     break;
                 }
+
+                default:
+                    break;
                 }
             }
-            setState(35);
+            setState(37);
             _errHandler->sync(this);
             alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 1, _ctx);
         }
@@ -236,24 +251,30 @@ FormulaParser::Xor_exprContext *FormulaParser::xor_expr() {
     Xor_exprContext *_localctx = _tracker.createInstance<Xor_exprContext>(_ctx, getState());
     enterRule(_localctx, 4, FormulaParser::RuleXor_expr);
 
-    auto onExit = finally([=] { exitRule(); });
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        exitRule();
+    });
     try {
         size_t alt;
-        _localctx = dynamic_cast<Xor_exprContext *>(_tracker.createInstance<FormulaParser::XorContext>(_localctx));
+        _localctx = _tracker.createInstance<FormulaParser::XorContext>(_localctx);
         enterOuterAlt(_localctx, 1);
-        setState(36);
+        setState(38);
         or_expr();
-        setState(41);
+        setState(43);
         _errHandler->sync(this);
         alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 2, _ctx);
         while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
             if (alt == 1) {
-                setState(37);
-                dynamic_cast<XorContext *>(_localctx)->op = match(FormulaParser::XOR);
-                setState(38);
+                setState(39);
+                antlrcpp::downCast<XorContext *>(_localctx)->op = match(FormulaParser::XOR);
+                setState(40);
                 or_expr();
             }
-            setState(43);
+            setState(45);
             _errHandler->sync(this);
             alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 2, _ctx);
         }
@@ -302,24 +323,30 @@ FormulaParser::Or_exprContext *FormulaParser::or_expr() {
     Or_exprContext *_localctx = _tracker.createInstance<Or_exprContext>(_ctx, getState());
     enterRule(_localctx, 6, FormulaParser::RuleOr_expr);
 
-    auto onExit = finally([=] { exitRule(); });
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        exitRule();
+    });
     try {
         size_t alt;
-        _localctx = dynamic_cast<Or_exprContext *>(_tracker.createInstance<FormulaParser::OrContext>(_localctx));
+        _localctx = _tracker.createInstance<FormulaParser::OrContext>(_localctx);
         enterOuterAlt(_localctx, 1);
-        setState(44);
+        setState(46);
         and_expr();
-        setState(49);
+        setState(51);
         _errHandler->sync(this);
         alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 3, _ctx);
         while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
             if (alt == 1) {
-                setState(45);
-                dynamic_cast<OrContext *>(_localctx)->op = match(FormulaParser::OR);
-                setState(46);
+                setState(47);
+                antlrcpp::downCast<OrContext *>(_localctx)->op = match(FormulaParser::OR);
+                setState(48);
                 and_expr();
             }
-            setState(51);
+            setState(53);
             _errHandler->sync(this);
             alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 3, _ctx);
         }
@@ -368,24 +395,30 @@ FormulaParser::And_exprContext *FormulaParser::and_expr() {
     And_exprContext *_localctx = _tracker.createInstance<And_exprContext>(_ctx, getState());
     enterRule(_localctx, 8, FormulaParser::RuleAnd_expr);
 
-    auto onExit = finally([=] { exitRule(); });
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        exitRule();
+    });
     try {
         size_t alt;
-        _localctx = dynamic_cast<And_exprContext *>(_tracker.createInstance<FormulaParser::AndContext>(_localctx));
+        _localctx = _tracker.createInstance<FormulaParser::AndContext>(_localctx);
         enterOuterAlt(_localctx, 1);
-        setState(52);
+        setState(54);
         release_until_expr();
-        setState(57);
+        setState(59);
         _errHandler->sync(this);
         alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 4, _ctx);
         while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
             if (alt == 1) {
-                setState(53);
-                dynamic_cast<AndContext *>(_localctx)->op = match(FormulaParser::AND);
-                setState(54);
+                setState(55);
+                antlrcpp::downCast<AndContext *>(_localctx)->op = match(FormulaParser::AND);
+                setState(56);
                 release_until_expr();
             }
-            setState(59);
+            setState(61);
             _errHandler->sync(this);
             alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 4, _ctx);
         }
@@ -560,103 +593,105 @@ FormulaParser::Release_until_exprContext *FormulaParser::release_until_expr() {
     Release_until_exprContext *_localctx = _tracker.createInstance<Release_until_exprContext>(_ctx, getState());
     enterRule(_localctx, 10, FormulaParser::RuleRelease_until_expr);
 
-    auto onExit = finally([=] { exitRule(); });
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        exitRule();
+    });
     try {
-        setState(88);
+        setState(90);
         _errHandler->sync(this);
         switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 5, _ctx)) {
         case 1: {
-            _localctx = dynamic_cast<Release_until_exprContext *>(
-                _tracker.createInstance<FormulaParser::ReleaseContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::ReleaseContext>(_localctx);
             enterOuterAlt(_localctx, 1);
-            setState(60);
-            dynamic_cast<ReleaseContext *>(_localctx)->left = unary();
-            setState(61);
-            dynamic_cast<ReleaseContext *>(_localctx)->op = match(FormulaParser::RELEASE);
             setState(62);
-            dynamic_cast<ReleaseContext *>(_localctx)->right = unary();
+            antlrcpp::downCast<ReleaseContext *>(_localctx)->left = unary();
+            setState(63);
+            antlrcpp::downCast<ReleaseContext *>(_localctx)->op = match(FormulaParser::RELEASE);
+            setState(64);
+            antlrcpp::downCast<ReleaseContext *>(_localctx)->right = unary();
             break;
         }
 
         case 2: {
-            _localctx = dynamic_cast<Release_until_exprContext *>(
-                _tracker.createInstance<FormulaParser::UntilContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::UntilContext>(_localctx);
             enterOuterAlt(_localctx, 2);
-            setState(64);
-            dynamic_cast<UntilContext *>(_localctx)->left = unary();
-            setState(65);
-            dynamic_cast<UntilContext *>(_localctx)->op = match(FormulaParser::UNTIL);
             setState(66);
-            dynamic_cast<UntilContext *>(_localctx)->right = unary();
+            antlrcpp::downCast<UntilContext *>(_localctx)->left = unary();
+            setState(67);
+            antlrcpp::downCast<UntilContext *>(_localctx)->op = match(FormulaParser::UNTIL);
+            setState(68);
+            antlrcpp::downCast<UntilContext *>(_localctx)->right = unary();
             break;
         }
 
         case 3: {
-            _localctx = dynamic_cast<Release_until_exprContext *>(
-                _tracker.createInstance<FormulaParser::ReleaseIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::ReleaseIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 3);
-            setState(68);
-            dynamic_cast<ReleaseIntervalContext *>(_localctx)->left = unary();
-            setState(69);
-            dynamic_cast<ReleaseIntervalContext *>(_localctx)->op = match(FormulaParser::RELEASE);
             setState(70);
-            dynamic_cast<ReleaseIntervalContext *>(_localctx)->iv = interval();
+            antlrcpp::downCast<ReleaseIntervalContext *>(_localctx)->left = unary();
             setState(71);
-            dynamic_cast<ReleaseIntervalContext *>(_localctx)->right = unary();
+            antlrcpp::downCast<ReleaseIntervalContext *>(_localctx)->op = match(FormulaParser::RELEASE);
+            setState(72);
+            antlrcpp::downCast<ReleaseIntervalContext *>(_localctx)->iv = interval();
+            setState(73);
+            antlrcpp::downCast<ReleaseIntervalContext *>(_localctx)->right = unary();
             break;
         }
 
         case 4: {
-            _localctx = dynamic_cast<Release_until_exprContext *>(
-                _tracker.createInstance<FormulaParser::UntilIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::UntilIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 4);
-            setState(73);
-            dynamic_cast<UntilIntervalContext *>(_localctx)->left = unary();
-            setState(74);
-            dynamic_cast<UntilIntervalContext *>(_localctx)->op = match(FormulaParser::UNTIL);
             setState(75);
-            dynamic_cast<UntilIntervalContext *>(_localctx)->iv = interval();
+            antlrcpp::downCast<UntilIntervalContext *>(_localctx)->left = unary();
             setState(76);
-            dynamic_cast<UntilIntervalContext *>(_localctx)->right = unary();
+            antlrcpp::downCast<UntilIntervalContext *>(_localctx)->op = match(FormulaParser::UNTIL);
+            setState(77);
+            antlrcpp::downCast<UntilIntervalContext *>(_localctx)->iv = interval();
+            setState(78);
+            antlrcpp::downCast<UntilIntervalContext *>(_localctx)->right = unary();
             break;
         }
 
         case 5: {
-            _localctx = dynamic_cast<Release_until_exprContext *>(
-                _tracker.createInstance<FormulaParser::SinceContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::SinceContext>(_localctx);
             enterOuterAlt(_localctx, 5);
-            setState(78);
-            dynamic_cast<SinceContext *>(_localctx)->left = unary();
-            setState(79);
-            dynamic_cast<SinceContext *>(_localctx)->op = match(FormulaParser::SINCE);
             setState(80);
-            dynamic_cast<SinceContext *>(_localctx)->right = unary();
+            antlrcpp::downCast<SinceContext *>(_localctx)->left = unary();
+            setState(81);
+            antlrcpp::downCast<SinceContext *>(_localctx)->op = match(FormulaParser::SINCE);
+            setState(82);
+            antlrcpp::downCast<SinceContext *>(_localctx)->right = unary();
             break;
         }
 
         case 6: {
-            _localctx = dynamic_cast<Release_until_exprContext *>(
-                _tracker.createInstance<FormulaParser::SinceIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::SinceIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 6);
-            setState(82);
-            dynamic_cast<SinceIntervalContext *>(_localctx)->left = unary();
-            setState(83);
-            dynamic_cast<SinceIntervalContext *>(_localctx)->op = match(FormulaParser::SINCE);
             setState(84);
-            dynamic_cast<SinceIntervalContext *>(_localctx)->iv = interval();
+            antlrcpp::downCast<SinceIntervalContext *>(_localctx)->left = unary();
             setState(85);
-            dynamic_cast<SinceIntervalContext *>(_localctx)->right = unary();
+            antlrcpp::downCast<SinceIntervalContext *>(_localctx)->op = match(FormulaParser::SINCE);
+            setState(86);
+            antlrcpp::downCast<SinceIntervalContext *>(_localctx)->iv = interval();
+            setState(87);
+            antlrcpp::downCast<SinceIntervalContext *>(_localctx)->right = unary();
             break;
         }
 
         case 7: {
-            _localctx = dynamic_cast<Release_until_exprContext *>(
-                _tracker.createInstance<FormulaParser::UnaryExprContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::UnaryExprContext>(_localctx);
             enterOuterAlt(_localctx, 7);
-            setState(87);
+            setState(89);
             unary();
             break;
         }
+
+        default:
+            break;
         }
 
     } catch (RecognitionException &e) {
@@ -1002,230 +1037,225 @@ FormulaParser::UnaryContext *FormulaParser::unary() {
     enterRule(_localctx, 12, FormulaParser::RuleUnary);
     size_t _la = 0;
 
-    auto onExit = finally([=] { exitRule(); });
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        exitRule();
+    });
     try {
-        setState(147);
+        setState(149);
         _errHandler->sync(this);
         switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 7, _ctx)) {
         case 1: {
-            _localctx =
-                dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::GloballyContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::GloballyContext>(_localctx);
             enterOuterAlt(_localctx, 1);
-            setState(90);
-            dynamic_cast<GloballyContext *>(_localctx)->op = match(FormulaParser::GLOBALLY);
-            setState(91);
-            dynamic_cast<GloballyContext *>(_localctx)->right = atom();
+            setState(92);
+            antlrcpp::downCast<GloballyContext *>(_localctx)->op = match(FormulaParser::GLOBALLY);
+            setState(93);
+            antlrcpp::downCast<GloballyContext *>(_localctx)->right = atom();
             break;
         }
 
         case 2: {
-            _localctx = dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::FutureContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::FutureContext>(_localctx);
             enterOuterAlt(_localctx, 2);
-            setState(92);
-            dynamic_cast<FutureContext *>(_localctx)->op = match(FormulaParser::FUTURE);
-            setState(93);
-            dynamic_cast<FutureContext *>(_localctx)->right = atom();
+            setState(94);
+            antlrcpp::downCast<FutureContext *>(_localctx)->op = match(FormulaParser::FUTURE);
+            setState(95);
+            antlrcpp::downCast<FutureContext *>(_localctx)->right = atom();
             break;
         }
 
         case 3: {
-            _localctx = dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::OnceContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::OnceContext>(_localctx);
             enterOuterAlt(_localctx, 3);
-            setState(94);
-            dynamic_cast<OnceContext *>(_localctx)->op = match(FormulaParser::ONCE);
-            setState(95);
-            dynamic_cast<OnceContext *>(_localctx)->right = atom();
+            setState(96);
+            antlrcpp::downCast<OnceContext *>(_localctx)->op = match(FormulaParser::ONCE);
+            setState(97);
+            antlrcpp::downCast<OnceContext *>(_localctx)->right = atom();
             break;
         }
 
         case 4: {
-            _localctx =
-                dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::PreviouslyContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::PreviouslyContext>(_localctx);
             enterOuterAlt(_localctx, 4);
-            setState(96);
-            dynamic_cast<PreviouslyContext *>(_localctx)->op = match(FormulaParser::PREVIOUSLY);
-            setState(97);
-            dynamic_cast<PreviouslyContext *>(_localctx)->right = atom();
+            setState(98);
+            antlrcpp::downCast<PreviouslyContext *>(_localctx)->op = match(FormulaParser::PREVIOUSLY);
+            setState(99);
+            antlrcpp::downCast<PreviouslyContext *>(_localctx)->right = atom();
             break;
         }
 
         case 5: {
-            _localctx =
-                dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::NextWeakContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::NextWeakContext>(_localctx);
             enterOuterAlt(_localctx, 5);
-            setState(98);
-            dynamic_cast<NextWeakContext *>(_localctx)->op = match(FormulaParser::NEXT_WEAK);
-            setState(99);
-            dynamic_cast<NextWeakContext *>(_localctx)->right = atom();
+            setState(100);
+            antlrcpp::downCast<NextWeakContext *>(_localctx)->op = match(FormulaParser::NEXT_WEAK);
+            setState(101);
+            antlrcpp::downCast<NextWeakContext *>(_localctx)->right = atom();
             break;
         }
 
         case 6: {
-            _localctx =
-                dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::NextStrongContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::NextStrongContext>(_localctx);
             enterOuterAlt(_localctx, 6);
-            setState(100);
-            dynamic_cast<NextStrongContext *>(_localctx)->op = match(FormulaParser::NEXT_STRONG);
-            setState(101);
-            dynamic_cast<NextStrongContext *>(_localctx)->right = atom();
+            setState(102);
+            antlrcpp::downCast<NextStrongContext *>(_localctx)->op = match(FormulaParser::NEXT_STRONG);
+            setState(103);
+            antlrcpp::downCast<NextStrongContext *>(_localctx)->right = atom();
             break;
         }
 
         case 7: {
-            _localctx = dynamic_cast<UnaryContext *>(
-                _tracker.createInstance<FormulaParser::GloballyIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::GloballyIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 7);
-            setState(102);
-            dynamic_cast<GloballyIntervalContext *>(_localctx)->op = match(FormulaParser::GLOBALLY);
-            setState(103);
-            dynamic_cast<GloballyIntervalContext *>(_localctx)->iv = interval();
             setState(104);
-            dynamic_cast<GloballyIntervalContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<GloballyIntervalContext *>(_localctx)->op = match(FormulaParser::GLOBALLY);
+            setState(105);
+            antlrcpp::downCast<GloballyIntervalContext *>(_localctx)->iv = interval();
+            setState(106);
+            antlrcpp::downCast<GloballyIntervalContext *>(_localctx)->right = atom();
             break;
         }
 
         case 8: {
-            _localctx =
-                dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::FutureIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::FutureIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 8);
-            setState(106);
-            dynamic_cast<FutureIntervalContext *>(_localctx)->op = match(FormulaParser::FUTURE);
-            setState(107);
-            dynamic_cast<FutureIntervalContext *>(_localctx)->iv = interval();
             setState(108);
-            dynamic_cast<FutureIntervalContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<FutureIntervalContext *>(_localctx)->op = match(FormulaParser::FUTURE);
+            setState(109);
+            antlrcpp::downCast<FutureIntervalContext *>(_localctx)->iv = interval();
+            setState(110);
+            antlrcpp::downCast<FutureIntervalContext *>(_localctx)->right = atom();
             break;
         }
 
         case 9: {
-            _localctx =
-                dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::OnceIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::OnceIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 9);
-            setState(110);
-            dynamic_cast<OnceIntervalContext *>(_localctx)->op = match(FormulaParser::ONCE);
-            setState(111);
-            dynamic_cast<OnceIntervalContext *>(_localctx)->iv = interval();
             setState(112);
-            dynamic_cast<OnceIntervalContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<OnceIntervalContext *>(_localctx)->op = match(FormulaParser::ONCE);
+            setState(113);
+            antlrcpp::downCast<OnceIntervalContext *>(_localctx)->iv = interval();
+            setState(114);
+            antlrcpp::downCast<OnceIntervalContext *>(_localctx)->right = atom();
             break;
         }
 
         case 10: {
-            _localctx = dynamic_cast<UnaryContext *>(
-                _tracker.createInstance<FormulaParser::PreviouslyIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::PreviouslyIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 10);
-            setState(114);
-            dynamic_cast<PreviouslyIntervalContext *>(_localctx)->op = match(FormulaParser::PREVIOUSLY);
-            setState(115);
-            dynamic_cast<PreviouslyIntervalContext *>(_localctx)->iv = interval();
             setState(116);
-            dynamic_cast<PreviouslyIntervalContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<PreviouslyIntervalContext *>(_localctx)->op = match(FormulaParser::PREVIOUSLY);
+            setState(117);
+            antlrcpp::downCast<PreviouslyIntervalContext *>(_localctx)->iv = interval();
+            setState(118);
+            antlrcpp::downCast<PreviouslyIntervalContext *>(_localctx)->right = atom();
             break;
         }
 
         case 11: {
-            _localctx = dynamic_cast<UnaryContext *>(
-                _tracker.createInstance<FormulaParser::NextWeakIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::NextWeakIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 11);
-            setState(118);
-            dynamic_cast<NextWeakIntervalContext *>(_localctx)->op = match(FormulaParser::NEXT_WEAK);
-            setState(119);
-            dynamic_cast<NextWeakIntervalContext *>(_localctx)->iv = interval();
             setState(120);
-            dynamic_cast<NextWeakIntervalContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<NextWeakIntervalContext *>(_localctx)->op = match(FormulaParser::NEXT_WEAK);
+            setState(121);
+            antlrcpp::downCast<NextWeakIntervalContext *>(_localctx)->iv = interval();
+            setState(122);
+            antlrcpp::downCast<NextWeakIntervalContext *>(_localctx)->right = atom();
             break;
         }
 
         case 12: {
-            _localctx = dynamic_cast<UnaryContext *>(
-                _tracker.createInstance<FormulaParser::NextStrongIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::NextStrongIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 12);
-            setState(122);
-            dynamic_cast<NextStrongIntervalContext *>(_localctx)->op = match(FormulaParser::NEXT_STRONG);
-            setState(123);
-            dynamic_cast<NextStrongIntervalContext *>(_localctx)->iv = interval();
             setState(124);
-            dynamic_cast<NextStrongIntervalContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<NextStrongIntervalContext *>(_localctx)->op = match(FormulaParser::NEXT_STRONG);
+            setState(125);
+            antlrcpp::downCast<NextStrongIntervalContext *>(_localctx)->iv = interval();
+            setState(126);
+            antlrcpp::downCast<NextStrongIntervalContext *>(_localctx)->right = atom();
             break;
         }
 
         case 13: {
-            _localctx =
-                dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::HistoricallyContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::HistoricallyContext>(_localctx);
             enterOuterAlt(_localctx, 13);
-            setState(126);
-            dynamic_cast<HistoricallyContext *>(_localctx)->op = match(FormulaParser::HISTORICALLY);
-            setState(127);
-            dynamic_cast<HistoricallyContext *>(_localctx)->right = atom();
+            setState(128);
+            antlrcpp::downCast<HistoricallyContext *>(_localctx)->op = match(FormulaParser::HISTORICALLY);
+            setState(129);
+            antlrcpp::downCast<HistoricallyContext *>(_localctx)->right = atom();
             break;
         }
 
         case 14: {
-            _localctx = dynamic_cast<UnaryContext *>(
-                _tracker.createInstance<FormulaParser::HistoricallyIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::HistoricallyIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 14);
-            setState(128);
-            dynamic_cast<HistoricallyIntervalContext *>(_localctx)->op = match(FormulaParser::HISTORICALLY);
-            setState(129);
-            dynamic_cast<HistoricallyIntervalContext *>(_localctx)->iv = interval();
             setState(130);
-            dynamic_cast<HistoricallyIntervalContext *>(_localctx)->right = atom();
+            antlrcpp::downCast<HistoricallyIntervalContext *>(_localctx)->op = match(FormulaParser::HISTORICALLY);
+            setState(131);
+            antlrcpp::downCast<HistoricallyIntervalContext *>(_localctx)->iv = interval();
+            setState(132);
+            antlrcpp::downCast<HistoricallyIntervalContext *>(_localctx)->right = atom();
             break;
         }
 
         case 15: {
-            _localctx = dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::NotContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::NotContext>(_localctx);
             enterOuterAlt(_localctx, 15);
-            setState(132);
-            dynamic_cast<NotContext *>(_localctx)->op = match(FormulaParser::NOT);
-            setState(133);
-            dynamic_cast<NotContext *>(_localctx)->right = atom();
+            setState(134);
+            antlrcpp::downCast<NotContext *>(_localctx)->op = match(FormulaParser::NOT);
+            setState(135);
+            antlrcpp::downCast<NotContext *>(_localctx)->right = atom();
             break;
         }
 
         case 16: {
-            _localctx = dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::NotExprContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::NotExprContext>(_localctx);
             enterOuterAlt(_localctx, 16);
-            setState(134);
-            dynamic_cast<NotExprContext *>(_localctx)->op = match(FormulaParser::NOT);
-            setState(135);
-            dynamic_cast<NotExprContext *>(_localctx)->right = expr(0);
+            setState(136);
+            antlrcpp::downCast<NotExprContext *>(_localctx)->op = match(FormulaParser::NOT);
+            setState(137);
+            antlrcpp::downCast<NotExprContext *>(_localctx)->right = expr(0);
             break;
         }
 
         case 17: {
-            _localctx =
-                dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::AtomExprContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::AtomExprContext>(_localctx);
             enterOuterAlt(_localctx, 17);
-            setState(136);
+            setState(138);
             atom();
             break;
         }
 
         case 18: {
-            _localctx =
-                dynamic_cast<UnaryContext *>(_tracker.createInstance<FormulaParser::PredicateContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::PredicateContext>(_localctx);
             enterOuterAlt(_localctx, 18);
-            setState(137);
-            dynamic_cast<PredicateContext *>(_localctx)->op = match(FormulaParser::PREDICATE);
-            setState(138);
-            dynamic_cast<PredicateContext *>(_localctx)->right = match(FormulaParser::ATOMIC);
-            setState(143);
+            setState(139);
+            antlrcpp::downCast<PredicateContext *>(_localctx)->op = match(FormulaParser::PREDICATE);
+            setState(140);
+            antlrcpp::downCast<PredicateContext *>(_localctx)->right = match(FormulaParser::ATOMIC);
+            setState(145);
             _errHandler->sync(this);
             _la = _input->LA(1);
             while (_la == FormulaParser::T__0) {
-                setState(139);
+                setState(141);
                 match(FormulaParser::T__0);
-                setState(140);
+                setState(142);
                 match(FormulaParser::ATOMIC);
-                setState(145);
+                setState(147);
                 _errHandler->sync(this);
                 _la = _input->LA(1);
             }
-            setState(146);
+            setState(148);
             match(FormulaParser::T__1);
             break;
         }
+
+        default:
+            break;
         }
 
     } catch (RecognitionException &e) {
@@ -1270,6 +1300,8 @@ FormulaParser::NumberContext *FormulaParser::InfiniteIntervalContext::number() {
     return getRuleContext<FormulaParser::NumberContext>(0);
 }
 
+tree::TerminalNode *FormulaParser::InfiniteIntervalContext::INFINITY() { return getToken(FormulaParser::INFINITY, 0); }
+
 FormulaParser::InfiniteIntervalContext::InfiniteIntervalContext(IntervalContext *ctx) { copyFrom(ctx); }
 
 antlrcpp::Any FormulaParser::InfiniteIntervalContext::accept(tree::ParseTreeVisitor *visitor) {
@@ -1282,44 +1314,51 @@ FormulaParser::IntervalContext *FormulaParser::interval() {
     IntervalContext *_localctx = _tracker.createInstance<IntervalContext>(_ctx, getState());
     enterRule(_localctx, 14, FormulaParser::RuleInterval);
 
-    auto onExit = finally([=] { exitRule(); });
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        exitRule();
+    });
     try {
-        setState(161);
+        setState(163);
         _errHandler->sync(this);
         switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 8, _ctx)) {
         case 1: {
-            _localctx = dynamic_cast<IntervalContext *>(
-                _tracker.createInstance<FormulaParser::FiniteIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::FiniteIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 1);
-            setState(149);
-            match(FormulaParser::T__2);
-            setState(150);
-            dynamic_cast<FiniteIntervalContext *>(_localctx)->l = number();
             setState(151);
-            match(FormulaParser::T__0);
+            match(FormulaParser::T__2);
             setState(152);
-            dynamic_cast<FiniteIntervalContext *>(_localctx)->u = number();
+            antlrcpp::downCast<FiniteIntervalContext *>(_localctx)->l = number();
             setState(153);
+            match(FormulaParser::T__0);
+            setState(154);
+            antlrcpp::downCast<FiniteIntervalContext *>(_localctx)->u = number();
+            setState(155);
             match(FormulaParser::T__3);
             break;
         }
 
         case 2: {
-            _localctx = dynamic_cast<IntervalContext *>(
-                _tracker.createInstance<FormulaParser::InfiniteIntervalContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::InfiniteIntervalContext>(_localctx);
             enterOuterAlt(_localctx, 2);
-            setState(155);
-            match(FormulaParser::T__2);
-            setState(156);
-            dynamic_cast<InfiniteIntervalContext *>(_localctx)->l = number();
             setState(157);
-            match(FormulaParser::T__0);
+            match(FormulaParser::T__2);
             setState(158);
-            dynamic_cast<InfiniteIntervalContext *>(_localctx)->u = match(FormulaParser::T__4);
+            antlrcpp::downCast<InfiniteIntervalContext *>(_localctx)->l = number();
             setState(159);
+            match(FormulaParser::T__0);
+            setState(160);
+            antlrcpp::downCast<InfiniteIntervalContext *>(_localctx)->u = match(FormulaParser::INFINITY);
+            setState(161);
             match(FormulaParser::T__3);
             break;
         }
+
+        default:
+            break;
         }
 
     } catch (RecognitionException &e) {
@@ -1372,7 +1411,9 @@ antlrcpp::Any FormulaParser::AtomicContext::accept(tree::ParseTreeVisitor *visit
 }
 //----------------- BooleanContext ------------------------------------------------------------------
 
-tree::TerminalNode *FormulaParser::BooleanContext::BOOL() { return getToken(FormulaParser::BOOL, 0); }
+FormulaParser::Bool_Context *FormulaParser::BooleanContext::bool_() {
+    return getRuleContext<FormulaParser::Bool_Context>(0);
+}
 
 FormulaParser::BooleanContext::BooleanContext(AtomContext *ctx) { copyFrom(ctx); }
 
@@ -1387,49 +1428,57 @@ FormulaParser::AtomContext *FormulaParser::atom() {
     enterRule(_localctx, 16, FormulaParser::RuleAtom);
     size_t _la = 0;
 
-    auto onExit = finally([=] { exitRule(); });
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        exitRule();
+    });
     try {
-        setState(173);
+        setState(175);
         _errHandler->sync(this);
         switch (_input->LA(1)) {
-        case FormulaParser::BOOL: {
-            _localctx = dynamic_cast<AtomContext *>(_tracker.createInstance<FormulaParser::BooleanContext>(_localctx));
+        case FormulaParser::TRUE:
+        case FormulaParser::FALSE: {
+            _localctx = _tracker.createInstance<FormulaParser::BooleanContext>(_localctx);
             enterOuterAlt(_localctx, 1);
-            setState(163);
-            match(FormulaParser::BOOL);
+            setState(165);
+            bool_();
             break;
         }
 
         case FormulaParser::ATOMIC: {
-            _localctx = dynamic_cast<AtomContext *>(_tracker.createInstance<FormulaParser::AtomicContext>(_localctx));
+            _localctx = _tracker.createInstance<FormulaParser::AtomicContext>(_localctx);
             enterOuterAlt(_localctx, 2);
-            setState(164);
+            setState(166);
             match(FormulaParser::ATOMIC);
             break;
         }
 
-        case FormulaParser::T__5: {
-            _localctx = dynamic_cast<AtomContext *>(_tracker.createInstance<FormulaParser::BracketsContext>(_localctx));
+        case FormulaParser::T__4: {
+            _localctx = _tracker.createInstance<FormulaParser::BracketsContext>(_localctx);
             enterOuterAlt(_localctx, 3);
-            setState(165);
-            match(FormulaParser::T__5);
             setState(167);
+            match(FormulaParser::T__4);
+            setState(169);
             _errHandler->sync(this);
             _la = _input->LA(1);
             do {
-                setState(166);
-                dynamic_cast<BracketsContext *>(_localctx)->content = expr(0);
-                setState(169);
+                setState(168);
+                antlrcpp::downCast<BracketsContext *>(_localctx)->content = expr(0);
+                setState(171);
                 _errHandler->sync(this);
                 _la = _input->LA(1);
             } while ((((_la & ~0x3fULL) == 0) &&
-                      ((1ULL << _la) & ((1ULL << FormulaParser::T__5) | (1ULL << FormulaParser::BOOL) |
-                                        (1ULL << FormulaParser::NOT) | (1ULL << FormulaParser::GLOBALLY) |
-                                        (1ULL << FormulaParser::FUTURE) | (1ULL << FormulaParser::NEXT_WEAK) |
-                                        (1ULL << FormulaParser::NEXT_STRONG) | (1ULL << FormulaParser::ONCE) |
-                                        (1ULL << FormulaParser::PREVIOUSLY) | (1ULL << FormulaParser::HISTORICALLY) |
-                                        (1ULL << FormulaParser::ATOMIC) | (1ULL << FormulaParser::PREDICATE))) != 0));
-            setState(171);
+                      ((1ULL << _la) &
+                       ((1ULL << FormulaParser::T__4) | (1ULL << FormulaParser::TRUE) | (1ULL << FormulaParser::FALSE) |
+                        (1ULL << FormulaParser::NOT) | (1ULL << FormulaParser::GLOBALLY) |
+                        (1ULL << FormulaParser::FUTURE) | (1ULL << FormulaParser::NEXT_WEAK) |
+                        (1ULL << FormulaParser::NEXT_STRONG) | (1ULL << FormulaParser::ONCE) |
+                        (1ULL << FormulaParser::PREVIOUSLY) | (1ULL << FormulaParser::HISTORICALLY) |
+                        (1ULL << FormulaParser::ATOMIC) | (1ULL << FormulaParser::PREDICATE))) != 0));
+            setState(173);
             match(FormulaParser::T__1);
             break;
         }
@@ -1472,12 +1521,95 @@ FormulaParser::NumberContext *FormulaParser::number() {
     NumberContext *_localctx = _tracker.createInstance<NumberContext>(_ctx, getState());
     enterRule(_localctx, 18, FormulaParser::RuleNumber);
 
-    auto onExit = finally([=] { exitRule(); });
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        exitRule();
+    });
     try {
-        _localctx = dynamic_cast<NumberContext *>(_tracker.createInstance<FormulaParser::DigitContext>(_localctx));
+        _localctx = _tracker.createInstance<FormulaParser::DigitContext>(_localctx);
         enterOuterAlt(_localctx, 1);
-        setState(175);
+        setState(177);
         match(FormulaParser::DIGIT);
+
+    } catch (RecognitionException &e) {
+        _errHandler->reportError(this, e);
+        _localctx->exception = std::current_exception();
+        _errHandler->recover(this, _localctx->exception);
+    }
+
+    return _localctx;
+}
+
+//----------------- Bool_Context ------------------------------------------------------------------
+
+FormulaParser::Bool_Context::Bool_Context(ParserRuleContext *parent, size_t invokingState)
+    : ParserRuleContext(parent, invokingState) {}
+
+size_t FormulaParser::Bool_Context::getRuleIndex() const { return FormulaParser::RuleBool_; }
+
+void FormulaParser::Bool_Context::copyFrom(Bool_Context *ctx) { ParserRuleContext::copyFrom(ctx); }
+
+//----------------- TrueBooleanContext ------------------------------------------------------------------
+
+tree::TerminalNode *FormulaParser::TrueBooleanContext::TRUE() { return getToken(FormulaParser::TRUE, 0); }
+
+FormulaParser::TrueBooleanContext::TrueBooleanContext(Bool_Context *ctx) { copyFrom(ctx); }
+
+antlrcpp::Any FormulaParser::TrueBooleanContext::accept(tree::ParseTreeVisitor *visitor) {
+    if (auto parserVisitor = dynamic_cast<FormulaVisitor *>(visitor))
+        return parserVisitor->visitTrueBoolean(this);
+    else
+        return visitor->visitChildren(this);
+}
+//----------------- FalseBooleanContext ------------------------------------------------------------------
+
+tree::TerminalNode *FormulaParser::FalseBooleanContext::FALSE() { return getToken(FormulaParser::FALSE, 0); }
+
+FormulaParser::FalseBooleanContext::FalseBooleanContext(Bool_Context *ctx) { copyFrom(ctx); }
+
+antlrcpp::Any FormulaParser::FalseBooleanContext::accept(tree::ParseTreeVisitor *visitor) {
+    if (auto parserVisitor = dynamic_cast<FormulaVisitor *>(visitor))
+        return parserVisitor->visitFalseBoolean(this);
+    else
+        return visitor->visitChildren(this);
+}
+FormulaParser::Bool_Context *FormulaParser::bool_() {
+    Bool_Context *_localctx = _tracker.createInstance<Bool_Context>(_ctx, getState());
+    enterRule(_localctx, 20, FormulaParser::RuleBool_);
+
+#if __cplusplus > 201703L
+    auto onExit = finally([=, this] {
+#else
+    auto onExit = finally([=] {
+#endif
+        exitRule();
+    });
+    try {
+        setState(181);
+        _errHandler->sync(this);
+        switch (_input->LA(1)) {
+        case FormulaParser::TRUE: {
+            _localctx = _tracker.createInstance<FormulaParser::TrueBooleanContext>(_localctx);
+            enterOuterAlt(_localctx, 1);
+            setState(179);
+            match(FormulaParser::TRUE);
+            break;
+        }
+
+        case FormulaParser::FALSE: {
+            _localctx = _tracker.createInstance<FormulaParser::FalseBooleanContext>(_localctx);
+            enterOuterAlt(_localctx, 2);
+            setState(180);
+            match(FormulaParser::FALSE);
+            break;
+        }
+
+        default:
+            throw NoViableAltException(this);
+        }
 
     } catch (RecognitionException &e) {
         _errHandler->reportError(this, e);
@@ -1491,7 +1623,7 @@ FormulaParser::NumberContext *FormulaParser::number() {
 bool FormulaParser::sempred(RuleContext *context, size_t ruleIndex, size_t predicateIndex) {
     switch (ruleIndex) {
     case 1:
-        return exprSempred(dynamic_cast<ExprContext *>(context), predicateIndex);
+        return exprSempred(antlrcpp::downCast<ExprContext *>(context), predicateIndex);
 
     default:
         break;
@@ -1521,41 +1653,27 @@ atn::ATN FormulaParser::_atn;
 std::vector<uint16_t> FormulaParser::_serializedATN;
 
 std::vector<std::string> FormulaParser::_ruleNames = {
-    "formula", "expr", "xor_expr", "or_expr", "and_expr", "release_until_expr", "unary", "interval", "atom", "number"};
+    "formula", "expr",     "xor_expr", "or_expr", "and_expr", "release_until_expr",
+    "unary",   "interval", "atom",     "number",  "bool_"};
 
-std::vector<std::string> FormulaParser::_literalNames = {"",    "','", "')'", "'['", "']'", "'inf'", "'('",  "",
-                                                         "",    "'G'", "'F'", "'W'", "'X'", "'U'",   "'R'",  "'O'",
-                                                         "'P'", "'S'", "'H'", "",    "",    "",      "'->'", "'<->'"};
+std::vector<std::string> FormulaParser::_literalNames = {"", "','", "')'", "'['", "']'", "'('",  "",     "",    "",
+                                                         "", "'G'", "'F'", "'W'", "",    "",     "'R'",  "'O'", "",
+                                                         "", "'H'", "",    "",    "",    "'->'", "'<->'"};
 
-std::vector<std::string> FormulaParser::_symbolicNames = {"",
-                                                          "",
-                                                          "",
-                                                          "",
-                                                          "",
-                                                          "",
-                                                          "",
-                                                          "BOOL",
-                                                          "NOT",
-                                                          "GLOBALLY",
-                                                          "FUTURE",
-                                                          "NEXT_WEAK",
-                                                          "NEXT_STRONG",
-                                                          "UNTIL",
-                                                          "RELEASE",
-                                                          "ONCE",
-                                                          "PREVIOUSLY",
-                                                          "SINCE",
-                                                          "HISTORICALLY",
-                                                          "AND",
-                                                          "OR",
-                                                          "XOR",
-                                                          "IMPL",
-                                                          "EQ",
-                                                          "TRUE",
-                                                          "FALSE",
-                                                          "ATOMIC",
-                                                          "PREDICATE",
-                                                          "WS",
+std::vector<std::string> FormulaParser::_symbolicNames = {"",          "",
+                                                          "",          "",
+                                                          "",          "",
+                                                          "TRUE",      "FALSE",
+                                                          "INFINITY",  "NOT",
+                                                          "GLOBALLY",  "FUTURE",
+                                                          "NEXT_WEAK", "NEXT_STRONG",
+                                                          "UNTIL",     "RELEASE",
+                                                          "ONCE",      "PREVIOUSLY",
+                                                          "SINCE",     "HISTORICALLY",
+                                                          "AND",       "OR",
+                                                          "XOR",       "IMPL",
+                                                          "EQ",        "ATOMIC",
+                                                          "PREDICATE", "WS",
                                                           "DIGIT"};
 
 dfa::Vocabulary FormulaParser::_vocabulary(_literalNames, _symbolicNames);
@@ -1576,109 +1694,116 @@ FormulaParser::Initializer::Initializer() {
         }
     }
 
-    _serializedATN = {
-        0x3,  0x608b, 0xa72a, 0x8133, 0xb9ed, 0x417c, 0x3be7, 0x7786, 0x5964, 0x3,  0x1f, 0xb4, 0x4,  0x2,  0x9,  0x2,
+    static const uint16_t serializedATNSegment0[] = {
+        0x3,  0x608b, 0xa72a, 0x8133, 0xb9ed, 0x417c, 0x3be7, 0x7786, 0x5964, 0x3,  0x1e, 0xba, 0x4,  0x2,  0x9,  0x2,
         0x4,  0x3,    0x9,    0x3,    0x4,    0x4,    0x9,    0x4,    0x4,    0x5,  0x9,  0x5,  0x4,  0x6,  0x9,  0x6,
         0x4,  0x7,    0x9,    0x7,    0x4,    0x8,    0x9,    0x8,    0x4,    0x9,  0x9,  0x9,  0x4,  0xa,  0x9,  0xa,
-        0x4,  0xb,    0x9,    0xb,    0x3,    0x2,    0x3,    0x2,    0x3,    0x3,  0x3,  0x3,  0x3,  0x3,  0x3,  0x3,
-        0x3,  0x3,    0x3,    0x3,    0x3,    0x3,    0x3,    0x3,    0x3,    0x3,  0x7,  0x3,  0x22, 0xa,  0x3,  0xc,
-        0x3,  0xe,    0x3,    0x25,   0xb,    0x3,    0x3,    0x4,    0x3,    0x4,  0x3,  0x4,  0x7,  0x4,  0x2a, 0xa,
-        0x4,  0xc,    0x4,    0xe,    0x4,    0x2d,   0xb,    0x4,    0x3,    0x5,  0x3,  0x5,  0x3,  0x5,  0x7,  0x5,
-        0x32, 0xa,    0x5,    0xc,    0x5,    0xe,    0x5,    0x35,   0xb,    0x5,  0x3,  0x6,  0x3,  0x6,  0x3,  0x6,
-        0x7,  0x6,    0x3a,   0xa,    0x6,    0xc,    0x6,    0xe,    0x6,    0x3d, 0xb,  0x6,  0x3,  0x7,  0x3,  0x7,
+        0x4,  0xb,    0x9,    0xb,    0x4,    0xc,    0x9,    0xc,    0x3,    0x2,  0x3,  0x2,  0x3,  0x3,  0x3,  0x3,
+        0x3,  0x3,    0x3,    0x3,    0x3,    0x3,    0x3,    0x3,    0x3,    0x3,  0x3,  0x3,  0x3,  0x3,  0x7,  0x3,
+        0x24, 0xa,    0x3,    0xc,    0x3,    0xe,    0x3,    0x27,   0xb,    0x3,  0x3,  0x4,  0x3,  0x4,  0x3,  0x4,
+        0x7,  0x4,    0x2c,   0xa,    0x4,    0xc,    0x4,    0xe,    0x4,    0x2f, 0xb,  0x4,  0x3,  0x5,  0x3,  0x5,
+        0x3,  0x5,    0x7,    0x5,    0x34,   0xa,    0x5,    0xc,    0x5,    0xe,  0x5,  0x37, 0xb,  0x5,  0x3,  0x6,
+        0x3,  0x6,    0x3,    0x6,    0x7,    0x6,    0x3c,   0xa,    0x6,    0xc,  0x6,  0xe,  0x6,  0x3f, 0xb,  0x6,
         0x3,  0x7,    0x3,    0x7,    0x3,    0x7,    0x3,    0x7,    0x3,    0x7,  0x3,  0x7,  0x3,  0x7,  0x3,  0x7,
         0x3,  0x7,    0x3,    0x7,    0x3,    0x7,    0x3,    0x7,    0x3,    0x7,  0x3,  0x7,  0x3,  0x7,  0x3,  0x7,
         0x3,  0x7,    0x3,    0x7,    0x3,    0x7,    0x3,    0x7,    0x3,    0x7,  0x3,  0x7,  0x3,  0x7,  0x3,  0x7,
-        0x3,  0x7,    0x3,    0x7,    0x5,    0x7,    0x5b,   0xa,    0x7,    0x3,  0x8,  0x3,  0x8,  0x3,  0x8,  0x3,
+        0x3,  0x7,    0x3,    0x7,    0x3,    0x7,    0x3,    0x7,    0x5,    0x7,  0x5d, 0xa,  0x7,  0x3,  0x8,  0x3,
         0x8,  0x3,    0x8,    0x3,    0x8,    0x3,    0x8,    0x3,    0x8,    0x3,  0x8,  0x3,  0x8,  0x3,  0x8,  0x3,
         0x8,  0x3,    0x8,    0x3,    0x8,    0x3,    0x8,    0x3,    0x8,    0x3,  0x8,  0x3,  0x8,  0x3,  0x8,  0x3,
         0x8,  0x3,    0x8,    0x3,    0x8,    0x3,    0x8,    0x3,    0x8,    0x3,  0x8,  0x3,  0x8,  0x3,  0x8,  0x3,
         0x8,  0x3,    0x8,    0x3,    0x8,    0x3,    0x8,    0x3,    0x8,    0x3,  0x8,  0x3,  0x8,  0x3,  0x8,  0x3,
         0x8,  0x3,    0x8,    0x3,    0x8,    0x3,    0x8,    0x3,    0x8,    0x3,  0x8,  0x3,  0x8,  0x3,  0x8,  0x3,
-        0x8,  0x3,    0x8,    0x3,    0x8,    0x3,    0x8,    0x3,    0x8,    0x3,  0x8,  0x3,  0x8,  0x3,  0x8,  0x7,
-        0x8,  0x90,   0xa,    0x8,    0xc,    0x8,    0xe,    0x8,    0x93,   0xb,  0x8,  0x3,  0x8,  0x5,  0x8,  0x96,
-        0xa,  0x8,    0x3,    0x9,    0x3,    0x9,    0x3,    0x9,    0x3,    0x9,  0x3,  0x9,  0x3,  0x9,  0x3,  0x9,
-        0x3,  0x9,    0x3,    0x9,    0x3,    0x9,    0x3,    0x9,    0x3,    0x9,  0x5,  0x9,  0xa4, 0xa,  0x9,  0x3,
-        0xa,  0x3,    0xa,    0x3,    0xa,    0x3,    0xa,    0x6,    0xa,    0xaa, 0xa,  0xa,  0xd,  0xa,  0xe,  0xa,
-        0xab, 0x3,    0xa,    0x3,    0xa,    0x5,    0xa,    0xb0,   0xa,    0xa,  0x3,  0xb,  0x3,  0xb,  0x3,  0xb,
-        0x2,  0x3,    0x4,    0xc,    0x2,    0x4,    0x6,    0x8,    0xa,    0xc,  0xe,  0x10, 0x12, 0x14, 0x2,  0x2,
-        0x2,  0xca,   0x2,    0x16,   0x3,    0x2,    0x2,    0x2,    0x4,    0x18, 0x3,  0x2,  0x2,  0x2,  0x6,  0x26,
-        0x3,  0x2,    0x2,    0x2,    0x8,    0x2e,   0x3,    0x2,    0x2,    0x2,  0xa,  0x36, 0x3,  0x2,  0x2,  0x2,
-        0xc,  0x5a,   0x3,    0x2,    0x2,    0x2,    0xe,    0x95,   0x3,    0x2,  0x2,  0x2,  0x10, 0xa3, 0x3,  0x2,
-        0x2,  0x2,    0x12,   0xaf,   0x3,    0x2,    0x2,    0x2,    0x14,   0xb1, 0x3,  0x2,  0x2,  0x2,  0x16, 0x17,
-        0x5,  0x4,    0x3,    0x2,    0x17,   0x3,    0x3,    0x2,    0x2,    0x2,  0x18, 0x19, 0x8,  0x3,  0x1,  0x2,
-        0x19, 0x1a,   0x5,    0x6,    0x4,    0x2,    0x1a,   0x23,   0x3,    0x2,  0x2,  0x2,  0x1b, 0x1c, 0xc,  0x5,
-        0x2,  0x2,    0x1c,   0x1d,   0x7,    0x18,   0x2,    0x2,    0x1d,   0x22, 0x5,  0x4,  0x3,  0x5,  0x1e, 0x1f,
-        0xc,  0x4,    0x2,    0x2,    0x1f,   0x20,   0x7,    0x19,   0x2,    0x2,  0x20, 0x22, 0x5,  0x4,  0x3,  0x4,
-        0x21, 0x1b,   0x3,    0x2,    0x2,    0x2,    0x21,   0x1e,   0x3,    0x2,  0x2,  0x2,  0x22, 0x25, 0x3,  0x2,
-        0x2,  0x2,    0x23,   0x21,   0x3,    0x2,    0x2,    0x2,    0x23,   0x24, 0x3,  0x2,  0x2,  0x2,  0x24, 0x5,
-        0x3,  0x2,    0x2,    0x2,    0x25,   0x23,   0x3,    0x2,    0x2,    0x2,  0x26, 0x2b, 0x5,  0x8,  0x5,  0x2,
-        0x27, 0x28,   0x7,    0x17,   0x2,    0x2,    0x28,   0x2a,   0x5,    0x8,  0x5,  0x2,  0x29, 0x27, 0x3,  0x2,
-        0x2,  0x2,    0x2a,   0x2d,   0x3,    0x2,    0x2,    0x2,    0x2b,   0x29, 0x3,  0x2,  0x2,  0x2,  0x2b, 0x2c,
-        0x3,  0x2,    0x2,    0x2,    0x2c,   0x7,    0x3,    0x2,    0x2,    0x2,  0x2d, 0x2b, 0x3,  0x2,  0x2,  0x2,
-        0x2e, 0x33,   0x5,    0xa,    0x6,    0x2,    0x2f,   0x30,   0x7,    0x16, 0x2,  0x2,  0x30, 0x32, 0x5,  0xa,
-        0x6,  0x2,    0x31,   0x2f,   0x3,    0x2,    0x2,    0x2,    0x32,   0x35, 0x3,  0x2,  0x2,  0x2,  0x33, 0x31,
-        0x3,  0x2,    0x2,    0x2,    0x33,   0x34,   0x3,    0x2,    0x2,    0x2,  0x34, 0x9,  0x3,  0x2,  0x2,  0x2,
-        0x35, 0x33,   0x3,    0x2,    0x2,    0x2,    0x36,   0x3b,   0x5,    0xc,  0x7,  0x2,  0x37, 0x38, 0x7,  0x15,
-        0x2,  0x2,    0x38,   0x3a,   0x5,    0xc,    0x7,    0x2,    0x39,   0x37, 0x3,  0x2,  0x2,  0x2,  0x3a, 0x3d,
-        0x3,  0x2,    0x2,    0x2,    0x3b,   0x39,   0x3,    0x2,    0x2,    0x2,  0x3b, 0x3c, 0x3,  0x2,  0x2,  0x2,
-        0x3c, 0xb,    0x3,    0x2,    0x2,    0x2,    0x3d,   0x3b,   0x3,    0x2,  0x2,  0x2,  0x3e, 0x3f, 0x5,  0xe,
-        0x8,  0x2,    0x3f,   0x40,   0x7,    0x10,   0x2,    0x2,    0x40,   0x41, 0x5,  0xe,  0x8,  0x2,  0x41, 0x5b,
-        0x3,  0x2,    0x2,    0x2,    0x42,   0x43,   0x5,    0xe,    0x8,    0x2,  0x43, 0x44, 0x7,  0xf,  0x2,  0x2,
-        0x44, 0x45,   0x5,    0xe,    0x8,    0x2,    0x45,   0x5b,   0x3,    0x2,  0x2,  0x2,  0x46, 0x47, 0x5,  0xe,
-        0x8,  0x2,    0x47,   0x48,   0x7,    0x10,   0x2,    0x2,    0x48,   0x49, 0x5,  0x10, 0x9,  0x2,  0x49, 0x4a,
-        0x5,  0xe,    0x8,    0x2,    0x4a,   0x5b,   0x3,    0x2,    0x2,    0x2,  0x4b, 0x4c, 0x5,  0xe,  0x8,  0x2,
-        0x4c, 0x4d,   0x7,    0xf,    0x2,    0x2,    0x4d,   0x4e,   0x5,    0x10, 0x9,  0x2,  0x4e, 0x4f, 0x5,  0xe,
-        0x8,  0x2,    0x4f,   0x5b,   0x3,    0x2,    0x2,    0x2,    0x50,   0x51, 0x5,  0xe,  0x8,  0x2,  0x51, 0x52,
-        0x7,  0x13,   0x2,    0x2,    0x52,   0x53,   0x5,    0xe,    0x8,    0x2,  0x53, 0x5b, 0x3,  0x2,  0x2,  0x2,
-        0x54, 0x55,   0x5,    0xe,    0x8,    0x2,    0x55,   0x56,   0x7,    0x13, 0x2,  0x2,  0x56, 0x57, 0x5,  0x10,
-        0x9,  0x2,    0x57,   0x58,   0x5,    0xe,    0x8,    0x2,    0x58,   0x5b, 0x3,  0x2,  0x2,  0x2,  0x59, 0x5b,
-        0x5,  0xe,    0x8,    0x2,    0x5a,   0x3e,   0x3,    0x2,    0x2,    0x2,  0x5a, 0x42, 0x3,  0x2,  0x2,  0x2,
-        0x5a, 0x46,   0x3,    0x2,    0x2,    0x2,    0x5a,   0x4b,   0x3,    0x2,  0x2,  0x2,  0x5a, 0x50, 0x3,  0x2,
-        0x2,  0x2,    0x5a,   0x54,   0x3,    0x2,    0x2,    0x2,    0x5a,   0x59, 0x3,  0x2,  0x2,  0x2,  0x5b, 0xd,
-        0x3,  0x2,    0x2,    0x2,    0x5c,   0x5d,   0x7,    0xb,    0x2,    0x2,  0x5d, 0x96, 0x5,  0x12, 0xa,  0x2,
-        0x5e, 0x5f,   0x7,    0xc,    0x2,    0x2,    0x5f,   0x96,   0x5,    0x12, 0xa,  0x2,  0x60, 0x61, 0x7,  0x11,
-        0x2,  0x2,    0x61,   0x96,   0x5,    0x12,   0xa,    0x2,    0x62,   0x63, 0x7,  0x12, 0x2,  0x2,  0x63, 0x96,
-        0x5,  0x12,   0xa,    0x2,    0x64,   0x65,   0x7,    0xd,    0x2,    0x2,  0x65, 0x96, 0x5,  0x12, 0xa,  0x2,
-        0x66, 0x67,   0x7,    0xe,    0x2,    0x2,    0x67,   0x96,   0x5,    0x12, 0xa,  0x2,  0x68, 0x69, 0x7,  0xb,
-        0x2,  0x2,    0x69,   0x6a,   0x5,    0x10,   0x9,    0x2,    0x6a,   0x6b, 0x5,  0x12, 0xa,  0x2,  0x6b, 0x96,
-        0x3,  0x2,    0x2,    0x2,    0x6c,   0x6d,   0x7,    0xc,    0x2,    0x2,  0x6d, 0x6e, 0x5,  0x10, 0x9,  0x2,
-        0x6e, 0x6f,   0x5,    0x12,   0xa,    0x2,    0x6f,   0x96,   0x3,    0x2,  0x2,  0x2,  0x70, 0x71, 0x7,  0x11,
-        0x2,  0x2,    0x71,   0x72,   0x5,    0x10,   0x9,    0x2,    0x72,   0x73, 0x5,  0x12, 0xa,  0x2,  0x73, 0x96,
-        0x3,  0x2,    0x2,    0x2,    0x74,   0x75,   0x7,    0x12,   0x2,    0x2,  0x75, 0x76, 0x5,  0x10, 0x9,  0x2,
-        0x76, 0x77,   0x5,    0x12,   0xa,    0x2,    0x77,   0x96,   0x3,    0x2,  0x2,  0x2,  0x78, 0x79, 0x7,  0xd,
-        0x2,  0x2,    0x79,   0x7a,   0x5,    0x10,   0x9,    0x2,    0x7a,   0x7b, 0x5,  0x12, 0xa,  0x2,  0x7b, 0x96,
-        0x3,  0x2,    0x2,    0x2,    0x7c,   0x7d,   0x7,    0xe,    0x2,    0x2,  0x7d, 0x7e, 0x5,  0x10, 0x9,  0x2,
-        0x7e, 0x7f,   0x5,    0x12,   0xa,    0x2,    0x7f,   0x96,   0x3,    0x2,  0x2,  0x2,  0x80, 0x81, 0x7,  0x14,
-        0x2,  0x2,    0x81,   0x96,   0x5,    0x12,   0xa,    0x2,    0x82,   0x83, 0x7,  0x14, 0x2,  0x2,  0x83, 0x84,
-        0x5,  0x10,   0x9,    0x2,    0x84,   0x85,   0x5,    0x12,   0xa,    0x2,  0x85, 0x96, 0x3,  0x2,  0x2,  0x2,
-        0x86, 0x87,   0x7,    0xa,    0x2,    0x2,    0x87,   0x96,   0x5,    0x12, 0xa,  0x2,  0x88, 0x89, 0x7,  0xa,
-        0x2,  0x2,    0x89,   0x96,   0x5,    0x4,    0x3,    0x2,    0x8a,   0x96, 0x5,  0x12, 0xa,  0x2,  0x8b, 0x8c,
-        0x7,  0x1d,   0x2,    0x2,    0x8c,   0x91,   0x7,    0x1c,   0x2,    0x2,  0x8d, 0x8e, 0x7,  0x3,  0x2,  0x2,
-        0x8e, 0x90,   0x7,    0x1c,   0x2,    0x2,    0x8f,   0x8d,   0x3,    0x2,  0x2,  0x2,  0x90, 0x93, 0x3,  0x2,
-        0x2,  0x2,    0x91,   0x8f,   0x3,    0x2,    0x2,    0x2,    0x91,   0x92, 0x3,  0x2,  0x2,  0x2,  0x92, 0x94,
-        0x3,  0x2,    0x2,    0x2,    0x93,   0x91,   0x3,    0x2,    0x2,    0x2,  0x94, 0x96, 0x7,  0x4,  0x2,  0x2,
-        0x95, 0x5c,   0x3,    0x2,    0x2,    0x2,    0x95,   0x5e,   0x3,    0x2,  0x2,  0x2,  0x95, 0x60, 0x3,  0x2,
-        0x2,  0x2,    0x95,   0x62,   0x3,    0x2,    0x2,    0x2,    0x95,   0x64, 0x3,  0x2,  0x2,  0x2,  0x95, 0x66,
-        0x3,  0x2,    0x2,    0x2,    0x95,   0x68,   0x3,    0x2,    0x2,    0x2,  0x95, 0x6c, 0x3,  0x2,  0x2,  0x2,
-        0x95, 0x70,   0x3,    0x2,    0x2,    0x2,    0x95,   0x74,   0x3,    0x2,  0x2,  0x2,  0x95, 0x78, 0x3,  0x2,
-        0x2,  0x2,    0x95,   0x7c,   0x3,    0x2,    0x2,    0x2,    0x95,   0x80, 0x3,  0x2,  0x2,  0x2,  0x95, 0x82,
-        0x3,  0x2,    0x2,    0x2,    0x95,   0x86,   0x3,    0x2,    0x2,    0x2,  0x95, 0x88, 0x3,  0x2,  0x2,  0x2,
-        0x95, 0x8a,   0x3,    0x2,    0x2,    0x2,    0x95,   0x8b,   0x3,    0x2,  0x2,  0x2,  0x96, 0xf,  0x3,  0x2,
-        0x2,  0x2,    0x97,   0x98,   0x7,    0x5,    0x2,    0x2,    0x98,   0x99, 0x5,  0x14, 0xb,  0x2,  0x99, 0x9a,
-        0x7,  0x3,    0x2,    0x2,    0x9a,   0x9b,   0x5,    0x14,   0xb,    0x2,  0x9b, 0x9c, 0x7,  0x6,  0x2,  0x2,
-        0x9c, 0xa4,   0x3,    0x2,    0x2,    0x2,    0x9d,   0x9e,   0x7,    0x5,  0x2,  0x2,  0x9e, 0x9f, 0x5,  0x14,
-        0xb,  0x2,    0x9f,   0xa0,   0x7,    0x3,    0x2,    0x2,    0xa0,   0xa1, 0x7,  0x7,  0x2,  0x2,  0xa1, 0xa2,
-        0x7,  0x6,    0x2,    0x2,    0xa2,   0xa4,   0x3,    0x2,    0x2,    0x2,  0xa3, 0x97, 0x3,  0x2,  0x2,  0x2,
-        0xa3, 0x9d,   0x3,    0x2,    0x2,    0x2,    0xa4,   0x11,   0x3,    0x2,  0x2,  0x2,  0xa5, 0xb0, 0x7,  0x9,
-        0x2,  0x2,    0xa6,   0xb0,   0x7,    0x1c,   0x2,    0x2,    0xa7,   0xa9, 0x7,  0x8,  0x2,  0x2,  0xa8, 0xaa,
-        0x5,  0x4,    0x3,    0x2,    0xa9,   0xa8,   0x3,    0x2,    0x2,    0x2,  0xaa, 0xab, 0x3,  0x2,  0x2,  0x2,
-        0xab, 0xa9,   0x3,    0x2,    0x2,    0x2,    0xab,   0xac,   0x3,    0x2,  0x2,  0x2,  0xac, 0xad, 0x3,  0x2,
-        0x2,  0x2,    0xad,   0xae,   0x7,    0x4,    0x2,    0x2,    0xae,   0xb0, 0x3,  0x2,  0x2,  0x2,  0xaf, 0xa5,
-        0x3,  0x2,    0x2,    0x2,    0xaf,   0xa6,   0x3,    0x2,    0x2,    0x2,  0xaf, 0xa7, 0x3,  0x2,  0x2,  0x2,
-        0xb0, 0x13,   0x3,    0x2,    0x2,    0x2,    0xb1,   0xb2,   0x7,    0x1f, 0x2,  0x2,  0xb2, 0x15, 0x3,  0x2,
-        0x2,  0x2,    0xd,    0x21,   0x23,   0x2b,   0x33,   0x3b,   0x5a,   0x91, 0x95, 0xa3, 0xab, 0xaf,
+        0x8,  0x3,    0x8,    0x3,    0x8,    0x3,    0x8,    0x3,    0x8,    0x3,  0x8,  0x3,  0x8,  0x3,  0x8,  0x3,
+        0x8,  0x3,    0x8,    0x7,    0x8,    0x92,   0xa,    0x8,    0xc,    0x8,  0xe,  0x8,  0x95, 0xb,  0x8,  0x3,
+        0x8,  0x5,    0x8,    0x98,   0xa,    0x8,    0x3,    0x9,    0x3,    0x9,  0x3,  0x9,  0x3,  0x9,  0x3,  0x9,
+        0x3,  0x9,    0x3,    0x9,    0x3,    0x9,    0x3,    0x9,    0x3,    0x9,  0x3,  0x9,  0x3,  0x9,  0x5,  0x9,
+        0xa6, 0xa,    0x9,    0x3,    0xa,    0x3,    0xa,    0x3,    0xa,    0x3,  0xa,  0x6,  0xa,  0xac, 0xa,  0xa,
+        0xd,  0xa,    0xe,    0xa,    0xad,   0x3,    0xa,    0x3,    0xa,    0x5,  0xa,  0xb2, 0xa,  0xa,  0x3,  0xb,
+        0x3,  0xb,    0x3,    0xc,    0x3,    0xc,    0x5,    0xc,    0xb8,   0xa,  0xc,  0x3,  0xc,  0x2,  0x3,  0x4,
+        0xd,  0x2,    0x4,    0x6,    0x8,    0xa,    0xc,    0xe,    0x10,   0x12, 0x14, 0x16, 0x2,  0x2,  0x2,  0xd0,
+        0x2,  0x18,   0x3,    0x2,    0x2,    0x2,    0x4,    0x1a,   0x3,    0x2,  0x2,  0x2,  0x6,  0x28, 0x3,  0x2,
+        0x2,  0x2,    0x8,    0x30,   0x3,    0x2,    0x2,    0x2,    0xa,    0x38, 0x3,  0x2,  0x2,  0x2,  0xc,  0x5c,
+        0x3,  0x2,    0x2,    0x2,    0xe,    0x97,   0x3,    0x2,    0x2,    0x2,  0x10, 0xa5, 0x3,  0x2,  0x2,  0x2,
+        0x12, 0xb1,   0x3,    0x2,    0x2,    0x2,    0x14,   0xb3,   0x3,    0x2,  0x2,  0x2,  0x16, 0xb7, 0x3,  0x2,
+        0x2,  0x2,    0x18,   0x19,   0x5,    0x4,    0x3,    0x2,    0x19,   0x3,  0x3,  0x2,  0x2,  0x2,  0x1a, 0x1b,
+        0x8,  0x3,    0x1,    0x2,    0x1b,   0x1c,   0x5,    0x6,    0x4,    0x2,  0x1c, 0x25, 0x3,  0x2,  0x2,  0x2,
+        0x1d, 0x1e,   0xc,    0x5,    0x2,    0x2,    0x1e,   0x1f,   0x7,    0x19, 0x2,  0x2,  0x1f, 0x24, 0x5,  0x4,
+        0x3,  0x5,    0x20,   0x21,   0xc,    0x4,    0x2,    0x2,    0x21,   0x22, 0x7,  0x1a, 0x2,  0x2,  0x22, 0x24,
+        0x5,  0x4,    0x3,    0x4,    0x23,   0x1d,   0x3,    0x2,    0x2,    0x2,  0x23, 0x20, 0x3,  0x2,  0x2,  0x2,
+        0x24, 0x27,   0x3,    0x2,    0x2,    0x2,    0x25,   0x23,   0x3,    0x2,  0x2,  0x2,  0x25, 0x26, 0x3,  0x2,
+        0x2,  0x2,    0x26,   0x5,    0x3,    0x2,    0x2,    0x2,    0x27,   0x25, 0x3,  0x2,  0x2,  0x2,  0x28, 0x2d,
+        0x5,  0x8,    0x5,    0x2,    0x29,   0x2a,   0x7,    0x18,   0x2,    0x2,  0x2a, 0x2c, 0x5,  0x8,  0x5,  0x2,
+        0x2b, 0x29,   0x3,    0x2,    0x2,    0x2,    0x2c,   0x2f,   0x3,    0x2,  0x2,  0x2,  0x2d, 0x2b, 0x3,  0x2,
+        0x2,  0x2,    0x2d,   0x2e,   0x3,    0x2,    0x2,    0x2,    0x2e,   0x7,  0x3,  0x2,  0x2,  0x2,  0x2f, 0x2d,
+        0x3,  0x2,    0x2,    0x2,    0x30,   0x35,   0x5,    0xa,    0x6,    0x2,  0x31, 0x32, 0x7,  0x17, 0x2,  0x2,
+        0x32, 0x34,   0x5,    0xa,    0x6,    0x2,    0x33,   0x31,   0x3,    0x2,  0x2,  0x2,  0x34, 0x37, 0x3,  0x2,
+        0x2,  0x2,    0x35,   0x33,   0x3,    0x2,    0x2,    0x2,    0x35,   0x36, 0x3,  0x2,  0x2,  0x2,  0x36, 0x9,
+        0x3,  0x2,    0x2,    0x2,    0x37,   0x35,   0x3,    0x2,    0x2,    0x2,  0x38, 0x3d, 0x5,  0xc,  0x7,  0x2,
+        0x39, 0x3a,   0x7,    0x16,   0x2,    0x2,    0x3a,   0x3c,   0x5,    0xc,  0x7,  0x2,  0x3b, 0x39, 0x3,  0x2,
+        0x2,  0x2,    0x3c,   0x3f,   0x3,    0x2,    0x2,    0x2,    0x3d,   0x3b, 0x3,  0x2,  0x2,  0x2,  0x3d, 0x3e,
+        0x3,  0x2,    0x2,    0x2,    0x3e,   0xb,    0x3,    0x2,    0x2,    0x2,  0x3f, 0x3d, 0x3,  0x2,  0x2,  0x2,
+        0x40, 0x41,   0x5,    0xe,    0x8,    0x2,    0x41,   0x42,   0x7,    0x11, 0x2,  0x2,  0x42, 0x43, 0x5,  0xe,
+        0x8,  0x2,    0x43,   0x5d,   0x3,    0x2,    0x2,    0x2,    0x44,   0x45, 0x5,  0xe,  0x8,  0x2,  0x45, 0x46,
+        0x7,  0x10,   0x2,    0x2,    0x46,   0x47,   0x5,    0xe,    0x8,    0x2,  0x47, 0x5d, 0x3,  0x2,  0x2,  0x2,
+        0x48, 0x49,   0x5,    0xe,    0x8,    0x2,    0x49,   0x4a,   0x7,    0x11, 0x2,  0x2,  0x4a, 0x4b, 0x5,  0x10,
+        0x9,  0x2,    0x4b,   0x4c,   0x5,    0xe,    0x8,    0x2,    0x4c,   0x5d, 0x3,  0x2,  0x2,  0x2,  0x4d, 0x4e,
+        0x5,  0xe,    0x8,    0x2,    0x4e,   0x4f,   0x7,    0x10,   0x2,    0x2,  0x4f, 0x50, 0x5,  0x10, 0x9,  0x2,
+        0x50, 0x51,   0x5,    0xe,    0x8,    0x2,    0x51,   0x5d,   0x3,    0x2,  0x2,  0x2,  0x52, 0x53, 0x5,  0xe,
+        0x8,  0x2,    0x53,   0x54,   0x7,    0x14,   0x2,    0x2,    0x54,   0x55, 0x5,  0xe,  0x8,  0x2,  0x55, 0x5d,
+        0x3,  0x2,    0x2,    0x2,    0x56,   0x57,   0x5,    0xe,    0x8,    0x2,  0x57, 0x58, 0x7,  0x14, 0x2,  0x2,
+        0x58, 0x59,   0x5,    0x10,   0x9,    0x2,    0x59,   0x5a,   0x5,    0xe,  0x8,  0x2,  0x5a, 0x5d, 0x3,  0x2,
+        0x2,  0x2,    0x5b,   0x5d,   0x5,    0xe,    0x8,    0x2,    0x5c,   0x40, 0x3,  0x2,  0x2,  0x2,  0x5c, 0x44,
+        0x3,  0x2,    0x2,    0x2,    0x5c,   0x48,   0x3,    0x2,    0x2,    0x2,  0x5c, 0x4d, 0x3,  0x2,  0x2,  0x2,
+        0x5c, 0x52,   0x3,    0x2,    0x2,    0x2,    0x5c,   0x56,   0x3,    0x2,  0x2,  0x2,  0x5c, 0x5b, 0x3,  0x2,
+        0x2,  0x2,    0x5d,   0xd,    0x3,    0x2,    0x2,    0x2,    0x5e,   0x5f, 0x7,  0xc,  0x2,  0x2,  0x5f, 0x98,
+        0x5,  0x12,   0xa,    0x2,    0x60,   0x61,   0x7,    0xd,    0x2,    0x2,  0x61, 0x98, 0x5,  0x12, 0xa,  0x2,
+        0x62, 0x63,   0x7,    0x12,   0x2,    0x2,    0x63,   0x98,   0x5,    0x12, 0xa,  0x2,  0x64, 0x65, 0x7,  0x13,
+        0x2,  0x2,    0x65,   0x98,   0x5,    0x12,   0xa,    0x2,    0x66,   0x67, 0x7,  0xe,  0x2,  0x2,  0x67, 0x98,
+        0x5,  0x12,   0xa,    0x2,    0x68,   0x69,   0x7,    0xf,    0x2,    0x2,  0x69, 0x98, 0x5,  0x12, 0xa,  0x2,
+        0x6a, 0x6b,   0x7,    0xc,    0x2,    0x2,    0x6b,   0x6c,   0x5,    0x10, 0x9,  0x2,  0x6c, 0x6d, 0x5,  0x12,
+        0xa,  0x2,    0x6d,   0x98,   0x3,    0x2,    0x2,    0x2,    0x6e,   0x6f, 0x7,  0xd,  0x2,  0x2,  0x6f, 0x70,
+        0x5,  0x10,   0x9,    0x2,    0x70,   0x71,   0x5,    0x12,   0xa,    0x2,  0x71, 0x98, 0x3,  0x2,  0x2,  0x2,
+        0x72, 0x73,   0x7,    0x12,   0x2,    0x2,    0x73,   0x74,   0x5,    0x10, 0x9,  0x2,  0x74, 0x75, 0x5,  0x12,
+        0xa,  0x2,    0x75,   0x98,   0x3,    0x2,    0x2,    0x2,    0x76,   0x77, 0x7,  0x13, 0x2,  0x2,  0x77, 0x78,
+        0x5,  0x10,   0x9,    0x2,    0x78,   0x79,   0x5,    0x12,   0xa,    0x2,  0x79, 0x98, 0x3,  0x2,  0x2,  0x2,
+        0x7a, 0x7b,   0x7,    0xe,    0x2,    0x2,    0x7b,   0x7c,   0x5,    0x10, 0x9,  0x2,  0x7c, 0x7d, 0x5,  0x12,
+        0xa,  0x2,    0x7d,   0x98,   0x3,    0x2,    0x2,    0x2,    0x7e,   0x7f, 0x7,  0xf,  0x2,  0x2,  0x7f, 0x80,
+        0x5,  0x10,   0x9,    0x2,    0x80,   0x81,   0x5,    0x12,   0xa,    0x2,  0x81, 0x98, 0x3,  0x2,  0x2,  0x2,
+        0x82, 0x83,   0x7,    0x15,   0x2,    0x2,    0x83,   0x98,   0x5,    0x12, 0xa,  0x2,  0x84, 0x85, 0x7,  0x15,
+        0x2,  0x2,    0x85,   0x86,   0x5,    0x10,   0x9,    0x2,    0x86,   0x87, 0x5,  0x12, 0xa,  0x2,  0x87, 0x98,
+        0x3,  0x2,    0x2,    0x2,    0x88,   0x89,   0x7,    0xb,    0x2,    0x2,  0x89, 0x98, 0x5,  0x12, 0xa,  0x2,
+        0x8a, 0x8b,   0x7,    0xb,    0x2,    0x2,    0x8b,   0x98,   0x5,    0x4,  0x3,  0x2,  0x8c, 0x98, 0x5,  0x12,
+        0xa,  0x2,    0x8d,   0x8e,   0x7,    0x1c,   0x2,    0x2,    0x8e,   0x93, 0x7,  0x1b, 0x2,  0x2,  0x8f, 0x90,
+        0x7,  0x3,    0x2,    0x2,    0x90,   0x92,   0x7,    0x1b,   0x2,    0x2,  0x91, 0x8f, 0x3,  0x2,  0x2,  0x2,
+        0x92, 0x95,   0x3,    0x2,    0x2,    0x2,    0x93,   0x91,   0x3,    0x2,  0x2,  0x2,  0x93, 0x94, 0x3,  0x2,
+        0x2,  0x2,    0x94,   0x96,   0x3,    0x2,    0x2,    0x2,    0x95,   0x93, 0x3,  0x2,  0x2,  0x2,  0x96, 0x98,
+        0x7,  0x4,    0x2,    0x2,    0x97,   0x5e,   0x3,    0x2,    0x2,    0x2,  0x97, 0x60, 0x3,  0x2,  0x2,  0x2,
+        0x97, 0x62,   0x3,    0x2,    0x2,    0x2,    0x97,   0x64,   0x3,    0x2,  0x2,  0x2,  0x97, 0x66, 0x3,  0x2,
+        0x2,  0x2,    0x97,   0x68,   0x3,    0x2,    0x2,    0x2,    0x97,   0x6a, 0x3,  0x2,  0x2,  0x2,  0x97, 0x6e,
+        0x3,  0x2,    0x2,    0x2,    0x97,   0x72,   0x3,    0x2,    0x2,    0x2,  0x97, 0x76, 0x3,  0x2,  0x2,  0x2,
+        0x97, 0x7a,   0x3,    0x2,    0x2,    0x2,    0x97,   0x7e,   0x3,    0x2,  0x2,  0x2,  0x97, 0x82, 0x3,  0x2,
+        0x2,  0x2,    0x97,   0x84,   0x3,    0x2,    0x2,    0x2,    0x97,   0x88, 0x3,  0x2,  0x2,  0x2,  0x97, 0x8a,
+        0x3,  0x2,    0x2,    0x2,    0x97,   0x8c,   0x3,    0x2,    0x2,    0x2,  0x97, 0x8d, 0x3,  0x2,  0x2,  0x2,
+        0x98, 0xf,    0x3,    0x2,    0x2,    0x2,    0x99,   0x9a,   0x7,    0x5,  0x2,  0x2,  0x9a, 0x9b, 0x5,  0x14,
+        0xb,  0x2,    0x9b,   0x9c,   0x7,    0x3,    0x2,    0x2,    0x9c,   0x9d, 0x5,  0x14, 0xb,  0x2,  0x9d, 0x9e,
+        0x7,  0x6,    0x2,    0x2,    0x9e,   0xa6,   0x3,    0x2,    0x2,    0x2,  0x9f, 0xa0, 0x7,  0x5,  0x2,  0x2,
+        0xa0, 0xa1,   0x5,    0x14,   0xb,    0x2,    0xa1,   0xa2,   0x7,    0x3,  0x2,  0x2,  0xa2, 0xa3, 0x7,  0xa,
+        0x2,  0x2,    0xa3,   0xa4,   0x7,    0x6,    0x2,    0x2,    0xa4,   0xa6, 0x3,  0x2,  0x2,  0x2,  0xa5, 0x99,
+        0x3,  0x2,    0x2,    0x2,    0xa5,   0x9f,   0x3,    0x2,    0x2,    0x2,  0xa6, 0x11, 0x3,  0x2,  0x2,  0x2,
+        0xa7, 0xb2,   0x5,    0x16,   0xc,    0x2,    0xa8,   0xb2,   0x7,    0x1b, 0x2,  0x2,  0xa9, 0xab, 0x7,  0x7,
+        0x2,  0x2,    0xaa,   0xac,   0x5,    0x4,    0x3,    0x2,    0xab,   0xaa, 0x3,  0x2,  0x2,  0x2,  0xac, 0xad,
+        0x3,  0x2,    0x2,    0x2,    0xad,   0xab,   0x3,    0x2,    0x2,    0x2,  0xad, 0xae, 0x3,  0x2,  0x2,  0x2,
+        0xae, 0xaf,   0x3,    0x2,    0x2,    0x2,    0xaf,   0xb0,   0x7,    0x4,  0x2,  0x2,  0xb0, 0xb2, 0x3,  0x2,
+        0x2,  0x2,    0xb1,   0xa7,   0x3,    0x2,    0x2,    0x2,    0xb1,   0xa8, 0x3,  0x2,  0x2,  0x2,  0xb1, 0xa9,
+        0x3,  0x2,    0x2,    0x2,    0xb2,   0x13,   0x3,    0x2,    0x2,    0x2,  0xb3, 0xb4, 0x7,  0x1e, 0x2,  0x2,
+        0xb4, 0x15,   0x3,    0x2,    0x2,    0x2,    0xb5,   0xb8,   0x7,    0x8,  0x2,  0x2,  0xb6, 0xb8, 0x7,  0x9,
+        0x2,  0x2,    0xb7,   0xb5,   0x3,    0x2,    0x2,    0x2,    0xb7,   0xb6, 0x3,  0x2,  0x2,  0x2,  0xb8, 0x17,
+        0x3,  0x2,    0x2,    0x2,    0xe,    0x23,   0x25,   0x2d,   0x35,   0x3d, 0x5c, 0x93, 0x97, 0xa5, 0xad, 0xb1,
+        0xb7,
     };
+
+    _serializedATN.insert(_serializedATN.end(), serializedATNSegment0,
+                          serializedATNSegment0 + sizeof(serializedATNSegment0) / sizeof(serializedATNSegment0[0]));
 
     atn::ATNDeserializer deserializer;
     _atn = deserializer.deserialize(_serializedATN);

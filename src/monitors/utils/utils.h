@@ -2,12 +2,44 @@
 
 #include "monitors/formula/formula.h"
 #include "monitors/trace/trace.h"
+#include <optional>
 #include <vector>
 
 struct Verdict {
-    size_t ts;
+
+    Verdict(size_t ts, bool b) : ts(ts), b(b) {}
+    Verdict(bool b) : b(b) {}
+    std::optional<size_t> ts;
     bool b;
-    bool operator==(const Verdict &bv) const { return ts == bv.ts && b == bv.b; }
+
+    bool operator==(const Verdict &bv) const {
+        return bv.ts.has_value() and this->ts.has_value() and this->ts == bv.ts and this->b == bv.b;
+    }
+
+    Verdict operator!() const {
+        if (this->ts.has_value())
+            return {this->ts.value(), !this->b};
+        else
+            return {!this->b};
+    }
+    Verdict operator&&(const Verdict &w) const {
+        if (!this->ts.has_value() or !w.ts.has_value())
+            return {false};
+        if (this->ts.value() != w.ts.value())
+            throw std::runtime_error(
+                "Verdict logical and: time steps do not match. Time step this: " + std::to_string(this->ts.value()) +
+                ". Time step w: " + std::to_string(w.ts.value()));
+        return {this->ts.value(), this->b && w.b};
+    }
+    Verdict operator||(const Verdict &w) const {
+        if (!this->ts.has_value() or !w.ts.has_value())
+            return {false};
+        if (this->ts.value() != w.ts.value())
+            throw std::runtime_error(
+                "Verdict logical or: time steps do not match. Time step this: " + std::to_string(this->ts.value()) +
+                ". Time step w: " + std::to_string(w.ts.value()));
+        return {this->ts.value(), this->b || w.b};
+    }
 };
 
 /**
@@ -16,14 +48,25 @@ struct Verdict {
 namespace Utils {
 
 /**
+ * Checks whether a value is within an interval.
+ *
+ * @param value Value which should be evaluated.
+ * @param low Lower bound.
+ * @param high Upper bound.
+ * @return True if low <= value <= high.
+ */
+template <typename T> bool isInInterval(const T &value, const T &low, const T &high) {
+    return !(value < low) && !(high < value);
+}
+
+/**
  * Computes how a boolean @param expr (containing only n-ary operators and not) evaluates on a given @param eventMap
  *
  * @param expr Expression to be evaluated.
  * @param eventMap Event.
  * @return True if @param expr is true in @param eventMap, false otherwise.
  */
-[[nodiscard]] bool evaluateBooleanExpression(const std::shared_ptr<Expression> &expr,
-                                             std::map<std::string, lazy_bool> &eventMap);
+[[nodiscard]] bool evaluateBooleanExpression(const std::shared_ptr<Expression> &expr, event_map_t &eventMap);
 
 /**
  * Creates a Trace.
@@ -32,8 +75,9 @@ namespace Utils {
  * @param trueAtomics Vector of vectors containing predicates that are true in each event.
  * @return Trace.
  */
-[[nodiscard]] Trace createTrace(const std::set<std::string> &atomics,
-                                std::vector<std::vector<std::string>> trueAtomics);
+[[nodiscard]] Trace
+createTrace(const std::set<std::string> &atomics, const std::vector<std::vector<std::string>> &trueAtomics,
+            const std::optional<std::vector<size_t>> &timeSteps = std::optional<std::vector<size_t>>{});
 
 /**
  * Creates a Trace with lazy evaluation of the predicates.
@@ -42,6 +86,15 @@ namespace Utils {
  * @return
  */
 [[nodiscard]] Trace createLazyTrace(const std::map<std::string, std::function<bool(size_t)>> &atomicsAndFunctions,
+                                    const std::vector<size_t> &timeSteps);
+
+/**
+ * Creates a Trace with lazy evaluation of the predicates.
+ * @param atomicsAndFunctions map containing lazy predicates
+ * @param timeSteps time steps for which predicates should be evaluated
+ * @return
+ */
+[[nodiscard]] Trace createLazyTrace(std::map<std::string, std::function<bool(size_t)>> &&atomicsAndFunctions,
                                     const std::vector<size_t> &timeSteps);
 
 /**
@@ -222,7 +275,7 @@ template <class T, class F>
  * @param arr Iterable container.
  * @return String representation of arr.
  */
-template <class T>[[nodiscard]] std::string iterableToString(const T &arr) {
+template <class T> [[nodiscard]] std::string iterableToString(const T &arr) {
     return iterableToString(arr, [](const auto &x) { return x; });
 }
 

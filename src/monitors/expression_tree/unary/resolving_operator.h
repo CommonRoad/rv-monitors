@@ -16,7 +16,7 @@
 class ResolvingOperator : public Unary {
   private:
     Trace trace;
-    int index;
+    size_t index;
 
   public:
     /**
@@ -24,7 +24,7 @@ class ResolvingOperator : public Unary {
      * @param left Expression event should be applied to.
      * @param event Event.
      */
-    explicit ResolvingOperator(const std::shared_ptr<Expression> &left, Trace trace, int idx)
+    explicit ResolvingOperator(const std::shared_ptr<Expression> &left, Trace trace, size_t idx)
         : Unary(trace.getEvent(idx).to_string(), left), trace(std::move(trace)), index(idx) {}
 
     /**
@@ -35,7 +35,10 @@ class ResolvingOperator : public Unary {
 
     [[nodiscard]] std::shared_ptr<Expression> clone() override;
 
-    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, int index) override;
+    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override;
+
+    [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor, size_t parentId,
+                                                       bool connectedEval) override;
 
     [[nodiscard]] std::string to_string() const override;
 };

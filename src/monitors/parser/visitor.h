@@ -5,21 +5,21 @@
 #include "monitors/expression_tree/atomic/predicate.h"
 #include "monitors/expression_tree/binary/bool/equivalence.h"
 #include "monitors/expression_tree/binary/bool/implication.h"
-#include "monitors/expression_tree/binary/temporal/ltlf/release.h"
-#include "monitors/expression_tree/binary/temporal/ltlf/until.h"
-#include "monitors/expression_tree/binary/temporal/ptlf/since.h"
+#include "monitors/expression_tree/binary/temporal/release.h"
+#include "monitors/expression_tree/binary/temporal/since.h"
+#include "monitors/expression_tree/binary/temporal/until.h"
 #include "monitors/expression_tree/interval.h"
 #include "monitors/expression_tree/nary/bool/and.h"
 #include "monitors/expression_tree/nary/bool/or.h"
 #include "monitors/expression_tree/nary/bool/xor.h"
 #include "monitors/expression_tree/unary/bool/not.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/future.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/globally.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/next_strong.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/next_weak.h"
-#include "monitors/expression_tree/unary/temporal/ptlf/historically.h"
-#include "monitors/expression_tree/unary/temporal/ptlf/once.h"
-#include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
+#include "monitors/expression_tree/unary/temporal/future.h"
+#include "monitors/expression_tree/unary/temporal/globally.h"
+#include "monitors/expression_tree/unary/temporal/historically.h"
+#include "monitors/expression_tree/unary/temporal/next_strong.h"
+#include "monitors/expression_tree/unary/temporal/next_weak.h"
+#include "monitors/expression_tree/unary/temporal/once.h"
+#include "monitors/expression_tree/unary/temporal/previously.h"
 #include "monitors/parser/gen/FormulaBaseVisitor.h"
 
 /**
@@ -159,7 +159,7 @@ class Visitor : public FormulaBaseVisitor {
      */
     antlrcpp::Any visitXor(FormulaParser::XorContext *ctx) override {
         // Not an xor -> continue with children
-        if ((ctx->op == nullptr) || (ctx->op->getText() != "xor" && ctx->op->getText() != "^")) {
+        if ((ctx->op == nullptr) || (ctx->op->getType() != FormulaParser::XOR)) {
             return visitChildren(ctx);
         }
         Xor::SetType_T xorSet;
@@ -181,13 +181,13 @@ class Visitor : public FormulaBaseVisitor {
      * @return Or if actual orExpr visited, result of visitChildren() otherwise.
      */
     antlrcpp::Any visitOr(FormulaParser::OrContext *ctx) override {
-        if ((ctx->op == nullptr) || (ctx->op->getText() != "or" && ctx->op->getText() != "|")) {
+        if ((ctx->op == nullptr) || (ctx->op->getType() != FormulaParser::OR)) {
             return visitChildren(ctx);
         }
         Or::SetType_T orSet;
         // Create multiset
         for (auto &child : ctx->children) {
-            if (child->getText() != "or" && child->getText() != "|") {
+            if (child->getText() != "OR" && child->getText() != "or" && child->getText() != "|") {
                 std::shared_ptr<Expression> newExpr = getType(visit(child));
                 orSet.merge(std::multiset<std::shared_ptr<Expression>>{newExpr});
             }
@@ -202,13 +202,13 @@ class Visitor : public FormulaBaseVisitor {
      * @return And if actual orExpr visited, result of visitChildren() otherwise.
      */
     antlrcpp::Any visitAnd(FormulaParser::AndContext *ctx) override {
-        if ((ctx->op == nullptr) || (ctx->op->getText() != "and" && ctx->op->getText() != "&")) {
+        if ((ctx->op == nullptr) || (ctx->op->getType() != FormulaParser::AND)) {
             return visitChildren(ctx);
         }
         And::SetType_T andSet;
         // Create multiset
         for (auto &child : ctx->children) {
-            if (child->getText() != "and" && child->getText() != "&") {
+            if (child->getText() != "AND" && child->getText() != "and" && child->getText() != "&") {
                 std::shared_ptr<Expression> newExpr = getType(visit(child));
                 andSet.merge(std::multiset<std::shared_ptr<Expression>>{newExpr});
             }
@@ -414,7 +414,7 @@ class Visitor : public FormulaBaseVisitor {
     antlrcpp::Any visitPreviouslyInterval(FormulaParser::PreviouslyIntervalContext *ctx) override {
         auto right = getType(visit(ctx->right));
         auto iv = visit(ctx->iv).as<std::shared_ptr<Interval>>();
-        return std::make_shared<Previously>(right);
+        return std::make_shared<Previously>(right, iv);
     }
 
     /**
@@ -425,7 +425,7 @@ class Visitor : public FormulaBaseVisitor {
     antlrcpp::Any visitNextWeakInterval(FormulaParser::NextWeakIntervalContext *ctx) override {
         auto right = getType(visit(ctx->right));
         auto iv = visit(ctx->iv).as<std::shared_ptr<Interval>>();
-        return std::make_shared<NextWeak>(right);
+        return std::make_shared<NextWeak>(right, iv);
     }
 
     /**
@@ -436,7 +436,7 @@ class Visitor : public FormulaBaseVisitor {
     antlrcpp::Any visitNextStrongInterval(FormulaParser::NextStrongIntervalContext *ctx) override {
         auto right = getType(visit(ctx->right));
         auto iv = visit(ctx->iv).as<std::shared_ptr<Interval>>();
-        return std::make_shared<NextStrong>(right);
+        return std::make_shared<NextStrong>(right, iv);
     }
 
     /**
@@ -471,8 +471,24 @@ class Visitor : public FormulaBaseVisitor {
      * @param ctx Content.
      * @return Constant according to given value.
      */
-    antlrcpp::Any visitBoolean(FormulaParser::BooleanContext *ctx) override {
-        return std::make_shared<Constant>(Constant(ctx->getText() == "True" || ctx->getText() == "true"));
+    antlrcpp::Any visitBoolean(FormulaParser::BooleanContext *ctx) override { return visit(ctx->bool_()); }
+
+    /**
+     * Visits a true constant and builds a Constant with it.
+     * @param ctx Content.
+     * @return True constant.
+     */
+    virtual antlrcpp::Any visitTrueBoolean(FormulaParser::TrueBooleanContext *context) override {
+        return std::make_shared<Constant>(true);
+    }
+
+    /**
+     * Visits a false constant and builds a Constant with it.
+     * @param ctx Content.
+     * @return False constant.
+     */
+    virtual antlrcpp::Any visitFalseBoolean(FormulaParser::FalseBooleanContext *context) override {
+        return std::make_shared<Constant>(false);
     }
 
     /**
@@ -498,9 +514,21 @@ class Visitor : public FormulaBaseVisitor {
      */
     antlrcpp::Any visitFiniteInterval(FormulaParser::FiniteIntervalContext *ctx) override {
         bool finite{false};
-        if ((int)visit(ctx->u) > 0)
+        if (visit(ctx->u).as<int>() > 0)
             finite = true;
-        return std::make_shared<Interval>(Interval(visit(ctx->l), visit(ctx->u), finite));
+        auto lower = visit(ctx->l).as<int>();
+        auto upper = visit(ctx->u).as<int>();
+        return std::make_shared<Interval>(lower, upper, finite);
+    }
+
+    /**
+     * Builds an Atomic from a string.
+     * @param ctx Context.
+     * @return Atomic.
+     */
+    antlrcpp::Any visitInfiniteInterval(FormulaParser::InfiniteIntervalContext *ctx) override {
+        auto lower = visit(ctx->l).as<int>();
+        return std::make_shared<Interval>(lower, -1, false);
     }
 
     /**

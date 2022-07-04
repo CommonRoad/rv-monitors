@@ -1,5 +1,5 @@
 
-// Generated from Formula.g4 by ANTLR 4.7.2
+// Generated from Formula.g4 by ANTLR 4.9.3
 
 #pragma once
 
@@ -13,33 +13,32 @@ class FormulaLexer : public antlr4::Lexer {
         T__2 = 3,
         T__3 = 4,
         T__4 = 5,
-        T__5 = 6,
-        BOOL = 7,
-        NOT = 8,
-        GLOBALLY = 9,
-        FUTURE = 10,
-        NEXT_WEAK = 11,
-        NEXT_STRONG = 12,
-        UNTIL = 13,
-        RELEASE = 14,
-        ONCE = 15,
-        PREVIOUSLY = 16,
-        SINCE = 17,
-        HISTORICALLY = 18,
-        AND = 19,
-        OR = 20,
-        XOR = 21,
-        IMPL = 22,
-        EQ = 23,
-        TRUE = 24,
-        FALSE = 25,
-        ATOMIC = 26,
-        PREDICATE = 27,
-        WS = 28,
-        DIGIT = 29
+        TRUE = 6,
+        FALSE = 7,
+        INFINITY = 8,
+        NOT = 9,
+        GLOBALLY = 10,
+        FUTURE = 11,
+        NEXT_WEAK = 12,
+        NEXT_STRONG = 13,
+        UNTIL = 14,
+        RELEASE = 15,
+        ONCE = 16,
+        PREVIOUSLY = 17,
+        SINCE = 18,
+        HISTORICALLY = 19,
+        AND = 20,
+        OR = 21,
+        XOR = 22,
+        IMPL = 23,
+        EQ = 24,
+        ATOMIC = 25,
+        PREDICATE = 26,
+        WS = 27,
+        DIGIT = 28
     };
 
-    FormulaLexer(antlr4::CharStream *input);
+    explicit FormulaLexer(antlr4::CharStream *input);
     ~FormulaLexer();
 
     virtual std::string getGrammarFileName() const override;

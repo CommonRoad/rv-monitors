@@ -3,6 +3,7 @@
 include(CMakeFindDependencyMacro)
 
 # Ensure dependencies are available
+#find_dependency(antlr4)
 
 # Add targets
 include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@Targets.cmake")

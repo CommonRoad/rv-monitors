@@ -1,14 +1,14 @@
 stages:
   - compile
   - test
-  #  - sanitizer TODO
   - coverage
   - static-test
   - docs
+  - evaluation
 
 
 
-image: $CI_REGISTRY/maierhofer/rv-monitors/ci:0.4.3
+image: $CI_REGISTRY/cps/rapid-prototyping-setup/ci:1.0
 
 ### build project ###
 build-compile-commands:
@@ -32,6 +32,8 @@ build-clang:
     - mkdir build && cd build
     - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Release ..
     - make rvmonitors -j4
+    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DRVMONITORS_BUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release ..
+    - make rvmonitors -j4
   needs: []
 
 build-gcc:
@@ -41,6 +43,8 @@ build-gcc:
     - export CXX=g++
     - mkdir build && cd build
     - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Release ..
+    - make rvmonitors -j4
+    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DRVMONITORS_BUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release ..
     - make rvmonitors -j4
   needs: []
 
@@ -53,22 +57,32 @@ build-test:
   artifacts:
     paths:
       - ./build/
-      - ./rvmonitors_test
-      - ./librvmonitors.so
+    expire_in: 20 minutes
+
+build-evaluation:
+  stage: compile
+  script:
+    - mkdir build && cd build
+    - cmake
+      -DCMAKE_PREFIX_PATH=/commonroad/dist
+      -DCMAKE_BUILD_TYPE=RelWithDebInfo
+      ..
+    - make rvmonitors_eval -j4
+  artifacts:
+    paths:
+      - ./build/
     expire_in: 20 minutes
 
 build-run-coverage:
   stage: compile
   script:
     - mkdir build && cd build
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCODE_COVERAGE=ON -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_BUILD_TYPE=Debug ..
+    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DRVMONITORS_BUILD_CODE_COVERAGE=ON -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_BUILD_TYPE=Debug ..
     - make rvmonitors_coverage -j4
   needs: []
   artifacts:
     paths:
       - ./build/
-      - ./rvmonitors_coverage
-      - ./librvmonitors.so
     expire_in: 20 minutes
 
 
@@ -76,7 +90,7 @@ build-run-coverage:
 test-coverage:
   stage: test
   script:
-    - ./rvmonitors_test --gtest_output="xml:report.xml"
+    - ./build/rvmonitors_test --gtest_output="xml:report.xml"
   dependencies:
     - build-test
   artifacts:
@@ -162,7 +176,7 @@ docs:
   stage: docs
   script:
     - mkdir -p build && cd build
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Debug -DBUILD_DOXYGEN=ON  ..
+    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Debug -DRVMONITORS_BUILD_DOXYGEN=ON  ..
     - make doc_doxygen ..
   dependencies: []
   artifacts:
@@ -170,3 +184,27 @@ docs:
       - build/doc_doxygen/html/
     expose_as: 'Doxygen Documentation'
     expire_in: 20 minutes
+
+### evaluate rvmonitors ###
+evaluation:
+  stage: evaluation
+  image: $CI_REGISTRY/maierhofer/rv-monitors/ci-hydra:0.5.0
+  allow_failure: true
+  when: manual
+  script:
+    - /commonroad/evaluate.sh "$(pwd)/build/rvmonitors_eval"
+  after_script:
+    - mkdir -p eval_results
+    - cp -r --target-directory=eval_results
+      /opt/hydra/evaluation/output
+      /opt/hydra/evaluation/fmlas
+      /opt/hydra/evaluation/logs
+      /opt/hydra/evaluation/error.log
+      /opt/hydra/evaluation/bug*.mdl 
+  needs:
+    - job: build-evaluation
+      artifacts: true
+  artifacts:
+    name: evaluation_artifacts
+    paths:
+      - eval_results

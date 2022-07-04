@@ -1,0 +1,14 @@
+//
+// Created by Sebastian Maierhofer.
+// Technical University of Munich - Cyber-Physical Systems Group
+// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
+// Credits: BMW Car@TUM
+//
+#pragma once
+
+#include "monitors/rv_algorithms/hydra_2/hydra.h"
+#include "monitors/trace/trace.h"
+#include "monitors/utils/utils.h"
+#include <gtest/gtest.h>
+
+class TestHydra : public testing::Test {};

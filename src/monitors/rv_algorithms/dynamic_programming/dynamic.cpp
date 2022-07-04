@@ -2,24 +2,23 @@
 #include "monitors/expression_tree/atomic/atomic.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/binary/bool/implication.h"
-#include "monitors/expression_tree/binary/temporal/ltlf/until.h"
+#include "monitors/expression_tree/binary/temporal/until.h"
 #include "monitors/expression_tree/nary/bool/and.h"
 #include "monitors/expression_tree/nary/bool/or.h"
 #include "monitors/expression_tree/nary/bool/xor.h"
 #include "monitors/expression_tree/unary/bool/not.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/future.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/globally.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/next_strong.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/next_weak.h"
-#include "monitors/expression_tree/unary/temporal/ptlf/once.h"
-#include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
+#include "monitors/expression_tree/unary/temporal/future.h"
+#include "monitors/expression_tree/unary/temporal/globally.h"
+#include "monitors/expression_tree/unary/temporal/next_strong.h"
+#include "monitors/expression_tree/unary/temporal/next_weak.h"
+#include "monitors/expression_tree/unary/temporal/once.h"
+#include "monitors/expression_tree/unary/temporal/previously.h"
 #include <monitors/utils/lazy_bool.h>
 
-DynamicProgrammingLTL::DynamicProgrammingLTL(const Formula &formula, bool pastEvaluation)
-    : MonitorInterface((formula)), pastEvaluation(pastEvaluation) {}
+DynamicProgrammingLTL::DynamicProgrammingLTL(const std::vector<Formula> &formulas, bool pastEvaluation)
+    : MonitorInterface((formulas)), pastEvaluation(pastEvaluation) {}
 
-void DynamicProgrammingLTL::initialize(size_t j, std::vector<bool> &initVector,
-                                       std::map<std::string, lazy_bool> &eventMap,
+void DynamicProgrammingLTL::initialize(size_t j, std::vector<bool> &initVector, event_map_t &eventMap,
                                        const std::vector<std::shared_ptr<Expression>> &subformulas) {
     // Atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(subformulas[j])) {
@@ -72,8 +71,7 @@ void DynamicProgrammingLTL::initialize(size_t j, std::vector<bool> &initVector,
 }
 
 void DynamicProgrammingLTL::update(size_t j, std::vector<bool> &updateVector, std::vector<bool> oldVector,
-                                   std::map<std::string, lazy_bool> &eventMap,
-                                   const std::vector<std::shared_ptr<Expression>> &subformulas) {
+                                   event_map_t &eventMap, const std::vector<std::shared_ptr<Expression>> &subformulas) {
     // Atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(subformulas[j])) {
         updateVector[j] = eventMap.at(atomic->to_string());
@@ -124,20 +122,22 @@ void DynamicProgrammingLTL::update(size_t j, std::vector<bool> &updateVector, st
     }
 }
 
-std::vector<Verdict> DynamicProgrammingLTL::evaluate(Trace &trace) {
-    if (!pastEvaluation) {
-        return {Verdict{0, checkTraceDynamicallyFuture(trace)}};
-    }
-    return {Verdict{0, checkTraceDynamicallyPast(trace)}};
+std::map<std::string, std::vector<Verdict>> DynamicProgrammingLTL::evaluate(Trace &trace) {
+    std::map<std::string, std::vector<Verdict>> result;
+    if (!pastEvaluation)
+        result[formulas.at(0).getId()] = {Verdict{checkTraceDynamicallyFuture(trace)}};
+    else
+        result[formulas.at(0).getId()] = {Verdict{checkTraceDynamicallyPast(trace)}};
+    return result;
 }
 
 std::vector<bool> DynamicProgrammingLTL::initializePre(Event &event,
                                                        const std::vector<std::shared_ptr<Expression>> &subformulas) {
     std::vector<bool> pre;
-    std::map<std::string, lazy_bool> eventMap = event.getEventMap();
+    event_map_t eventMap = event.getEventMap();
     pre.resize(subformulas.size());
     // Fill pre backwards
-    for (size_t j = subformulas.size() - 1; j >= 0 && j < subformulas.size(); --j) {
+    for (size_t j = subformulas.size() - 1; j < subformulas.size(); --j) {
         initialize(j, pre, eventMap, subformulas);
         // Previously
         if (std::dynamic_pointer_cast<Previously>(subformulas[j])) {
@@ -159,10 +159,10 @@ std::vector<bool> DynamicProgrammingLTL::updateNowPast(Event &event,
                                                        const std::vector<bool> &pre) {
     std::vector<bool> now;
     now.resize(pre.size());
-    std::map<std::string, lazy_bool> eventMap = event.getEventMap();
+    event_map_t eventMap = event.getEventMap();
 
     // j >= 0 && j < subformulas.size() to avoid underflow
-    for (size_t j = subformulas.size() - 1; j >= 0 && j < subformulas.size(); --j) {
+    for (size_t j = subformulas.size() - 1; j < subformulas.size(); --j) {
         update(j, now, pre, eventMap, subformulas);
         // Previously
         if (auto previously = std::dynamic_pointer_cast<Previously>(subformulas[j])) {
@@ -185,7 +185,7 @@ bool DynamicProgrammingLTL::checkTraceDynamicallyPast(Trace &trace) {
     if (trace.getTrace().empty()) {
         return false;
     }
-    std::vector<std::shared_ptr<Expression>> subformulae = Utils::subformulasBreadthFirstOrder(formula);
+    std::vector<std::shared_ptr<Expression>> subformulae = Utils::subformulasBreadthFirstOrder(formulas.at(0));
     std::vector<bool> pre = initializePre(trace.getTraceRef()[0], subformulae);
     for (size_t i = 1; i < trace.getTrace().size(); ++i) {
         pre = updateNowPast(trace.getTraceRef()[i], subformulae, pre);
@@ -201,10 +201,10 @@ bool DynamicProgrammingLTL::checkTraceDynamicallyPast(Trace &trace) {
 std::vector<bool> DynamicProgrammingLTL::initializeNext(Event &event,
                                                         const std::vector<std::shared_ptr<Expression>> &subformulas) {
     std::vector<bool> next;
-    std::map<std::string, lazy_bool> eventMap = event.getEventMap();
+    event_map_t eventMap = event.getEventMap();
     next.resize(subformulas.size());
     // Fill next backwards
-    for (size_t j = subformulas.size() - 1; j >= 0 && j < subformulas.size(); --j) {
+    for (size_t j = subformulas.size() - 1; j < subformulas.size(); --j) {
         initialize(j, next, eventMap, subformulas);
         // Weak Next
         if (std::dynamic_pointer_cast<NextWeak>(subformulas[j])) {
@@ -238,10 +238,10 @@ std::vector<bool> DynamicProgrammingLTL::updateNowFuture(Event &event,
                                                          const std::vector<bool> &next) {
     std::vector<bool> now;
     now.resize(next.size());
-    std::map<std::string, lazy_bool> eventMap = event.getEventMap();
+    event_map_t eventMap = event.getEventMap();
 
     // j >= 0 && j < subformulas.size() to avoid underflow
-    for (size_t j = subformulas.size() - 1; j >= 0 && j < subformulas.size(); --j) {
+    for (size_t j = subformulas.size() - 1; j < subformulas.size(); --j) {
         update(j, now, next, eventMap, subformulas);
         // Next
         if (std::dynamic_pointer_cast<NextStrong>(subformulas[j]) ||
@@ -275,12 +275,12 @@ bool DynamicProgrammingLTL::checkTraceDynamicallyFuture(Trace &trace) {
     if (trace.getTrace().empty()) {
         return false;
     }
-    std::vector<std::shared_ptr<Expression>> subformulas = Utils::subformulasBreadthFirstOrder(formula);
+    std::vector<std::shared_ptr<Expression>> subformulas = Utils::subformulasBreadthFirstOrder(formulas.at(0));
     std::vector<bool> next = initializeNext(trace.getTraceRef()[trace.getLength() - 1], subformulas);
     if (!next[0]) {
         return false;
     }
-    for (size_t i = trace.getLength() - 2; i >= 0 && i < trace.getLength() - 1; --i) {
+    for (size_t i = trace.getLength() - 2; i < trace.getLength() - 1; --i) {
         next = updateNowFuture(trace.getTraceRef()[i], subformulas, next);
         // Only for safety properties!
         if (!next[0]) {
@@ -290,3 +290,5 @@ bool DynamicProgrammingLTL::checkTraceDynamicallyFuture(Trace &trace) {
     return next[0];
 }
 std::string DynamicProgrammingLTL::to_string() const { return "TODO"; }
+
+bool DynamicProgrammingLTL::isPastEvaluation() const { return pastEvaluation; }

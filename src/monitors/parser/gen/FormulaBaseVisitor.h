@@ -1,5 +1,5 @@
 
-// Generated from Formula.g4 by ANTLR 4.7.2
+// Generated from Formula.g4 by ANTLR 4.9.3
 
 #pragma once
 
@@ -117,4 +117,12 @@ class FormulaBaseVisitor : public FormulaVisitor {
     virtual antlrcpp::Any visitBrackets(FormulaParser::BracketsContext *ctx) override { return visitChildren(ctx); }
 
     virtual antlrcpp::Any visitDigit(FormulaParser::DigitContext *ctx) override { return visitChildren(ctx); }
+
+    virtual antlrcpp::Any visitTrueBoolean(FormulaParser::TrueBooleanContext *ctx) override {
+        return visitChildren(ctx);
+    }
+
+    virtual antlrcpp::Any visitFalseBoolean(FormulaParser::FalseBooleanContext *ctx) override {
+        return visitChildren(ctx);
+    }
 };

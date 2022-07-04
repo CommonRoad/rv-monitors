@@ -40,7 +40,11 @@ bool Formula::containsAtomic(const std::shared_ptr<Atomic> &atomic) const {
     return atomics.find(atomic->to_string()) != atomics.end();
 }
 
-Formula Formula::deepCopy() const { return Formula(Formula::deepCopy(getExpr())); }
+Formula Formula::deepCopy() const { return Formula(Formula::deepCopy(getExpr()), id); }
+
+const std::string &Formula::getId() const { return id; }
+
+void Formula::setId(const std::string &identifier) { id = identifier; }
 
 bool operator==(const Formula &f1, const Formula &f2) { return *(f1.getExpr()) == *(f2.getExpr()); }
 

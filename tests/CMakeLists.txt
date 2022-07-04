@@ -19,28 +19,55 @@ set(RV_MONITOR_TEST_SRC_FILES
         rv_algorithms/dynamic_programming/test_dynamic_programming_ltl.cpp
         rv_algorithms/event_consuming/test_event_consuming_future.cpp
         rv_algorithms/event_consuming/test_event_consuming_past.cpp
+        rv_algorithms/mtl_event_consuming/test_mtl_event_consuming.cpp
         rv_algorithms/mt_fsm/test_mt_fsm_evaluation_future.cpp
         rv_algorithms/mt_fsm/test_mt_fsm_evaluation_past.cpp
-        rv_algorithms/mtl/test_mtl.cpp
+        rv_algorithms/hydra_2/hydra_test_utils.cpp
+        rv_algorithms/hydra_2/test_hydra.cpp
+        rv_algorithms/hydra_2/test_hydra_creation.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_constant_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_or_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_and_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_negation_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_atomic_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_predicate_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_next_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_previous_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_since_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_until_monitor.cpp
         rv_algorithms/test_rv_monitors.cpp
         parser/test_parser.cpp
         qmc/test_qmc.cpp
         rewriting/test_basic_rewrite_visitor.cpp
         rewriting/test_rewrite_visitor.cpp
         utils/test_lazy_bool.cpp
+        utils/generators/formula_generator/test_formula_generator.cpp
+        utils/generators/formula_generator/test_formula_generator.cpp
+        utils/generators/trace_generator/test_trace_generator.cpp
+        utils/generators/trace_generator/test_trace_generator.cpp
+        utils/generators/computation_time_generator/test_computation_time_generator.cpp
+        utils/generators/computation_time_generator/test_computation_time_generator.cpp
+
         )
 
 
 add_executable(rvmonitors_test ${RV_MONITOR_TEST_SRC_FILES})
-
 target_compile_definitions(rvmonitors_test PRIVATE)
-
 target_link_libraries(
         rvmonitors_test
         PUBLIC
         rvmonitors
         gmock # gmock includes the gtest target, so we don't need it here.
 )
+
+add_executable(rvmonitors_performance_eval performance/eval_performance.cpp)
+target_compile_definitions(rvmonitors_performance_eval PRIVATE)
+target_link_libraries(
+        rvmonitors_performance_eval
+        PUBLIC
+        rvmonitors
+)
+
 
 include(GoogleTest)
 # queries the compiled executable for tests, this requires the executable to be runnable. if you are
@@ -54,7 +81,7 @@ gtest_discover_tests(
 
 # Code coverage
 if (CMAKE_BUILD_TYPE MATCHES Debug)
-    if (CodeCoverage MATCHES ON)
+    if (RVMONITORS_BUILD_CODE_COVERAGE)
         add_executable(rvmonitors_test_coverage ${RV_MONITOR_SRC_FILES} ${RV_MONITOR_TEST_SRC_FILES})
         target_include_directories(rvmonitors_test_coverage PUBLIC "../src/")
         target_link_libraries(rvmonitors_test_coverage PUBLIC

@@ -15,5 +15,8 @@ class Not : public Unary {
 
     std::shared_ptr<Expression> clone() override;
 
-    std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, int index) override;
+    std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override;
+
+    [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor, size_t parentId,
+                                                       bool connectedEval) override;
 };

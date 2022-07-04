@@ -17,9 +17,10 @@
  */
 class DynamicProgrammingLTL : public MonitorInterface {
   public:
-    DynamicProgrammingLTL(const Formula &formula, bool pastEvaluation = false);
-    std::vector<Verdict> evaluate(Trace &trace) override;
+    DynamicProgrammingLTL(const std::vector<Formula> &formulas, bool pastEvaluation = false);
+    std::map<std::string, std::vector<Verdict>> evaluate(Trace &trace) override;
     std::string to_string() const override;
+    bool isPastEvaluation() const;
 
   private:
     bool pastEvaluation;
@@ -31,7 +32,7 @@ class DynamicProgrammingLTL : public MonitorInterface {
      * @param eventMap Map of events with truth values of all predicates.
      * @param subformulas Vector of all subformulas of the formula to be verified.
      */
-    void initialize(size_t j, std::vector<bool> &initVector, std::map<std::string, lazy_bool> &eventMap,
+    void initialize(size_t j, std::vector<bool> &initVector, event_map_t &eventMap,
                     const std::vector<std::shared_ptr<Expression>> &subformulas);
 
     /**
@@ -42,8 +43,7 @@ class DynamicProgrammingLTL : public MonitorInterface {
      * @param eventMap Map of events with truth values of all predicates.
      * @param subformulas Vector of all subformulas of the formula to be verified.
      */
-    void update(size_t j, std::vector<bool> &updateVector, std::vector<bool> oldVector,
-                std::map<std::string, lazy_bool> &eventMap,
+    void update(size_t j, std::vector<bool> &updateVector, std::vector<bool> oldVector, event_map_t &eventMap,
                 const std::vector<std::shared_ptr<Expression>> &subformulas);
 
     /**

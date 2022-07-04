@@ -18,6 +18,12 @@ class Trace {
     explicit Trace(std::vector<Event> trace) : trace(std::move(trace)) {}
 
     /**
+     * Constructor.
+     * @param trace
+     */
+    Trace() : trace() {}
+
+    /**
      * Getter for an event.
      * @param index
      * @return Event at index.
@@ -46,7 +52,7 @@ class Trace {
      * To_string().
      * @return String representation of the trace.
      */
-    [[nodiscard]] std::string to_string() {
+    [[nodiscard]] std::string to_string() const {
         std::stringstream ret;
         for (const Event &event : trace) {
             ret << event.to_string() << std::endl;

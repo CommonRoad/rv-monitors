@@ -8,6 +8,8 @@
 
 #include <utility>
 
-const Formula &MonitorInterface::getFormula() const { return formula; }
+MonitorInterface::MonitorInterface(Formula formula) : formulas({std::move(formula)}) {}
 
-MonitorInterface::MonitorInterface(Formula formula) : formula(std::move(formula)) {}
+MonitorInterface::MonitorInterface(std::vector<Formula> formulas) : formulas(std::move(formulas)) {}
+
+const std::vector<Formula> &MonitorInterface::getFormulas() const { return formulas; }

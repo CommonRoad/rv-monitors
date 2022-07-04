@@ -11,9 +11,9 @@ set(RV_MONITOR_SRC_FILES
         monitors/expression_tree/binary/binary.cpp
         monitors/expression_tree/binary/bool/equivalence.cpp
         monitors/expression_tree/binary/bool/implication.cpp
-        monitors/expression_tree/binary/temporal/ltlf/until.cpp
-        monitors/expression_tree/binary/temporal/ltlf/release.cpp
-        monitors/expression_tree/binary/temporal/ptlf/since.cpp
+        monitors/expression_tree/binary/temporal/until.cpp
+        monitors/expression_tree/binary/temporal/release.cpp
+        monitors/expression_tree/binary/temporal/since.cpp
         monitors/expression_tree/nary/bool/and.cpp
         monitors/expression_tree/nary/bool/or.cpp
         monitors/expression_tree/nary/bool/xor.cpp
@@ -22,28 +22,33 @@ set(RV_MONITOR_SRC_FILES
         monitors/expression_tree/unary/resolving_operator.cpp
         monitors/expression_tree/unary/unary.cpp
         monitors/expression_tree/unary/bool/not.cpp
-        monitors/expression_tree/unary/temporal/ltlf/future.cpp
-        monitors/expression_tree/unary/temporal/ltlf/globally.cpp
-        monitors/expression_tree/unary/temporal/ltlf/next_strong.cpp
-        monitors/expression_tree/unary/temporal/ltlf/next_weak.cpp
-        monitors/expression_tree/unary/temporal/ptlf/historically.cpp
-        monitors/expression_tree/unary/temporal/ptlf/once.cpp
-        monitors/expression_tree/unary/temporal/ptlf/previously.cpp
+        monitors/expression_tree/unary/temporal/future.cpp
+        monitors/expression_tree/unary/temporal/globally.cpp
+        monitors/expression_tree/unary/temporal/next_strong.cpp
+        monitors/expression_tree/unary/temporal/next_weak.cpp
+        monitors/expression_tree/unary/temporal/historically.cpp
+        monitors/expression_tree/unary/temporal/once.cpp
+        monitors/expression_tree/unary/temporal/previously.cpp
         monitors/formula/formula.cpp
         monitors/formula/nff.cpp
         monitors/parser/parser.cpp
-        monitors/parser/gen/FormulaBaseListener.cpp
         monitors/parser/gen/FormulaBaseVisitor.cpp
         monitors/parser/gen/FormulaLexer.cpp
-        monitors/parser/gen/FormulaListener.cpp
         monitors/parser/gen/FormulaParser.cpp
         monitors/parser/gen/FormulaVisitor.cpp
+        monitors/parser/gen/LogBaseVisitor.cpp
+        monitors/parser/gen/LogLexer.cpp
+        monitors/parser/gen/LogParser.cpp
+        monitors/parser/gen/LogVisitor.cpp
+        monitors/parser/log_visitor.cpp
         monitors/qmc/prime_term.cpp
         monitors/qmc/qmc.cpp
         monitors/qmc/qmc_table.cpp
         monitors/rewriting/basic_rewrite_visitor.cpp
         monitors/rewriting/expression_visitor.cpp
         monitors/rewriting/rewrite_visitor.cpp
+        monitors/rewriting/mtl_rewrite_visitor.cpp
+        monitors/rewriting/hydra_rewrite_visitor.cpp
         monitors/rv_algorithms/monitor_interface.cpp
         monitors/rv_algorithms/rv_monitor.cpp
         monitors/rv_algorithms/btt_fsm/btt_fsm.cpp
@@ -51,26 +56,45 @@ set(RV_MONITOR_SRC_FILES
         monitors/rv_algorithms/btt_fsm/decision.cpp
         monitors/rv_algorithms/btt_fsm/state_btt_fsm.cpp
         monitors/rv_algorithms/dynamic_programming/dynamic.cpp
-        monitors/rv_algorithms/event_consuming/event_consuming.cpp
-        monitors/rv_algorithms/event_consuming/event_consuming_visitor.cpp
+        monitors/rv_algorithms/ltl_event_consuming/event_consuming.cpp
+        monitors/rv_algorithms/ltl_event_consuming/event_consuming_visitor.cpp
         monitors/rv_algorithms/mt_fsm/mt_fsm.cpp
         monitors/rv_algorithms/mt_fsm/multi_transition.cpp
         monitors/rv_algorithms/mt_fsm/state_mt_fsm.cpp
-        monitors/rv_algorithms/mtl/mtl_event_consuming.cpp
-        monitors/rv_algorithms/mtl/mtl_deriving_future_visitor.cpp
-        monitors/rv_algorithms/mtl/mtl_event_consuming_visitor.cpp
-        monitors/rv_algorithms/mtl/mtl_resolving_past_visitor.cpp
-        monitors/rv_algorithms/mtl/mtl_rewrite_visitor.cpp
+        monitors/rv_algorithms/mtl_event_consuming/mtl_event_consuming.cpp
+        monitors/rv_algorithms/mtl_event_consuming/mtl_event_consuming_visitor.cpp
+        monitors/rv_algorithms/hydra_2/hydra.cpp
+        monitors/rv_algorithms/hydra_2/hydra_monitors/hydra_monitor.cpp
+        monitors/rv_algorithms/hydra_2/hydra_monitors/previous_monitor.cpp
+        monitors/rv_algorithms/hydra_2/hydra_creation_visitor.cpp
+        monitors/rv_algorithms/hydra_2/hydra_monitors/predicate_monitor.cpp
+        monitors/rv_algorithms/hydra_2/hydra_monitors/constant_monitor.cpp
+        monitors/rv_algorithms/hydra_2/hydra_monitors/atomic_monitor.cpp
+        monitors/rv_algorithms/hydra_2/hydra_monitors/next_monitor.cpp
+        monitors/rv_algorithms/hydra_2/hydra_monitors/since_monitor.cpp
+        monitors/rv_algorithms/hydra_2/hydra_monitors/until_monitor.cpp
+        monitors/rv_algorithms/hydra_2/hydra_monitors/or_monitor.cpp
+        monitors/rv_algorithms/hydra_2/hydra_monitors/and_monitor.cpp
+        monitors/rv_algorithms/hydra_2/hydra_monitors/negation_monitor.cpp
         monitors/trace/event.cpp
         monitors/trace/event_generator.cpp
         monitors/utils/lazy_bool.cpp
         monitors/utils/execution_statistic.cpp
         monitors/utils/utils.cpp
-        )
+        monitors/utils/generators/formula_generator/formula_generator.h
+        monitors/utils/generators/formula_generator/formula_generator.cpp
+        monitors/utils/generators/trace_generator/trace_generator.h
+        monitors/utils/generators/trace_generator/trace_generator.cpp
+        monitors/utils/generators/computation_time_generator/computation_time_generator.h
+        monitors/utils/generators/computation_time_generator/computation_time_generator.cpp)
 
 
 # create library of this project
-add_library(${LIBRARY_NAME} SHARED ${RV_MONITOR_SRC_FILES})
+if(RVMONITORS_BUILD_SHARED_LIBS)
+    add_library(${LIBRARY_NAME} SHARED ${RV_MONITOR_SRC_FILES})
+else()
+    add_library(${LIBRARY_NAME} STATIC ${RV_MONITOR_SRC_FILES})
+endif()
 
 target_compile_features(${LIBRARY_NAME}
         PUBLIC cxx_lambdas cxx_auto_type
@@ -86,9 +110,16 @@ target_include_directories(${LIBRARY_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
-target_link_libraries(${LIBRARY_NAME}
+target_link_libraries(${LIBRARY_NAME} PRIVATE
         antlr4cpp
+        spdlog::spdlog
         )
+
+add_executable(rvmonitors_eval monitors/evaluation/evaluation.cpp)
+target_link_libraries(rvmonitors_eval
+    PUBLIC
+        rvmonitors
+    )
 
 # this adds many warnings to the build. They usually help to find some bugs
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")

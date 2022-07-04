@@ -15,7 +15,7 @@ class TestRVMonitors : public testing::Test {
   protected:
     std::unique_ptr<Trace> trace;
     std::unique_ptr<Formula> formula;
-    bool executeRVMonitor(AlgorithmType algorithm);
+    std::vector<Verdict> executeRVMonitor(AlgorithmType algorithm);
 
   private:
     void SetUp() override;
