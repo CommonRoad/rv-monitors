@@ -55,12 +55,12 @@ double AndMonitor::computeCost(const std::vector<std::shared_ptr<HydraMonitor>> 
     double cost{0.0};
     for (const auto &mon : monitors)
         cost += mon->getEvalCost();
-    return cost / static_cast<double>(monitors.size());
+    return cost / static_cast<double>(monitors.size()); // normalize value
 }
 
 double AndMonitor::computeSatisfactionProbability(const std::vector<std::shared_ptr<HydraMonitor>> &monitors) {
     double prob{monitors.at(0)->getSatisfactionProbability()};
     for (size_t idx{1}; idx < monitors.size(); ++idx)
-        prob *= monitors.at(idx)->getSatisfactionProbability() / 10.0;
+        prob *= monitors.at(idx)->getSatisfactionProbability();
     return prob;
 }

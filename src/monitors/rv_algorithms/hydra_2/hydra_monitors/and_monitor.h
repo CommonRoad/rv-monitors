@@ -9,12 +9,24 @@
 
 class AndMonitor : public HydraMonitor {
   public:
+    /**
+     * Constructor of AndMonitor.
+     *
+     * @param formula
+     * @param subMonitors
+     * @param monitorId
+     * @param connectedEval
+     * @param shortCircuiting
+     */
     AndMonitor(Formula formula, const std::vector<std::shared_ptr<HydraMonitor>> &subMonitors, size_t monitorId,
                bool connectedEval, bool shortCircuiting)
         : HydraMonitor(std::move(formula), monitorId, connectedEval, computeCost(subMonitors),
                        computeSatisfactionProbability(subMonitors)),
           subMonitors(subMonitors), shortCircuiting(shortCircuiting){};
 
+    /*
+     *
+     */
     Verdict concreteStep(size_t parentId, size_t stepNumber) override;
 
     void setTrace(const Trace &trace) override;

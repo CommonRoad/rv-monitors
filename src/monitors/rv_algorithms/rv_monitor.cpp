@@ -9,6 +9,7 @@
 #include "monitors/rv_algorithms/ltl_event_consuming/event_consuming.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
 #include "monitors/utils/utils.h"
+#include <cassert>
 
 std::map<std::string, std::vector<Verdict>> RVMonitor::verify(Trace trace) {
     std::chrono::high_resolution_clock::time_point startTime;
@@ -65,6 +66,8 @@ AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
 RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration configuration,
                      const std::map<std::string, std::array<double, 2>> &predicateCosts)
     : configuration(configuration) {
+    for (const auto &pred : predicateCosts)
+        assert(pred.second[0] >= 0 or pred.second[0] <= 100 or pred.second[1] >= 0 or pred.second[1] <= 1);
     switch (configuration.algorithm) {
     case dynamic_programming_ltl:
         monitor = std::make_unique<DynamicProgrammingLTL>(formulas, configuration.past);
@@ -89,6 +92,8 @@ RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration 
 RVMonitor::RVMonitor(const Formula &formula, MonitorConfiguration configuration,
                      const std::map<std::string, std::array<double, 2>> &predicateCosts)
     : configuration(configuration) {
+    for (const auto &pred : predicateCosts)
+        assert(pred.second[0] >= 0 or pred.second[0] <= 100 or pred.second[1] >= 0 or pred.second[1] <= 1);
     switch (configuration.algorithm) {
     case dynamic_programming_ltl:
         monitor = std::make_unique<DynamicProgrammingLTL>(std::vector<Formula>{formula}, configuration.past);
@@ -151,6 +156,7 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
 }
 
 std::string RVMonitor::to_string() { return monitor->to_string(); }
+
 MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool past, bool measurement,
                                            bool hydraConnectedEvaluation, bool hydraReordering,
                                            bool hydraShortCircuiting)

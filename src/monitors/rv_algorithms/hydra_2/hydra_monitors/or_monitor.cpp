@@ -54,7 +54,7 @@ double OrMonitor::computeCost(const std::vector<std::shared_ptr<HydraMonitor>> &
     double cost{0.0};
     for (const auto &mon : monitors)
         cost += mon->getEvalCost();
-    return cost / static_cast<double>(monitors.size());
+    return cost / static_cast<double>(monitors.size()); // normalize cost
 }
 
 double OrMonitor::computeSatisfactionProbability(const std::vector<std::shared_ptr<HydraMonitor>> &monitors) {

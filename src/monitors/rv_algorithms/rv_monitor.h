@@ -46,7 +46,7 @@ struct MonitorConfiguration {
     MonitorConfiguration(AlgorithmType algorithm, bool past, bool measurement);
 
     /*
-     *
+     * Default constructor.
      */
     MonitorConfiguration() = default;
 
@@ -66,27 +66,34 @@ class RVMonitor {
     /**
      * Constructor
      *
-     * @param algorithm Algorithm type, e.g., event-consuming LTL, BTT-FSM, etc.
      * @param formula Temporal logic formula.
-     * @param past Boolean indicating whether formula specifies only future or past properties (true if formula is in
-     * PLTLf).
-     * @param measurement Boolean indicating whether performance evaluation should be performed.
+     * @param configuration List of configuration parameters for the different monitoring algorithms.
+     * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
+     * satisfaction probability in interval [0, 1].
      */
     RVMonitor(const Formula &formula, MonitorConfiguration configuration = {},
               const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
 
+    /*
+     * Copy constructor.
+     * @param obj New RVMonitor object.
+     */
     RVMonitor(const RVMonitor &obj);
 
+    /*
+     * Copy assignment
+     *
+     * @param other New RVMonitor object.
+     */
     RVMonitor &operator=(const RVMonitor &other);
 
     /**
      * Constructor
      *
-     * @param algorithm Algorithm type, e.g., event-consuming LTL, BTT-FSM, etc.
-     * @param formula List of temporal logic formulas.
-     * @param past Boolean indicating whether formula specifies only future or past properties (true if formula is in
-     * PLTLf).
-     * @param measurement Boolean indicating whether performance evaluation should be performed.
+     * @param formula Temporal logic formula.
+     * @param configuration List of configuration parameters for the different monitoring algorithms.
+     * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
+     * satisfaction probability in interval [0, 1].
      */
     RVMonitor(const std::vector<Formula> &formula, MonitorConfiguration configuration,
               const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
@@ -106,6 +113,11 @@ class RVMonitor {
      */
     const ExecutionStatistic &getExecutionStatistic() const;
 
+    /**
+     * Creates string representation of activated monitoring algorithm.
+     *
+     * @return String representation of activated monitoring algorithm.
+     */
     std::string to_string();
 
   protected:

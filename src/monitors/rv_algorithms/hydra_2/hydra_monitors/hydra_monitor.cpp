@@ -5,16 +5,18 @@
 // Credits: BMW Car@TUM
 //
 #include "hydra_monitor.h"
-
+#include <cassert>
 #include <iostream>
 #include <utility>
 
 const Formula &HydraMonitor::getFormula() const { return formula; }
 
-HydraMonitor::HydraMonitor(Formula formula, size_t id, bool connectedEval, double evalCost,
+HydraMonitor::HydraMonitor(Formula formula, size_t monitorId, bool connectedEval, double evalCost,
                            double satisfactionProbability)
-    : formula(std::move(formula)), monitorId((id)), connectedEval(connectedEval), evalCost(evalCost),
-      satisfactionProbability(satisfactionProbability) {}
+    : formula(std::move(formula)), monitorId((monitorId)), connectedEval(connectedEval), evalCost(evalCost),
+      satisfactionProbability(satisfactionProbability) {
+    assert(evalCost >= 0 or evalCost <= 100 or satisfactionProbability >= 0 or satisfactionProbability <= 1);
+}
 
 void HydraMonitor::reset() {
     verdictHistory = {};

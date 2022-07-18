@@ -46,6 +46,8 @@ void Hydra::setTraceMonitors(const Trace &tra) {
 
 void Hydra::createMonitor(const std::vector<Formula> &formulas, bool connectedEval, bool reordering,
                           bool shortCircuiting, const std::map<std::string, std::array<double, 2>> &predicateCosts) {
+    for (const auto &pred : predicateCosts)
+        assert(pred.second[0] < 0 or pred.second[0] > 1 or pred.second[1] < 0 or pred.second[1] > 1);
     HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts, reordering, shortCircuiting)};
     for (const auto &form : formulas) {
         if (form.getId().empty())
@@ -64,5 +66,7 @@ void Hydra::createMonitor(const std::vector<Formula> &formulas, bool connectedEv
 Hydra::Hydra(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting,
              const std::map<std::string, std::array<double, 2>> &predicateCosts)
     : MonitorInterface(formulas) {
+    for (const auto &pred : predicateCosts)
+        assert(pred.second[0] < 0 or pred.second[0] > 1 or pred.second[1] < 0 or pred.second[1] > 1);
     createMonitor(formulas, connectedEval, reordering, shortCircuiting, predicateCosts);
 }
