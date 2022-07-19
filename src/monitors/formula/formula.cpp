@@ -21,7 +21,7 @@ void Formula::setExpr(const std::shared_ptr<Expression> &expression) { expr = ex
 
 const std::shared_ptr<Event> &Formula::getEvent() const { return event; }
 
-void Formula::setEvent(std::shared_ptr<Event> ev) { event = std::move(ev); }
+void Formula::setEvent(std::shared_ptr<Event> eve) { event = std::move(eve); }
 
 [[nodiscard]] bool Formula::sameTree(const std::shared_ptr<Expression> &before,
                                      const std::shared_ptr<Expression> &after) {
@@ -30,9 +30,9 @@ void Formula::setEvent(std::shared_ptr<Event> ev) { event = std::move(ev); }
 
 [[nodiscard]] std::string Formula::to_string() const { return getExpr()->to_string(); }
 
-[[nodiscard]] std::ostream &operator<<(std::ostream &os, const Formula &formula) {
-    os << formula.to_string();
-    return os;
+[[nodiscard]] std::ostream &operator<<(std::ostream &ost, const Formula &formula) {
+    ost << formula.to_string();
+    return ost;
 }
 
 bool Formula::containsAtomic(const std::shared_ptr<Atomic> &atomic) const {
@@ -46,6 +46,6 @@ const std::string &Formula::getId() const { return id; }
 
 void Formula::setId(const std::string &identifier) { id = identifier; }
 
-bool operator==(const Formula &f1, const Formula &f2) { return *(f1.getExpr()) == *(f2.getExpr()); }
+bool operator==(const Formula &form1, const Formula &form2) { return *(form1.getExpr()) == *(form2.getExpr()); }
 
-bool operator<(const Formula &f1, const Formula &f2) { return *(f1.getExpr()) < *(f2.getExpr()); }
+bool operator<(const Formula &form1, const Formula &form2) { return *(form1.getExpr()) < *(form2.getExpr()); }

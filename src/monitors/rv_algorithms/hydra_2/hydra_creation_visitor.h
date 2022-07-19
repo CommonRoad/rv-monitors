@@ -113,7 +113,7 @@ class HydraCreationVisitor {
     std::map<std::string, std::shared_ptr<HydraMonitor>> baseline;
     std::map<std::string, std::array<double, 2>>
         predicateCosts; //**< Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
-                        //satisfaction probability in interval [0, 1]. */
+                        // satisfaction probability in interval [0, 1]. */
 
     /**
      * Resorts the formula based on predicate costs.

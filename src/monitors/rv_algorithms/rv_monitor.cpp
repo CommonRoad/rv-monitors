@@ -67,7 +67,7 @@ RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration 
                      const std::map<std::string, std::array<double, 2>> &predicateCosts)
     : configuration(configuration) {
     for (const auto &pred : predicateCosts)
-        assert(pred.second[0] >= 0 or pred.second[0] <= 100 or pred.second[1] >= 0 or pred.second[1] <= 1);
+        assert(pred.second[0] >= 0 and pred.second[0] <= 100 and pred.second[1] >= 0 and pred.second[1] <= 1);
     switch (configuration.algorithm) {
     case dynamic_programming_ltl:
         monitor = std::make_unique<DynamicProgrammingLTL>(formulas, configuration.past);
@@ -93,7 +93,7 @@ RVMonitor::RVMonitor(const Formula &formula, MonitorConfiguration configuration,
                      const std::map<std::string, std::array<double, 2>> &predicateCosts)
     : configuration(configuration) {
     for (const auto &pred : predicateCosts)
-        assert(pred.second[0] >= 0 or pred.second[0] <= 100 or pred.second[1] >= 0 or pred.second[1] <= 1);
+        assert(pred.second[0] >= 0 and pred.second[0] <= 100 and pred.second[1] >= 0 and pred.second[1] <= 1);
     switch (configuration.algorithm) {
     case dynamic_programming_ltl:
         monitor = std::make_unique<DynamicProgrammingLTL>(std::vector<Formula>{formula}, configuration.past);

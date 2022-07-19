@@ -205,7 +205,10 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitNot(Not &tlop, size_t p
 
 HydraCreationVisitor::HydraCreationVisitor(std::map<std::string, std::array<double, 2>> predicateCosts, bool reordering,
                                            bool shortCircuiting)
-    : reordering(reordering), shortCircuiting(shortCircuiting), predicateCosts(std::move(predicateCosts)) {}
+    : reordering(reordering), shortCircuiting(shortCircuiting), predicateCosts(std::move(predicateCosts)) {
+    for (const auto &pred : this->predicateCosts)
+        assert(pred.second[0] >= 0 and pred.second[0] <= 100 and pred.second[1] >= 0 and pred.second[1] <= 1);
+}
 
 void HydraCreationVisitor::resort(std::vector<std::shared_ptr<HydraMonitor>> &monitors, bool increasing) {
     std::vector<double> cost;
@@ -215,10 +218,10 @@ void HydraCreationVisitor::resort(std::vector<std::shared_ptr<HydraMonitor>> &mo
     std::iota(tmp.begin(), tmp.end(), 0);
     if (increasing) {
         for (const auto &mon : monitors)
-            cost.push_back(mon->getSatisfactionProbability() + static_cast<double>(mon->getEvalCost()));
+            cost.push_back(mon->getSatisfactionProbability() * 100 + static_cast<double>(mon->getEvalCost()));
     } else {
         for (const auto &mon : monitors)
-            cost.push_back((1 - mon->getSatisfactionProbability()) + static_cast<double>(mon->getEvalCost()));
+            cost.push_back((1 - mon->getSatisfactionProbability()) * 100 + static_cast<double>(mon->getEvalCost()));
     }
     sort(tmp.begin(), tmp.end(), [&](size_t idx1, size_t idx2) { return cost[idx1] < cost[idx2]; });
     auto tmpSubMonitors{monitors};
