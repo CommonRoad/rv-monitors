@@ -11,11 +11,12 @@
 #include "hydra_monitor.h"
 
 /**
- * Monitor representing next operator.
+ * Monitor representing (strong) next operator.
  */
 class NextMonitor : public HydraMonitor {
   public:
     /**
+     * Constructor
      *
      * @param formula Formula to be monitored.
      * @param subMonitor Child monitor.
@@ -31,8 +32,7 @@ class NextMonitor : public HydraMonitor {
           subMonitor(std::move(subMonitor)), from(intervalFrom), to(intervalTo){};
 
     /**
-     * Performs concrete step of predicate monitor. It evaluates the trace element of the concrete step. Returns false if
-     * stepNumber >= traceLength.
+     * Performs concrete step of next operator monitor.
      *
      * @param parentId ID of parent monitor.
      * @param stepNumber Current step/position in trace.
@@ -63,5 +63,5 @@ class NextMonitor : public HydraMonitor {
     std::shared_ptr<HydraMonitor> subMonitor; //**< Child monitor. */
     size_t from; //**< Start of time interval. */
     size_t to; //**< End of time interval. */
-    std::optional<size_t> currentTime; //**< Current time step which is evaluated. */
+    std::optional<size_t> currentTime; //**< Previous time step to check whether next verdict lies in interval. Initialized after first event has been seen. */
 };

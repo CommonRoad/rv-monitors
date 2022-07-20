@@ -17,9 +17,9 @@ Verdict NextMonitor::concreteStep(size_t parentId, size_t stepNumber) {
                 return {lastTime, subVerdict.b};
             else
                 return {lastTime, false};
-        } else if (!subVerdict.ts.has_value()) {
+        } else if (!subVerdict.ts.has_value()) { // last event in trace
             return {*currentTime, false};
-        } else {
+        } else { // first event in trace (next time step specifies verdict)
             currentTime = subVerdict.ts;
         }
     } while (true);

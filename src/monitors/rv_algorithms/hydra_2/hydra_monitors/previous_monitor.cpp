@@ -16,10 +16,10 @@ Verdict PreviousMonitor::concreteStep(size_t parentId, size_t stepNumber) {
             return {subVerdict.ts.value(), lastSubVerdict.b};
         else
             return {subVerdict.ts.value(), false};
-    } else if (subVerdict.ts.has_value()) {
+    } else if (subVerdict.ts.has_value()) { // first trace element
         currentVerdict = subVerdict;
         return {subVerdict.ts.value(), false};
-    } else
+    } else // behind trace (no more trace element exist)
         return {false};
 }
 void PreviousMonitor::setTrace(const Trace &tra) { subMonitor->setTrace(tra); }
