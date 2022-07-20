@@ -18,4 +18,5 @@ Verdict ConstantMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 }
 
 void ConstantMonitor::setTrace(const Trace &tra) { trace = tra; }
+
 std::string ConstantMonitor::to_string() { return formula.getExpr()->getSymbol(); }

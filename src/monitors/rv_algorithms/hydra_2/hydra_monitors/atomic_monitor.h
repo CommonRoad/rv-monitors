@@ -25,7 +25,7 @@ class AtomicMonitor : public HydraMonitor {
 
     /**
      * Performs concrete step of atomic monitor. It evaluates the trace element of the concrete step. Returns false if
-     * stepNumber > traceLength.
+     * stepNumber >= traceLength.
      *
      * @param parentId ID of parent monitor.
      * @param stepNumber Current step/position in trace.
