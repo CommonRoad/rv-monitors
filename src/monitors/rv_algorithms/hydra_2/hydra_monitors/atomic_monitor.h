@@ -9,7 +9,7 @@
 #include "hydra_monitor.h"
 
 /**
- * Monitor representing atomic proposition.
+ * Hydra monitor representing atomic proposition.
  */
 class AtomicMonitor : public HydraMonitor {
   public:

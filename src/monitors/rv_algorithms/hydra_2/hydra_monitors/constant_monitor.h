@@ -12,7 +12,7 @@
 #include <utility>
 
 /**
- * Monitor representing Constant (true/false).
+ * Hydra monitor representing Constant (true/false).
  */
 class ConstantMonitor : public HydraMonitor {
   public:

@@ -5,6 +5,7 @@
 // Credits: BMW Car@TUM
 //
 #include "or_monitor.h"
+#include <iostream>
 
 Verdict OrMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     Verdict verdict{subMonitors.at(0)->step(monitorId, stepNumber)};
@@ -15,17 +16,19 @@ Verdict OrMonitor::concreteStep(size_t parentId, size_t stepNumber) {
             else
                 return {verdict.ts.value(), true};
         }
-        auto current{subMonitors.at(0)->getTraceIdxByParentId(monitorId)};
-        for (size_t i{1}; i < subMonitors.size(); ++i) {
-            if (subMonitors.at(i)->step(monitorId, current - 1).b) {
+        auto currentStep{subMonitors.at(0)->getTraceIdxByParentId(monitorId)};
+        if(stepNumber != currentStep - 1)
+            std::cout << "stop" << '\n';
+        for (size_t i{1}; i < subMonitors.size(); ++i) { // verdict of first monitor is evaluated above
+            if (subMonitors.at(i)->step(monitorId, stepNumber).b) {
                 if (!verdict.ts.has_value())
                     return {true};
                 else
                     return {verdict.ts.value(), true};
             }
         }
-    } else {
-        for (size_t i{1}; i < subMonitors.size(); ++i)
+    } else { // if no short-circuiting, check all verdicts of submonitors
+        for (size_t i{1}; i < subMonitors.size(); ++i)  // verdict of first monitor is evaluated above
             verdict = verdict || subMonitors.at(i)->step(monitorId, stepNumber);
     }
     return verdict;
@@ -50,7 +53,7 @@ std::string OrMonitor::to_string() {
     return str;
 }
 
-double OrMonitor::computeCost(const std::vector<std::shared_ptr<HydraMonitor>> &monitors) {
+double OrMonitor::computeEvaluationCost(const std::vector<std::shared_ptr<HydraMonitor>> &monitors) {
     double cost{0.0};
     for (const auto &mon : monitors)
         cost += mon->getEvalCost();

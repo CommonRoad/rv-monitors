@@ -11,7 +11,7 @@
 #include "hydra_monitor.h"
 
 /**
- * Monitor representing (strong) previous operator.
+ * Hydra monitor representing (strong) previous operator.
  */
 class PreviousMonitor : public HydraMonitor {
   public:

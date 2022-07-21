@@ -9,7 +9,7 @@
 #include "hydra_monitor.h"
 
 /**
- * Monitor representing predicate.
+ * Hydra monitor representing predicate.
  */
 class PredicateMonitor : public HydraMonitor {
   public:
