@@ -64,5 +64,5 @@ class NextMonitor : public HydraMonitor {
     size_t from;                              //**< Start of time interval. */
     size_t to;                                //**< End of time interval. */
     std::optional<size_t> currentTime;        //**< Previous time step to check whether next verdict lies in interval.
-                                              //Initialized after first event has been seen. */
+                                              // Initialized after first event has been seen. */
 };
