@@ -36,8 +36,7 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         stepNumber += 1;
     }
 
-    while (!endReached && !lastViolation &&
-           headPositionMonitorLeft.ts - headPositionMonitorTmp.ts <= to) {
+    while (!endReached && !lastViolation && headPositionMonitorLeft.ts - headPositionMonitorTmp.ts <= to) {
         if (subVerdictRight->b) {
             lastSatisfaction = HeadPos(headPositionMonitorRight.ts, headPositionMonitorRight.tp);
         }

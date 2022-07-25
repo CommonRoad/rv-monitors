@@ -26,8 +26,8 @@ class PredicateMonitor : public HydraMonitor {
         : HydraMonitor(std::move(formula), monitorId, connectedEval, evalCost, satisfactionProbability){};
 
     /**
-     * Performs concrete step of predicate monitor. It evaluates the trace element of the concrete step. Returns false if
-     * stepNumber >= traceLength.
+     * Performs concrete step of predicate monitor. It evaluates the trace element of the concrete step. Returns false
+     * if stepNumber >= traceLength.
      *
      * @param parentId ID of parent monitor.
      * @param stepNumber Current step/position in trace.

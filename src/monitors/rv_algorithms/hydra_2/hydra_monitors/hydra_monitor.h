@@ -11,7 +11,7 @@ struct HeadPos {
     size_t ts;
     int tp = -1;
     HeadPos() = default;
-    HeadPos(size_t timeStep, int traceIdx) : ts(timeStep), tp(traceIdx) {};
+    HeadPos(size_t timeStep, int traceIdx) : ts(timeStep), tp(traceIdx){};
 
     void update(size_t new_ts) {
         ts = new_ts;

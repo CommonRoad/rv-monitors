@@ -26,11 +26,11 @@ class UntilMonitor : public HydraMonitor {
     UntilMonitor(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitorLeft,
                  std::shared_ptr<HydraMonitor> subMonitorRight, std::shared_ptr<HydraMonitor> subMonitorTmp,
                  size_t intervalFrom, size_t intervalTo, size_t monitorId, bool connectedEval)
-        : HydraMonitor(formula, monitorId, connectedEval, (subMonitorRight->getEvalCost() + subMonitorLeft->getEvalCost()) / 2,
-                       (subMonitorRight->getSatisfactionProbability() + subMonitorRight->getSatisfactionProbability()) / 2),
+        : HydraMonitor(
+              formula, monitorId, connectedEval, (subMonitorRight->getEvalCost() + subMonitorLeft->getEvalCost()) / 2,
+              (subMonitorRight->getSatisfactionProbability() + subMonitorRight->getSatisfactionProbability()) / 2),
           subMonitorLeft(std::move(subMonitorLeft)), subMonitorRight(std::move(subMonitorRight)),
-          subMonitorTmp(std::move(subMonitorTmp)),
-          from(intervalFrom), to(intervalTo){};
+          subMonitorTmp(std::move(subMonitorTmp)), from(intervalFrom), to(intervalTo){};
 
     /**
      * Performs concrete step of until-monitor.
@@ -68,18 +68,19 @@ class UntilMonitor : public HydraMonitor {
      */
     void stepLeftRightMonitors(size_t stepNumber);
 
-    std::shared_ptr<HydraMonitor> subMonitorLeft; //**< Monitor for specification on left side of until. */
+    std::shared_ptr<HydraMonitor> subMonitorLeft;  //**< Monitor for specification on left side of until. */
     std::shared_ptr<HydraMonitor> subMonitorRight; //**< Monitor for specification on right side of until. */
     std::shared_ptr<HydraMonitor> subMonitorTmp;
-    std::optional<Verdict> subVerdictLeft; //**< Verdict for monitor on left side of until. */
+    std::optional<Verdict> subVerdictLeft;  //**< Verdict for monitor on left side of until. */
     std::optional<Verdict> subVerdictRight; //**< Verdict for monitor on right side of until. */
     std::optional<Verdict> subVerdictTmp;
-    size_t from;  //**< Start of time interval. */
-    size_t to; //**< End of time interval. */
+    size_t from; //**< Start of time interval. */
+    size_t to;   //**< End of time interval. */
     HeadPos headPositionMonitorLeft;
     HeadPos headPositionMonitorRight;
     HeadPos headPositionMonitorTmp;
-    std::optional<HeadPos> lastSatisfaction; //**< Last time right side of until was satisfied (time step, trace idx). */
+    std::optional<HeadPos>
+        lastSatisfaction;                 //**< Last time right side of until was satisfied (time step, trace idx). */
     std::optional<HeadPos> lastViolation; //**< Last time left side of until was violated (time step, trace idx). */
     bool endReached{false};
 };

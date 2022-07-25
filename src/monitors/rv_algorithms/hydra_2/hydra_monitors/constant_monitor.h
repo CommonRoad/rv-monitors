@@ -22,7 +22,8 @@ class ConstantMonitor : public HydraMonitor {
      * @param formula Formula to be monitored.
      * @param monitorId ID of monitor.
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
-     */    ConstantMonitor(Formula formula, size_t monitorId, bool connectedEval)
+     */
+    ConstantMonitor(Formula formula, size_t monitorId, bool connectedEval)
         : HydraMonitor(std::move(formula), monitorId, connectedEval){};
 
     /**

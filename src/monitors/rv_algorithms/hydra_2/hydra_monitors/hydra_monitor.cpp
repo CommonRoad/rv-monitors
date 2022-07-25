@@ -30,10 +30,11 @@ size_t HydraMonitor::getMaxTraceIdx() {
     if (traceIdx.empty())
         return 0;
     else
-        return std::max_element(traceIdx.begin(), traceIdx.end(),
-                                [](const std::pair<size_t, size_t> &elemA, const std::pair<size_t, size_t> &elemB) -> bool {
-                                    return elemA.second < elemB.second;
-                                })
+        return std::max_element(
+                   traceIdx.begin(), traceIdx.end(),
+                   [](const std::pair<size_t, size_t> &elemA, const std::pair<size_t, size_t> &elemB) -> bool {
+                       return elemA.second < elemB.second;
+                   })
             ->second;
 }
 

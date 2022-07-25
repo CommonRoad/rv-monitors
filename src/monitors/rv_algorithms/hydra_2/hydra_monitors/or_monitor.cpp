@@ -16,7 +16,7 @@ Verdict OrMonitor::concreteStep(size_t parentId, size_t stepNumber) {
             else
                 return {verdict.ts.value(), true};
         }
-    //    auto currentStep{subMonitors.at(0)->getTraceIdxByParentId(monitorId)};
+        //    auto currentStep{subMonitors.at(0)->getTraceIdxByParentId(monitorId)};
         for (size_t i{1}; i < subMonitors.size(); ++i) { // verdict of first monitor is evaluated above
             if (subMonitors.at(i)->step(monitorId, stepNumber).b) {
                 if (!verdict.ts.has_value())
@@ -25,8 +25,8 @@ Verdict OrMonitor::concreteStep(size_t parentId, size_t stepNumber) {
                     return {verdict.ts.value(), true};
             }
         }
-    } else { // if no short-circuiting, check all verdicts of submonitors
-        for (size_t i{1}; i < subMonitors.size(); ++i)  // verdict of first monitor is evaluated above
+    } else {                                           // if no short-circuiting, check all verdicts of submonitors
+        for (size_t i{1}; i < subMonitors.size(); ++i) // verdict of first monitor is evaluated above
             verdict = verdict || subMonitors.at(i)->step(monitorId, stepNumber);
     }
     return verdict;
@@ -60,7 +60,7 @@ double OrMonitor::computeEvaluationCost(const std::vector<std::shared_ptr<HydraM
 
 double OrMonitor::computeSatisfactionProbability(const std::vector<std::shared_ptr<HydraMonitor>> &monitors) {
     std::set<double> probs;
-    for(const auto &mon : monitors){
+    for (const auto &mon : monitors) {
         probs.insert(mon->getSatisfactionProbability());
     }
     return *probs.rbegin();

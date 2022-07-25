@@ -59,12 +59,12 @@ class SinceMonitor : public HydraMonitor {
     std::string to_string() override;
 
   private:
-    std::shared_ptr<HydraMonitor> subMonitorLeft; //**< Monitor for specification on left side of since. */
+    std::shared_ptr<HydraMonitor> subMonitorLeft;  //**< Monitor for specification on left side of since. */
     std::shared_ptr<HydraMonitor> subMonitorRight; //**< Monitor for specification on right side of since. */
-    std::optional<Verdict> subVerdictLeft; //**< Verdict for monitor on left side of since. */
-    std::optional<Verdict> subVerdictRight; //**< Verdict for monitor on right side of since. */
-    size_t from; //**< Start of time interval. */
-    size_t to; //**< End of time interval. */
+    std::optional<Verdict> subVerdictLeft;         //**< Verdict for monitor on left side of since. */
+    std::optional<Verdict> subVerdictRight;        //**< Verdict for monitor on right side of since. */
+    size_t from;                                   //**< Start of time interval. */
+    size_t to;                                     //**< End of time interval. */
     HeadPos headPositionMonitorLeft;
     HeadPos headPositionMonitorRight;
     std::optional<HeadPos> lastSatisfaction;
