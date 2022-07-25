@@ -216,12 +216,12 @@ void HydraCreationVisitor::resort(std::vector<std::shared_ptr<HydraMonitor>> &mo
     cost.reserve(monitors.size());
 
     std::iota(tmp.begin(), tmp.end(), 0);
-    if (increasing) {
+    if (increasing) { // and-operator
         for (const auto &mon : monitors)
-            cost.push_back(mon->getSatisfactionProbability() * 100 + static_cast<double>(mon->getEvalCost()));
-    } else {
+            cost.push_back(mon->getSatisfactionProbability() * 10 + static_cast<double>(mon->getEvalCost()));
+    } else { // or-operator
         for (const auto &mon : monitors)
-            cost.push_back((1 - mon->getSatisfactionProbability()) * 100 + static_cast<double>(mon->getEvalCost()));
+            cost.push_back((1 - mon->getSatisfactionProbability()) * 10 + static_cast<double>(mon->getEvalCost()));
     }
     sort(tmp.begin(), tmp.end(), [&](size_t idx1, size_t idx2) { return cost[idx1] < cost[idx2]; });
     auto tmpSubMonitors{monitors};

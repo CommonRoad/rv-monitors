@@ -7,56 +7,56 @@
 #include "since_monitor.h"
 
 Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
-    subVerdictF = subMonitorF->step(monitorId, stepNumber);
-    if (subVerdictF->ts.has_value())
-        positionMonitorF.update(subVerdictF->ts.value());
-    if (!subVerdictF->b)
-        lastViolation = std::make_pair(positionMonitorF.ts, positionMonitorF.tp);
+    subVerdictLeft = subMonitorLeft->step(monitorId, stepNumber);
+    if (subVerdictLeft->ts.has_value())
+        headPositionMonitorLeft.update(subVerdictLeft->ts.value());
+    if (!subVerdictLeft->b)
+        lastViolation = HeadPos(headPositionMonitorLeft.ts, headPositionMonitorLeft.tp);
 
-    if (positionMonitorG.tp == -1) {
-        subVerdictG = subMonitorG->step(monitorId, stepNumberG);
-        stepNumberG += 1;
-        if (subVerdictG->ts.has_value())
-            positionMonitorG.update(subVerdictG->ts.value());
+    if (headPositionMonitorRight.tp == -1) {
+        subVerdictRight = subMonitorRight->step(monitorId, stepNumberRight);
+        stepNumberRight += 1;
+        if (subVerdictRight->ts.has_value())
+            headPositionMonitorRight.update(subVerdictRight->ts.value());
     }
 
-    while (!positionMonitorG.eof && positionMonitorG.tp <= positionMonitorF.tp &&
-           positionMonitorF.ts - positionMonitorG.ts >= from) {
-        if (subVerdictG->b)
-            lastSatisfaction = std::make_pair(positionMonitorG.ts, positionMonitorG.tp);
-        subVerdictG = subMonitorG->step(monitorId, stepNumberG);
-        stepNumberG += 1;
-        if (subVerdictG->ts.has_value())
-            positionMonitorG.update(subVerdictG->ts.value());
+    while (!endReached && headPositionMonitorRight.tp <= headPositionMonitorLeft.tp &&
+           headPositionMonitorLeft.ts - headPositionMonitorRight.ts >= from) {
+        if (subVerdictRight->b)
+            lastSatisfaction = HeadPos(headPositionMonitorRight.ts, headPositionMonitorRight.tp);
+        subVerdictRight = subMonitorRight->step(monitorId, stepNumberRight);
+        stepNumberRight += 1;
+        if (subVerdictRight->ts.has_value())
+            headPositionMonitorRight.update(subVerdictRight->ts.value());
         else {
-            positionMonitorG.eof = true;
-            positionMonitorG.tp++;
+            endReached = true;
+            headPositionMonitorRight.tp++;
         }
     }
 
-    int verdict = static_cast<int>(lastSatisfaction && positionMonitorF.ts - lastSatisfaction->first <= to &&
-                                   (!lastViolation || lastSatisfaction->second >= lastViolation->second));
-    return {positionMonitorF.ts, verdict != 0};
+    int verdict = static_cast<int>(lastSatisfaction && headPositionMonitorLeft.ts - lastSatisfaction->ts <= to &&
+                                   (!lastViolation || lastSatisfaction->tp >= lastViolation->tp));
+    return {headPositionMonitorLeft.ts, verdict != 0};
 }
 void SinceMonitor::setTrace(const Trace &tra) {
-    subMonitorF->setTrace(tra);
-    subMonitorG->setTrace(tra);
+    subMonitorLeft->setTrace(tra);
+    subMonitorRight->setTrace(tra);
 }
 void SinceMonitor::reset() {
     HydraMonitor::reset();
-    subMonitorG->reset();
-    subMonitorF->reset();
-    subVerdictF = {};
-    subVerdictG = {};
+    subMonitorRight->reset();
+    subMonitorLeft->reset();
+    subVerdictLeft = {};
+    subVerdictRight = {};
     lastSatisfaction = {};
     lastViolation = {};
-    positionMonitorG.reset();
-    positionMonitorF.reset();
-    stepNumberG = 0;
+    headPositionMonitorRight.reset();
+    headPositionMonitorLeft.reset();
+    stepNumberRight = 0;
 }
 std::string SinceMonitor::to_string() {
     std::string interval{" "};
     if (from != 0 or to != 10000)
         interval = "[" + std::to_string(from) + ", " + std::to_string(to) + "] ";
-    return "(" + subMonitorF->to_string() + " S" + interval + subMonitorG->to_string() + ")";
+    return "(" + subMonitorLeft->to_string() + " S" + interval + subMonitorRight->to_string() + ")";
 }

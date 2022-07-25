@@ -8,7 +8,8 @@
 #include <iostream>
 
 Verdict AndMonitor::concreteStep(size_t parentId, size_t stepNumber) {
-    Verdict verdict{subMonitors.at(0)->step(monitorId, stepNumber)};
+    auto tmp{subMonitors.at(0)->getTraceIdxByParentId(monitorId)};
+    Verdict verdict{subMonitors.at(0)->step(monitorId, tmp)};
     if (shortCircuiting) {
         if (!verdict.b) {
             if (!verdict.ts.has_value()) // happens when we are behind last trace element with submonitor
@@ -16,9 +17,10 @@ Verdict AndMonitor::concreteStep(size_t parentId, size_t stepNumber) {
             else
                 return {verdict.ts.value(), false};
         }
-        auto current{subMonitors.at(0)->getTraceIdxByParentId(monitorId)};
-        for (size_t i{1}; i < subMonitors.size(); ++i)
-            if (!subMonitors.at(i)->step(monitorId, current - 1).b) {
+        auto current{subMonitors.at(0)->getTraceIdxByParentId(monitorId) - 1};
+        std::cout << tmp << " | " << current << " | " << stepNumber << '\n';
+        for (size_t i{1}; i < subMonitors.size(); ++i) // verdict of first monitor is evaluated above
+            if (!subMonitors.at(i)->step(monitorId, current).b) {
                 if (!verdict.ts.has_value())
                     return {false};
                 else
@@ -52,9 +54,9 @@ std::string AndMonitor::to_string() {
 }
 
 double AndMonitor::computeCost(const std::vector<std::shared_ptr<HydraMonitor>> &monitors) {
-    double cost{0.0};
-    for (const auto &mon : monitors)
-        cost += mon->getEvalCost();
+    double cost{monitors.at(0)->getEvalCost()};
+    for (size_t idx{0}; idx < monitors.size(); ++idx)
+        cost += monitors.at(idx)->getEvalCost() * (1 - monitors.at(idx)->getSatisfactionProbability());
     return cost / static_cast<double>(monitors.size()); // normalize value
 }
 

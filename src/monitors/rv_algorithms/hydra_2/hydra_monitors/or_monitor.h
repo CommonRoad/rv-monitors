@@ -14,6 +14,7 @@
 class OrMonitor : public HydraMonitor {
   public:
     /**
+     * Constructor of or-monitor.
      *
      * @param formula Formula to be monitored.
      * @param subMonitors Child monitors.
@@ -57,7 +58,7 @@ class OrMonitor : public HydraMonitor {
 
   private:
     std::vector<std::shared_ptr<HydraMonitor>> subMonitors; //**< Child monitors. */
-    bool shortCircuiting; //**< Boolean indicating whether short circuiting should be used. */
+    bool shortCircuiting; //**< Boolean indicating whether short-circuiting should be used. */
 
     /**
      * Computes normalized cost over all provided monitors.
@@ -68,6 +69,7 @@ class OrMonitor : public HydraMonitor {
     static double computeEvaluationCost(const std::vector<std::shared_ptr<HydraMonitor>> &monitors);
 
     /**
+     * Computest satisfaction probability over all provided monitors.
      *
      * @param monitors List of monitors which should be used for predicate satisfaction probability computation.
      * @return Satisfaction probability of or-monitor in interval [0, 1]
