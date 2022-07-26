@@ -24,8 +24,7 @@ TEST(TestUntilMonitor, testUntilMonitorEvaluation) {
     mon1->registerParent(1);
     auto mon2{std::make_shared<AtomicMonitor>(formulaB, 3, false)};
     mon2->registerParent(1);
-    auto tmpConstSubMonitor{std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(true)), 1, false)};
-    auto mon{UntilMonitor(formula, mon1, mon2, tmpConstSubMonitor, 0, 4, 1, false)};
+    auto mon{UntilMonitor(formula, mon1, mon2, 0, 4, 1, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.step(0, 0).b, true);
@@ -48,8 +47,7 @@ TEST(TestUntilMonitor, testToString) {
     mon1->registerParent(1);
     auto mon2{std::make_shared<AtomicMonitor>(formulaB, 3, false)};
     mon2->registerParent(1);
-    auto tmpConstSubMonitor{std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(true)), 4, false)};
-    auto mon{UntilMonitor(formula, mon1, mon2, tmpConstSubMonitor, 0, 4, 1, false)};
+    auto mon{UntilMonitor(formula, mon1, mon2, 0, 4, 1, false)};
     EXPECT_EQ(mon.to_string(), "(a U[0, 4] b)");
 }
 
@@ -62,7 +60,6 @@ TEST(TestUntilMonitor, testReset) {
     mon1->registerParent(1);
     auto mon2{std::make_shared<AtomicMonitor>(formulaB, 3, false)};
     mon2->registerParent(1);
-    auto tmpConstSubMonitor{std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(true)), 4, false)};
-    auto mon{UntilMonitor(formula, mon1, mon2, tmpConstSubMonitor, 0, 4, 1, false)};
+    auto mon{UntilMonitor(formula, mon1, mon2, 0, 4, 1, false)};
     EXPECT_NO_THROW(mon.reset());
 }

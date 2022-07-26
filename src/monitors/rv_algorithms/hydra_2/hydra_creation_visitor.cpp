@@ -137,12 +137,9 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitUntil(Until &tlop, size
         return baseline.at(tlop.to_string());
     } else {
         size_t idx{maxId++};
-        auto tmpConstSubMonitor{
-            std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(true)), maxId++, connectedEval)};
-        tmpConstSubMonitor->registerParent(idx);
         auto newMonitor{std::make_shared<UntilMonitor>(
             Formula(std::make_shared<Until>(tlop)), tlop.getLeft()->accept(*this, idx, connectedEval),
-            tlop.getRight()->accept(*this, idx, connectedEval), tmpConstSubMonitor, tlop.getInterval()->getStart(),
+            tlop.getRight()->accept(*this, idx, connectedEval), tlop.getInterval()->getStart(),
             tlop.getInterval()->getEnd(), idx, connectedEval)};
         baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(tlop.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
