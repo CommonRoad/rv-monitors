@@ -34,12 +34,11 @@ Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         }
     }
 
-    if(lastSatisfaction && headPositionMonitorLeft.ts - lastSatisfaction->ts <= to &&
+    if (lastSatisfaction && headPositionMonitorLeft.ts - lastSatisfaction->ts <= to &&
         (!lastViolation || lastSatisfaction->tp >= lastViolation->tp))
         return {headPositionMonitorLeft.ts, true};
     else
         return {headPositionMonitorLeft.ts, false};
-
 }
 
 void SinceMonitor::setTrace(const Trace &tra) {

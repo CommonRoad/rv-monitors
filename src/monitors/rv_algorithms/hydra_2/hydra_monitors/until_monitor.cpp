@@ -27,17 +27,24 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     if (subVerdictBaseTimeStep->ts)
         headPositionMonitorBaseTimeStep.update(subVerdictBaseTimeStep->ts.value());
 
-    if (lastSatisfaction && lastSatisfaction->tp <
-            headPositionMonitorBaseTimeStep.tp)  // if last satisfaction (-> right side of until satisfied) is before current time step, reset last satisfaction
+    if (lastSatisfaction &&
+        lastSatisfaction->tp <
+            headPositionMonitorBaseTimeStep.tp) // if last satisfaction (-> right side of until satisfied) is before
+                                                // current time step, reset last satisfaction
         lastSatisfaction = {};
-    if (lastViolation && lastViolation->tp < headPositionMonitorBaseTimeStep.tp) // if last violation (-> left side of until violated) is before current time step, reset last satisfaction
+    if (lastViolation &&
+        lastViolation->tp < headPositionMonitorBaseTimeStep.tp) // if last violation (-> left side of until violated) is
+                                                                // before current time step, reset last satisfaction
         lastViolation = {};
 
     if (stepNumber == 0) { // only executed at first call of function
         stepNumber = stepLeftRightMonitors(stepNumber);
     }
 
-    while (!endReached && !lastViolation && headPositionMonitorLeft.ts - headPositionMonitorBaseTimeStep.ts <= to) { //loop until end is reached, until left side of monitor is false, or until upper bound of time interval is violated
+    while (!endReached && !lastViolation &&
+           headPositionMonitorLeft.ts - headPositionMonitorBaseTimeStep.ts <=
+               to) { // loop until end is reached, until left side of monitor is false, or until upper bound of time
+                     // interval is violated
         if (subVerdictRight->b) {
             lastSatisfaction = HeadPos(headPositionMonitorRight.ts, headPositionMonitorRight.tp);
         }
@@ -47,7 +54,7 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         stepNumber = stepLeftRightMonitors(stepNumber);
     }
 
-    if(lastSatisfaction && lastSatisfaction->ts - headPositionMonitorBaseTimeStep.ts >= from)
+    if (lastSatisfaction && lastSatisfaction->ts - headPositionMonitorBaseTimeStep.ts >= from)
         return {headPositionMonitorBaseTimeStep.ts, true};
     else
         return {headPositionMonitorBaseTimeStep.ts, false};

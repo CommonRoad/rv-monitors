@@ -31,7 +31,8 @@ class UntilMonitor : public HydraMonitor {
               formula, monitorId, connectedEval, (subMonitorRight->getEvalCost() + subMonitorLeft->getEvalCost()) / 2,
               (subMonitorRight->getSatisfactionProbability() + subMonitorRight->getSatisfactionProbability()) / 2),
           subMonitorLeft(std::move(subMonitorLeft)), subMonitorRight(std::move(subMonitorRight)),
-          subMonitorBaseTimeStep(std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(true)), 0, connectedEval)),
+          subMonitorBaseTimeStep(
+              std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(true)), 0, connectedEval)),
           from(intervalFrom), to(intervalTo){};
 
     /**
@@ -82,8 +83,7 @@ class UntilMonitor : public HydraMonitor {
     HeadPos headPositionMonitorLeft;
     HeadPos headPositionMonitorRight;
     HeadPos headPositionMonitorBaseTimeStep;
-    std::optional<HeadPos>
-        lastSatisfaction;                 //**< Last time right side of until was satisfied. */
-    std::optional<HeadPos> lastViolation; //**< Last time left side of until was violated. */
-    bool endReached{false};  //**< Boolean indicating whether end of trace was reached. */
+    std::optional<HeadPos> lastSatisfaction; //**< Last time right side of until was satisfied. */
+    std::optional<HeadPos> lastViolation;    //**< Last time left side of until was violated. */
+    bool endReached{false};                  //**< Boolean indicating whether end of trace was reached. */
 };
