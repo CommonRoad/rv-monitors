@@ -13,7 +13,7 @@ Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     if (!subVerdictLeft->b)
         lastViolation = HeadPos(headPositionMonitorLeft.ts, headPositionMonitorLeft.tp);
 
-    if (headPositionMonitorRight.tp == -1) {
+    if (stepNumber == 0) {
         subVerdictRight = subMonitorRight->step(monitorId, stepNumberRight);
         stepNumberRight += 1;
         if (subVerdictRight->ts.has_value())
@@ -34,10 +34,14 @@ Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         }
     }
 
-    int verdict = static_cast<int>(lastSatisfaction && headPositionMonitorLeft.ts - lastSatisfaction->ts <= to &&
-                                   (!lastViolation || lastSatisfaction->tp >= lastViolation->tp));
-    return {headPositionMonitorLeft.ts, verdict != 0};
+    if(lastSatisfaction && headPositionMonitorLeft.ts - lastSatisfaction->ts <= to &&
+        (!lastViolation || lastSatisfaction->tp >= lastViolation->tp))
+        return {headPositionMonitorLeft.ts, true};
+    else
+        return {headPositionMonitorLeft.ts, false};
+
 }
+
 void SinceMonitor::setTrace(const Trace &tra) {
     subMonitorLeft->setTrace(tra);
     subMonitorRight->setTrace(tra);

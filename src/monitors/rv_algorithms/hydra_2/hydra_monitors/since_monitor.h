@@ -67,8 +67,8 @@ class SinceMonitor : public HydraMonitor {
     size_t to;                                     //**< End of time interval. */
     HeadPos headPositionMonitorLeft;
     HeadPos headPositionMonitorRight;
-    std::optional<HeadPos> lastSatisfaction;
-    std::optional<HeadPos> lastViolation;
-    size_t stepNumberRight{0};
+    std::optional<HeadPos> lastSatisfaction; //**< Last time right side of until was satisfied. */
+    std::optional<HeadPos> lastViolation; //**< Last time left side of until was violated. */
+    size_t stepNumberRight{0}; // Custom step number for right monitor since left monitor is only called once
     bool endReached{false};
 };

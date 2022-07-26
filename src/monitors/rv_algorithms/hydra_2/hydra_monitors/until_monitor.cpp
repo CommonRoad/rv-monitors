@@ -6,68 +6,71 @@
 //
 #include "until_monitor.h"
 
-void UntilMonitor::stepLeftRightMonitors(size_t stepNumber) {
+size_t UntilMonitor::stepLeftRightMonitors(size_t stepNumber) {
     subVerdictLeft = subMonitorLeft->step(monitorId, stepNumber, true);
     if (subVerdictLeft->ts)
         headPositionMonitorLeft.update(subVerdictLeft->ts.value());
     else {
         endReached = true;
-        return;
+        return stepNumber++;
     }
     subVerdictRight = subMonitorRight->step(monitorId, stepNumber, true);
     if (subVerdictRight->ts)
         headPositionMonitorRight.update(subVerdictRight->ts.value());
     else
         endReached = true;
+    return stepNumber++;
 }
 
 Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
-    subVerdictTmp = subMonitorTmp->step(monitorId, stepNumber, true);
-    if (subVerdictTmp->ts)
-        headPositionMonitorTmp.update(subVerdictTmp->ts.value());
+    subVerdictBaseTimeStep = subMonitorBaseTimeStep->step(monitorId, stepNumber, true);
+    if (subVerdictBaseTimeStep->ts)
+        headPositionMonitorBaseTimeStep.update(subVerdictBaseTimeStep->ts.value());
 
-    if (lastSatisfaction && lastSatisfaction->tp < headPositionMonitorTmp.tp)
+    if (lastSatisfaction && lastSatisfaction->tp <
+            headPositionMonitorBaseTimeStep.tp)  // if last satisfaction (-> right side of until satisfied) is before current time step, reset last satisfaction
         lastSatisfaction = {};
-    if (lastViolation && lastViolation->tp < headPositionMonitorTmp.tp)
+    if (lastViolation && lastViolation->tp < headPositionMonitorBaseTimeStep.tp) // if last violation (-> left side of until violated) is before current time step, reset last satisfaction
         lastViolation = {};
 
     if (stepNumber == 0) { // only executed at first call of function
-        stepLeftRightMonitors(stepNumber);
-        stepNumber += 1;
+        stepNumber = stepLeftRightMonitors(stepNumber);
     }
 
-    while (!endReached && !lastViolation && headPositionMonitorLeft.ts - headPositionMonitorTmp.ts <= to) {
+    while (!endReached && !lastViolation && headPositionMonitorLeft.ts - headPositionMonitorBaseTimeStep.ts <= to) { //loop until end is reached, until left side of monitor is false, or until upper bound of time interval is violated
         if (subVerdictRight->b) {
             lastSatisfaction = HeadPos(headPositionMonitorRight.ts, headPositionMonitorRight.tp);
         }
         if (!subVerdictLeft->b) {
             lastViolation = HeadPos(headPositionMonitorLeft.ts, headPositionMonitorLeft.tp);
         }
-        stepLeftRightMonitors(stepNumber);
-        stepNumber += 1;
+        stepNumber = stepLeftRightMonitors(stepNumber);
     }
 
-    int verd = static_cast<int>(lastSatisfaction && lastSatisfaction->ts - headPositionMonitorTmp.ts >= from);
-    return {headPositionMonitorTmp.ts, verd != 0};
+    if(lastSatisfaction && lastSatisfaction->ts - headPositionMonitorBaseTimeStep.ts >= from)
+        return {headPositionMonitorBaseTimeStep.ts, true};
+    else
+        return {headPositionMonitorBaseTimeStep.ts, false};
 }
+
 void UntilMonitor::setTrace(const Trace &tra) {
     subMonitorLeft->setTrace(tra);
     subMonitorRight->setTrace(tra);
-    subMonitorTmp->setTrace(tra);
+    subMonitorBaseTimeStep->setTrace(tra);
 }
 void UntilMonitor::reset() {
     HydraMonitor::reset();
     subMonitorRight->reset();
     subMonitorLeft->reset();
-    subMonitorTmp->reset();
+    subMonitorBaseTimeStep->reset();
     subVerdictLeft = {};
     subVerdictRight = {};
-    subVerdictTmp = {};
+    subVerdictBaseTimeStep = {};
     lastSatisfaction = {};
     lastViolation = {};
     headPositionMonitorRight.reset();
     headPositionMonitorLeft.reset();
-    headPositionMonitorTmp.reset();
+    headPositionMonitorBaseTimeStep.reset();
 }
 std::string UntilMonitor::to_string() {
     std::string interval{" "};
