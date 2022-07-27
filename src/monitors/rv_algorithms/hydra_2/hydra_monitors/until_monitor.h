@@ -74,16 +74,19 @@ class UntilMonitor : public HydraMonitor {
 
     std::shared_ptr<HydraMonitor> subMonitorLeft;  //**< Monitor for specification on left side of until. */
     std::shared_ptr<HydraMonitor> subMonitorRight; //**< Monitor for specification on right side of until. */
-    std::shared_ptr<HydraMonitor> subMonitorBaseTimeStep;
-    std::optional<Verdict> subVerdictLeft;  //**< Verdict for monitor on left side of until. */
-    std::optional<Verdict> subVerdictRight; //**< Verdict for monitor on right side of until. */
-    std::optional<Verdict> subVerdictBaseTimeStep;
-    size_t from; //**< Start of time interval. */
-    size_t to;   //**< End of time interval. */
-    HeadPos headPositionMonitorLeft;
-    HeadPos headPositionMonitorRight;
-    HeadPos headPositionMonitorBaseTimeStep;
-    std::optional<HeadPos> lastSatisfaction; //**< Last time right side of until was satisfied. */
-    std::optional<HeadPos> lastViolation;    //**< Last time left side of until was violated. */
-    bool endReached{false};                  //**< Boolean indicating whether end of trace was reached. */
+    std::shared_ptr<HydraMonitor>
+        subMonitorBaseTimeStep; //**< Monitor to extract time step and index from trace at position of until monitor
+                                // head. Represented by Constant-True-Monitor. */
+    std::optional<Verdict> subVerdictLeft;         //**< Verdict for monitor on left side of until. */
+    std::optional<Verdict> subVerdictRight;        //**< Verdict for monitor on right side of until. */
+    std::optional<Verdict> subVerdictBaseTimeStep; //**< Monitor to extract time step and index from trace at position
+                                                   // of until monitor head. Represented by Constant-True-Monitor. */
+    size_t from;                                   //**< Start of time interval. */
+    size_t to;                                     //**< End of time interval. */
+    HeadPos headPositionMonitorLeft;               //**< Head position of left monitor. */
+    HeadPos headPositionMonitorRight;              //**< Head position of right monitor. *
+    HeadPos headPositionMonitorBaseTimeStep;       //**< Head position of base time monitor. *
+    std::optional<HeadPos> lastSatisfaction;       //**< Last time right side of until was satisfied. */
+    std::optional<HeadPos> lastViolation;          //**< Last time left side of until was violated. */
+    bool endReached{false};                        //**< Boolean indicating whether end of trace was reached. */
 };

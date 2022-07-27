@@ -9,7 +9,7 @@ TEST(TestECPast, violatedEnd) {
         Utils::createTrace({"green", "yellow", "red"}, {{"green"}, {"red"}, {"yellow"}, {"green"}, {"red"}, {"green"}});
     Formula formula = Parser::parse("G(green -> P(yellow))");
     auto eventConsuming{EventConsumingLTL({formula}, true)};
-    EXPECT_FALSE(eventConsuming.evaluate(trace)[formula.getId()].at(0).b);
+    EXPECT_FALSE(eventConsuming.evaluate(trace)[formula.getId()].at(0).value);
 }
 
 TEST(TestECPast, violatedBeginning) {
@@ -17,7 +17,7 @@ TEST(TestECPast, violatedBeginning) {
                                      {{"red"}, {"green"}, {"red"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}});
     Formula formula = Parser::parse("G(green -> P(yellow))");
     auto eventConsuming{EventConsumingLTL({formula}, true)};
-    EXPECT_FALSE(eventConsuming.evaluate(trace)[formula.getId()].at(0).b);
+    EXPECT_FALSE(eventConsuming.evaluate(trace)[formula.getId()].at(0).value);
 }
 
 TEST(TestECPast, satisfied) {
@@ -26,5 +26,5 @@ TEST(TestECPast, satisfied) {
                            {{"yellow"}, {"green"}, {"red"}, {"yellow"}, {"green"}, {"red"}, {"yellow"}, {"green"}});
     Formula formula = Parser::parse("G(green -> P(yellow))");
     auto eventConsuming{EventConsumingLTL({formula}, true)};
-    EXPECT_TRUE((eventConsuming.evaluate(trace)[formula.getId()].at(0).b));
+    EXPECT_TRUE((eventConsuming.evaluate(trace)[formula.getId()].at(0).value));
 }

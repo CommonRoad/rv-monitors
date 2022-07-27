@@ -65,10 +65,10 @@ class SinceMonitor : public HydraMonitor {
     std::optional<Verdict> subVerdictRight;        //**< Verdict for monitor on right side of since. */
     size_t from;                                   //**< Start of time interval. */
     size_t to;                                     //**< End of time interval. */
-    HeadPos headPositionMonitorLeft;
-    HeadPos headPositionMonitorRight;
-    std::optional<HeadPos> lastSatisfaction; //**< Last time right side of until was satisfied. */
-    std::optional<HeadPos> lastViolation;    //**< Last time left side of until was violated. */
+    HeadPos headPositionMonitorLeft;               //**< Head position of left monitor. */
+    HeadPos headPositionMonitorRight;              //**< Head position of right monitor. *
+    std::optional<HeadPos> lastSatisfaction;       //**< Last time right side of until was satisfied. */
+    std::optional<HeadPos> lastViolation;          //**< Last time left side of until was violated. */
     size_t stepNumberRight{0}; // Custom step number for right monitor since left monitor is only called once
-    bool endReached{false};
+    bool endReached{false};    //**< Boolean indicating whether end of trace was reached. */
 };

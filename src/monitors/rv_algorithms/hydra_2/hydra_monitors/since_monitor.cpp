@@ -8,37 +8,40 @@
 
 Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     subVerdictLeft = subMonitorLeft->step(monitorId, stepNumber);
-    if (subVerdictLeft->ts.has_value())
-        headPositionMonitorLeft.update(subVerdictLeft->ts.value());
-    if (!subVerdictLeft->b)
-        lastViolation = HeadPos(headPositionMonitorLeft.ts, headPositionMonitorLeft.tp);
+    if (subVerdictLeft->timeStamp.has_value())
+        headPositionMonitorLeft.update(subVerdictLeft->timeStamp.value());
+    if (!subVerdictLeft->value)
+        lastViolation = HeadPos(headPositionMonitorLeft.timeStep, headPositionMonitorLeft.traceIdx);
 
     if (stepNumber == 0) {
         subVerdictRight = subMonitorRight->step(monitorId, stepNumberRight);
-        stepNumberRight += 1;
-        if (subVerdictRight->ts.has_value())
-            headPositionMonitorRight.update(subVerdictRight->ts.value());
+        stepNumberRight++;
+        if (subVerdictRight->timeStamp.has_value())
+            headPositionMonitorRight.update(subVerdictRight->timeStamp.value());
     }
 
-    while (!endReached && headPositionMonitorRight.tp <= headPositionMonitorLeft.tp &&
-           headPositionMonitorLeft.ts - headPositionMonitorRight.ts >= from) {
-        if (subVerdictRight->b)
-            lastSatisfaction = HeadPos(headPositionMonitorRight.ts, headPositionMonitorRight.tp);
+    // loop until end is reached, right monitor time points equals (is greater) than left monitor's time point, or lower
+    // time bound is violated
+    while (!endReached && headPositionMonitorRight.traceIdx <= headPositionMonitorLeft.traceIdx &&
+           headPositionMonitorLeft.timeStep - headPositionMonitorRight.timeStep >= from) {
+        if (subVerdictRight->value)
+            lastSatisfaction = HeadPos(headPositionMonitorRight.timeStep, headPositionMonitorRight.traceIdx);
         subVerdictRight = subMonitorRight->step(monitorId, stepNumberRight);
-        stepNumberRight += 1;
-        if (subVerdictRight->ts.has_value())
-            headPositionMonitorRight.update(subVerdictRight->ts.value());
+        stepNumberRight++;
+        if (subVerdictRight->timeStamp.has_value())
+            headPositionMonitorRight.update(subVerdictRight->timeStamp.value());
         else {
             endReached = true;
-            headPositionMonitorRight.tp++;
+            headPositionMonitorRight.traceIdx++;
         }
     }
 
-    if (lastSatisfaction && headPositionMonitorLeft.ts - lastSatisfaction->ts <= to &&
-        (!lastViolation || lastSatisfaction->tp >= lastViolation->tp))
-        return {headPositionMonitorLeft.ts, true};
+    // check whether right side of until was satisfied and whether satisfaction is before end of allowed time interval
+    if (lastSatisfaction && headPositionMonitorLeft.timeStep - lastSatisfaction->timeStep <= to &&
+        (!lastViolation || lastSatisfaction->traceIdx >= lastViolation->traceIdx))
+        return {headPositionMonitorLeft.timeStep, true};
     else
-        return {headPositionMonitorLeft.ts, false};
+        return {headPositionMonitorLeft.timeStep, false};
 }
 
 void SinceMonitor::setTrace(const Trace &tra) {

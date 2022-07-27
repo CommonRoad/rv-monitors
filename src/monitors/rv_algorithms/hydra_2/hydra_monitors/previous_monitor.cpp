@@ -9,16 +9,16 @@
 Verdict PreviousMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     Verdict subVerdict = subMonitor->step(monitorId, stepNumber);
 
-    if (currentVerdict.has_value() and subVerdict.ts.has_value()) {
+    if (currentVerdict.has_value() and subVerdict.timeStamp.has_value()) {
         Verdict lastSubVerdict = *currentVerdict;
         currentVerdict = subVerdict;
-        if (Utils::isInInterval(subVerdict.ts.value() - lastSubVerdict.ts.value(), from, to))
-            return {subVerdict.ts.value(), lastSubVerdict.b};
+        if (Utils::isInInterval(subVerdict.timeStamp.value() - lastSubVerdict.timeStamp.value(), from, to))
+            return {subVerdict.timeStamp.value(), lastSubVerdict.value};
         else
-            return {subVerdict.ts.value(), false};
-    } else if (subVerdict.ts.has_value()) { // first trace element
+            return {subVerdict.timeStamp.value(), false};
+    } else if (subVerdict.timeStamp.has_value()) { // first trace element
         currentVerdict = subVerdict;
-        return {subVerdict.ts.value(), false};
+        return {subVerdict.timeStamp.value(), false};
     } else // behind trace (no more trace element exist)
         return {false};
 }

@@ -9,8 +9,6 @@
 #include <iostream>
 #include <utility>
 
-const Formula &HydraMonitor::getFormula() const { return formula; }
-
 HydraMonitor::HydraMonitor(Formula formula, size_t monitorId, bool connectedEval, double evalCost,
                            double satisfactionProbability)
     : formula(std::move(formula)), monitorId((monitorId)), connectedEval(connectedEval), evalCost(evalCost),
@@ -40,31 +38,37 @@ size_t HydraMonitor::getMaxTraceIdx() {
 
 size_t HydraMonitor::getTraceIdxByParentId(size_t parentId) const { return traceIdx.at(parentId); }
 
-Verdict HydraMonitor::step(size_t parentId, size_t stepNumber, bool ret, size_t repeat) {
+Verdict HydraMonitor::step(size_t parentId, size_t stepNumber, bool singleStep) {
     auto verdict{Verdict(0, false)};
-    if (stepNumber < traceIdx[parentId] or ret) {
-        if (!connectedEval) {
+    // step number is behind head position (e.g., if child of until operator) or specific verdict is directly required
+    // (only used by until operator)
+    if (stepNumber < traceIdx[parentId] or singleStep) {
+        if (!connectedEval) { // since no connected evaluation, perform step directly
             verdict = concreteStep(parentId, stepNumber);
             ++traceIdx[parentId];
-        } else if (traceIdx[parentId] == getMaxTraceIdx()) {
+        } else if (traceIdx[parentId] ==
+                   getMaxTraceIdx()) { // if requested trace index equals maximum trace index based on all monitor heads
+                                       // based on parent monitors, perform new step and store verdict
             verdict = concreteStep(parentId, stepNumber);
             verdictHistory.push_back(verdict);
             ++traceIdx[parentId];
-        } else {
+        } else { // if required step was already performed based on other parent monitor, use already computed verdict
             verdict = verdictHistory[traceIdx[parentId]];
             ++traceIdx[parentId];
         }
         return verdict;
     }
-    while (stepNumber + repeat >= traceIdx[parentId]) {
-        if (!connectedEval) {
+    while (stepNumber >= traceIdx[parentId]) {
+        if (!connectedEval) { // since no connected evaluation, perform step directly
             verdict = concreteStep(parentId, traceIdx[parentId]);
             ++traceIdx[parentId];
-        } else if (traceIdx[parentId] == getMaxTraceIdx()) {
+        } else if (traceIdx[parentId] ==
+                   getMaxTraceIdx()) { // if requested trace index equals maximum trace index based on all monitor heads
+                                       // based on parent monitors, perform new step and store verdict
             verdict = concreteStep(parentId, traceIdx[parentId]);
             verdictHistory.push_back(verdict);
             ++traceIdx[parentId];
-        } else {
+        } else { // if required step was already performed based on other parent monitor, use already computed verdict
             verdict = verdictHistory[traceIdx[parentId]];
             ++traceIdx[parentId];
         }

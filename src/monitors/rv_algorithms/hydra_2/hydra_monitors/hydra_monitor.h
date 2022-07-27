@@ -7,25 +7,55 @@
 #pragma once
 #include "monitors/utils/utils.h"
 
+/**
+ * Representation of Hydra monitor head position consisting of time step and trace position.
+ */
 struct HeadPos {
-    size_t ts;
-    int tp = -1;
-    HeadPos() = default;
-    HeadPos(size_t timeStep, int traceIdx) : ts(timeStep), tp(traceIdx){};
+    size_t timeStep;   //**< Time step of monitor head position. */
+    int traceIdx = -1; //**< Trace index of monitor head position. Initial invalid index. */
 
+    /**
+     * Default constructor.
+     */
+    HeadPos() = default;
+
+    /**
+     * Constructor of head position.
+     *
+     * @param timeStep Time step of monitor head position.
+     * @param traceIdx Trace index of monitor head position.
+     */
+    HeadPos(size_t timeStep, int traceIdx) : timeStep(timeStep), traceIdx(traceIdx){};
+
+    /**
+     * Sets new time step and increments index by one.
+     *
+     * @param new_ts New time step.
+     */
     void update(size_t new_ts) {
-        ts = new_ts;
-        tp++;
+        timeStep = new_ts;
+        traceIdx++;
     }
 
+    /**
+     * Reset head to default values.
+     */
     void reset() {
-        ts = 0;
-        tp = -1;
+        timeStep = 0;
+        traceIdx = -1;
     }
 };
 
+/**
+ * Hydra monitor interface.
+ */
 class HydraMonitor {
   private:
+    /**
+     * Extracts maximum trace idx of monitor given all parent monitors (required for connected evaluation).
+     *
+     * @return Trace index.
+     */
     size_t getMaxTraceIdx();
 
   public:
@@ -46,11 +76,10 @@ class HydraMonitor {
      *
      * @param parentId Id of parent monitor.
      * @param stepNumber Number of step which should be performed.
-     * @param ret
-     * @param repeat
+     * @param singleStep Boolean indicating whether only one step for provided step number should be executed.
      * @return Boolean verdict.
      */
-    Verdict step(size_t parentId, size_t stepNumber, bool ret = false, size_t repeat = 0);
+    Verdict step(size_t parentId, size_t stepNumber, bool singleStep = false);
 
     /**
      * Monitor specific step function.
@@ -60,13 +89,6 @@ class HydraMonitor {
      * @return Boolean verdict.
      */
     virtual Verdict concreteStep(size_t parentId, size_t stepNumber) = 0;
-
-    /**
-     * Getter for formula.
-     *
-     * @return Formula object.
-     */
-    const Formula &getFormula() const;
 
     /**
      * Setter for trace.

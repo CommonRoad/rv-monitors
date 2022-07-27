@@ -21,9 +21,9 @@ TEST(TestNegationMonitor, testNegationMonitorFalseEvaluation) {
     auto mon{NegationMonitor(formula, mon1, 1, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
-    EXPECT_EQ(mon.concreteStep(0, 0).b, false);
-    EXPECT_EQ(mon.step(0, 0).b, false);
-    EXPECT_EQ(mon.step(0, 4).b, true);
+    EXPECT_EQ(mon.concreteStep(0, 0).value, false);
+    EXPECT_EQ(mon.step(0, 0).value, false);
+    EXPECT_EQ(mon.step(0, 4).value, true);
 }
 
 TEST(TestNegationMonitor, testNegationMonitorTrueEvaluation) {
@@ -36,9 +36,9 @@ TEST(TestNegationMonitor, testNegationMonitorTrueEvaluation) {
     auto mon{NegationMonitor(formula, mon1, 1, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
-    EXPECT_EQ(mon.concreteStep(0, 0).b, true);
-    EXPECT_EQ(mon.step(0, 0).b, true);
-    EXPECT_EQ(mon.step(0, 4).b, true);
+    EXPECT_EQ(mon.concreteStep(0, 0).value, true);
+    EXPECT_EQ(mon.step(0, 0).value, true);
+    EXPECT_EQ(mon.step(0, 4).value, true);
 }
 
 TEST(TestNegationMonitor, testToString) {

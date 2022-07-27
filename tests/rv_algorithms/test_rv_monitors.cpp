@@ -25,7 +25,7 @@ std::vector<Verdict> TestRVMonitors::executeRVMonitor(AlgorithmType algorithm) {
 
 TEST_F(TestRVMonitors, EventConsumingLTL) {
     testing::internal::CaptureStdout();
-    EXPECT_FALSE(executeRVMonitor(AlgorithmType::event_consuming_ltl).at(0).b);
+    EXPECT_FALSE(executeRVMonitor(AlgorithmType::event_consuming_ltl).at(0).value);
     auto consoleOutputAlgorithmType{testing::internal::GetCapturedStdout()};
     EXPECT_EQ(consoleOutputAlgorithmType, "EventConsuming-LTL");
 }
@@ -42,21 +42,21 @@ TEST_F(TestRVMonitors, HydraMTL) {
 
 TEST_F(TestRVMonitors, BTT_FSM_LTL) {
     testing::internal::CaptureStdout();
-    EXPECT_FALSE(executeRVMonitor(AlgorithmType::btt_fsm).at(0).b);
+    EXPECT_FALSE(executeRVMonitor(AlgorithmType::btt_fsm).at(0).value);
     auto consoleOutputAlgorithmType{testing::internal::GetCapturedStdout()};
     EXPECT_EQ(consoleOutputAlgorithmType, "BTT-FSM*");
 }
 
 TEST_F(TestRVMonitors, MT_FSM_LTL) {
     testing::internal::CaptureStdout();
-    EXPECT_FALSE(executeRVMonitor(AlgorithmType::mt_fsm).at(0).b);
+    EXPECT_FALSE(executeRVMonitor(AlgorithmType::mt_fsm).at(0).value);
     auto consoleOutputAlgorithmType{testing::internal::GetCapturedStdout()};
     EXPECT_EQ(consoleOutputAlgorithmType, "MT-FSM*");
 }
 
 TEST_F(TestRVMonitors, DynamicProgrammingLTL) {
     testing::internal::CaptureStdout();
-    EXPECT_FALSE(executeRVMonitor(AlgorithmType::dynamic_programming_ltl).at(0).b);
+    EXPECT_FALSE(executeRVMonitor(AlgorithmType::dynamic_programming_ltl).at(0).value);
     auto consoleOutputAlgorithmType{testing::internal::GetCapturedStdout()};
     EXPECT_EQ(consoleOutputAlgorithmType, "DynamicProgramming");
 }

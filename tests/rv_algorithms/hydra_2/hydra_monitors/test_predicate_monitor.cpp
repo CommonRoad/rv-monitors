@@ -47,16 +47,16 @@ TEST(TestPredicateMonitor, testPredicateEvaluation) {
     auto mon{PredicateMonitor(formula, 1, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
-    EXPECT_EQ(mon.concreteStep(0, 0).b, true);
-    EXPECT_EQ(mon.step(0, 0).b, true);
-    EXPECT_EQ(mon.concreteStep(0, 1).b, false);
-    EXPECT_EQ(mon.step(0, 1).b, false);
-    EXPECT_EQ(mon.concreteStep(0, 2).b, true);
-    EXPECT_EQ(mon.step(0, 2).b, true);
-    EXPECT_EQ(mon.concreteStep(0, 3).b, false);
-    EXPECT_EQ(mon.step(0, 3).b, false);
-    EXPECT_EQ(mon.concreteStep(0, 4).b, false);
-    EXPECT_EQ(mon.step(0, 4).b, false);
+    EXPECT_EQ(mon.concreteStep(0, 0).value, true);
+    EXPECT_EQ(mon.step(0, 0).value, true);
+    EXPECT_EQ(mon.concreteStep(0, 1).value, false);
+    EXPECT_EQ(mon.step(0, 1).value, false);
+    EXPECT_EQ(mon.concreteStep(0, 2).value, true);
+    EXPECT_EQ(mon.step(0, 2).value, true);
+    EXPECT_EQ(mon.concreteStep(0, 3).value, false);
+    EXPECT_EQ(mon.step(0, 3).value, false);
+    EXPECT_EQ(mon.concreteStep(0, 4).value, false);
+    EXPECT_EQ(mon.step(0, 4).value, false);
 }
 
 TEST(TestPredicateMonitor, testPredicateMonitorToString) {

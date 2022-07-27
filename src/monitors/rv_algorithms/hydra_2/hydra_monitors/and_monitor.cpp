@@ -8,23 +8,20 @@
 #include <iostream>
 
 Verdict AndMonitor::concreteStep(size_t parentId, size_t stepNumber) {
-    auto tmp{subMonitors.at(0)->getTraceIdxByParentId(monitorId)};
-    Verdict verdict{subMonitors.at(0)->step(monitorId, tmp)};
+    Verdict verdict{subMonitors.at(0)->step(monitorId, stepNumber)};
     if (shortCircuiting) {
-        if (!verdict.b) {
-            if (!verdict.ts.has_value()) // happens when we are behind last trace element with submonitor
+        if (!verdict.value) {
+            if (!verdict.timeStamp.has_value()) // happens when we are behind last trace element with submonitor
                 return {false};
             else
-                return {verdict.ts.value(), false};
+                return {verdict.timeStamp.value(), false};
         }
-        auto current{subMonitors.at(0)->getTraceIdxByParentId(monitorId) - 1};
-        std::cout << tmp << " | " << current << " | " << stepNumber << '\n';
         for (size_t i{1}; i < subMonitors.size(); ++i) // verdict of first monitor is evaluated above
-            if (!subMonitors.at(i)->step(monitorId, current).b) {
-                if (!verdict.ts.has_value())
+            if (!subMonitors.at(i)->step(monitorId, stepNumber).value) {
+                if (!verdict.timeStamp.has_value())
                     return {false};
                 else
-                    return {verdict.ts.value(), false};
+                    return {verdict.timeStamp.value(), false};
             }
     } else {
         for (size_t i{1}; i < subMonitors.size(); ++i)

@@ -10,7 +10,7 @@ TEST(TestMT_FSMFuture, violated1) {
         {{"a"}, {"b"}, {"a"}, {"b"}, {"a"}, {"c"}, {"a"}, {"a"}, {"b"}, {"g"}, {"f"}, {"h"}, {"c"}, {"b"}, {"a"}});
     Formula formula = Parser::parse("G(a -> F(b))");
     auto mtFSM = MtFsm({formula});
-    EXPECT_FALSE(mtFSM.evaluate(trace)[formula.getId()].at(0).b);
+    EXPECT_FALSE(mtFSM.evaluate(trace)[formula.getId()].at(0).value);
 }
 
 TEST(TestMT_FSMFuture, satisfied1) {
@@ -19,7 +19,7 @@ TEST(TestMT_FSMFuture, satisfied1) {
         {{"a"}, {"b"}, {"a"}, {"b"}, {"a"}, {"c"}, {"a"}, {"a"}, {"b"}, {"g"}, {"f"}, {"h"}, {"c"}, {"b"}, {"a"}});
     Formula formula = Parser::parse("F(!G(b -> Fc))");
     auto mtFSM = MtFsm({formula});
-    EXPECT_TRUE(mtFSM.evaluate(trace)[formula.getId()].at(0).b);
+    EXPECT_TRUE(mtFSM.evaluate(trace)[formula.getId()].at(0).value);
 }
 
 TEST(TestMT_FSMFuture, satisfied2) {
@@ -28,7 +28,7 @@ TEST(TestMT_FSMFuture, satisfied2) {
         {"a", "b", "c", "g", "f", "h"},
         {{"a"}, {"b"}, {"a"}, {"b"}, {"a"}, {"c"}, {"a"}, {"a"}, {"b"}, {"g"}, {"f"}, {"h"}, {"c"}, {"b"}, {"c"}});
     auto mtFSM = MtFsm({formula});
-    EXPECT_TRUE(mtFSM.evaluate(trace)[formula.getId()].at(0).b);
+    EXPECT_TRUE(mtFSM.evaluate(trace)[formula.getId()].at(0).value);
 }
 
 TEST(TestMT_FSMFuture, violated2) {
@@ -37,7 +37,7 @@ TEST(TestMT_FSMFuture, violated2) {
         {{"a"}, {"b"}, {"a"}, {"b"}, {"a"}, {"c"}, {"a"}, {"a"}, {"b"}, {"g"}, {"f"}, {"h"}, {"c"}, {"b"}, {"c"}});
     Formula formula = Parser::parse("F(!G(b -> Fc))");
     auto mtFSM = MtFsm({formula});
-    EXPECT_FALSE(mtFSM.evaluate(trace)[formula.getId()].at(0).b);
+    EXPECT_FALSE(mtFSM.evaluate(trace)[formula.getId()].at(0).value);
 }
 
 TEST(TestMT_FSMFuture, violatedEnd) {
@@ -46,7 +46,7 @@ TEST(TestMT_FSMFuture, violatedEnd) {
                            {{"green"}, {"red"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}, {"green"}, {"red"}});
     Formula formula = Parser::parse("G(green -> !red U yellow)");
     auto mtFSM = MtFsm({formula});
-    EXPECT_FALSE(mtFSM.evaluate(trace)[formula.getId()].at(0).b);
+    EXPECT_FALSE(mtFSM.evaluate(trace)[formula.getId()].at(0).value);
 }
 
 TEST(TestMT_FSMFuture, violatedBeginning) {
@@ -55,7 +55,7 @@ TEST(TestMT_FSMFuture, violatedBeginning) {
                            {{"green"}, {"red"}, {"yellow"}, {"red"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}});
     Formula formula = Parser::parse("G(green -> !red U yellow)");
     auto mtFSM = MtFsm({formula});
-    EXPECT_FALSE(mtFSM.evaluate(trace)[formula.getId()].at(0).b);
+    EXPECT_FALSE(mtFSM.evaluate(trace)[formula.getId()].at(0).value);
 }
 
 TEST(TestMT_FSMFuture, satisfied) {
@@ -63,5 +63,5 @@ TEST(TestMT_FSMFuture, satisfied) {
                                      {{"green"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}, {"red"}, {"red"}});
     Formula formula = Parser::parse("G(green -> !red U yellow)");
     auto mtFSM = MtFsm({formula});
-    EXPECT_TRUE(mtFSM.evaluate(trace)[formula.getId()].at(0).b);
+    EXPECT_TRUE(mtFSM.evaluate(trace)[formula.getId()].at(0).value);
 }

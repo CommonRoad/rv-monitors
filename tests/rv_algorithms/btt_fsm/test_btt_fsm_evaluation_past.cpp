@@ -10,7 +10,7 @@ TEST(TestBTT_FSMPast, violatedEnd) {
     Formula formula = Parser::parse("G(green -> P(yellow))");
     auto btt = BttFsm({formula}, true);
 
-    EXPECT_FALSE(btt.evaluate(trace)[formula.getId()].at(0).b);
+    EXPECT_FALSE(btt.evaluate(trace)[formula.getId()].at(0).value);
 }
 
 TEST(TestBTT_FSMPast, violatedBeginning) {
@@ -19,7 +19,7 @@ TEST(TestBTT_FSMPast, violatedBeginning) {
     Formula formula = Parser::parse("G(green -> P(yellow))");
     auto btt = BttFsm({formula}, true);
 
-    EXPECT_FALSE(btt.evaluate(trace)[formula.getId()].at(0).b);
+    EXPECT_FALSE(btt.evaluate(trace)[formula.getId()].at(0).value);
 }
 
 TEST(TestBTT_FSMPast, satisfied) {
@@ -29,5 +29,5 @@ TEST(TestBTT_FSMPast, satisfied) {
     Formula formula = Parser::parse("G(green -> P(yellow))");
     auto btt = BttFsm({formula}, true);
 
-    EXPECT_TRUE(btt.evaluate(trace)[formula.getId()].at(0).b);
+    EXPECT_TRUE(btt.evaluate(trace)[formula.getId()].at(0).value);
 }

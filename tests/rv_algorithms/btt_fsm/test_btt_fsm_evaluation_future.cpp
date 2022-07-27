@@ -11,7 +11,7 @@ TEST(TestBTT_FSMEvaluation, violated1) {
     Formula formula = Parser::parse("G(a -> F(b))");
     auto btt = BttFsm({formula});
 
-    EXPECT_FALSE(btt.evaluate(trace)[formula.getId()].at(0).b);
+    EXPECT_FALSE(btt.evaluate(trace)[formula.getId()].at(0).value);
 }
 
 TEST(TestBTT_FSMEvaluation, satisfied1) {
@@ -21,7 +21,7 @@ TEST(TestBTT_FSMEvaluation, satisfied1) {
     Formula formula = Parser::parse("F(!G(b -> Fc))");
     auto btt = BttFsm({formula});
 
-    EXPECT_TRUE(btt.evaluate(trace)[formula.getId()].at(0).b);
+    EXPECT_TRUE(btt.evaluate(trace)[formula.getId()].at(0).value);
 }
 
 TEST(TestBTT_FSMEvaluation, satisfied2) {
@@ -32,7 +32,7 @@ TEST(TestBTT_FSMEvaluation, satisfied2) {
 
     auto btt = BttFsm({formula});
 
-    EXPECT_TRUE(btt.evaluate(trace)[formula.getId()].at(0).b);
+    EXPECT_TRUE(btt.evaluate(trace)[formula.getId()].at(0).value);
 }
 
 TEST(TestBTT_FSMEvaluation, violated2) {
@@ -42,7 +42,7 @@ TEST(TestBTT_FSMEvaluation, violated2) {
     Formula formula = Parser::parse("F(!G(b -> Fc))");
     auto btt = BttFsm({formula});
 
-    EXPECT_FALSE(btt.evaluate(trace)[formula.getId()].at(0).b);
+    EXPECT_FALSE(btt.evaluate(trace)[formula.getId()].at(0).value);
 }
 
 TEST(TestBTT_FSMEvaluation, satisfied3) {
@@ -52,7 +52,7 @@ TEST(TestBTT_FSMEvaluation, satisfied3) {
     Formula formula = Parser::parse("G((a & b & c & F(d)) -> (!(!(e) & F(e))))");
     auto btt = BttFsm({formula});
 
-    EXPECT_TRUE(btt.evaluate(trace)[formula.getId()].at(0).b);
+    EXPECT_TRUE(btt.evaluate(trace)[formula.getId()].at(0).value);
 }
 
 TEST(TestBTT_FSMEvaluation, violatedEnd) {
@@ -62,7 +62,7 @@ TEST(TestBTT_FSMEvaluation, violatedEnd) {
     Formula formula = Parser::parse("G(green -> !red U yellow)");
     auto btt = BttFsm({formula});
 
-    EXPECT_FALSE(btt.evaluate(trace)[formula.getId()].at(0).b);
+    EXPECT_FALSE(btt.evaluate(trace)[formula.getId()].at(0).value);
 }
 
 TEST(TestBTT_FSMEvaluation, violatedBeginning) {
@@ -72,7 +72,7 @@ TEST(TestBTT_FSMEvaluation, violatedBeginning) {
     Formula formula = Parser::parse("G(green -> !red U yellow)");
     auto btt = BttFsm({formula});
 
-    EXPECT_FALSE(btt.evaluate(trace)[formula.getId()].at(0).b);
+    EXPECT_FALSE(btt.evaluate(trace)[formula.getId()].at(0).value);
 }
 
 TEST(TestBTT_FSMEvaluation, satisfied) {
@@ -81,5 +81,5 @@ TEST(TestBTT_FSMEvaluation, satisfied) {
     Formula formula = Parser::parse("G(green -> !red U yellow)");
     auto btt = BttFsm({formula});
 
-    EXPECT_TRUE(btt.evaluate(trace)[formula.getId()].at(0).b);
+    EXPECT_TRUE(btt.evaluate(trace)[formula.getId()].at(0).value);
 }

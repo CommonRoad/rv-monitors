@@ -13,14 +13,14 @@ static void print_solution(const std::vector<Verdict> &solution) {
     int last_ts = -1;
     std::cout << std::boolalpha;
     for (const auto &verdict : solution) {
-        assert(verdict.ts.has_value());
-        auto ts = verdict.ts.value();
+        assert(verdict.timeStamp.has_value());
+        auto ts = verdict.timeStamp.value();
         if (ts == last_ts) {
             i++;
         } else {
             i = 0;
         }
-        std::cout << ts << ":" << i << " " << verdict.b << std::endl;
+        std::cout << ts << ":" << i << " " << verdict.value << std::endl;
         last_ts = ts;
     }
 }

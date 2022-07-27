@@ -10,19 +10,18 @@
 Verdict OrMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     Verdict verdict{subMonitors.at(0)->step(monitorId, stepNumber)};
     if (shortCircuiting) {
-        if (verdict.b) {
-            if (!verdict.ts.has_value()) // happens when we are behind last trace element with submonitor
+        if (verdict.value) {
+            if (!verdict.timeStamp.has_value()) // happens when we are behind last trace element with submonitor
                 return {true};
             else
-                return {verdict.ts.value(), true};
+                return {verdict.timeStamp.value(), true};
         }
-        //    auto currentStep{subMonitors.at(0)->getTraceIdxByParentId(monitorId)};
         for (size_t i{1}; i < subMonitors.size(); ++i) { // verdict of first monitor is evaluated above
-            if (subMonitors.at(i)->step(monitorId, stepNumber).b) {
-                if (!verdict.ts.has_value())
+            if (subMonitors.at(i)->step(monitorId, stepNumber).value) {
+                if (!verdict.timeStamp.has_value())
                     return {true};
                 else
-                    return {verdict.ts.value(), true};
+                    return {verdict.timeStamp.value(), true};
             }
         }
     } else {                                           // if no short-circuiting, check all verdicts of submonitors

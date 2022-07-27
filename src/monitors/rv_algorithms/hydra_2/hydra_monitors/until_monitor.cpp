@@ -8,33 +8,34 @@
 
 size_t UntilMonitor::stepLeftRightMonitors(size_t stepNumber) {
     subVerdictLeft = subMonitorLeft->step(monitorId, stepNumber, true);
-    if (subVerdictLeft->ts)
-        headPositionMonitorLeft.update(subVerdictLeft->ts.value());
+    if (subVerdictLeft->timeStamp)
+        headPositionMonitorLeft.update(subVerdictLeft->timeStamp.value());
     else {
         endReached = true;
-        return stepNumber++;
+        return ++stepNumber;
     }
     subVerdictRight = subMonitorRight->step(monitorId, stepNumber, true);
-    if (subVerdictRight->ts)
-        headPositionMonitorRight.update(subVerdictRight->ts.value());
+    if (subVerdictRight->timeStamp)
+        headPositionMonitorRight.update(subVerdictRight->timeStamp.value());
     else
         endReached = true;
-    return stepNumber++;
+    return ++stepNumber;
 }
 
 Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     subVerdictBaseTimeStep = subMonitorBaseTimeStep->step(monitorId, stepNumber, true);
-    if (subVerdictBaseTimeStep->ts)
-        headPositionMonitorBaseTimeStep.update(subVerdictBaseTimeStep->ts.value());
+    if (subVerdictBaseTimeStep->timeStamp)
+        headPositionMonitorBaseTimeStep.update(subVerdictBaseTimeStep->timeStamp.value());
 
     if (lastSatisfaction &&
-        lastSatisfaction->tp <
-            headPositionMonitorBaseTimeStep.tp) // if last satisfaction (-> right side of until satisfied) is before
-                                                // current time step, reset last satisfaction
+        lastSatisfaction->traceIdx <
+            headPositionMonitorBaseTimeStep.traceIdx) // if last satisfaction (-> right side of until satisfied) is
+                                                      // before current time step, reset last satisfaction
         lastSatisfaction = {};
     if (lastViolation &&
-        lastViolation->tp < headPositionMonitorBaseTimeStep.tp) // if last violation (-> left side of until violated) is
-                                                                // before current time step, reset last satisfaction
+        lastViolation->traceIdx <
+            headPositionMonitorBaseTimeStep.traceIdx) // if last violation (-> left side of until violated) is
+                                                      // before current time step, reset last satisfaction
         lastViolation = {};
 
     if (stepNumber == 0) { // only executed at first call of function
@@ -42,22 +43,23 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     }
 
     while (!endReached && !lastViolation &&
-           headPositionMonitorLeft.ts - headPositionMonitorBaseTimeStep.ts <=
-               to) { // loop until end is reached, until left side of monitor is false, or until upper bound of time
+           (headPositionMonitorLeft.timeStep - headPositionMonitorBaseTimeStep.timeStep <=
+               to || headPositionMonitorLeft.timeStep < headPositionMonitorBaseTimeStep.timeStep)) { // loop until end is reached, until left side of monitor is false, or until upper bound of time
                      // interval is violated
-        if (subVerdictRight->b) {
-            lastSatisfaction = HeadPos(headPositionMonitorRight.ts, headPositionMonitorRight.tp);
+        if (subVerdictRight->value) {
+            lastSatisfaction = HeadPos(headPositionMonitorRight.timeStep, headPositionMonitorRight.traceIdx);
         }
-        if (!subVerdictLeft->b) {
-            lastViolation = HeadPos(headPositionMonitorLeft.ts, headPositionMonitorLeft.tp);
+        if (!subVerdictLeft->value) {
+            lastViolation = HeadPos(headPositionMonitorLeft.timeStep, headPositionMonitorLeft.traceIdx);
         }
         stepNumber = stepLeftRightMonitors(stepNumber);
     }
 
-    if (lastSatisfaction && lastSatisfaction->ts - headPositionMonitorBaseTimeStep.ts >= from)
-        return {headPositionMonitorBaseTimeStep.ts, true};
+    // check whether right side of until was satisfied and whether satisfaction is after start of allowed time interval
+    if (lastSatisfaction && lastSatisfaction->timeStep - headPositionMonitorBaseTimeStep.timeStep >= from)
+        return {headPositionMonitorBaseTimeStep.timeStep, true};
     else
-        return {headPositionMonitorBaseTimeStep.ts, false};
+        return {headPositionMonitorBaseTimeStep.timeStep, false};
 }
 
 void UntilMonitor::setTrace(const Trace &tra) {
