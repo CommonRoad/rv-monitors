@@ -38,14 +38,19 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
                                                       // before current time step, reset last satisfaction
         lastViolation = {};
 
-    if (stepNumber == 0) { // only executed at first call of function
+    // if not step was performed yet or last verdicts are behind base time step, execute step for current base step
+    if (stepNumber == 0 or subVerdictLeft->timeStamp < headPositionMonitorBaseTimeStep.timeStep or
+        subVerdictRight->timeStamp <
+            headPositionMonitorBaseTimeStep.timeStep) { // only executed at first call of function
         stepNumber = stepLeftRightMonitors(stepNumber);
     }
 
     while (!endReached && !lastViolation &&
-           (headPositionMonitorLeft.timeStep - headPositionMonitorBaseTimeStep.timeStep <=
-               to || headPositionMonitorLeft.timeStep < headPositionMonitorBaseTimeStep.timeStep)) { // loop until end is reached, until left side of monitor is false, or until upper bound of time
-                     // interval is violated
+           (headPositionMonitorLeft.timeStep - headPositionMonitorBaseTimeStep.timeStep <= to ||
+            headPositionMonitorLeft.timeStep <
+                headPositionMonitorBaseTimeStep.timeStep)) { // loop until end is reached, until left side of monitor is
+                                                             // false, or until upper bound of time
+                                                             // interval is violated
         if (subVerdictRight->value) {
             lastSatisfaction = HeadPos(headPositionMonitorRight.timeStep, headPositionMonitorRight.traceIdx);
         }
@@ -55,8 +60,10 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         stepNumber = stepLeftRightMonitors(stepNumber);
     }
 
-    // check whether right side of until was satisfied and whether satisfaction is after start of allowed time interval
-    if (lastSatisfaction && lastSatisfaction->timeStep - headPositionMonitorBaseTimeStep.timeStep >= from)
+    // check whether right side of until was satisfied, whether satisfaction is after start of allowed time interval,
+    // and whether left side of from is greater/equal zero (required since unsigned, and we have an overflow
+    if (lastSatisfaction && lastSatisfaction->timeStep - headPositionMonitorBaseTimeStep.timeStep >= from &&
+        lastSatisfaction->timeStep >= headPositionMonitorBaseTimeStep.timeStep)
         return {headPositionMonitorBaseTimeStep.timeStep, true};
     else
         return {headPositionMonitorBaseTimeStep.timeStep, false};

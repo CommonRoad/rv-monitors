@@ -8,8 +8,8 @@
 #include <iostream>
 
 Verdict PredicateMonitor::concreteStep(size_t parentId, size_t stepNumber) {
-    if (traceIdx[parentId] < trace.getLength()) {
-        auto event{trace.getEvent(traceIdx[parentId])};
+    if (stepNumber < trace.getLength()) {
+        auto event{trace.getEvent(stepNumber)};
         auto verdict{
             Verdict(event.getTimeStep(), event.getValue(*std::dynamic_pointer_cast<Predicate>(formula.getExpr())))};
         return verdict;

@@ -8,21 +8,20 @@
 #include <iostream>
 
 Verdict NextMonitor::concreteStep(size_t parentId, size_t stepNumber) {
-    do {
-        auto subVerdict = subMonitor->step(monitorId, stepNumber);
-        if (subVerdict.timeStamp.has_value() and currentTime) {
-            size_t lastTime = *currentTime;
-            currentTime = subVerdict.timeStamp;
-            if (Utils::isInInterval(subVerdict.timeStamp.value() - lastTime, from, to))
-                return {lastTime, subVerdict.value};
-            else
-                return {lastTime, false};
-        } else if (!subVerdict.timeStamp.has_value()) { // last event in trace
-            return {*currentTime, false};
-        } else { // first event in trace (next time step specifies verdict)
-            currentTime = subVerdict.timeStamp;
-        }
-    } while (true);
+
+    if (!currentTime) // first event in trace (next time step specifies verdict
+        currentTime = subMonitor->step(monitorId, stepNumber).timeStamp;
+
+    auto subVerdict{subMonitor->step(monitorId, stepNumber + 1)};
+    if (subVerdict.timeStamp.has_value() and currentTime) {
+        size_t lastTime = *currentTime;
+        currentTime = subVerdict.timeStamp;
+        if (Utils::isInInterval(subVerdict.timeStamp.value() - lastTime, from, to))
+            return {lastTime, subVerdict.value};
+        else
+            return {lastTime, false};
+    } else // last event in trace
+        return {*currentTime, false};
 }
 
 void NextMonitor::setTrace(const Trace &tra) { subMonitor->setTrace(tra); }
