@@ -39,9 +39,12 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         lastViolation = {};
 
     // if not step was performed yet or last verdicts are behind base time step, execute step for current base step
-    if (stepNumber == 0 or subVerdictLeft->timeStamp < headPositionMonitorBaseTimeStep.timeStep or
-        subVerdictRight->timeStamp <
-            headPositionMonitorBaseTimeStep.timeStep) { // only executed at first call of function
+    if (stepNumber == 0 or
+        (subVerdictLeft->timeStamp.has_value() and
+         subVerdictLeft->timeStamp.value() < headPositionMonitorBaseTimeStep.timeStep) or
+        (subVerdictRight->timeStamp.has_value() and
+         subVerdictRight->timeStamp.value() <
+             headPositionMonitorBaseTimeStep.timeStep)) { // only executed at first call of function
         stepNumber = stepLeftRightMonitors(stepNumber);
     }
 

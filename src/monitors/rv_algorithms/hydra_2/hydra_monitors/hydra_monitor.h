@@ -160,4 +160,5 @@ class HydraMonitor {
     bool connectedEval;                  //**< Boolean indicating whether connected evaluation should be performed */
     double evalCost{0.0};                //**< Evaluation cost of monitor */
     double satisfactionProbability{1.0}; //**< Satisfaction probability of monitor */
+    Verdict &simulateVerdict(size_t parentId, size_t stepNumber, Verdict &verdict);
 };

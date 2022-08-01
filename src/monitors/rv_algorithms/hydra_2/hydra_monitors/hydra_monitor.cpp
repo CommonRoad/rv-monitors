@@ -42,26 +42,32 @@ Verdict HydraMonitor::step(size_t parentId, size_t stepNumber, bool singleStep) 
     auto verdict{Verdict(0, false)};
     // step number is behind head position (e.g., if child of until operator) or specific verdict is directly required
     // (only used by until operator)
-    if (stepNumber < traceIdx[parentId] or singleStep) {
-        if (!connectedEval) { // since no connected evaluation, perform step directly
-            verdict = concreteStep(parentId, stepNumber);
-            ++traceIdx[parentId];
-        } else if (traceIdx[parentId] ==
-                   getMaxTraceIdx()) { // if requested trace index equals maximum trace index based on all monitor heads
-                                       // based on parent monitors, perform new step and store verdict
+    if (!connectedEval) // since no connected evaluation, perform step directly
+        verdict = concreteStep(parentId, stepNumber);
+    else if (singleStep) {
+        if (stepNumber >= traceIdx[parentId]) {
+            verdict = simulateVerdict(parentId, stepNumber, verdict);
+        } else { // if required step was already performed based on other parent monitor, use already computed verdict
+            verdict = verdictHistory[stepNumber];
+        }
+    } else if (stepNumber < traceIdx[parentId]) {
+        if (traceIdx[parentId] == getMaxTraceIdx()) { // if requested trace index equals maximum
+                                                      // trace index based on all monitor heads
+            // based on parent monitors, perform new step and store verdict
             verdict = concreteStep(parentId, stepNumber);
             verdictHistory.push_back(verdict);
             ++traceIdx[parentId];
-        } else { // if required step was already performed based on other parent monitor, use already computed verdict
-            verdict = verdictHistory[traceIdx[parentId]];
-            ++traceIdx[parentId];
-        }
-        return verdict;
-    }
+        } else // if required step was already performed based on other parent monitor, use already computed verdict
+            verdict = verdictHistory[stepNumber];
+    } else
+        verdict = simulateVerdict(parentId, stepNumber, verdict);
+    return verdict;
+}
+Verdict &HydraMonitor::simulateVerdict(size_t parentId, size_t stepNumber, Verdict &verdict) {
     while (stepNumber >= traceIdx[parentId]) {
         if (!connectedEval) { // since no connected evaluation, perform step directly
             verdict = concreteStep(parentId, traceIdx[parentId]);
-            ++traceIdx[parentId];
+            //       ++traceIdx[parentId];
         } else if (traceIdx[parentId] ==
                    getMaxTraceIdx()) { // if requested trace index equals maximum trace index based on all monitor heads
                                        // based on parent monitors, perform new step and store verdict
