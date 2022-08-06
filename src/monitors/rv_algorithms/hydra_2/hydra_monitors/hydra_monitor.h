@@ -58,6 +58,15 @@ class HydraMonitor {
      */
     size_t getMaxTraceIdx();
 
+    /**
+     * Executes monitor until desired step number is reached.
+     *
+     * @param parentId Id of parent monitor.
+     * @param stepNumber Last step number which should be performed.
+     * @return Verdict of desired step number.
+     */
+    Verdict simulateVerdict(size_t parentId, size_t stepNumber);
+
   public:
     /**
      * Base constructor for hydra monitor.
@@ -160,5 +169,4 @@ class HydraMonitor {
     bool connectedEval;                  //**< Boolean indicating whether connected evaluation should be performed */
     double evalCost{0.0};                //**< Evaluation cost of monitor */
     double satisfactionProbability{1.0}; //**< Satisfaction probability of monitor */
-    Verdict &simulateVerdict(size_t parentId, size_t stepNumber, Verdict &verdict);
 };
