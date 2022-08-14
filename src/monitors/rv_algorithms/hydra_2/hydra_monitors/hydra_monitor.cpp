@@ -42,13 +42,15 @@ Verdict HydraMonitor::step(size_t parentId, size_t stepNumber, bool singleStep) 
     auto verdict{Verdict(0, false)};
     if (!connectedEval) // since no connected evaluation, perform step directly
         verdict = concreteStep(parentId, stepNumber);
-    else if (singleStep) { //step number is behind head position (e.g., if child of until operator) or specific verdict is directly required (only used by until operator)
+    else if (singleStep) { // step number is behind head position (e.g., if child of until operator) or specific verdict
+                           // is directly required (only used by until operator)
         if (stepNumber >= traceIdx[parentId]) {
             verdict = simulateVerdict(parentId, stepNumber);
         } else { // if required step was already performed based on other parent monitor, use already computed verdict
             verdict = verdictHistory[stepNumber];
         }
-    } else if (stepNumber < traceIdx[parentId]) { // required step was already performed based on other parent monitor, use already computed verdict
+    } else if (stepNumber < traceIdx[parentId]) { // required step was already performed based on other parent monitor,
+                                                  // use already computed verdict
         verdict = verdictHistory[stepNumber];
     } else
         verdict = simulateVerdict(parentId, stepNumber);

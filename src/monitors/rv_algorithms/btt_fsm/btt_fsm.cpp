@@ -1,10 +1,12 @@
 #include "btt_fsm.h"
 #include "btt_fsm_utils_creation.h"
 #include "monitors/expression_tree/atomic/constant.h"
+#include "monitors/formula/supported_formula_type.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
 
 BttFsm::BttFsm(const std::vector<Formula> &formulas, bool pastEvaluation)
-    : MonitorInterface((formulas)), states(formulaToBTT_FSM()), pastEvaluation(pastEvaluation) {}
+    : MonitorInterface(formulas, {{TemoralFormulaType::futureOnly, false}, {TemoralFormulaType::pastSafety, false}}),
+      states(formulaToBTT_FSM()), pastEvaluation(pastEvaluation) {}
 
 const std::vector<StateBttFsm> &BttFsm::getStates() const { return states; }
 

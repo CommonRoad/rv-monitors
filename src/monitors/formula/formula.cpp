@@ -1,5 +1,4 @@
 #include "formula.h"
-
 #include "monitors/expression_tree/binary/binary.h"
 #include "monitors/expression_tree/nary/bool/xor.h"
 #include "monitors/utils/utils.h"
@@ -44,8 +43,41 @@ Formula Formula::deepCopy() const { return Formula(Formula::deepCopy(getExpr()),
 
 const std::string &Formula::getId() const { return id; }
 
+bool Formula::checkCompatibility(SupportedFormulaType formulaType) const {
+    auto formulaString = getExpr()->to_string();
+    if (!formulaType.interval and formulaString.find('[') != std::string::npos)
+        return false;
+    switch (formulaType.formulaType) {
+    case futureOnly:
+        return !std::any_of(pastOperators.begin(), pastOperators.end(),
+                            [formulaString](char oper) { return formulaString.find(oper) != std::string::npos; });
+    case pastOnly:
+        return !std::any_of(futureOperators.begin(), futureOperators.end(),
+                            [formulaString](char oper) { return formulaString.find(oper) != std::string::npos; });
+    case safetyGeneral:
+        return this->expr->getSymbol().find(globallySymbol) != std::string::npos;
+    case futureSafety:
+        return this->expr->getSymbol() == globallySymbol and
+               !std::any_of(pastOperators.begin(), pastOperators.end(),
+                            [formulaString](char oper) { return formulaString.find(oper) != std::string::npos; });
+    case pastSafety:
+        return this->expr->getSymbol() == globallySymbol and
+               std::count(formulaString.begin(), formulaString.end(), globallySymbol[0]) == 1 and
+               !std::any_of(futureOperators.begin(), futureOperators.end(), [formulaString](char oper) {
+                   return (formulaString.find(oper) != std::string::npos) and oper != globallySymbol[0];
+               });
+    case futurePastCombined:
+        return true;
+    }
+    return false;
+}
+
 void Formula::setId(const std::string &identifier) { id = identifier; }
 
-bool operator==(const Formula &form1, const Formula &form2) { return *(form1.getExpr()) == *(form2.getExpr()); }
+bool operator==(const Formula &formula1, const Formula &formula2) {
+    return *(formula1.getExpr()) == *(formula2.getExpr());
+}
 
-bool operator<(const Formula &form1, const Formula &form2) { return *(form1.getExpr()) < *(form2.getExpr()); }
+bool operator<(const Formula &formula1, const Formula &formula2) {
+    return *(formula1.getExpr()) < *(formula2.getExpr());
+}

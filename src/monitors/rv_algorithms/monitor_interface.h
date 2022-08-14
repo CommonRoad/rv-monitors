@@ -17,15 +17,23 @@ class MonitorInterface {
      * Constructor for monitor.
      *
      * @param formula Temporal logic formula.
+     * @param supportedFormulaTypes List of formula types which are supported by monitor.
+     * @param formulaCompatibilityCheck Boolean which activates check whether formula provided to monitor is evaluated
+     * for monitor compatibility.
      */
-    MonitorInterface(Formula formula);
+    MonitorInterface(Formula formula, std::vector<SupportedFormulaType> supportedFormulaTypes,
+                     bool formulaCompatibilityCheck = true);
 
     /**
      * Constructor for monitor based on several formulas.
      *
      * @param formula List of formulas.
+     * @param supportedFormulaTypes List of formula types which are supported by monitor.
+     * @param formulaCompatibilityCheck Boolean which activates check whether formula provided to monitor is evaluated
+     * for monitor compatibility.
      */
-    MonitorInterface(std::vector<Formula> formulas);
+    MonitorInterface(std::vector<Formula> formulas, std::vector<SupportedFormulaType> supportedFormulaTypes,
+                     bool formulaCompatibilityCheck = true);
 
     /**
      * Evaluation function for monitor algorithms.
@@ -53,4 +61,6 @@ class MonitorInterface {
 
   protected:
     std::vector<Formula> formulas; //**< Temporal logic formulas which are evaluated by monitor */
+    std::vector<SupportedFormulaType>
+        supportedFormulaTypes; //**< List of formula types which are supported by monitor */
 };

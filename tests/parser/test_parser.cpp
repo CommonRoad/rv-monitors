@@ -59,7 +59,7 @@ TEST(TestParser, ex_log_parse_hydra_syntax) {
 }
 
 TEST(TestParser, ex_eval_rvm_syntax_static_log) {
-    std::string ex_mtl = "p OR (q U[2,2] r)";
+    std::string ex_mtl = "G(p OR (q U[2,2] r))";
 
     const std::set<std::string> atomics = {"p", "q", "r"};
     const std::vector<std::vector<std::string>> log_entries = {
@@ -69,16 +69,17 @@ TEST(TestParser, ex_eval_rvm_syntax_static_log) {
     Trace trace = Utils::createTrace(atomics, log_entries, time_steps);
 
     Formula formula = Parser::parse(ex_mtl, "Ex1");
-    std::string ex_mtl_parsed = "((q U[2, 2] r) | p)";
+    std::string ex_mtl_parsed = "G(((q U[2, 2] r) | p))";
     EXPECT_EQ(formula.to_string(), ex_mtl_parsed);
 
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{0, true},  Verdict{1, false},
                                      Verdict{4, true},  Verdict{4, false}, Verdict{5, true}};
+
     hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
 }
 
 TEST(TestParser, ex_eval_rvm_syntax) {
-    std::string ex_mtl = "p OR (q UNTIL[2,2] r)";
+    std::string ex_mtl = "G(p OR (q UNTIL[2,2] r))";
     Formula formula = Parser::parse(ex_mtl, "Ex1");
 
     std::string ex_log = "@0 q r\n"
@@ -96,7 +97,7 @@ TEST(TestParser, ex_eval_rvm_syntax) {
 }
 
 TEST(TestParser, ex_eval_hydra_syntax) {
-    std::string ex_mtl = "p0 OR (p1 UNTIL[2,2] p2)";
+    std::string ex_mtl = "G(p0 OR (p1 UNTIL[2,2] p2))";
     Formula formula = Parser::parse(ex_mtl, "Ex1");
 
     std::string ex_log = "@0 p1 p2\n"

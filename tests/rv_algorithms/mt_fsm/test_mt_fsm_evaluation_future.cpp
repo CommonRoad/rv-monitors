@@ -4,6 +4,15 @@
 #include "monitors/trace/trace.h"
 #include "monitors/utils/utils.h"
 
+TEST(TestMT_FSMFuture, testFormulaType) {
+    Formula formulaOne = Parser::parse("G(a -> F(b))");
+    Formula formulaTwo = Parser::parse("H(a -> F(b))");
+    Formula formulaThree = Parser::parse("G(a -> F(b) & O(c))");
+    EXPECT_NO_THROW(MtFsm({formulaOne}));
+    EXPECT_THROW(MtFsm({formulaTwo}), std::logic_error);
+    EXPECT_THROW(MtFsm({formulaThree}), std::logic_error);
+}
+
 TEST(TestMT_FSMFuture, violated1) {
     Trace trace = Utils::createTrace(
         {"a", "b", "c", "g", "f"},

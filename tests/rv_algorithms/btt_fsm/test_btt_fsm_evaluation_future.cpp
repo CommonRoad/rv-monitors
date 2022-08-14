@@ -4,6 +4,17 @@
 #include "monitors/trace/trace.h"
 #include "monitors/utils/utils.h"
 
+TEST(TestBTT_FSMEvaluation, testFormulaType) {
+    Formula formulaOne = Parser::parse("G(a -> F(b))");
+    Formula formulaTwo = Parser::parse("H(a -> F(b))");
+    Formula formulaThree = Parser::parse("G(a -> F(b) & O(c))");
+    Formula formulaFour = Parser::parse("G(a -> O(c))");
+    EXPECT_NO_THROW(BttFsm({formulaOne}));
+    EXPECT_THROW(BttFsm({formulaTwo}), std::logic_error);
+    EXPECT_THROW(BttFsm({formulaThree}), std::logic_error);
+    EXPECT_NO_THROW(BttFsm({formulaFour}));
+}
+
 TEST(TestBTT_FSMEvaluation, violated1) {
     Trace trace = Utils::createTrace(
         {"a", "b", "c", "g", "f"},

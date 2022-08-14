@@ -4,6 +4,15 @@
 #include "monitors/trace/trace.h"
 #include "monitors/utils/utils.h"
 
+TEST(TestDynamicFuture, testFormulaType) {
+    Formula formulaOne = Parser::parse("G(a -> F(b))");
+    Formula formulaTwo = Parser::parse("H(a -> F(b))");
+    Formula formulaThree = Parser::parse("G(a -> F(b) & O(c))");
+    EXPECT_NO_THROW(DynamicProgrammingLTL({formulaOne}));
+    EXPECT_THROW(DynamicProgrammingLTL({formulaTwo}), std::logic_error);
+    EXPECT_THROW(DynamicProgrammingLTL({formulaThree}), std::logic_error);
+}
+
 TEST(TestDynamicFuture, violated1) {
     Trace trace1 = Utils::createTrace(
         {"a", "b", "c", "g", "f"},

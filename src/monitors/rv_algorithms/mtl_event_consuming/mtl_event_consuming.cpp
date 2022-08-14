@@ -13,7 +13,8 @@
 #include <iostream>
 #include <utility>
 
-MTLEventConsuming::MTLEventConsuming(const std::vector<Formula> &formulas) : MonitorInterface((std::move(formulas))) {}
+MTLEventConsuming::MTLEventConsuming(const std::vector<Formula> &formulas)
+    : MonitorInterface(formulas, {{TemoralFormulaType::futurePastCombined, true}}) {}
 // MTLEventConsuming::MTLEventConsuming(const Formula &formula) : MonitorInterface((formula)) {}
 
 std::map<std::string, std::vector<Verdict>> MTLEventConsuming::evaluate(Trace &trace) {
