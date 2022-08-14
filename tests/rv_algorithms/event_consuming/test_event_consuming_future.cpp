@@ -4,6 +4,15 @@
 #include "monitors/trace/trace.h"
 #include "monitors/utils/utils.h"
 
+TEST(TestECFuture, testFormulaType) {
+    Formula formulaOne = Parser::parse("G(a -> F(b))");
+    Formula formulaTwo = Parser::parse("H(a -> F(b))");
+    Formula formulaThree = Parser::parse("G(a -> F(b) & O(c))");
+    EXPECT_NO_THROW(EventConsumingLTL({formulaOne}, false));
+    EXPECT_THROW(EventConsumingLTL({formulaTwo}, false), std::logic_error);
+    EXPECT_THROW(EventConsumingLTL({formulaThree}, false), std::logic_error);
+}
+
 TEST(TestECFuture, violated1) {
     Trace trace = Utils::createTrace(
         {"a", "b", "c", "g", "f"},

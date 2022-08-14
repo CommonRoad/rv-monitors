@@ -16,7 +16,8 @@
 #include <monitors/utils/lazy_bool.h>
 
 DynamicProgrammingLTL::DynamicProgrammingLTL(const std::vector<Formula> &formulas, bool pastEvaluation)
-    : MonitorInterface((formulas)), pastEvaluation(pastEvaluation) {}
+    : MonitorInterface(formulas, {{TemoralFormulaType::futureOnly, false}, {TemoralFormulaType::pastSafety, false}}),
+      pastEvaluation(pastEvaluation) {}
 
 void DynamicProgrammingLTL::initialize(size_t idx, std::vector<bool> &initVector, event_map_t &eventMap,
                                        const std::vector<std::shared_ptr<Expression>> &subformulas) {

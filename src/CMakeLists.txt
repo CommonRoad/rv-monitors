@@ -30,6 +30,7 @@ set(RV_MONITOR_SRC_FILES
         monitors/expression_tree/unary/temporal/once.cpp
         monitors/expression_tree/unary/temporal/previously.cpp
         monitors/formula/formula.cpp
+        monitors/formula/supported_formula_type.cpp
         monitors/formula/nff.cpp
         monitors/parser/parser.cpp
         monitors/parser/gen/FormulaBaseVisitor.cpp

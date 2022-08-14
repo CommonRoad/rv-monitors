@@ -17,6 +17,15 @@
  */
 class Hydra : public MonitorInterface {
   public:
+    /**
+     * Constructor
+     * @param formulas List of formulas which should be monitored.
+     * @param connectedEval Boolean indicating whether connected evaluation should be used.
+     * @param reordering Boolean indicating whether the formula should be reordered based on the predicate costs.
+     * @param shortCircuiting Boolean indicating whether short circuiting should be used.
+     * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
+     * satisfaction probability in interval [0, 1].
+     */
     Hydra(const std::vector<Formula> &formulas, bool connectedEval = true, bool reordering = true,
           bool shortCircuiting = true, const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
 

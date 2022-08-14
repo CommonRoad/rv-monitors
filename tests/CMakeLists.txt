@@ -37,6 +37,7 @@ set(RV_MONITOR_TEST_SRC_FILES
         rv_algorithms/hydra_2/hydra_monitors/test_until_monitor.cpp
         rv_algorithms/test_rv_monitors.cpp
         parser/test_parser.cpp
+        formula/test_formula.cpp
         qmc/test_qmc.cpp
         rewriting/test_basic_rewrite_visitor.cpp
         rewriting/test_rewrite_visitor.cpp
