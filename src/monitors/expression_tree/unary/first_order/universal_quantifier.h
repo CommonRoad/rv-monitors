@@ -9,10 +9,10 @@ class UniversalQuantifier : public Unary, public FirstOrderOperator {
 
   public:
     /// First constructor
-    explicit UniversalQuantifier(std::shared_ptr<Expression> &left, std::vector<std::shared_ptr<Variable>> &variables);
+    explicit UniversalQuantifier(std::shared_ptr<Expression> &left, std::vector<Variable> &variables);
 
     /// Second constructor
-    explicit UniversalQuantifier(std::shared_ptr<Expression> &left, std::shared_ptr<Variable> &variable);
+    explicit UniversalQuantifier(std::shared_ptr<Expression> &left, Variable &variable);
 
     [[nodiscard]] std::string to_string() const override;
 

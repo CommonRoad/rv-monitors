@@ -44,6 +44,7 @@ set(RV_MONITOR_TEST_SRC_FILES
         qmc/test_qmc.cpp
         rewriting/test_basic_rewrite_visitor.cpp
         rewriting/test_rewrite_visitor.cpp
+        rewriting/test_hydra_rewrite_visitor.cpp
         utils/test_lazy_bool.cpp
         utils/generators/formula_generator/test_formula_generator.cpp
         utils/generators/formula_generator/test_formula_generator.cpp

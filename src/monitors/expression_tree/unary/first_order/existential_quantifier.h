@@ -8,10 +8,10 @@ class ExistentialQuantifier : public Unary, public FirstOrderOperator {
 
   public:
     /// First constructor
-    explicit ExistentialQuantifier(std::shared_ptr<Expression> &left, std::vector<std::shared_ptr<Variable>> &variables);
+    explicit ExistentialQuantifier(std::shared_ptr<Expression> &left, std::vector<Variable> &variables);
 
     /// Second constructor
-    explicit ExistentialQuantifier(std::shared_ptr<Expression> &left, std::shared_ptr<Variable> &variable);
+    explicit ExistentialQuantifier(std::shared_ptr<Expression> &left, Variable &variable);
 
     [[nodiscard]] std::string to_string() const override;
 

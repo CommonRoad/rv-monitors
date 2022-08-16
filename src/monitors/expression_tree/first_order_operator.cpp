@@ -5,29 +5,36 @@ Variable::Variable(std::string &name, std::string &domain) : name(name), domain(
 // Constructor
 {}
 
-const std::string &Variable::getName() const
+std::string Variable::getName() const
 // Returns name of variable
 { return name; }
 
-const std::string &Variable::getDomain() const
+std::string Variable::getDomain() const
 // Returns name of collections
 { return domain; }
 
-FirstOrderOperator::FirstOrderOperator(std::vector<std::shared_ptr<Variable>> &variables) : variables(variables)
+FirstOrderOperator::FirstOrderOperator(std::vector<Variable> &variables) : variables(variables)
 // First constructor
 {}
 
-FirstOrderOperator::FirstOrderOperator(std::shared_ptr<Variable> &variable)
+FirstOrderOperator::FirstOrderOperator(Variable &variable)
 // Second constructor
 {
     variables.push_back(variable);
 }
 
-void FirstOrderOperator::addVariable(std::string &variable)
+void FirstOrderOperator::addVariable(std::string variable, std::string domain)
 // Adds variable
-{}
+{ variables.emplace_back(variable, domain); }
 
-const std::vector<std::shared_ptr<Variable>> &FirstOrderOperator::getVariables() const
+void FirstOrderOperator::removeVariable(std::string variable)
+// Removes variable
+{
+    auto isVal = [&variable](const Variable &var) -> bool { return var.getName() == variable; };
+    variables.erase(std::remove_if(variables.begin(), variables.end(), isVal), variables.end());
+}
+
+const std::vector<Variable> &FirstOrderOperator::getVariables() const
 // Returns all variables bounded by operator
 { return variables; }
 
@@ -36,8 +43,8 @@ std::string FirstOrderOperator::to_string() const {
 
     const auto &vars = getVariables();
     for (size_t idx = 0; idx < vars.size(); idx++) {
-        std::shared_ptr<Variable> variable = vars[idx];
-        str += variable->getName() + " in " + variable->getDomain();
+        Variable variable = vars[idx];
+        str += variable.getName() + " in " + variable.getDomain();
         if (idx != vars.size() - 1)
             str += ", ";
         else

@@ -24,14 +24,14 @@ class Variable {
      *
      * @return Name
      */
-    [[nodiscard]] const std::string &getName() const;
+    [[nodiscard]] std::string getName() const;
 
     /**
      * Returns name of collections.
      *
      * @return Name of collections
      */
-    [[nodiscard]] const std::string &getDomain() const;
+    [[nodiscard]] std::string getDomain() const;
 
 };
 
@@ -40,28 +40,38 @@ class FirstOrderOperator {
   private:
 
     /// Bounded variables
-    std::vector<std::shared_ptr<Variable>> variables;
+    std::vector<Variable> variables;
 
   public:
     /// First constructor
-    explicit FirstOrderOperator(std::vector<std::shared_ptr<Variable>> &variables);
+    explicit FirstOrderOperator(std::vector<Variable> &variables);
 
     /// Second constructor
-    explicit FirstOrderOperator(std::shared_ptr<Variable> &variable);
+    explicit FirstOrderOperator(Variable &variable);
+
+    /// Destructor
+    virtual ~FirstOrderOperator() = default;
 
     /**
      * Adds variable.
      *
      * @param variable Variable
      */
-    void addVariable(std::string &variable);
+    void addVariable(std::string variable, std::string domain);
+
+    /**
+     * Removes variable.
+     *
+     * @param variable Variable
+     */
+     void removeVariable(std::string variable);
 
     /**
      * Returns all variables bounded by operator.
      *
      * @return Bounded variables
      */
-    [[nodiscard]] const std::vector<std::shared_ptr<Variable>> &getVariables() const;
+    [[nodiscard]] const std::vector<Variable> &getVariables() const;
 
     [[nodiscard]] std::string to_string() const;
 

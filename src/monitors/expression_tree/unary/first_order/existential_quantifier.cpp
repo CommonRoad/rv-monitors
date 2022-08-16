@@ -1,11 +1,11 @@
 #include "existential_quantifier.h"
 
-ExistentialQuantifier::ExistentialQuantifier(std::shared_ptr<Expression> &left, std::vector<std::shared_ptr<Variable>> &variables)
+ExistentialQuantifier::ExistentialQuantifier(std::shared_ptr<Expression> &left, std::vector<Variable> &variables)
     : Unary(existentialSymbol, left), FirstOrderOperator(variables)
 // First constructor
 {}
 
-ExistentialQuantifier::ExistentialQuantifier(std::shared_ptr<Expression> &left, std::shared_ptr<Variable> &variable)
+ExistentialQuantifier::ExistentialQuantifier(std::shared_ptr<Expression> &left, Variable &variable)
     : Unary(existentialSymbol, left), FirstOrderOperator(variable)
 // Second constructor
 {}

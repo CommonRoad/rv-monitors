@@ -594,20 +594,20 @@ class Visitor : public FormulaBaseVisitor {
 
     antlrcpp::Any visitUniversal(FormulaParser::UniversalContext *ctx) override {
         auto right = getType(visit(ctx->right));
-        auto dv = visit(ctx->dv).as<std::vector<std::shared_ptr<Variable>>>();
+        auto dv = visit(ctx->dv).as<std::vector<Variable>>();
         return std::make_shared<UniversalQuantifier>(right, dv);
     }
 
     antlrcpp::Any visitExistential(FormulaParser::ExistentialContext *ctx) override {
         auto right = getType(visit(ctx->right));
-        auto dv = visit(ctx->dv).as<std::vector<std::shared_ptr<Variable>>>();
+        auto dv = visit(ctx->dv).as<std::vector<Variable>>();
         return std::make_shared<ExistentialQuantifier>(right, dv);
     }
 
     antlrcpp::Any visitCounting(FormulaParser::CountingContext *ctx) override {
-        auto piv = visit(ctx->piv).as<std::shared_ptr<ProbabilityInterval>>();
+        auto piv = visit(ctx->piv).as<ProbabilityInterval>();
         auto right = getType(visit(ctx->right));
-        auto dv = visit(ctx->dv).as<std::vector<std::shared_ptr<Variable>>>();
+        auto dv = visit(ctx->dv).as<std::vector<Variable>>();
         return std::make_shared<CountingQuantifier>(right, dv, piv);
     }
 
@@ -615,11 +615,11 @@ class Visitor : public FormulaBaseVisitor {
         auto lower = visit(ctx->l).as<float>();
         auto upper = visit(ctx->u).as<float>();
 
-        return std::make_shared<ProbabilityInterval>(lower, upper);
+        return ProbabilityInterval{lower, upper};
     }
 
     antlrcpp::Any visitDomainVariables(FormulaParser::DomainVariablesContext *ctx) override {
-        std::vector<std::shared_ptr<Variable>> variables;
+        std::vector<Variable> variables;
 
         const std::vector<std::string> invalidLiterals{"(", ")", ","};
 
@@ -633,7 +633,7 @@ class Visitor : public FormulaBaseVisitor {
             if (child == "in") {
                 auto domain = ctx->children.at(idx + 1)->getText();
                 for (auto name : names)
-                    variables.push_back(std::make_shared<Variable>(name, domain));
+                    variables.emplace_back(name, domain);
                 names.clear();
                 idx++;
                 continue;

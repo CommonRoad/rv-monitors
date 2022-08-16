@@ -216,7 +216,7 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitUniversalQuantifier(Uni
 
     std::map<std::string, std::string> variables;
     for (const auto &var : tlop.getVariables())
-        variables[var->getName()] = var->getDomain();
+        variables[var.getName()] = var.getDomain();
 
     auto newMonitor{std::make_shared<UniversalMonitor>(Formula(std::make_shared<UniversalQuantifier>(tlop)),
                                                       tlop.getLeft()->accept(*this, idx, connectedEval), idx,
@@ -232,7 +232,7 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitExistentialQuantifier(E
 
     std::map<std::string, std::string> variables;
     for (const auto &var : tlop.getVariables())
-        variables[var->getName()] = var->getDomain();
+        variables[var.getName()] = var.getDomain();
 
     auto newMonitor{std::make_shared<ExistentialMonitor>(Formula(std::make_shared<ExistentialQuantifier>(tlop)),
                                                        tlop.getLeft()->accept(*this, idx, connectedEval), idx,
@@ -248,12 +248,12 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitCountingQuantifier(Coun
 
     std::map<std::string, std::string> variables;
     for (const auto &var : tlop.getVariables())
-        variables[var->getName()] = var->getDomain();
+        variables[var.getName()] = var.getDomain();
 
     auto newMonitor{std::make_shared<CountingMonitor>(Formula(std::make_shared<CountingQuantifier>(tlop)),
                                                       tlop.getLeft()->accept(*this, idx, connectedEval), idx,
-                                                      variables, domains, tlop.getProbInterval()->getMin(),
-                                                      tlop.getProbInterval()->getMax(), connectedEval, shortCircuiting)};
+                                                      variables, domains, tlop.getProbInterval().getMin(),
+                                                      tlop.getProbInterval().getMax(), connectedEval, shortCircuiting)};
 
     baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(tlop.to_string(), newMonitor));
     newMonitor->registerParent(parentId);

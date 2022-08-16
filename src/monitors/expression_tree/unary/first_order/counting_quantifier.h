@@ -37,14 +37,14 @@ class CountingQuantifier : public Unary, public FirstOrderOperator {
 
   private:
     /// Probability interval
-    std::shared_ptr<ProbabilityInterval> probInterval;
+    ProbabilityInterval probInterval;
 
   public:
     /// First constructor
-    explicit CountingQuantifier(std::shared_ptr<Expression> &left, std::vector<std::shared_ptr<Variable>> &variables, std::shared_ptr<ProbabilityInterval> &probInterval);
+    explicit CountingQuantifier(std::shared_ptr<Expression> &left, std::vector<Variable> &variables, ProbabilityInterval &probInterval);
 
     /// Second constructor
-    explicit CountingQuantifier(std::shared_ptr<Expression> &left, std::shared_ptr<Variable> &variable, std::shared_ptr<ProbabilityInterval> &probInterval);
+    explicit CountingQuantifier(std::shared_ptr<Expression> &left, Variable &variable, ProbabilityInterval &probInterval);
 
     [[nodiscard]] std::string to_string() const override;
 
@@ -59,7 +59,7 @@ class CountingQuantifier : public Unary, public FirstOrderOperator {
      *
      * @return Probability interval
      */
-    const std::shared_ptr<ProbabilityInterval> &getProbInterval() const;
+    const ProbabilityInterval &getProbInterval() const;
 
 };
 

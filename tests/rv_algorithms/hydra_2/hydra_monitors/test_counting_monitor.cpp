@@ -25,7 +25,7 @@ TEST(TestCountingMonitor, testCountingMonitorStandard) {
     std::map<std::string, std::string> variables{std::make_pair("x", "D")};
     CountingQuantifier *quantifier = dynamic_cast<CountingQuantifier *>(formula.getExpr().get());
     auto mon{CountingMonitor(formula, mon1, 1, variables, domainCollection,
-                             quantifier->getProbInterval()->getMin(), quantifier->getProbInterval()->getMax(), false, false)};
+                             quantifier->getProbInterval().getMin(), quantifier->getProbInterval().getMax(), false, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.step(0, 0).b, false);
@@ -54,7 +54,7 @@ TEST(TestCountingMonitor, testWrongIntervalOrder) {
     std::map<std::string, std::string> variables{std::make_pair("x", "D")};
     CountingQuantifier *quantifier = dynamic_cast<CountingQuantifier *>(formula.getExpr().get());
     auto mon{CountingMonitor(formula, mon1, 1, variables, domainCollection,
-                             quantifier->getProbInterval()->getMin(), quantifier->getProbInterval()->getMax(), false, false)};
+                             quantifier->getProbInterval().getMin(), quantifier->getProbInterval().getMax(), false, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
     for (size_t i = 0; i < 5; i++)
@@ -70,6 +70,6 @@ TEST(TestCountingMonitor, testCountingMonitorToString) {
     DomainCollection domainCollection;
     CountingQuantifier *quantifier = dynamic_cast<CountingQuantifier *>(formula.getExpr().get());
     auto mon{CountingMonitor(formula, mon1, 0, {}, domainCollection,
-                             quantifier->getProbInterval()->getMin(), quantifier->getProbInterval()->getMax(), false, false)};
+                             quantifier->getProbInterval().getMin(), quantifier->getProbInterval().getMax(), false, false)};
     EXPECT_EQ(mon.to_string(), "C[0.220000, 0.650000] x in D, y in D. p(x, '20', y)");
 }

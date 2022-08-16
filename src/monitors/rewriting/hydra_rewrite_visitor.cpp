@@ -507,21 +507,96 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitPredicate(Predicate &op, T
 std::shared_ptr<Expression> HydraRewriteVisitor::visitUniversalQuantifier(UniversalQuantifier &op, Trace &trace,
                                                                           size_t index) {
     visitExpression(op, trace, index);
+    auto inner{std::dynamic_pointer_cast<UniversalQuantifier>(op.getLeft())};
+    if (inner != nullptr) {
+        std::vector<Variable> variables;
+        for (const auto &var : op.getVariables())
+            variables.push_back(var);
+        std::shared_ptr<Expression> innerLeft = inner->getLeft();
+        auto newUniversal = std::make_shared<UniversalQuantifier>(innerLeft, variables);
+        for (const auto &var : inner->getVariables()) {
+            newUniversal->removeVariable(var.getName());
+            newUniversal->addVariable(var.getName(), var.getDomain());
+        }
+        return newUniversal;
+    }
+    auto innerFirstOrder = std::dynamic_pointer_cast<FirstOrderOperator>(op.getLeft());
+    if (innerFirstOrder != nullptr)
+        return removeShadowedVariables(op, *innerFirstOrder);
     return std::make_shared<UniversalQuantifier>(op);
 }
 
 std::shared_ptr<Expression> HydraRewriteVisitor::visitExistentialQuantifier(ExistentialQuantifier &op, Trace &trace,
                                                                             size_t index) {
     visitExpression(op, trace, index);
+    auto inner{std::dynamic_pointer_cast<ExistentialQuantifier>(op.getLeft())};
+    if (inner != nullptr) {
+        std::vector<Variable> variables;
+        for (const auto &var : op.getVariables())
+            variables.push_back(var);
+        for (const auto &var : inner->getVariables())
+            variables.push_back(var);
+        std::shared_ptr<Expression> innerLeft = inner->getLeft();
+        auto newExistential = std::make_shared<ExistentialQuantifier>(innerLeft, variables);
+        for (const auto &var : inner->getVariables()) {
+            newExistential->removeVariable(var.getName());
+            newExistential->addVariable(var.getName(), var.getDomain());
+        }
+        return newExistential;
+    }
+    auto innerFirstOrder = std::dynamic_pointer_cast<FirstOrderOperator>(op.getLeft());
+    if (innerFirstOrder != nullptr)
+        return removeShadowedVariables(op, *innerFirstOrder);
     return std::make_shared<ExistentialQuantifier>(op);
 }
 
 std::shared_ptr<Expression> HydraRewriteVisitor::visitCountingQuantifier(CountingQuantifier &op, Trace &trace,
                                                                          size_t index) {
     visitExpression(op, trace, index);
+    auto inner = std::dynamic_pointer_cast<CountingQuantifier>(op.getLeft());
+    if (inner != nullptr) {
+        auto opProb{op.getProbInterval()};
+        auto innerProb{inner->getProbInterval()};
+        if (opProb.getMin() == innerProb.getMin() and opProb.getMax() == innerProb.getMax()) {
+            std::vector<Variable> variables;
+            for (const auto &var : op.getVariables())
+                variables.push_back(var);
+            for (const auto &var : inner->getVariables())
+                variables.push_back(var);
+            std::shared_ptr<Expression> innerLeft = inner->getLeft();
+            auto newCounting = std::make_shared<CountingQuantifier>(innerLeft, variables, opProb);
+            for (const auto &var : inner->getVariables()) {
+                newCounting->removeVariable(var.getName());
+                newCounting->addVariable(var.getName(), var.getDomain());
+            }
+            return newCounting;
+        }
+    }
+    auto innerFirstOrder = std::dynamic_pointer_cast<FirstOrderOperator>(op.getLeft());
+    if (innerFirstOrder != nullptr)
+        return removeShadowedVariables(op, *innerFirstOrder);
     return std::make_shared<CountingQuantifier>(op);
 }
 
 std::shared_ptr<Expression> HydraRewriteVisitor::visitSameFunc(SameFunc &op, Trace &trace, size_t index) {
     return std::make_shared<SameFunc>(op);
+}
+
+std::shared_ptr<Expression> HydraRewriteVisitor::removeShadowedVariables(FirstOrderOperator &outer, FirstOrderOperator &inner) {
+    for (const auto &var : inner.getVariables())
+        outer.removeVariable(var.getName());
+    if (outer.getVariables().empty())
+        return getFirstOrderExpression(inner);
+    return getFirstOrderExpression(outer);
+}
+
+std::shared_ptr<Expression> HydraRewriteVisitor::getFirstOrderExpression(FirstOrderOperator &oper) {
+    std::shared_ptr<Expression> firstOrderExpr{nullptr};
+    if (auto *universal = dynamic_cast<UniversalQuantifier *>(&oper); universal != nullptr)
+        firstOrderExpr = std::make_shared<UniversalQuantifier>(*universal);
+    else if (auto *existential = dynamic_cast<ExistentialQuantifier *>(&oper); existential != nullptr)
+        firstOrderExpr = std::make_shared<ExistentialQuantifier>(*existential);
+    else if (auto *counting = dynamic_cast<CountingQuantifier *>(&oper); counting != nullptr)
+        firstOrderExpr = std::make_shared<CountingQuantifier>(*counting);
+    return firstOrderExpr;
 }

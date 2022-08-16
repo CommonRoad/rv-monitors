@@ -1,11 +1,11 @@
 #include "universal_quantifier.h"
 
-UniversalQuantifier::UniversalQuantifier(std::shared_ptr<Expression> &left, std::vector<std::shared_ptr<Variable>> &variables)
+UniversalQuantifier::UniversalQuantifier(std::shared_ptr<Expression> &left, std::vector<Variable> &variables)
     : Unary(universalSymbol, left), FirstOrderOperator(variables)
 // First constructor
 {}
 
-UniversalQuantifier::UniversalQuantifier(std::shared_ptr<Expression> &left, std::shared_ptr<Variable> &variable)
+UniversalQuantifier::UniversalQuantifier(std::shared_ptr<Expression> &left, Variable &variable)
     : Unary(universalSymbol, left), FirstOrderOperator(variable)
 // Second constructor
 {}

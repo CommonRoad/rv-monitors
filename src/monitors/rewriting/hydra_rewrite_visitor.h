@@ -1,5 +1,6 @@
 #pragma once
 
+#include "monitors/expression_tree/first_order_operator.h"
 #include "monitors/formula/formula.h"
 
 /**
@@ -65,4 +66,10 @@ class HydraRewriteVisitor : public ExpressionVisitor {
     [[nodiscard]] std::shared_ptr<Expression> visitCountingQuantifier(CountingQuantifier &op, Trace &trace, size_t index) override;
 
     [[nodiscard]] std::shared_ptr<Expression> visitSameFunc(SameFunc &op, Trace &trace, size_t index) override;
+
+  private:
+    std::shared_ptr<Expression> removeShadowedVariables(FirstOrderOperator &outer, FirstOrderOperator &inner);
+
+    std::shared_ptr<Expression> getFirstOrderExpression(FirstOrderOperator &oper);
+
 };
