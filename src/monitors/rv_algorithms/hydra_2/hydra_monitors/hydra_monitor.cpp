@@ -16,10 +16,10 @@ HydraMonitor::HydraMonitor(Formula formula, size_t id, bool connectedEval, doubl
     : formula(std::move(formula)), monitorId((id)), connectedEval(connectedEval), evalCost(evalCost),
       satisfactionProbability(satisfactionProbability) {}
 
-void HydraMonitor::reset() {
+void HydraMonitor::reset(std::optional<size_t> stepNumber) {
     verdictHistory = {};
     for (auto &[_, id] : traceIdx)
-        id = 0;
+        id = stepNumber.has_value() ? stepNumber.value() : 0;
 }
 
 void HydraMonitor::registerParent(size_t parentId) { traceIdx[parentId] = 0; }

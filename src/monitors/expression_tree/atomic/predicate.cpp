@@ -6,8 +6,12 @@
 
 std::string Predicate::to_string() const {
     std::string str{name + "("};
-    for (const auto &param : parameters)
-        str += param + ", ";
+    for (const auto &[argName, argType] : arguments) {
+        if (argType == Predicate::VARIABLE)
+            str += argName + ", ";
+        else if (argType == Predicate::CONSTANT)
+            str += "\'" + argName + "\'" + ", ";
+    }
     str.erase(str.size() - 2);
     str += ")";
     return str;
@@ -25,4 +29,4 @@ std::shared_ptr<HydraMonitor> Predicate::accept(HydraCreationVisitor &visitor, s
 
 const std::string &Predicate::getName() const { return name; }
 
-const std::vector<std::string> &Predicate::getParameters() const { return parameters; }
+const std::vector<std::pair<std::string, Predicate::Argument>> &Predicate::getArguments() const { return arguments; }

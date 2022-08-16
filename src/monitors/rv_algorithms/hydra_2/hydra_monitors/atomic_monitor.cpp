@@ -8,14 +8,25 @@
 
 Verdict AtomicMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     if (traceIdx[parentId] < trace.getLength()) {
+        const Atomic &atomic = *std::dynamic_pointer_cast<Atomic>(formula.getExpr());
         auto event{trace.getEvent(traceIdx[parentId])};
-        auto verdict{
-            Verdict(event.getTimeStep(), event.getValue(*std::dynamic_pointer_cast<Atomic>(formula.getExpr())))};
-        return verdict;
+
+        auto iter{variableValues.find(atomic.to_string())};
+        if (iter != variableValues.end())
+            return {event.getTimeStep(), event.getValue(iter->second.getVal())};
+        else
+            return {event.getTimeStep(), event.getValue(atomic)};
     } else
         return {false};
 }
 
 void AtomicMonitor::setTrace(const Trace &tra) { trace = tra; }
+
+void AtomicMonitor::setVariableValues(std::map<std::string, Value> values) { variableValues = values; }
+
+void AtomicMonitor::reset(std::optional<size_t> stepNumber) {
+    HydraMonitor::reset(stepNumber);
+    variableValues.clear();
+}
 
 std::string AtomicMonitor::to_string() { return formula.to_string(); }

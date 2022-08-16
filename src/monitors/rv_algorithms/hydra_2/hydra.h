@@ -17,7 +17,7 @@
  */
 class Hydra : public MonitorInterface {
   public:
-    Hydra(const std::vector<Formula> &formulas, bool connectedEval = true, bool reordering = true,
+    Hydra(const std::vector<Formula> &formulas, DomainCollection domains = {}, FunctionCollection functions = {}, bool connectedEval = true, bool reordering = true,
           bool shortCircuiting = true, const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
 
     /**
@@ -36,9 +36,11 @@ class Hydra : public MonitorInterface {
     [[nodiscard]] std::string to_string() const override;
 
   private:
-    void createMonitor(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting,
+    void createMonitor(const std::vector<Formula> &formulas, DomainCollection &domainCollection, FunctionCollection &functionCollection, bool connectedEval, bool reordering, bool shortCircuiting,
                        const std::map<std::string, std::array<double, 2>> &predicateCosts);
+
     void resetMonitors();
+
     void setTraceMonitors(const Trace &tra);
 
     std::vector<std::shared_ptr<HydraMonitor>> monitors;

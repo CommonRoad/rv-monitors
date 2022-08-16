@@ -29,6 +29,30 @@ TEST(TestAtomicMonitor, testAtomicEvaluation) {
     EXPECT_EQ(mon.step(0, 4).b, false);
 }
 
+TEST(TestAtomicMonitor, testAtomicQuantifierEvaluation) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a", "c"}, {}, {"a", "b"}}, std::vector<size_t>{0, 1, 2});
+    Formula formula = Parser::parse("x");
+    formula.setId("R1");
+    auto mon{AtomicMonitor(formula, 1, false)};
+    mon.registerParent(0);
+    mon.setTrace(trace);
+    std::map<std::string, Value> variableValues1{{"x", {"a"}}};
+    std::map<std::string, Value> variableValues2{{"x", {"b"}}};
+    mon.setVariableValues(variableValues1);
+    EXPECT_EQ(mon.concreteStep(0, 0).b, true);
+    mon.setVariableValues(variableValues2);
+    EXPECT_EQ(mon.concreteStep(0, 0).b, false);
+    EXPECT_EQ(mon.step(0, 0).b, false);
+    EXPECT_EQ(mon.concreteStep(0, 1).b, false);
+    mon.setVariableValues(variableValues2);
+    EXPECT_EQ(mon.concreteStep(0, 1).b, false);
+    EXPECT_EQ(mon.step(0, 1).b, false);
+    EXPECT_EQ(mon.concreteStep(0, 2).b, true);
+    mon.setVariableValues(variableValues2);
+    EXPECT_EQ(mon.concreteStep(0, 2).b, true);
+    EXPECT_EQ(mon.step(0, 2).b, true);
+}
+
 TEST(TestAtomicMonitor, testToString) {
     Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"b"}, {"a"}, {}}, std::vector<size_t>{0, 1, 2, 3});
     Formula formula = Parser::parse("a");

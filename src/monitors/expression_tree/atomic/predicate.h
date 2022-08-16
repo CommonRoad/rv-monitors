@@ -12,8 +12,20 @@
 
 class Predicate : public Expression {
   public:
-    Predicate(std::string symbol, std::string na, std::vector<std::string> params)
-        : Expression(std::move(symbol)), name(std::move(na)), parameters(std::move(params)) {}
+    enum Argument {
+        VARIABLE,
+        PARAMETER,
+        CONSTANT
+    };
+
+    Predicate(std::string symbol, std::string na, std::vector<std::pair<std::string, Argument>> args)
+        : Expression(std::move(symbol)), name(std::move(na)), arguments(std::move(args)) {}
+
+    Predicate(std::string symbol, std::string na, std::vector<std::string> args)
+        : Expression(std::move(symbol)), name(std::move(na)) {
+        for (const auto &arg : args)
+            arguments.emplace_back(arg, PARAMETER);
+    }
 
     [[nodiscard]] std::string to_string() const override;
 
@@ -26,9 +38,9 @@ class Predicate : public Expression {
 
     const std::string &getName() const;
 
-    const std::vector<std::string> &getParameters() const;
+    const std::vector<std::pair<std::string, Argument>> &getArguments() const;
 
   private:
     std::string name;
-    std::vector<std::string> parameters;
+    std::vector<std::pair<std::string, Argument>> arguments;
 };

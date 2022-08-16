@@ -40,7 +40,9 @@ class HydraMonitor {
 
     virtual void setTrace(const Trace &tra) = 0;
 
-    virtual void reset();
+    virtual void setVariableValues(std::map<std::string, Value> values) = 0;
+
+    virtual void reset(std::optional<size_t> stepNumber = std::nullopt);
 
     void registerParent(size_t parentId);
 

@@ -1,77 +1,62 @@
 
-// Generated from Formula.g4 by ANTLR 4.9.3
+// Generated from Formula.g4 by ANTLR 4.7.2
 
 #pragma once
 
+
 #include "antlr4-runtime.h"
 
-class FormulaLexer : public antlr4::Lexer {
-  public:
-    enum {
-        T__0 = 1,
-        T__1 = 2,
-        T__2 = 3,
-        T__3 = 4,
-        T__4 = 5,
-        TRUE = 6,
-        FALSE = 7,
-        INFINITY = 8,
-        NOT = 9,
-        GLOBALLY = 10,
-        FUTURE = 11,
-        NEXT_WEAK = 12,
-        NEXT_STRONG = 13,
-        UNTIL = 14,
-        RELEASE = 15,
-        ONCE = 16,
-        PREVIOUSLY = 17,
-        SINCE = 18,
-        HISTORICALLY = 19,
-        AND = 20,
-        OR = 21,
-        XOR = 22,
-        IMPL = 23,
-        EQ = 24,
-        ATOMIC = 25,
-        PREDICATE = 26,
-        WS = 27,
-        DIGIT = 28
-    };
 
-    explicit FormulaLexer(antlr4::CharStream *input);
-    ~FormulaLexer();
 
-    virtual std::string getGrammarFileName() const override;
-    virtual const std::vector<std::string> &getRuleNames() const override;
 
-    virtual const std::vector<std::string> &getChannelNames() const override;
-    virtual const std::vector<std::string> &getModeNames() const override;
-    virtual const std::vector<std::string> &getTokenNames() const override; // deprecated, use vocabulary instead
-    virtual antlr4::dfa::Vocabulary &getVocabulary() const override;
+class  FormulaLexer : public antlr4::Lexer {
+public:
+  enum {
+    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, TRUE = 7, 
+    FALSE = 8, INFINITY = 9, NOT = 10, GLOBALLY = 11, FUTURE = 12, NEXT_WEAK = 13, 
+    NEXT_STRONG = 14, UNTIL = 15, RELEASE = 16, ONCE = 17, PREVIOUSLY = 18, 
+    SINCE = 19, HISTORICALLY = 20, UNIVERSAL = 21, EXISTENTIAL = 22, COUNTING = 23, 
+    AND = 24, OR = 25, XOR = 26, IMPL = 27, EQ = 28, SAME = 29, IN = 30, 
+    ATOMIC = 31, PREDICATE = 32, DOMAIN = 33, CONST_VALUE = 34, WS = 35, 
+    DIGIT = 36, PROB_DIGIT = 37
+  };
 
-    virtual const std::vector<uint16_t> getSerializedATN() const override;
-    virtual const antlr4::atn::ATN &getATN() const override;
+  FormulaLexer(antlr4::CharStream *input);
+  ~FormulaLexer();
 
-  private:
-    static std::vector<antlr4::dfa::DFA> _decisionToDFA;
-    static antlr4::atn::PredictionContextCache _sharedContextCache;
-    static std::vector<std::string> _ruleNames;
-    static std::vector<std::string> _tokenNames;
-    static std::vector<std::string> _channelNames;
-    static std::vector<std::string> _modeNames;
+  virtual std::string getGrammarFileName() const override;
+  virtual const std::vector<std::string>& getRuleNames() const override;
 
-    static std::vector<std::string> _literalNames;
-    static std::vector<std::string> _symbolicNames;
-    static antlr4::dfa::Vocabulary _vocabulary;
-    static antlr4::atn::ATN _atn;
-    static std::vector<uint16_t> _serializedATN;
+  virtual const std::vector<std::string>& getChannelNames() const override;
+  virtual const std::vector<std::string>& getModeNames() const override;
+  virtual const std::vector<std::string>& getTokenNames() const override; // deprecated, use vocabulary instead
+  virtual antlr4::dfa::Vocabulary& getVocabulary() const override;
 
-    // Individual action functions triggered by action() above.
+  virtual const std::vector<uint16_t> getSerializedATN() const override;
+  virtual const antlr4::atn::ATN& getATN() const override;
 
-    // Individual semantic predicate functions triggered by sempred() above.
+private:
+  static std::vector<antlr4::dfa::DFA> _decisionToDFA;
+  static antlr4::atn::PredictionContextCache _sharedContextCache;
+  static std::vector<std::string> _ruleNames;
+  static std::vector<std::string> _tokenNames;
+  static std::vector<std::string> _channelNames;
+  static std::vector<std::string> _modeNames;
 
-    struct Initializer {
-        Initializer();
-    };
-    static Initializer _init;
+  static std::vector<std::string> _literalNames;
+  static std::vector<std::string> _symbolicNames;
+  static antlr4::dfa::Vocabulary _vocabulary;
+  static antlr4::atn::ATN _atn;
+  static std::vector<uint16_t> _serializedATN;
+
+
+  // Individual action functions triggered by action() above.
+
+  // Individual semantic predicate functions triggered by sempred() above.
+
+  struct Initializer {
+    Initializer();
+  };
+  static Initializer _init;
 };
+

@@ -23,6 +23,10 @@
 #include "monitors/expression_tree/unary/temporal/next_weak.h"
 #include "monitors/expression_tree/unary/temporal/once.h"
 #include "monitors/expression_tree/unary/temporal/previously.h"
+#include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/function/same_func.h"
 #include "monitors/expression_tree/unary/unary.h"
 #include "monitors/rewriting/rewrite_visitor_utils.h"
 #include "monitors/trace/event.h"
@@ -495,6 +499,29 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitDerivingOperator(DerivingO
                                                                        size_t index) {
     return std::make_shared<DerivingOperator>(op);
 }
+
 std::shared_ptr<Expression> HydraRewriteVisitor::visitPredicate(Predicate &op, Trace &trace, size_t index) {
     return std::make_shared<Predicate>(op);
+}
+
+std::shared_ptr<Expression> HydraRewriteVisitor::visitUniversalQuantifier(UniversalQuantifier &op, Trace &trace,
+                                                                          size_t index) {
+    visitExpression(op, trace, index);
+    return std::make_shared<UniversalQuantifier>(op);
+}
+
+std::shared_ptr<Expression> HydraRewriteVisitor::visitExistentialQuantifier(ExistentialQuantifier &op, Trace &trace,
+                                                                            size_t index) {
+    visitExpression(op, trace, index);
+    return std::make_shared<ExistentialQuantifier>(op);
+}
+
+std::shared_ptr<Expression> HydraRewriteVisitor::visitCountingQuantifier(CountingQuantifier &op, Trace &trace,
+                                                                         size_t index) {
+    visitExpression(op, trace, index);
+    return std::make_shared<CountingQuantifier>(op);
+}
+
+std::shared_ptr<Expression> HydraRewriteVisitor::visitSameFunc(SameFunc &op, Trace &trace, size_t index) {
+    return std::make_shared<SameFunc>(op);
 }

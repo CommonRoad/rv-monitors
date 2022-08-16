@@ -22,7 +22,9 @@ class NextMonitor : public HydraMonitor {
 
     void setTrace(const Trace &tra) override;
 
-    void reset() override;
+    void setVariableValues(std::map<std::string, Value> values) override;
+
+    void reset(std::optional<size_t> stepNumber = std::nullopt) override;
 
     std::string to_string() override;
 

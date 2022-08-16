@@ -36,10 +36,15 @@ void AndMonitor::setTrace(const Trace &tra) {
         mon->setTrace(tra);
 }
 
-void AndMonitor::reset() {
-    HydraMonitor::reset();
+void AndMonitor::setVariableValues(std::map<std::string, Value> values) {
+    for (auto &mon : subMonitors)
+        mon->setVariableValues(values);
+}
+
+void AndMonitor::reset(std::optional<size_t> stepNumber) {
+    HydraMonitor::reset(stepNumber);
     for (const auto &mon : subMonitors)
-        mon->reset();
+        mon->reset(stepNumber);
 }
 
 std::string AndMonitor::to_string() {

@@ -73,4 +73,20 @@ class Trace {
             trace.back().setTerminal(false);
         }
     }
+
+    /**
+     * Checks predicate is traced.
+     * @param predicate Predicate
+     * @param index Index
+     * @return Is traced or not
+     */
+    bool isTraced(const Predicate &predicate, size_t index) {
+        if (index < trace.size()) {
+            Event &event = trace[index];
+            return event.hasPredicate(predicate);
+        } else {
+            return false;
+        }
+    }
+
 };

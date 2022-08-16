@@ -105,7 +105,7 @@ std::set<std::string> Utils::getAtomics(const Formula &formula) { return getAtom
 std::set<std::string> Utils::getPredicates(const Formula &formula) { return getPredicates(formula.getExpr(), {}); }
 
 // Wrapper
-std::map<std::string, std::tuple<std::string, std::vector<std::string>>>
+std::map<std::string, std::tuple<std::string, std::vector<std::pair<std::string, Predicate::Argument>>>>
 Utils::getPredicatesAndParameters(const Formula &formula) {
     return getPredicatesAndParameters(formula.getExpr(), {});
 }
@@ -197,9 +197,9 @@ std::set<std::string> Utils::getAtomicsAndPredicates(const Formula &formula) {
     return getAtomicsAndPredicates(formula.getExpr());
 }
 
-std::map<std::string, std::tuple<std::string, std::vector<std::string>>> Utils::getPredicatesAndParameters(
+std::map<std::string, std::tuple<std::string, std::vector<std::pair<std::string, Predicate::Argument>>>> Utils::getPredicatesAndParameters(
     const std::shared_ptr<Expression> &expr,
-    std::map<std::string, std::tuple<std::string, std::vector<std::string>>> predicatesWithParameters) {
+    std::map<std::string, std::tuple<std::string, std::vector<std::pair<std::string, Predicate::Argument>>>> predicatesWithParameters) {
     if (!expr) {
         return predicatesWithParameters;
     }
@@ -221,7 +221,7 @@ std::map<std::string, std::tuple<std::string, std::vector<std::string>>> Utils::
     }
     // Predicate
     else if (auto predicate = std::dynamic_pointer_cast<Predicate>(expr)) {
-        predicatesWithParameters.insert({predicate->to_string(), {predicate->getName(), predicate->getParameters()}});
+        predicatesWithParameters.insert({predicate->to_string(), {predicate->getName(), predicate->getArguments()}});
     }
 
     // Don't count constants and atomics

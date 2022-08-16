@@ -35,6 +35,10 @@ set(RV_MONITOR_TEST_SRC_FILES
         rv_algorithms/hydra_2/hydra_monitors/test_previous_monitor.cpp
         rv_algorithms/hydra_2/hydra_monitors/test_since_monitor.cpp
         rv_algorithms/hydra_2/hydra_monitors/test_until_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_universal_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_existential_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_counting_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_same_func_monitor.cpp
         rv_algorithms/test_rv_monitors.cpp
         parser/test_parser.cpp
         qmc/test_qmc.cpp
@@ -47,7 +51,6 @@ set(RV_MONITOR_TEST_SRC_FILES
         utils/generators/trace_generator/test_trace_generator.cpp
         utils/generators/computation_time_generator/test_computation_time_generator.cpp
         utils/generators/computation_time_generator/test_computation_time_generator.cpp
-
         )
 
 

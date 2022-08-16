@@ -16,3 +16,6 @@ static constexpr char previousSymbol[] = "P";
 static constexpr char onceSymbol[] = "O";
 static constexpr char sinceSymbol[] = "S";
 static constexpr char historicallySymbol[] = "H";
+static constexpr char universalSymbol[] = "A";
+static constexpr char existentialSymbol[] = "E";
+static constexpr char countingSymbol[] = "C";

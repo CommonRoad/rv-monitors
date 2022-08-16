@@ -13,6 +13,10 @@
 #include "monitors/expression_tree/nary/bool/or.h"
 #include "monitors/expression_tree/nary/bool/xor.h"
 #include "monitors/expression_tree/unary/bool/not.h"
+#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/function/same_func.h"
+#include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
 #include "monitors/expression_tree/unary/temporal/future.h"
 #include "monitors/expression_tree/unary/temporal/globally.h"
 #include "monitors/expression_tree/unary/temporal/historically.h"
@@ -107,6 +111,22 @@ class Visitor : public FormulaBaseVisitor {
         // Historically
         if (expr.is<std::shared_ptr<Historically>>()) {
             return expr.as<std::shared_ptr<Historically>>();
+        }
+        // Universal
+        if (expr.is<std::shared_ptr<UniversalQuantifier>>()) {
+            return expr.as<std::shared_ptr<UniversalQuantifier>>();
+        }
+        // Existential
+        if (expr.is<std::shared_ptr<ExistentialQuantifier>>()) {
+            return expr.as<std::shared_ptr<ExistentialQuantifier>>();
+        }
+        // Counting
+        if (expr.is<std::shared_ptr<CountingQuantifier>>()) {
+            return expr.as<std::shared_ptr<CountingQuantifier>>();
+        }
+        // SameFunc
+        if (expr.is<std::shared_ptr<SameFunc>>()) {
+            return expr.as<std::shared_ptr<SameFunc>>();
         }
 
         throw std::runtime_error("Visitor::getType() No type found. Check your formula string.");
@@ -283,6 +303,18 @@ class Visitor : public FormulaBaseVisitor {
         auto right = getType(visit(ctx->right));
         auto iv = visit(ctx->iv).as<std::shared_ptr<Interval>>();
         return std::make_shared<Since>(left, right, iv);
+    }
+
+    antlrcpp::Any visitSameFunc(FormulaParser::SameFuncContext *ctx) override {
+        auto left = ctx->left->getText();
+        auto right = ctx->right->getText();
+        bool isLeftConst = left[0] == '\'' and left[left.length() - 1] == '\'';
+        bool isRightConst = right[0] == '\'' and right[right.length() - 1] == '\'';
+        if (isLeftConst)
+            left = left.substr(1, left.length() - 2);
+        if (isRightConst)
+            right = right.substr(1, right.length() - 2);
+        return std::make_shared<SameFunc>(left, right, isLeftConst, isRightConst);
     }
 
     /**
@@ -540,19 +572,80 @@ class Visitor : public FormulaBaseVisitor {
 
     antlrcpp::Any visitPredicate(FormulaParser::PredicateContext *ctx) override {
         const std::vector<std::string> invalidLiterals{"(", ")", ","};
-        std::vector<std::string> params;
+        std::vector<std::pair<std::string, Predicate::Argument>> args;
         for (size_t idx{1}; idx < ctx->children.size(); ++idx) {
             auto child{ctx->children.at(idx)->getText()};
             if (std::any_of(invalidLiterals.begin(), invalidLiterals.end(),
                             [child](const std::string &lit) { return lit == child; }))
                 continue;
-            params.push_back(child);
+            if (child[0] == '\'' and child[child.length() - 1] == '\'') {
+                child = child.substr(1, child.length() - 2);
+                args.emplace_back(child, Predicate::Argument::CONSTANT);
+            } else
+                args.emplace_back(child, Predicate::Argument::VARIABLE);
         }
         std::string name{ctx->getText().substr(0, ctx->getText().find('('))};
         std::string symbol{name};
-        for (const auto &par : params)
-            symbol += par + "_";
+        for (const auto &[argName, _] : args)
+            symbol += argName + "_";
         symbol = symbol.substr(0, symbol.size() - 1);
-        return std::make_shared<Predicate>(Predicate(symbol, name, params));
+        return std::make_shared<Predicate>(Predicate(symbol, name, args));
     }
+
+    antlrcpp::Any visitUniversal(FormulaParser::UniversalContext *ctx) override {
+        auto right = getType(visit(ctx->right));
+        auto dv = visit(ctx->dv).as<std::vector<std::shared_ptr<Variable>>>();
+        return std::make_shared<UniversalQuantifier>(right, dv);
+    }
+
+    antlrcpp::Any visitExistential(FormulaParser::ExistentialContext *ctx) override {
+        auto right = getType(visit(ctx->right));
+        auto dv = visit(ctx->dv).as<std::vector<std::shared_ptr<Variable>>>();
+        return std::make_shared<ExistentialQuantifier>(right, dv);
+    }
+
+    antlrcpp::Any visitCounting(FormulaParser::CountingContext *ctx) override {
+        auto piv = visit(ctx->piv).as<std::shared_ptr<ProbabilityInterval>>();
+        auto right = getType(visit(ctx->right));
+        auto dv = visit(ctx->dv).as<std::vector<std::shared_ptr<Variable>>>();
+        return std::make_shared<CountingQuantifier>(right, dv, piv);
+    }
+
+    antlrcpp::Any visitFiniteProbabilityInterval(FormulaParser::FiniteProbabilityIntervalContext *ctx) override {
+        auto lower = visit(ctx->l).as<float>();
+        auto upper = visit(ctx->u).as<float>();
+
+        return std::make_shared<ProbabilityInterval>(lower, upper);
+    }
+
+    antlrcpp::Any visitDomainVariables(FormulaParser::DomainVariablesContext *ctx) override {
+        std::vector<std::shared_ptr<Variable>> variables;
+
+        const std::vector<std::string> invalidLiterals{"(", ")", ","};
+
+        std::vector<std::string> names;
+        for (size_t idx = 0; idx < ctx->children.size(); idx++) {
+            auto child = ctx->children.at(idx)->getText();
+            if (std::any_of(invalidLiterals.begin(), invalidLiterals.end(),
+                            [child](const std::string &lit) { return lit == child; }))
+                continue;
+
+            if (child == "in") {
+                auto domain = ctx->children.at(idx + 1)->getText();
+                for (auto name : names)
+                    variables.push_back(std::make_shared<Variable>(name, domain));
+                names.clear();
+                idx++;
+                continue;
+            }
+
+            names.push_back(child);
+        }
+        return variables;
+    }
+
+    antlrcpp::Any visitProbDigit(FormulaParser::ProbDigitContext *ctx) override {
+        return std::stof(ctx->getText());
+    }
+
 };

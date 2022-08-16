@@ -27,6 +27,10 @@
 #include "monitors/expression_tree/unary/temporal/next_weak.h"
 #include "monitors/expression_tree/unary/temporal/once.h"
 #include "monitors/expression_tree/unary/temporal/previously.h"
+#include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/function/same_func.h"
 #include <iostream>
 
 void MTLEventConsumingVisitor::consumeEvent(Formula &formula, Trace &trace, size_t index) {
@@ -311,4 +315,26 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
         // rewritten in mtl_rewrite_visitor
     }
     return ret->accept(*this, trace, index);
+}
+
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitUniversalQuantifier(UniversalQuantifier &op, Trace &trace,
+                                                                               size_t index) {
+    visitExpression(op, trace, index);
+    return std::make_shared<UniversalQuantifier>(op);
+}
+
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitExistentialQuantifier(ExistentialQuantifier &op,
+                                                                                 Trace &trace, size_t index) {
+    visitExpression(op, trace, index);
+    return std::make_shared<ExistentialQuantifier>(op);
+}
+
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitCountingQuantifier(CountingQuantifier &op, Trace &trace,
+                                                                              size_t index) {
+    visitExpression(op, trace, index);
+    return std::make_shared<CountingQuantifier>(op);
+}
+
+std::shared_ptr<Expression> MTLEventConsumingVisitor::visitSameFunc(SameFunc &op, Trace &trace, size_t index) {
+    return std::make_shared<SameFunc>(op);
 }

@@ -5,7 +5,6 @@ expr
  : <assoc=right> left=expr op=IMPL right=expr   #Implication
  | <assoc=right> left=expr op=EQ right=expr     #Equivalence
  |  xor_expr                                    #XorExpr
-
  ;
 
 xor_expr
@@ -22,40 +21,52 @@ and_expr
 
 
 release_until_expr
-: <assoc=right> left=unary op=RELEASE right=unary                      #Release
-| <assoc=right> left=unary op=UNTIL right=unary                        #Until
-| <assoc=right> left=unary op=RELEASE iv=interval right=unary          #ReleaseInterval
-| <assoc=right> left=unary op=UNTIL iv=interval right=unary            #UntilInterval
-| <assoc=right> left=unary op=SINCE right=unary                        #Since
-| <assoc=right> left=unary op=SINCE iv=interval right=unary            #SinceInterval
-| unary                                                                #UnaryExpr
+: <assoc=right> left=unary op=RELEASE right=unary                                      #Release
+| <assoc=right> left=unary op=UNTIL right=unary                                        #Until
+| <assoc=right> left=unary op=RELEASE iv=interval right=unary                          #ReleaseInterval
+| <assoc=right> left=unary op=UNTIL iv=interval right=unary                            #UntilInterval
+| <assoc=right> left=unary op=SINCE right=unary                                        #Since
+| <assoc=right> left=unary op=SINCE iv=interval right=unary                            #SinceInterval
+| <assoc=right> left=(ATOMIC|CONST_VALUE) op=SAME right=(ATOMIC|CONST_VALUE)           #SameFunc
+| unary                                                                                #UnaryExpr
 ;
 
 unary
-: op=GLOBALLY right=atom                         #Globally
-  | op=FUTURE right=atom                         #Future
-  | op=ONCE right=atom                           #Once
-  | op=PREVIOUSLY right=atom                     #Previously
-  | op=NEXT_WEAK right=atom                      #NextWeak
-  | op=NEXT_STRONG right=atom                    #NextStrong
-  | op=GLOBALLY iv=interval right=atom           #GloballyInterval
-  | op=FUTURE iv=interval right=atom             #FutureInterval
-  | op=ONCE iv=interval right=atom               #OnceInterval
-  | op=PREVIOUSLY iv=interval right=atom         #PreviouslyInterval
-  | op=NEXT_WEAK iv=interval right=atom          #NextWeakInterval
-  | op=NEXT_STRONG iv=interval right=atom        #NextStrongInterval
-  | op=HISTORICALLY right=atom                   #Historically
-  | op=HISTORICALLY iv=interval right=atom       #HistoricallyInterval
-  | op=NOT right=atom                            #Not
-  | op=NOT right=expr                            #NotExpr
-  | atom                                         #AtomExpr
-  | op=PREDICATE right=ATOMIC (',' ATOMIC)*')'   #Predicate
+: op=GLOBALLY right=atom                                                    #Globally
+  | op=FUTURE right=atom                                                    #Future
+  | op=ONCE right=atom                                                      #Once
+  | op=PREVIOUSLY right=atom                                                #Previously
+  | op=NEXT_WEAK right=atom                                                 #NextWeak
+  | op=NEXT_STRONG right=atom                                               #NextStrong
+  | op=GLOBALLY iv=interval right=atom                                      #GloballyInterval
+  | op=FUTURE iv=interval right=atom                                        #FutureInterval
+  | op=ONCE iv=interval right=atom                                          #OnceInterval
+  | op=PREVIOUSLY iv=interval right=atom                                    #PreviouslyInterval
+  | op=NEXT_WEAK iv=interval right=atom                                     #NextWeakInterval
+  | op=NEXT_STRONG iv=interval right=atom                                   #NextStrongInterval
+  | op=HISTORICALLY right=atom                                              #Historically
+  | op=HISTORICALLY iv=interval right=atom                                  #HistoricallyInterval
+  | op=NOT right=atom                                                       #Not
+  | op=NOT right=expr                                                       #NotExpr
+  | atom                                                                    #AtomExpr
+  | op=PREDICATE right=(ATOMIC|CONST_VALUE) (',' (ATOMIC|CONST_VALUE))*')'  #Predicate
+  | op=UNIVERSAL dv=domain_vars '.' right=expr                              #Universal
+  | op=EXISTENTIAL dv=domain_vars '.' right=expr                            #Existential
+  | op=COUNTING piv=prob_interval dv=domain_vars '.' right=expr             #Counting
  ;
 
 interval
-: '[' l=number ',' u=number   ']'      #FiniteInterval
+: '[' l=number ',' u=number   ']'       #FiniteInterval
 | '[' l=number ',' u=INFINITY ']'       #InfiniteInterval
 ;
+
+prob_interval
+ : '[' l=prob_number ',' u=prob_number ']'    #FiniteProbabilityInterval
+ ;
+
+domain_vars
+ : ATOMIC (',' ATOMIC)* IN DOMAIN (',' ATOMIC (',' ATOMIC)* IN DOMAIN)*   #DomainVariables
+ ;
 
 atom
  : bool_                                           #Boolean
@@ -65,6 +76,10 @@ atom
 
 number
  : DIGIT                 #Digit
+ ;
+
+prob_number
+ : PROB_DIGIT            #ProbDigit
  ;
 
 bool_
@@ -89,11 +104,19 @@ bool_
  SINCE                      : ('S'|'SINCE');
  HISTORICALLY               : 'H';
 
+ UNIVERSAL                  : ('A'|'ALL');
+ EXISTENTIAL                : ('E'|'EXISTS');
+ COUNTING                   : ('C'|'COUNT');
+
  AND        	            : ('&'|'and'|'AND');
  OR         	            : ('|'|'or'|'OR');
  XOR                        : ('^'|'xor');
  IMPL       	            : '->';
  EQ                         : '<->';
+
+ SAME                       : '==';
+
+ IN                         : 'in';
 
 
  // *********
@@ -106,7 +129,10 @@ bool_
 
  ATOMIC		                : LOWER_ALPHA_UNDERSCORE;
  PREDICATE                  : LOWER_ALPHA_UNDERSCORE'(';
+ DOMAIN                     : [A-Z]+[A-Z]*[0-9]*;
+ CONST_VALUE                : '\'' [a-zA-Z0-9]+ '\'';
 
  WS                         : [ \t\n]+ -> skip;       //Skip whitespaces
 
  DIGIT                      : [0-9] | [1-9][0-9]+;
+ PROB_DIGIT                 : [0] '.' [0-9]* | [1] '.' [0]*;

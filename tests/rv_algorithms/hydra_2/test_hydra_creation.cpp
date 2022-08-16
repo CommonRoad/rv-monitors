@@ -12,20 +12,21 @@
 #include <utility>
 
 void executeTest(Formula inputFormula, const std::string &expectedFormulaStringReordered,
-                 const std::map<std::string, std::array<double, 2>> &predicateCosts) {
-    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts, false)};
+                 const std::map<std::string, std::array<double, 2>> &predicateCosts,
+                 DomainCollection domainCollection = {}, FunctionCollection functionCollection = {}) {
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts, domainCollection, functionCollection, false)};
     std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(inputFormula, 0, false);
     EXPECT_EQ(mon->to_string(), inputFormula.to_string());
 
-    hcv = HydraCreationVisitor(predicateCosts, false);
+    hcv = HydraCreationVisitor(predicateCosts, domainCollection, functionCollection, false);
     mon = hcv.createMonitor(inputFormula, 0, true);
     EXPECT_EQ(mon->to_string(), inputFormula.to_string());
 
-    hcv = HydraCreationVisitor(predicateCosts, true);
+    hcv = HydraCreationVisitor(predicateCosts, domainCollection, functionCollection, true);
     mon = hcv.createMonitor(inputFormula, 0, false);
     EXPECT_EQ(mon->to_string(), expectedFormulaStringReordered);
 
-    hcv = HydraCreationVisitor(predicateCosts, true);
+    hcv = HydraCreationVisitor(predicateCosts, domainCollection, functionCollection, true);
     mon = hcv.createMonitor(inputFormula, 0, true);
     EXPECT_EQ(mon->to_string(), expectedFormulaStringReordered);
 }
@@ -91,7 +92,6 @@ TEST(TestHydraCreation, testNextAnd) {
     formula.setId("R1");
     std::map<std::string, std::array<double, 2>> predicateCosts{
         {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
-    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts)};
     std::string expectedFormula{"(X(d(test)) & X(a(test)) & X(b(test)) & X(c(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -339,4 +339,54 @@ TEST(TestHydraCreation, testAndOrDuplicatedPredicate) {
         {"a", {20.0, 80.0}}, {"b", {100.0, 20.0}}, {"c", {100.0, 80.0}}, {"d", {20.0, 20.0}}};
     std::string expectedFormula{"(a(test) & (a(test) | c(test) | b(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
+}
+
+TEST(TestHydraCreation, testUniversalSimple) {
+    Formula formula = Parser::parse("A x, y in D. p(x, y)");
+    formula.setId("R1");
+    std::map<std::string, std::array<double, 2>> predicateCosts{};
+    std::string expectedFormula{"A x in D, y in D. p(x, y)"};
+    DomainCollection collection;
+    collection.addDomain({"D", {"1", "2", "3"}});
+    executeTest(formula, expectedFormula, predicateCosts, collection);
+}
+
+TEST(TestHydraCreation, testUniversalNested) {
+    Formula formula = Parser::parse("A w in D0, x in D1. A y, z in D2. p(w, x, y, z)");
+    formula.setId("R1");
+    std::map<std::string, std::array<double, 2>> predicateCosts{};
+    std::string expectedFormula{"A w in D0, x in D1. A y in D2, z in D2. p(w, x, y, z)"};
+    std::vector<Domain> domains{{"D0", {"0"}}, {"D1", {"1"}}, {"D2", {"2"}}};
+    DomainCollection collection{domains};
+    executeTest(formula, expectedFormula, predicateCosts, collection);
+}
+
+TEST(TestHydraCreation, testExistentialSimple) {
+    Formula formula = Parser::parse("E x in D0, y in D1, z in D2. p0(x, y) & p1(y, z)");
+    formula.setId("R1");
+    std::map<std::string, std::array<double, 2>> predicateCosts{};
+    std::string expectedFormula{"E x in D0, y in D1, z in D2. (p0(x, y) & p1(y, z))"};
+    std::vector<Domain> domains{{"D0", {"1", "2", "3"}}, {"D1", {"4", "5", "6"}}, {"D2", {"7", "8", "9"}}};
+    DomainCollection collection{domains};
+    executeTest(formula, expectedFormula, predicateCosts, collection);
+}
+
+TEST(TestHydraCreation, testUniversalExistentialMixed) {
+    Formula formula = Parser::parse("A x in D0. E y in D1. p(x, y)");
+    formula.setId("R1");
+    std::map<std::string, std::array<double, 2>> predicateCosts{};
+    std::string expectedFormula{"A x in D0. E y in D1. p(x, y)"};
+    std::vector<Domain> domains{{"D0", {"0", "1", "2"}}, {"D1", {"2", "3", "4"}}};
+    DomainCollection collection{domains};
+    executeTest(formula, expectedFormula, predicateCosts, collection);
+}
+
+TEST(TestHydraCreation, testCountingSimple) {
+    Formula formula = Parser::parse("C[0.1, 0.5] x in D0, y in D1. p(x, y)");
+    formula.setId("R1");
+    std::map<std::string, std::array<double, 2>> predicateCosts{};
+    std::string expectedFormula{"C[0.100000, 0.500000] x in D0, y in D1. p(x, y)"};
+    std::vector<Domain> domains{{"D0", {"0"}}, {"D1", {"1"}}};
+    DomainCollection collection{domains};
+    executeTest(formula, expectedFormula, predicateCosts, collection);
 }

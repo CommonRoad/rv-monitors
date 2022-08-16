@@ -15,6 +15,10 @@
 #include "hydra_monitors/previous_monitor.h"
 #include "hydra_monitors/since_monitor.h"
 #include "hydra_monitors/until_monitor.h"
+#include "hydra_monitors/universal_monitor.h"
+#include "hydra_monitors/existential_monitor.h"
+#include "hydra_monitors/counting_monitor.h"
+#include "hydra_monitors/same_func_monitor.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/binary/temporal/since.h"
 #include "monitors/expression_tree/binary/temporal/until.h"
@@ -23,6 +27,10 @@
 #include "monitors/expression_tree/unary/bool/not.h"
 #include "monitors/expression_tree/unary/temporal/next_strong.h"
 #include "monitors/expression_tree/unary/temporal/previously.h"
+#include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/function/same_func.h"
 #include "monitors/formula/formula.h"
 #include <numeric>
 #include <utility>
@@ -77,7 +85,7 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitPredicate(Predicate &tl
                 break;
             }
         auto newMonitor{std::make_shared<PredicateMonitor>(Formula(std::make_shared<Predicate>(tlop)), idx,
-                                                           connectedEval, cost, prob)};
+                                                           functions, connectedEval, cost, prob)};
         baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(tlop.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
@@ -203,9 +211,70 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitNot(Not &tlop, size_t p
     }
 }
 
-HydraCreationVisitor::HydraCreationVisitor(std::map<std::string, std::array<double, 2>> predicateCosts, bool reordering,
-                                           bool shortCircuiting)
-    : reordering(reordering), shortCircuiting(shortCircuiting), predicateCosts(std::move(predicateCosts)) {}
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitUniversalQuantifier(UniversalQuantifier &tlop, size_t parentId, bool connectedEval) {
+    size_t idx{maxId++};
+
+    std::map<std::string, std::string> variables;
+    for (const auto &var : tlop.getVariables())
+        variables[var->getName()] = var->getDomain();
+
+    auto newMonitor{std::make_shared<UniversalMonitor>(Formula(std::make_shared<UniversalQuantifier>(tlop)),
+                                                      tlop.getLeft()->accept(*this, idx, connectedEval), idx,
+                                                      variables, domains, connectedEval, shortCircuiting)};
+
+    baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(tlop.to_string(), newMonitor));
+    newMonitor->registerParent(parentId);
+    return newMonitor;
+}
+
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitExistentialQuantifier(ExistentialQuantifier &tlop, size_t parentId, bool connectedEval) {
+    size_t idx{maxId++};
+
+    std::map<std::string, std::string> variables;
+    for (const auto &var : tlop.getVariables())
+        variables[var->getName()] = var->getDomain();
+
+    auto newMonitor{std::make_shared<ExistentialMonitor>(Formula(std::make_shared<ExistentialQuantifier>(tlop)),
+                                                       tlop.getLeft()->accept(*this, idx, connectedEval), idx,
+                                                       variables, domains, connectedEval, shortCircuiting)};
+
+    baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(tlop.to_string(), newMonitor));
+    newMonitor->registerParent(parentId);
+    return newMonitor;
+}
+
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitCountingQuantifier(CountingQuantifier &tlop, size_t parentId, bool connectedEval) {
+    size_t idx{maxId++};
+
+    std::map<std::string, std::string> variables;
+    for (const auto &var : tlop.getVariables())
+        variables[var->getName()] = var->getDomain();
+
+    auto newMonitor{std::make_shared<CountingMonitor>(Formula(std::make_shared<CountingQuantifier>(tlop)),
+                                                      tlop.getLeft()->accept(*this, idx, connectedEval), idx,
+                                                      variables, domains, tlop.getProbInterval()->getMin(),
+                                                      tlop.getProbInterval()->getMax(), connectedEval, shortCircuiting)};
+
+    baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(tlop.to_string(), newMonitor));
+    newMonitor->registerParent(parentId);
+    return newMonitor;
+}
+
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitSameFunc(SameFunc &tlop, size_t parentId, bool connectedEval) {
+    size_t idx{maxId++};
+
+    auto newMonitor{std::make_shared<SameFuncMonitor>(Formula(std::make_shared<SameFunc>(tlop)), idx, connectedEval)};
+    baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(tlop.to_string(), newMonitor));
+    newMonitor->registerParent(parentId);
+    return newMonitor;
+}
+
+HydraCreationVisitor::HydraCreationVisitor(std::map<std::string, std::array<double, 2>> predicateCosts,
+                                           DomainCollection &domains,
+                                           FunctionCollection &functions,
+                                           bool reordering, bool shortCircuiting)
+    : reordering(reordering), shortCircuiting(shortCircuiting), predicateCosts(std::move(predicateCosts)),
+      domains(domains), functions(functions) {}
 
 void HydraCreationVisitor::resort(std::vector<std::shared_ptr<HydraMonitor>> &monitors, bool increasing) {
     std::vector<double> cost;

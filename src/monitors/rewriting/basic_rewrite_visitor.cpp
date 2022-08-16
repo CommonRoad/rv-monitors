@@ -21,6 +21,10 @@
 #include "monitors/expression_tree/unary/temporal/next_weak.h"
 #include "monitors/expression_tree/unary/temporal/once.h"
 #include "monitors/expression_tree/unary/temporal/previously.h"
+#include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/function/same_func.h"
 #include "monitors/trace/event.h"
 #include "rewrite_visitor.h"
 #include "rewrite_visitor_utils.h"
@@ -408,4 +412,26 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitEquivalence(Equivalence &o
     auto newRight = std::make_shared<Implication>(op.getRight(), op.getLeft());
     And::SetType_T andSet{newLeft, newRight};
     return std::make_shared<And>(andSet);
+}
+
+std::shared_ptr<Expression> BasicRewriteVisitor::visitUniversalQuantifier(UniversalQuantifier &op, Trace &trace,
+                                                                          size_t index) {
+    visitExpression(op, trace, index);
+    return std::make_shared<UniversalQuantifier>(op);
+}
+
+std::shared_ptr<Expression> BasicRewriteVisitor::visitExistentialQuantifier(ExistentialQuantifier &op, Trace &trace,
+                                                                            size_t index) {
+    visitExpression(op, trace, index);
+    return std::make_shared<ExistentialQuantifier>(op);
+}
+
+std::shared_ptr<Expression> BasicRewriteVisitor::visitCountingQuantifier(CountingQuantifier &op, Trace &trace,
+                                                                         size_t index) {
+    visitExpression(op, trace, index);
+    return std::make_shared<CountingQuantifier>(op);
+}
+
+std::shared_ptr<Expression> BasicRewriteVisitor::visitSameFunc(SameFunc &op, Trace &trace, size_t index) {
+    return std::make_shared<SameFunc>(op);
 }

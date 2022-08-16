@@ -42,10 +42,15 @@ void SinceMonitor::setTrace(const Trace &tra) {
     subMonitorF->setTrace(tra);
     subMonitorG->setTrace(tra);
 }
-void SinceMonitor::reset() {
-    HydraMonitor::reset();
-    subMonitorG->reset();
-    subMonitorF->reset();
+
+void SinceMonitor::setVariableValues(std::map<std::string, Value> values) {
+    subMonitorF->setVariableValues(values);
+}
+
+void SinceMonitor::reset(std::optional<size_t> stepNumber) {
+    HydraMonitor::reset(stepNumber);
+    subMonitorG->reset(stepNumber);
+    subMonitorF->reset(stepNumber);
     subVerdictF = {};
     subVerdictG = {};
     lastSatisfaction = {};
@@ -54,6 +59,7 @@ void SinceMonitor::reset() {
     positionMonitorF.reset();
     stepNumberG = 0;
 }
+
 std::string SinceMonitor::to_string() {
     std::string interval{" "};
     if (from != 0 or to != 10000)

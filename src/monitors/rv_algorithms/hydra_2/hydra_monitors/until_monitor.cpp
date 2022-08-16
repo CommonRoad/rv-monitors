@@ -63,16 +63,24 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     int v = static_cast<int>(lastSatisfaction && lastSatisfaction->first - positionMonitorH.ts >= from);
     return {positionMonitorH.ts, v != 0};
 }
+
 void UntilMonitor::setTrace(const Trace &tra) {
     subMonitorF->setTrace(tra);
     subMonitorG->setTrace(tra);
     subMonitorH->setTrace(tra);
 }
-void UntilMonitor::reset() {
-    HydraMonitor::reset();
-    subMonitorG->reset();
-    subMonitorF->reset();
-    subMonitorH->reset();
+
+void UntilMonitor::setVariableValues(std::map<std::string, Value> values) {
+    subMonitorF->setVariableValues(values);
+    subMonitorG->setVariableValues(values);
+    subMonitorH->setVariableValues(values);
+}
+
+void UntilMonitor::reset(std::optional<size_t> stepNumber) {
+    HydraMonitor::reset(stepNumber);
+    subMonitorG->reset(stepNumber);
+    subMonitorF->reset(stepNumber);
+    subMonitorH->reset(stepNumber);
     subVerdictF = {};
     subVerdictG = {};
     subVerdictH = {};
@@ -82,6 +90,7 @@ void UntilMonitor::reset() {
     positionMonitorF.reset();
     positionMonitorH.reset();
 }
+
 std::string UntilMonitor::to_string() {
     std::string interval{" "};
     if (from != 0 or to != 10000)

@@ -95,4 +95,18 @@ class Event {
      * @param timeStep time step to be set
      */
     void setTimeStep(size_t timeStep);
+
+    /**
+     * Checks atomic is included by event map.
+     * @param atomic Atomic
+     * @return Has atomic or not
+     */
+    [[nodiscard]] bool hasAtomic(const Atomic &atomic) const;
+
+    /**
+     * Checks predicate is included by event map.
+     * @param predicate Predicate
+     * @return Has predicate or not
+     */
+    [[nodiscard]] bool hasPredicate(const Predicate &predicate) const;
 };

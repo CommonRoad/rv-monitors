@@ -180,12 +180,12 @@ createTrace(const std::set<std::string> &atomics, const std::vector<std::vector<
  * @param formula Formula.
  * @return string set of all predicates in @param formula.
  */
-[[nodiscard]] std::map<std::string, std::tuple<std::string, std::vector<std::string>>>
+[[nodiscard]] std::map<std::string, std::tuple<std::string, std::vector<std::pair<std::string, Predicate::Argument>>>>
 getPredicatesAndParameters(const Formula &formula);
 
-std::map<std::string, std::tuple<std::string, std::vector<std::string>>> getPredicatesAndParameters(
+std::map<std::string, std::tuple<std::string, std::vector<std::pair<std::string, Predicate::Argument>>>> getPredicatesAndParameters(
     const std::shared_ptr<Expression> &expr,
-    std::map<std::string, std::tuple<std::string, std::vector<std::string>>> predicatesWithParameters);
+    std::map<std::string, std::tuple<std::string, std::vector<std::pair<std::string, Predicate::Argument>>>> predicatesWithParameters);
 
 /**
  * Computes the number of predicates in @param expr.

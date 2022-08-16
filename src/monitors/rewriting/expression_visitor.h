@@ -56,6 +56,14 @@ class Equivalence;
 
 class Predicate;
 
+class UniversalQuantifier;
+
+class ExistentialQuantifier;
+
+class CountingQuantifier;
+
+class SameFunc;
+
 /**
  * Parent class to apply the visitor pattern to the expression tree.
  * The functionality of the single visit functions depends on the inheriting class.
@@ -239,4 +247,37 @@ class ExpressionVisitor {
      * @return Transformed EventOperator as a shared_ptr.
      */
     virtual std::shared_ptr<Expression> visitPredicate(Predicate &expr, Trace &trace, size_t index) = 0;
+
+    /**
+     * Visits an UniversalQuantifier.
+     * @param expr Expression.
+     * @param trace Trace.
+     * @return Transformed UniversalQuantifier as a shared_ptr.
+     */
+    virtual std::shared_ptr<Expression> visitUniversalQuantifier(UniversalQuantifier &expr, Trace &trace, size_t index) = 0;
+
+    /**
+     * Visits an ExistentialQuantifier.
+     * @param expr Expression.
+     * @param trace Trace.
+     * @return Transformed ExistentialQuantifier as a shared_ptr.
+     */
+    virtual std::shared_ptr<Expression> visitExistentialQuantifier(ExistentialQuantifier &expr, Trace &trace, size_t index) = 0;
+
+    /**
+     * Visits a CountingQuantifier.
+     * @param expr Expression.
+     * @param trace Trace.
+     * @return Transformed CountingQuantifier as a shared_ptr.
+     */
+    virtual std::shared_ptr<Expression> visitCountingQuantifier(CountingQuantifier &expr, Trace &trace, size_t index) = 0;
+
+    /**
+     * Visits a SameFunc.
+     * @param expr Expression.
+     * @param trace Trace.
+     * @return Transformed SameFunc as a shared_ptr.
+     */
+    virtual std::shared_ptr<Expression> visitSameFunc(SameFunc &expr, Trace &trace, size_t index) = 0;
+
 };

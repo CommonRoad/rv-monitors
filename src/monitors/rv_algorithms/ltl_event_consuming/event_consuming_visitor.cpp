@@ -21,6 +21,10 @@
 #include "monitors/expression_tree/unary/temporal/next_weak.h"
 #include "monitors/expression_tree/unary/temporal/once.h"
 #include "monitors/expression_tree/unary/temporal/previously.h"
+#include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/function/same_func.h"
 
 void EventConsumingVisitor::consumeEvent(Formula &formula, Trace &trace, size_t index) {
     std::shared_ptr<EventOperator> eventOperator = std::make_shared<EventOperator>(formula.getExpr(), trace, index);
@@ -258,4 +262,26 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitEventOperator(EventOpera
         }
     }
     return ret->accept(*this, trace, index);
+}
+
+std::shared_ptr<Expression> EventConsumingVisitor::visitUniversalQuantifier(UniversalQuantifier &op, Trace &trace,
+                                                                            size_t index) {
+    visitExpression(op, trace, index);
+    return std::make_shared<UniversalQuantifier>(op);
+}
+
+std::shared_ptr<Expression> EventConsumingVisitor::visitExistentialQuantifier(ExistentialQuantifier &op, Trace &trace,
+                                                                              size_t index) {
+    visitExpression(op, trace, index);
+    return std::make_shared<ExistentialQuantifier>(op);
+}
+
+std::shared_ptr<Expression> EventConsumingVisitor::visitCountingQuantifier(CountingQuantifier &op, Trace &trace,
+                                                                           size_t index) {
+    visitExpression(op, trace, index);
+    return std::make_shared<CountingQuantifier>(op);
+}
+
+std::shared_ptr<Expression> EventConsumingVisitor::visitSameFunc(SameFunc &op, Trace &trace, size_t index) {
+    return std::make_shared<SameFunc>(op);
 }

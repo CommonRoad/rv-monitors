@@ -24,9 +24,13 @@ Verdict PreviousMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 }
 void PreviousMonitor::setTrace(const Trace &tra) { subMonitor->setTrace(tra); }
 
-void PreviousMonitor::reset() {
-    HydraMonitor::reset();
-    subMonitor->reset();
+void PreviousMonitor::setVariableValues(std::map<std::string, Value> values) {
+    subMonitor->setVariableValues(values);
+}
+
+void PreviousMonitor::reset(std::optional<size_t> stepNumber) {
+    HydraMonitor::reset(stepNumber);
+    subMonitor->reset(stepNumber);
     currentVerdict = {};
 }
 std::string PreviousMonitor::to_string() {

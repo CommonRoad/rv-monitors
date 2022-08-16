@@ -44,9 +44,9 @@ void Hydra::setTraceMonitors(const Trace &tra) {
         mon->setTrace(tra);
 }
 
-void Hydra::createMonitor(const std::vector<Formula> &formulas, bool connectedEval, bool reordering,
-                          bool shortCircuiting, const std::map<std::string, std::array<double, 2>> &predicateCosts) {
-    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts, reordering, shortCircuiting)};
+void Hydra::createMonitor(const std::vector<Formula> &formulas, DomainCollection &domainCollection, FunctionCollection &functionCollection,
+                          bool connectedEval, bool reordering, bool shortCircuiting, const std::map<std::string, std::array<double, 2>> &predicateCosts) {
+    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts, domainCollection, functionCollection, reordering, shortCircuiting)};
     for (const auto &form : formulas) {
         if (form.getId().empty())
             throw std::logic_error("Formula has no valid unique ID.");
@@ -61,8 +61,8 @@ void Hydra::createMonitor(const std::vector<Formula> &formulas, bool connectedEv
     }
 }
 
-Hydra::Hydra(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting,
-             const std::map<std::string, std::array<double, 2>> &predicateCosts)
+Hydra::Hydra(const std::vector<Formula> &formulas, DomainCollection domainCollection, FunctionCollection functionCollection,
+             bool connectedEval, bool reordering, bool shortCircuiting, const std::map<std::string, std::array<double, 2>> &predicateCosts)
     : MonitorInterface(formulas) {
-    createMonitor(formulas, connectedEval, reordering, shortCircuiting, predicateCosts);
+    createMonitor(formulas, domainCollection, functionCollection, connectedEval, reordering, shortCircuiting, predicateCosts);
 }

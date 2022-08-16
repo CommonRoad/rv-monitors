@@ -35,10 +35,16 @@ void OrMonitor::setTrace(const Trace &tra) {
     for (const auto &mon : subMonitors)
         mon->setTrace(tra);
 }
-void OrMonitor::reset() {
-    HydraMonitor::reset();
+
+void OrMonitor::setVariableValues(std::map<std::string, Value> values) {
+    for (auto &mon : subMonitors)
+        mon->setVariableValues(values);
+}
+
+void OrMonitor::reset(std::optional<size_t> stepNumber) {
+    HydraMonitor::reset(stepNumber);
     for (const auto &mon : subMonitors)
-        mon->reset();
+        mon->reset(stepNumber);
 }
 
 std::string OrMonitor::to_string() {

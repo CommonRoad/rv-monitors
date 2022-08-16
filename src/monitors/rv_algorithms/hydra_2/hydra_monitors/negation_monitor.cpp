@@ -12,8 +12,13 @@ Verdict NegationMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 
 void NegationMonitor::setTrace(const Trace &tra) { subMonitor->setTrace(tra); }
 
-void NegationMonitor::reset() {
-    HydraMonitor::reset();
-    subMonitor->reset();
+void NegationMonitor::setVariableValues(std::map<std::string, Value> values) {
+    subMonitor->setVariableValues(values);
 }
+
+void NegationMonitor::reset(std::optional<size_t> stepNumber) {
+    HydraMonitor::reset(stepNumber);
+    subMonitor->reset(stepNumber);
+}
+
 std::string NegationMonitor::to_string() { return "!(" + subMonitor->to_string() + ")"; }

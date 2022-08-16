@@ -79,8 +79,10 @@ RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration 
         monitor = std::make_unique<BttFsm>(formulas, configuration.past);
         break;
     case hydra_mtl:
+        DomainCollection domainCollection; // TODO: Transfer domain and function collection
+        FunctionCollection functionCollection;
         monitor =
-            std::make_unique<Hydra>(formulas, configuration.hydraConnectedEvaluation, configuration.hydraReordering,
+            std::make_unique<Hydra>(formulas, domainCollection, functionCollection, configuration.hydraConnectedEvaluation, configuration.hydraReordering,
                                     configuration.hydraShortCircuiting, predicateCosts);
         break;
     }
@@ -103,8 +105,10 @@ RVMonitor::RVMonitor(const Formula &formula, MonitorConfiguration configuration,
         monitor = std::make_unique<BttFsm>(std::vector<Formula>{formula}, configuration.past);
         break;
     case hydra_mtl:
+        DomainCollection domainCollection; // TODO: Transfer domain and function collection
+        FunctionCollection functionCollection;
         monitor =
-            std::make_unique<Hydra>(std::vector<Formula>{formula}, configuration.hydraConnectedEvaluation,
+            std::make_unique<Hydra>(std::vector<Formula>{formula}, domainCollection, functionCollection, configuration.hydraConnectedEvaluation,
                                     configuration.hydraReordering, configuration.hydraShortCircuiting, predicateCosts);
         break;
     }
@@ -122,7 +126,9 @@ RVMonitor::RVMonitor(const RVMonitor &obj) : configuration(obj.configuration) {
             formulaCopy.setId(form.getId());
             formulas.push_back(formulaCopy);
         }
-        monitor = std::make_unique<Hydra>(formulas, configuration.hydraConnectedEvaluation,
+        DomainCollection domainCollection; // TODO: Transfer domain and function collection
+        FunctionCollection functionCollection;
+        monitor = std::make_unique<Hydra>(formulas, domainCollection, functionCollection, configuration.hydraConnectedEvaluation,
                                           configuration.hydraReordering, configuration.hydraShortCircuiting);
     }
     // TODO other algorithms
@@ -140,8 +146,9 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
                 formulaCopy.setId(form.getId());
                 formulas.push_back(formulaCopy);
             }
-
-            monitor = std::make_unique<Hydra>(formulas, configuration.hydraConnectedEvaluation,
+            DomainCollection domainCollection; // TODO: Transfer domain and function collection
+            FunctionCollection functionCollection;
+            monitor = std::make_unique<Hydra>(formulas, domainCollection, functionCollection, configuration.hydraConnectedEvaluation,
                                               configuration.hydraReordering, configuration.hydraShortCircuiting);
         }
         // TODO other algorithms
@@ -151,6 +158,7 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
 }
 
 std::string RVMonitor::to_string() { return monitor->to_string(); }
+
 MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool past, bool measurement,
                                            bool hydraConnectedEvaluation, bool hydraReordering,
                                            bool hydraShortCircuiting)

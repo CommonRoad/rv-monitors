@@ -27,11 +27,16 @@ Verdict NextMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 
 void NextMonitor::setTrace(const Trace &tra) { subMonitor->setTrace(tra); }
 
-void NextMonitor::reset() {
-    HydraMonitor::reset();
-    currentTime = {};
-    subMonitor->reset();
+void NextMonitor::setVariableValues(std::map<std::string, Value> values) {
+    subMonitor->setVariableValues(values);
 }
+
+void NextMonitor::reset(std::optional<size_t> stepNumber) {
+    HydraMonitor::reset(stepNumber);
+    currentTime = {};
+    subMonitor->reset(stepNumber);
+}
+
 std::string NextMonitor::to_string() {
     std::string interval;
     if (from != 0 or to != 10000)

@@ -20,19 +20,19 @@ TEST(TestHydra, testEmptyTrace) {
 TEST(TestHydra, testToString) {
     Formula formula = Parser::parse("P(c)");
     formula.setId("R1");
-    auto monitor{Hydra({formula}, false, false, false)};
+    auto monitor{Hydra({formula}, {}, {}, false, false, false)};
     EXPECT_EQ(monitor.to_string(), "P(c)");
 }
 
 TEST(TestHydra, testNoValidId) {
     Formula formula = Parser::parse("P[0, 1](c)");
-    EXPECT_THROW(auto monitor{Hydra({formula}, false, false, false)}, std::logic_error);
+    EXPECT_THROW(auto monitor{Hydra({formula}, {}, {}, false, false, false)}, std::logic_error);
 }
 
 TEST(TestHydra, testGetFormula) {
     Formula formula = Parser::parse("P[0, 1](c)");
     formula.setId("R1");
-    auto monitor{Hydra({formula}, false, false, false)};
+    auto monitor{Hydra({formula}, {}, {}, false, false, false)};
     EXPECT_EQ(monitor.getFormulas().size(), 1);
     EXPECT_EQ(monitor.getFormulas().at(0).getId(), "R1");
     EXPECT_EQ(monitor.getFormulas().at(0).to_string(), "P[0, 1](c)");
@@ -598,4 +598,166 @@ TEST(TestHydra, testAndOnceIntervallAnd2) {
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, false}, Verdict{3, false},
                                      Verdict{4, false}};
     hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution});
+}
+
+TEST(TestHydra, testSingleUniversal) {
+    Trace trace = Utils::createTrace({}, {{}, {}, {}, {}, {}});
+    Formula formula = Parser::parse("A x in D. higherThanTimeStep(x)");
+    formula.setId("R1");
+    DomainCollection domainCollection{Domain{"D", {"2, 3, 4"}}};
+    FunctionCollection functionCollection{{"higherThanTimeStep", 1,
+                                           [](int argc, char *args[]) -> bool {
+                                               size_t timeStep = strtol(args[0], nullptr, 10);
+                                               size_t val = strtol(args[1], nullptr, 10);
+                                               return val > timeStep;
+                                           }, true
+    }};
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, false}, Verdict{3, false},
+                                     Verdict{4, false}};
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution}, domainCollection, functionCollection);
+}
+
+TEST(TestHydra, testUniversalEmptyDomain) {
+    Trace trace = Utils::createTrace({}, {{}, {}, {}});
+    Formula formula = Parser::parse("A x in D. x");
+    formula.setId("R1");
+    DomainCollection domainCollection{Domain{"D", std::vector<std::string>()}};
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}};
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution}, domainCollection);
+}
+
+TEST(TestHydra, testUniversalNext) {
+    Trace trace = Utils::createTrace({}, {{}, {}, {}, {}, {}});
+    Formula formula = Parser::parse("A x in D. X(divisible_by_time_step(x))");
+    formula.setId("R1");
+    DomainCollection domainCollection{Domain{"D", {"4, 8, 16"}}};
+    FunctionCollection functionCollection{{"divisible_by_time_step", 1,
+                                           [](int argc, char *args[]) -> bool {
+                                               size_t timeStep = strtol(args[0], nullptr, 10);
+                                               size_t val = strtol(args[1], nullptr, 10);
+                                               if (timeStep == 0)
+                                                   return false;
+                                               return val % timeStep == 0;
+                                           }, true
+    }};
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, false}, Verdict{3, true},
+                                     Verdict{4, false}};
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution}, domainCollection, functionCollection);
+}
+
+TEST(TestHydra, testUniversalUntil) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a"}, {}, {}, {"a", "b"}, {"c"}});
+    Formula formula = Parser::parse("A x in D. ((true)U(x))");
+    formula.setId("R1");
+    DomainCollection domainCollection{Domain{"D", {"a", "b", "c"}}};
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+                                     Verdict{4, false}};
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution}, domainCollection);
+}
+
+TEST(TestHydra, testSingleExistential) {
+    Trace trace = Utils::createTrace({}, {{}, {}, {}, {}, {}, {}});
+    Formula formula = Parser::parse("E x in D. equalToTimeStep(x)");
+    formula.setId("R1");
+    DomainCollection domainCollection{Domain{"D", {"1", "3", "5", "7"}}};
+    FunctionCollection functionCollection{{"equalToTimeStep", 1,
+                                           [](int argc, char *args[]) -> bool {
+                                               size_t timeStep = strtol(args[0], nullptr, 10);
+                                               size_t val = strtol(args[1], nullptr, 10);
+                                               return val == timeStep;
+                                           }, true
+    }};
+    std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, true}, Verdict{2, false}, Verdict{3, true},
+                                     Verdict{4, false}, Verdict{5, true}};
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution}, domainCollection, functionCollection);
+}
+
+TEST(TestHydra, testExistentialEmptyDomain) {
+    Trace trace = Utils::createTrace({}, {{}, {}, {}});
+    Formula formula = Parser::parse("E x in D. x");
+    formula.setId("R1");
+    DomainCollection domainCollection{Domain{"D", std::vector<std::string>()}};
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}};
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution}, domainCollection);
+}
+
+TEST(TestHydra, testSingleCounting) {
+    Trace trace = Utils::createTrace({}, {{}, {}, {}, {}, {}, {}});
+    Formula formula = Parser::parse("C[0.2, 0.8] x in D. lower_than_time_step(x)");
+    formula.setId("R1");
+    DomainCollection domainCollection{Domain{"D", {"0", "1", "2", "3", "4"}}};
+    FunctionCollection functionCollection{{"lower_than_time_step", 1,
+                                           [](int argc, char *args[]) {
+                                               size_t timeStep = strtol(args[0], nullptr, 10);
+                                               size_t val = strtol(args[1], nullptr, 10);
+                                               return val < timeStep;
+                                           }, true
+    }};
+    std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true},
+                                     Verdict{4, true}, Verdict{5, false}};
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution}, domainCollection, functionCollection);
+}
+
+TEST(TestHydra, testCountingAtomic) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a", "b"}, {"c"}, {"a", "b", "c"}, {"a"}, {"b", "c"}});
+    Formula formula = Parser::parse("C[0.5, 1.] x in D. x");
+    formula.setId("R1");
+    DomainCollection domainCollection{Domain{"D", {"a", "b", "c"}}};
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, false}, Verdict{2, true}, Verdict{3, false}, Verdict{4, true}};
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution}, domainCollection);
+}
+
+TEST(TestHydra, testQuantifierMixed1) {
+    Trace trace = Utils::createTrace({"a", "b", "c", "d", "e", "f", "g"},
+                                     {{"a", "b", "c", "d"}, {"b", "e"}, {"b", "c"}, {"a", "c", "e", "f"}});
+    Formula formula = Parser::parse("C[0.5, 1.] x in D0. E y in D1. x & y");
+    formula.setId("R1");
+    std::vector<Domain> domains{Domain{"D0", {"a", "b", "c"}}, Domain{"D1", {"d", "e", "f", "g"}}};
+    DomainCollection domainCollection{domains};
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, false}, Verdict{2, false}, Verdict{3, true}};
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution}, domainCollection);
+}
+
+TEST(TestHydra, testQuantifierMixed2) {
+    Trace trace = Utils::createTrace({"a", "b", "c", "d", "e", "f"},
+                                     {{"a", "d", "e", "f"}, {"d", "e", "f"}, {"a", "b", "c", "e", "f"}, {"b", "c", "d", "e", "f"}});
+    Formula formula = Parser::parse("E x in D0. x & A y in D1. y");
+    formula.setId("R1");
+    std::vector<Domain> domains{Domain{"D0", {"a", "b", "c"}}, Domain{"D1", {"d", "e", "f"}}};
+    DomainCollection domainCollection{domains};
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, false}, Verdict{2, false}, Verdict{3, true}};
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution}, domainCollection);
+}
+
+TEST(TestHydra, testQuantifierScope) {
+    Trace trace = Utils::createTrace({}, {{}, {}, {}, {}});
+    Formula formula = Parser::parse("A x in D0. E x in D1. equal_to_time_step(x)");
+    formula.setId("R1");
+    std::vector<Domain> domains{Domain{"D0", {"7", "8", "9"}}, Domain{"D1", {"0", "1", "2"}}};
+    DomainCollection domainCollection{domains};
+    FunctionCollection functionCollection{{"equal_to_time_step", 1,
+                                           [](int argc, char *args[]) {
+                                               size_t timeStep = strtol(args[0], nullptr, 10);
+                                               size_t val = strtol(args[1], nullptr, 10);
+                                               return val == timeStep;
+                                           }, true
+    }};
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}, Verdict{3, false}};
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution}, domainCollection, functionCollection);
+}
+
+TEST(TestHydra, testSameFuncUniversal) {
+    Trace trace = Utils::createTrace({}, {{}});
+    Formula formula = Parser::parse("A x, y in D. x == y -> equals(x, y)");
+    formula.setId("R1");
+    DomainCollection domainCollection{Domain{"D", {"1", "2", "3", "4"}}};
+    FunctionCollection functionCollection{{"equals", 2,
+                                           [](int argc, char *args[]) {
+                                               size_t leftVal = strtol(args[0], nullptr, 10);
+                                               size_t rightVal = strtol(args[1], nullptr, 10);
+                                               return leftVal == rightVal;
+                                           }
+    }};
+    std::vector<Verdict> expSolution{Verdict{0, true}};
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution}, domainCollection, functionCollection);
 }
