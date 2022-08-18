@@ -9,7 +9,7 @@
 
 #include <set>
 
-enum TemoralFormulaType {
+enum TemporalFormulaType {
     futureOnly,    //**< Formula can only have future operators. */
     pastOnly,      //**< Formula can only have past operators. */
     safetyGeneral, //**< Formula must start with globally operator. Rest of formula can be arbitrary. */
@@ -19,8 +19,16 @@ enum TemoralFormulaType {
     futurePastCombined //**< Formula can consist of arbitrary combination of operators. */
 };
 
-struct SupportedFormulaType {
-    const TemoralFormulaType formulaType;
-    const bool interval; //**< The formula can have intervals. */
-    SupportedFormulaType(const TemoralFormulaType &formulaType, bool interval = true);
+struct MonitoringProperties {
+    const TemporalFormulaType formulaType; //**< Supported temporal formula type. */
+    const bool interval;                   //**< Boolean indicating that a formula can have intervals. */
+    const bool equidistantTime;            //**< Boolean indicating that the trace must have equidistant time steps. */
+
+    /**
+     *
+     * @param formulaType Supported temporal formula type.
+     * @param interval Boolean indicating that a formula can have intervals.
+     * @param equidistantTime Boolean indicating that the trace must have equidistant time steps.
+     */
+    MonitoringProperties(const TemporalFormulaType &formulaType, bool interval = true, bool equidistantTime = false);
 };

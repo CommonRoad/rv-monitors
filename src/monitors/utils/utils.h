@@ -34,8 +34,9 @@ struct Verdict {
      * @return Boolean value indicating equality.
      */
     bool operator==(const Verdict &verdict) const {
-        return verdict.timeStamp.has_value() and this->timeStamp.has_value() and
-               this->timeStamp == verdict.timeStamp and this->value == verdict.value;
+        return (verdict.timeStamp.has_value() and this->timeStamp.has_value() and
+                this->timeStamp == verdict.timeStamp and this->value == verdict.value) or
+               (!verdict.timeStamp.has_value() and !this->timeStamp.has_value() and this->value == verdict.value);
     }
 
     /**
@@ -116,9 +117,19 @@ template <typename T> bool isInInterval(const T &value, const T &low, const T &h
  * @param trueAtomics Vector of vectors containing predicates that are true in each event.
  * @return Trace.
  */
-[[nodiscard]] Trace
-createTrace(const std::set<std::string> &atomics, const std::vector<std::vector<std::string>> &trueAtomics,
-            const std::optional<std::vector<size_t>> &timeSteps = std::optional<std::vector<size_t>>{});
+[[nodiscard]] Trace createTrace(const std::set<std::string> &atomics,
+                                const std::vector<std::vector<std::string>> &trueAtomics,
+                                const std::vector<size_t> &timeSteps = std::vector<size_t>{});
+
+/**
+ * Creates a Trace.
+ *
+ * @param trueAtomics Vector of vectors containing predicates that are true in each event.
+ * @return Trace.
+ */
+[[nodiscard]] Trace createTrace(const std::vector<std::vector<std::string>> &trueAtomics,
+                                const std::vector<size_t> &timeSteps = std::vector<size_t>{},
+                                const std::shared_ptr<Formula> &formula = {});
 
 /**
  * Creates a Trace with lazy evaluation of the predicates.

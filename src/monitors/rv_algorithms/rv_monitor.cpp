@@ -8,6 +8,7 @@
 #include "monitors/rv_algorithms/hydra_2/hydra.h"
 #include "monitors/rv_algorithms/ltl_event_consuming/event_consuming.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
+#include "monitors/rv_algorithms/mtl_event_consuming/mtl_event_consuming.h"
 #include "monitors/utils/utils.h"
 #include <cassert>
 
@@ -40,6 +41,9 @@ std::ostream &operator<<(std::ostream &stream, const AlgorithmType &algorithm) {
     case hydra_mtl:
         stream << "Hydra-MTL";
         break;
+    case event_consuming_mtl:
+        stream << "EventConsuming-MTL";
+        break;
     }
     return stream;
 }
@@ -55,6 +59,8 @@ AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
         return mt_fsm;
     } else if (algorithmString == "btt-fsm*") {
         return btt_fsm;
+    } else if (algorithmString == "event-consuming-mtl") {
+        return event_consuming_mtl;
     } else {
         throw std::runtime_error(
             "Algorithm::stringToAlgorithm Command line argument " + algorithmString +
@@ -70,21 +76,24 @@ RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration 
         assert(pred.second[0] >= 0 and pred.second[0] <= 100 and pred.second[1] >= 0 and pred.second[1] <= 1);
     switch (configuration.algorithm) {
     case dynamic_programming_ltl:
-        monitor = std::make_unique<DynamicProgrammingLTL>(formulas, configuration.past);
+        monitor = std::make_unique<DynamicProgrammingLTL>(formulas);
         break;
     case event_consuming_ltl:
-        monitor = std::make_unique<EventConsumingLTL>(formulas, configuration.past);
+        monitor = std::make_unique<EventConsumingLTL>(formulas);
         break;
     case mt_fsm:
-        monitor = std::make_unique<MtFsm>(formulas, configuration.past);
+        monitor = std::make_unique<MtFsm>(formulas);
         break;
     case btt_fsm:
-        monitor = std::make_unique<BttFsm>(formulas, configuration.past);
+        monitor = std::make_unique<BttFsm>(formulas);
         break;
     case hydra_mtl:
         monitor =
             std::make_unique<Hydra>(formulas, configuration.hydraConnectedEvaluation, configuration.hydraReordering,
                                     configuration.hydraShortCircuiting, predicateCosts);
+        break;
+    case event_consuming_mtl:
+        monitor = std::make_unique<MTLEventConsuming>(formulas);
         break;
     }
 }
@@ -96,21 +105,24 @@ RVMonitor::RVMonitor(const Formula &formula, MonitorConfiguration configuration,
         assert(pred.second[0] >= 0 and pred.second[0] <= 100 and pred.second[1] >= 0 and pred.second[1] <= 1);
     switch (configuration.algorithm) {
     case dynamic_programming_ltl:
-        monitor = std::make_unique<DynamicProgrammingLTL>(std::vector<Formula>{formula}, configuration.past);
+        monitor = std::make_unique<DynamicProgrammingLTL>(std::vector<Formula>{formula});
         break;
     case event_consuming_ltl:
-        monitor = std::make_unique<EventConsumingLTL>(std::vector<Formula>{formula}, configuration.past);
+        monitor = std::make_unique<EventConsumingLTL>(std::vector<Formula>{formula});
         break;
     case mt_fsm:
-        monitor = std::make_unique<MtFsm>(std::vector<Formula>{formula}, configuration.past);
+        monitor = std::make_unique<MtFsm>(std::vector<Formula>{formula});
         break;
     case btt_fsm:
-        monitor = std::make_unique<BttFsm>(std::vector<Formula>{formula}, configuration.past);
+        monitor = std::make_unique<BttFsm>(std::vector<Formula>{formula});
         break;
     case hydra_mtl:
         monitor =
             std::make_unique<Hydra>(std::vector<Formula>{formula}, configuration.hydraConnectedEvaluation,
                                     configuration.hydraReordering, configuration.hydraShortCircuiting, predicateCosts);
+        break;
+    case event_consuming_mtl:
+        monitor = std::make_unique<MTLEventConsuming>(std::vector<Formula>{formula});
         break;
     }
 }
@@ -157,12 +169,10 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
 
 std::string RVMonitor::to_string() { return monitor->to_string(); }
 
-MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool past, bool measurement,
-                                           bool hydraConnectedEvaluation, bool hydraReordering,
-                                           bool hydraShortCircuiting)
-    : algorithm(algorithm), past(past), performanceMeasurement(measurement),
-      hydraConnectedEvaluation(hydraConnectedEvaluation), hydraReordering(hydraReordering),
-      hydraShortCircuiting(hydraShortCircuiting) {}
+MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool measurement, bool hydraConnectedEvaluation,
+                                           bool hydraReordering, bool hydraShortCircuiting)
+    : algorithm(algorithm), performanceMeasurement(measurement), hydraConnectedEvaluation(hydraConnectedEvaluation),
+      hydraReordering(hydraReordering), hydraShortCircuiting(hydraShortCircuiting) {}
 
-MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool past, bool measurement)
-    : algorithm(algorithm), past(past), performanceMeasurement(measurement) {}
+MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool measurement)
+    : algorithm(algorithm), performanceMeasurement(measurement) {}

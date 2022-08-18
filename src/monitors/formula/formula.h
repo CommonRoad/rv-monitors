@@ -15,7 +15,6 @@ class Formula {
   private:
     std::string id;                   //**< Id of formula. */
     std::shared_ptr<Expression> expr; //**< Expression object corresponding to formula. */
-    std::shared_ptr<Event> event = nullptr;
 
   public:
     /**
@@ -47,20 +46,6 @@ class Formula {
      * @param expression Expression.
      */
     void setExpr(const std::shared_ptr<Expression> &expression);
-
-    /**
-     * Getter for event.
-     *
-     * @return event.
-     */
-    [[nodiscard]] const std::shared_ptr<Event> &getEvent() const;
-
-    /**
-     * Setter for event.
-     *
-     * @param eve Event.
-     */
-    void setEvent(std::shared_ptr<Event> eve);
 
     /**
      * Transforms a formula to its negative normal form (NNF).
@@ -163,10 +148,18 @@ class Formula {
     /**
      * Checks if the formula type is compatible with the formulaTypes parameter.
      *
-     * @param formulaType what formula type the formula should compared with.
-     * @return bool if compatibility was discovered or not.
+     * @param formulaType what formula type the formula should be compared with.
+     * @return boolean indicating whether compatibility was discovered or not.
      */
-    bool checkCompatibility(SupportedFormulaType formulaType) const;
+    bool checkCompatibility(MonitoringProperties formulaType) const;
+
+    /**
+     * Checks compatibility of formula with respect to given formula types
+     *
+     * @param formulaTypes List of formula types the formula should be compared with
+     * @return boolean indicating whether compatibility was discovered or not.
+     */
+    bool checkCompatibility(std::vector<MonitoringProperties> formulaTypes) const;
 
     /**
      * Writes formula on existing output stream.
@@ -180,6 +173,7 @@ class Formula {
 
 /**
  * Custom < operator for comparing two formulas formula1 and formula2 by their string representations.
+ *
  * @param formula1 Formula.
  * @param formula2 Formula.
  * @return True if formula1 < formula2, false otherwise.
@@ -188,6 +182,7 @@ bool operator<(const Formula &formula1, const Formula &formula2);
 
 /**
  * Custom == operator for comparing two formulas formula1 and f2 by their string representations.
+ *
  * @param formula1 Formula.
  * @param formula1 Formula.
  * @return True if formula1 == formula2, false otherwise.

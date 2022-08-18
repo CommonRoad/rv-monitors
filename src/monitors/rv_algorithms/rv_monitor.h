@@ -16,8 +16,6 @@
 #include <iostream>
 #include <vector>
 
-enum AlgorithmType { dynamic_programming_ltl, event_consuming_ltl, mt_fsm, btt_fsm, hydra_mtl };
-
 /**
  * List of configuration parameters for the different monitoring algorithms.
  */
@@ -27,23 +25,21 @@ struct MonitorConfiguration {
      * Constructor defining all configuration variables.
      *
      * @param algorithm Algorithm type, e.g., hydra, event-consuming LTL, etc.
-     * @param past Only past evaluation (only relevant for certain algorithms, i.e. LTL algorithms)
      * @param measurement Indicates whether evaluation with time measurement should be performed
      * @param hydraConnectedEvaluation Indicates whether HYDRA monitor should perform connected evaluation
      * @param hydraReordering Indicates whether HYDRA monitor should perform reordering
      * @param hydraShortCircuiting Indicates whether HYDRA monitor should perform short circuiting
      */
-    MonitorConfiguration(AlgorithmType algorithm, bool past, bool measurement, bool hydraConnectedEvaluation,
-                         bool hydraReordering, bool hydraShortCircuiting);
+    MonitorConfiguration(AlgorithmType algorithm, bool measurement, bool hydraConnectedEvaluation, bool hydraReordering,
+                         bool hydraShortCircuiting);
 
     /**
      * Constructor defining only algorithm type, past evaluation, and performance evaluation.
      *
      * @param algorithm Algorithm type, e.g., hydra, event-consuming LTL, etc.
-     * @param past Only past evaluation (only relevant for certain algorithms, i.e. LTL algorithms)
      * @param measurement Indicates whether evaluation with time measurement should be performed
      */
-    MonitorConfiguration(AlgorithmType algorithm, bool past, bool measurement);
+    MonitorConfiguration(AlgorithmType algorithm, bool measurement);
 
     /*
      * Default constructor.
@@ -52,7 +48,6 @@ struct MonitorConfiguration {
 
     const AlgorithmType algorithm{
         AlgorithmType::hydra_mtl}; /**< Algorithm to use, e.g., Hydra, LTL event consuming, .... */
-    const bool past{false}; /**< Set only past evaluation (only relevant for certain algorithms, i.e. LTL algorithms) */
     const bool performanceMeasurement{
         false}; /**< Indicates whether evaluation with time measurement should be performed */
     const bool hydraConnectedEvaluation{

@@ -6,20 +6,20 @@
 //
 #include "until_monitor.h"
 
-size_t UntilMonitor::stepLeftRightMonitors(size_t stepNumber) {
-    subVerdictLeft = subMonitorLeft->step(monitorId, stepNumber, true);
+void UntilMonitor::stepLeftRightMonitors() {
+    subVerdictLeft = subMonitorLeft->step(monitorId, stepNumberUntil, true);
     if (subVerdictLeft->timeStamp)
         headPositionMonitorLeft.update(subVerdictLeft->timeStamp.value());
     else {
         endReached = true;
-        return ++stepNumber;
+        ++stepNumberUntil;
     }
-    subVerdictRight = subMonitorRight->step(monitorId, stepNumber, true);
+    subVerdictRight = subMonitorRight->step(monitorId, stepNumberUntil, true);
     if (subVerdictRight->timeStamp)
         headPositionMonitorRight.update(subVerdictRight->timeStamp.value());
     else
         endReached = true;
-    return ++stepNumber;
+    ++stepNumberUntil;
 }
 
 Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
@@ -39,13 +39,13 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         lastViolation = {};
 
     // if not step was performed yet or last verdicts are behind base time step, execute step for current base step
-    if (stepNumber == 0 or
+    if (stepNumberUntil == 0 or
         (subVerdictLeft->timeStamp.has_value() and
          subVerdictLeft->timeStamp.value() < headPositionMonitorBaseTimeStep.timeStep) or
         (subVerdictRight->timeStamp.has_value() and
          subVerdictRight->timeStamp.value() <
              headPositionMonitorBaseTimeStep.timeStep)) { // only executed at first call of function
-        stepNumber = stepLeftRightMonitors(stepNumber);
+        stepLeftRightMonitors();
     }
 
     while (!endReached && !lastViolation &&
@@ -60,9 +60,8 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         if (!subVerdictLeft->value) {
             lastViolation = HeadPos(headPositionMonitorLeft.timeStep, headPositionMonitorLeft.traceIdx);
         }
-        stepNumber = stepLeftRightMonitors(stepNumber);
+        stepLeftRightMonitors();
     }
-
     // check whether right side of until was satisfied, whether satisfaction is after start of allowed time interval,
     // and whether left side of from is greater/equal zero (required since unsigned, and we have an overflow
     if (lastSatisfaction && lastSatisfaction->timeStep - headPositionMonitorBaseTimeStep.timeStep >= from &&
