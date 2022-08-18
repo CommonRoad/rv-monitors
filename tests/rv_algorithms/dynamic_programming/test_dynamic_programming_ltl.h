@@ -2,4 +2,4 @@
 
 #include <gtest/gtest.h>
 
-class TestDynamicFuture : public testing::Test {};
+class TestDynamicProgrammingLTL : public testing::Test {};

@@ -65,7 +65,7 @@ void Hydra::createMonitor(const std::vector<Formula> &formulas, bool connectedEv
 
 Hydra::Hydra(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting,
              const std::map<std::string, std::array<double, 2>> &predicateCosts)
-    : MonitorInterface(formulas, {{TemoralFormulaType::safetyGeneral, true}}) {
+    : MonitorInterface(formulas, AlgorithmType::hydra_mtl) {
     for (const auto &pred : predicateCosts)
         assert(pred.second[0] < 0 or pred.second[0] > 1 or pred.second[1] < 0 or pred.second[1] > 1);
     createMonitor(formulas, connectedEval, reordering, shortCircuiting, predicateCosts);

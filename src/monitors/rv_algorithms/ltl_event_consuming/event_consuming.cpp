@@ -8,8 +8,7 @@
 
 EventConsumingLTL::EventConsumingLTL(const std::vector<Formula> &formulas, bool pastEvaluation,
                                      bool formulaCompatibilityCheck)
-    : MonitorInterface(formulas, {{TemoralFormulaType::futureOnly, false}, {TemoralFormulaType::pastSafety, false}},
-                       formulaCompatibilityCheck),
+    : MonitorInterface(formulas, AlgorithmType::event_consuming_ltl, formulaCompatibilityCheck),
       pastEvaluation(pastEvaluation) {}
 
 Formula EventConsumingLTL::eventConsumingFuture(Trace &trace) {

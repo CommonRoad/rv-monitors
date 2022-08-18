@@ -4,9 +4,9 @@
 #include "monitors/formula/supported_formula_type.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
 
-BttFsm::BttFsm(const std::vector<Formula> &formulas, bool pastEvaluation)
-    : MonitorInterface(formulas, {{TemoralFormulaType::futureOnly, false}, {TemoralFormulaType::pastSafety, false}}),
-      states(formulaToBTT_FSM()), pastEvaluation(pastEvaluation) {}
+BttFsm::BttFsm(const std::vector<Formula> &formulas)
+    : MonitorInterface(formulas, AlgorithmType::btt_fsm), states(formulaToBTT_FSM()),
+      pastEvaluation(formulas[0].checkCompatibility(TemporalFormulaType::pastSafety)) {}
 
 const std::vector<StateBttFsm> &BttFsm::getStates() const { return states; }
 
@@ -59,10 +59,10 @@ std::vector<StateBttFsm> BttFsm::formulaToBTT_FSM() {
 
     // Add states true and false
     for (const auto &mtFsmState : mtFsmStates) {
-        size_t id = mtFsmState.getId();
+        size_t stateId = mtFsmState.getId();
         // States false (0) and true (1)
-        if ((id == 0u) or id == 1) {
-            bttStates.emplace_back(id);
+        if ((stateId == 0u) or stateId == 1) {
+            bttStates.emplace_back(stateId);
             continue;
         }
         // Other state
@@ -75,7 +75,7 @@ std::vector<StateBttFsm> BttFsm::formulaToBTT_FSM() {
         auto bttTerminal = BTT_FSMUtilsCreation::findNextNode(mtFsmState.getTerminal(), precedencesTerminal);
 
         // Create new state and add it
-        auto newState = StateBttFsm(id, bttNonTerminal, bttTerminal);
+        auto newState = StateBttFsm(stateId, bttNonTerminal, bttTerminal);
         bttStates.push_back(newState);
     }
 

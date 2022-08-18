@@ -3,7 +3,6 @@
 #include "monitors/expression_tree/nary/bool/xor.h"
 #include "monitors/utils/utils.h"
 #include "nff.h"
-#include <utility>
 
 void Formula::toNnf() {
     auto before = deepCopy(expr);
@@ -17,10 +16,6 @@ void Formula::toNnf() {
 [[nodiscard]] std::shared_ptr<Expression> Formula::getExpr() const { return expr; }
 
 void Formula::setExpr(const std::shared_ptr<Expression> &expression) { expr = expression; }
-
-const std::shared_ptr<Event> &Formula::getEvent() const { return event; }
-
-void Formula::setEvent(std::shared_ptr<Event> eve) { event = std::move(eve); }
 
 [[nodiscard]] bool Formula::sameTree(const std::shared_ptr<Expression> &before,
                                      const std::shared_ptr<Expression> &after) {
@@ -43,7 +38,12 @@ Formula Formula::deepCopy() const { return Formula(Formula::deepCopy(getExpr()),
 
 const std::string &Formula::getId() const { return id; }
 
-bool Formula::checkCompatibility(SupportedFormulaType formulaType) const {
+bool Formula::checkCompatibility(std::vector<MonitoringProperties> formulaTypes) const {
+    return std::any_of(formulaTypes.begin(), formulaTypes.end(),
+                       [this](MonitoringProperties formulaType) { return this->checkCompatibility(formulaType); });
+}
+
+bool Formula::checkCompatibility(MonitoringProperties formulaType) const {
     auto formulaString = getExpr()->to_string();
     if (!formulaType.interval and formulaString.find('[') != std::string::npos)
         return false;

@@ -40,8 +40,12 @@ size_t HydraMonitor::getTraceIdxByParentId(size_t parentId) const { return trace
 
 Verdict HydraMonitor::step(size_t parentId, size_t stepNumber, bool singleStep) {
     auto verdict{Verdict(0, false)};
-    if (!connectedEval) // since no connected evaluation, perform step directly
-        verdict = concreteStep(parentId, stepNumber);
+    if (!connectedEval)
+        if (stepNumber >= traceIdx[parentId]) { // required step equals stored step, perform next step directly
+            verdict = simulateVerdict(parentId, stepNumber);
+        } else // step number is behind head position (e.g., if child of until operator) or specific verdict
+               // is directly required (only used by until operator)
+            verdict = concreteStep(parentId, stepNumber);
     else if (singleStep) { // step number is behind head position (e.g., if child of until operator) or specific verdict
                            // is directly required (only used by until operator)
         if (stepNumber >= traceIdx[parentId]) {
@@ -61,7 +65,7 @@ Verdict HydraMonitor::simulateVerdict(size_t parentId, size_t stepNumber) {
     while (stepNumber >= traceIdx[parentId]) {
         if (!connectedEval) { // since no connected evaluation, perform step directly
             verdict = concreteStep(parentId, traceIdx[parentId]);
-            //       ++traceIdx[parentId];
+            ++traceIdx[parentId];
         } else if (traceIdx[parentId] ==
                    getMaxTraceIdx()) { // if requested trace index equals maximum trace index based on all monitor heads
                                        // based on parent monitors, perform new step and store verdict

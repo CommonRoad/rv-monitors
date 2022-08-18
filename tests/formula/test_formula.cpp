@@ -17,14 +17,14 @@ TEST(TestFormula, testCheckCompatibility) {
     formulas.push_back(std::make_unique<Formula>(Parser::parse("G(a -> F(b & O(c)))")));
     formulas.push_back(std::make_unique<Formula>(Parser::parse("G((a -> O(c)))")));
     formulas.push_back(std::make_unique<Formula>(Parser::parse("G(F(c))")));
-    std::vector<SupportedFormulaType> formulaTypes;
-    formulaTypes.emplace_back(TemoralFormulaType::futureOnly, true);
-    formulaTypes.emplace_back(TemoralFormulaType::pastOnly, true);
-    formulaTypes.emplace_back(TemoralFormulaType::safetyGeneral, true);
-    formulaTypes.emplace_back(TemoralFormulaType::pastSafety, false);
-    formulaTypes.emplace_back(TemoralFormulaType::futurePastCombined, true);
-    formulaTypes.emplace_back(TemoralFormulaType::safetyGeneral, false);
-    formulaTypes.emplace_back(TemoralFormulaType::futureSafety, false);
+    std::vector<MonitoringProperties> formulaTypes;
+    formulaTypes.emplace_back(TemporalFormulaType::futureOnly, true);
+    formulaTypes.emplace_back(TemporalFormulaType::pastOnly, true);
+    formulaTypes.emplace_back(TemporalFormulaType::safetyGeneral, true);
+    formulaTypes.emplace_back(TemporalFormulaType::pastSafety, false);
+    formulaTypes.emplace_back(TemporalFormulaType::futurePastCombined, true);
+    formulaTypes.emplace_back(TemporalFormulaType::safetyGeneral, false);
+    formulaTypes.emplace_back(TemporalFormulaType::futureSafety, false);
     std::vector<bool> expectedResult{false, true,  false, false, true,  false, false, true,  false, false, false,
                                      true,  false, false, false, false, true,  false, true,  false, false, false,
                                      false, true,  false, true,  true,  false, false, false, true,  true,  true,

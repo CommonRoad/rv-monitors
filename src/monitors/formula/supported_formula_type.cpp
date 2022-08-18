@@ -6,5 +6,6 @@
 //
 #include "supported_formula_type.h"
 
-SupportedFormulaType::SupportedFormulaType(const TemoralFormulaType &formulaType, const bool interval)
-    : formulaType(formulaType), interval(interval) {}
+MonitoringProperties::MonitoringProperties(const TemporalFormulaType &formulaType, const bool interval,
+                                           const bool equidistantTime)
+    : formulaType(formulaType), interval(interval), equidistantTime(equidistantTime) {}

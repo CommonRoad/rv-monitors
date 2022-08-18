@@ -12,6 +12,9 @@
 #include "constant_monitor.h"
 #include "hydra_monitor.h"
 
+/**
+ * Hydra monitor for representing until operator.
+ */
 class UntilMonitor : public HydraMonitor {
   public:
     /**
@@ -66,11 +69,8 @@ class UntilMonitor : public HydraMonitor {
   private:
     /**
      * Executes left and right monitors of until.
-     *
-     * @param stepNumber
-     * @return Incremented step number.
      */
-    size_t stepLeftRightMonitors(size_t stepNumber);
+    void stepLeftRightMonitors();
 
     std::shared_ptr<HydraMonitor> subMonitorLeft;  //**< Monitor for specification on left side of until. */
     std::shared_ptr<HydraMonitor> subMonitorRight; //**< Monitor for specification on right side of until. */
@@ -89,4 +89,5 @@ class UntilMonitor : public HydraMonitor {
     std::optional<HeadPos> lastSatisfaction;       //**< Last time right side of until was satisfied. */
     std::optional<HeadPos> lastViolation;          //**< Last time left side of until was violated. */
     bool endReached{false};                        //**< Boolean indicating whether end of trace was reached. */
+    size_t stepNumberUntil{0}; //**< Stores real step number because until operator can be before parent step number. */
 };
