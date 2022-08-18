@@ -111,6 +111,42 @@ TEST(TestUniversalMonitor, testUniversalMonitorAtomic) {
     EXPECT_EQ(mon.step(0, 4).b, false);
 }
 
+TEST(TestUniversalMonitor, testUniversalVariableAsPredicate) {
+    Trace trace = Utils::createTrace({}, {{}, {}, {}, {}, {}}, std::vector<size_t>{0, 1, 2, 3, 4});
+    Formula formula = Parser::parse("A x in D0, y in D1. x(y)");
+    Formula formulaPredicate = Parser::parse("x(y)");
+    formula.setId("R1");
+    DomainCollection domainCollection;
+    domainCollection.addDomain({"D0", {Value("higher_than_time_step"), Value("even_time_step")}});
+    domainCollection.addDomain({"D1", {Value("3"), Value("4")}});
+    FunctionCollection functionCollection;
+    functionCollection.addFunction({"higher_than_time_step", 1,
+                                    [](int argc, char *args[]) -> bool {
+                                        size_t timeStep = strtol(args[0], nullptr, 10);
+                                        size_t val = strtol(args[1], nullptr, 10);
+                                        return val > timeStep;
+                                    }, true
+    });
+    functionCollection.addFunction({"even_time_step", 1,
+                                    [](int argc, char *args[]) -> bool {
+                                        size_t timeStep = strtol(args[0], nullptr, 10);
+                                        return timeStep % 2 == 0;
+                                    }, true
+    });
+    auto mon1{std::make_shared<PredicateMonitor>(formulaPredicate, 2, functionCollection, false)};
+    mon1->registerParent(1);
+    std::map<std::string, std::string> variables{std::make_pair("x", "D0"), std::make_pair("y", "D1")};
+    auto mon{UniversalMonitor(formula, mon1, 1, variables, domainCollection, false, false)};
+    mon.registerParent(0);
+    mon.setTrace(trace);
+    EXPECT_EQ(mon.step(0, 0).b, true);
+    EXPECT_EQ(mon.step(0, 1).b, false);
+    EXPECT_EQ(mon.step(0, 2).b, true);
+    EXPECT_EQ(mon.step(0, 3).b, false);
+    EXPECT_EQ(mon.step(0, 4).b, false);
+    EXPECT_EQ(mon.step(0, 5).b, false);
+}
+
 TEST(TestUniversalMonitor, testUniversalMonitorToString) {
     Formula formula = Parser::parse("A x, y in D. p(x, y, '100')");
     Formula formulaPredicate = Parser::parse("p(x, y, '100')");

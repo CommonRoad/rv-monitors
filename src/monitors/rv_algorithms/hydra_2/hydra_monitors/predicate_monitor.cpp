@@ -14,7 +14,13 @@ Verdict PredicateMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         if (trace.isTraced(predicate, traceIdx[parentId])) {
             return {event.getTimeStep(), event.getValue(predicate)};
         } else {
-            Function function = functions.getFunction(predicate.getName());
+            std::string predName;
+            auto iterFunc{variableValues.find(predicate.getName())};
+            if (iterFunc != variableValues.end())
+                predName = iterFunc->second.getVal();
+            else
+                predName = predicate.getName();
+            Function function = functions.getFunction(predName);
             int argc = static_cast<int>(predicate.getArguments().size());
             std::vector<std::string> args;
             if (function.getWithTimeStepArgument()) {
@@ -24,9 +30,9 @@ Verdict PredicateMonitor::concreteStep(size_t parentId, size_t stepNumber) {
             for (const auto &[argName, argType] : predicate.getArguments()) {
                 switch (argType) {
                 case Predicate::VARIABLE: {
-                    auto iter{variableValues.find(argName)};
-                    if (iter != variableValues.end())
-                        args.push_back(iter->second.getVal());
+                    auto iterVar{variableValues.find(argName)};
+                    if (iterVar != variableValues.end())
+                        args.push_back(iterVar->second.getVal());
                     else
                         throw std::runtime_error("Undefined variable " + argName + "!");
                     break;
