@@ -7,13 +7,13 @@
 
 TEST(TestCountingMonitor, testCountingMonitorStandard) {
     Trace trace = Utils::createTrace({}, {{}, {}, {}, {}, {}}, std::vector<size_t>{0, 1, 2, 3, 4});
-    Formula formula = Parser::parse("C[0.2, 0.7] x in D. higherThanStep(x)");
-    Formula formulaPredicate = Parser::parse("higherThanStep(x)");
+    Formula formula = Parser::parse("C[0.2, 0.7] x in D. higher_than_time_step(x)");
+    Formula formulaPredicate = Parser::parse("higher_than_time_step(x)");
     formula.setId("R1");
     DomainCollection domainCollection;
     domainCollection.addDomain({"D", {"1", "2", "3", "4"}});
     FunctionCollection functionCollection;
-    functionCollection.addFunction({"higherThanStep", 1,
+    functionCollection.addFunction({"higher_than_time_step", 1,
                                     [](int argc, char *args[]) -> bool {
                                         size_t timeStep = strtol(args[0], nullptr, 10);
                                         size_t val = strtol(args[1], nullptr, 10);
@@ -38,13 +38,13 @@ TEST(TestCountingMonitor, testCountingMonitorStandard) {
 
 TEST(TestCountingMonitor, testWrongIntervalOrder) {
     Trace trace = Utils::createTrace({}, {{}, {}, {}, {}}, std::vector<size_t>{0, 1, 2, 3});
-    Formula formula = Parser::parse("C[0.5, 0.3] x in D. higherThanZero(x)");
-    Formula formulaPredicate = Parser::parse("higherThanZero(x)");
+    Formula formula = Parser::parse("C[0.5, 0.3] x in D. higher_than_zero(x)");
+    Formula formulaPredicate = Parser::parse("higher_than_zero(x)");
     formula.setId("R1");
     DomainCollection domainCollection;
     domainCollection.addDomain({"D", {"2", "4", "8"}});
     FunctionCollection functionCollection;
-    functionCollection.addFunction({"higherThanZero", 1,
+    functionCollection.addFunction({"higher_than_zero", 1,
                                     [](int argc, char *args[]) -> bool {
                                         return strtol(args[0], nullptr, 10) > 0;
                                     }

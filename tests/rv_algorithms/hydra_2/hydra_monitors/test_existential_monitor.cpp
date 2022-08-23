@@ -6,13 +6,13 @@
 
 TEST(TestExistentialMonitor, testExistentialMonitorStandard) {
     Trace trace = Utils::createTrace({}, {{}, {}, {}, {}}, std::vector<size_t>{0, 1, 2, 3});
-    Formula formula = Parser::parse("E x in D. equalToStep(x)");
-    Formula formulaPredicate = Parser::parse("equalToStep(x)");
+    Formula formula = Parser::parse("E x in D. equal_to_time_step(x)");
+    Formula formulaPredicate = Parser::parse("equal_to_time_step(x)");
     formula.setId("R1");
     DomainCollection domainCollection;
     domainCollection.addDomain({"D", {"0", "1", "3", "4"}});
     FunctionCollection functionCollection;
-    functionCollection.addFunction({"equalToStep", 1,
+    functionCollection.addFunction({"equal_to_time_step", 1,
                                     [](int argc, char *args[]) -> bool {
                                         size_t timeStep = strtol(args[0], nullptr, 10);
                                         size_t val = strtol(args[1], nullptr, 10);

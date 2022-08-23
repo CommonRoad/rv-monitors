@@ -44,6 +44,7 @@ void QuantifierMonitor::resetIterators() {
     for (auto &varDomain : varDomains)
         iters.push_back(varDomain.second.begin());
 }
+
 size_t QuantifierMonitor::numCombinations() const {
     size_t numCombinations{1};
     for (const auto &varDomain : varDomains)

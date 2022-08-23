@@ -602,10 +602,10 @@ TEST(TestHydra, testAndOnceIntervallAnd2) {
 
 TEST(TestHydra, testSingleUniversal) {
     Trace trace = Utils::createTrace({}, {{}, {}, {}, {}, {}});
-    Formula formula = Parser::parse("A x in D. higherThanTimeStep(x)");
+    Formula formula = Parser::parse("A x in D. higher_than_time_step(x)");
     formula.setId("R1");
     DomainCollection domainCollection{Domain{"D", {"2, 3, 4"}}};
-    FunctionCollection functionCollection{{"higherThanTimeStep", 1,
+    FunctionCollection functionCollection{{"higher_than_time_step", 1,
                                            [](int argc, char *args[]) -> bool {
                                                size_t timeStep = strtol(args[0], nullptr, 10);
                                                size_t val = strtol(args[1], nullptr, 10);
@@ -614,6 +614,22 @@ TEST(TestHydra, testSingleUniversal) {
     }};
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, false}, Verdict{3, false},
                                      Verdict{4, false}};
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution}, domainCollection, functionCollection);
+}
+
+TEST(TestHydra, testUniversalTracePriority) {
+    Trace trace = Utils::createTrace({"lower_than_time_step(x)"}, {{"lower_than_time_step(x)"}, {"lower_than_time_step(x)"}, {}, {}});
+    Formula formula = Parser::parse("A x in D. lower_than_time_step(x)");
+    formula.setId("R1");
+    DomainCollection domainCollection{Domain{"D", {"-1", "0", "1"}}};
+    FunctionCollection functionCollection{{"lower_than_time_step", 1,
+                                           [](int argc, char *args[]) -> bool {
+                                               int timeStep = strtol(args[0], nullptr, 10);
+                                               int val = strtol(args[1], nullptr, 10);
+                                               return val < timeStep;
+                                           }, true
+    }};
+    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, false}, Verdict{3, false}};
     hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution}, domainCollection, functionCollection);
 }
 
@@ -657,10 +673,10 @@ TEST(TestHydra, testUniversalUntil) {
 
 TEST(TestHydra, testSingleExistential) {
     Trace trace = Utils::createTrace({}, {{}, {}, {}, {}, {}, {}});
-    Formula formula = Parser::parse("E x in D. equalToTimeStep(x)");
+    Formula formula = Parser::parse("E x in D. equal_to_time_step(x)");
     formula.setId("R1");
     DomainCollection domainCollection{Domain{"D", {"1", "3", "5", "7"}}};
-    FunctionCollection functionCollection{{"equalToTimeStep", 1,
+    FunctionCollection functionCollection{{"equal_to_time_step", 1,
                                            [](int argc, char *args[]) -> bool {
                                                size_t timeStep = strtol(args[0], nullptr, 10);
                                                size_t val = strtol(args[1], nullptr, 10);

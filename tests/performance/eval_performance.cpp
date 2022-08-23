@@ -44,6 +44,7 @@ void evalFormula1(const std::vector<Formula> &formulas, size_t numExecutions, st
 void evalFormula2(const std::vector<Formula> &formulas, size_t numExecutions, std::vector<size_t> &traceLength);
 void evalFormula1Atomic(const std::vector<Formula> &formulas, size_t numExecutions, std::vector<size_t> &traceLength);
 void evalFormula2Atomic(const std::vector<Formula> &formulas, size_t numExecutions, std::vector<size_t> &traceLength);
+void evalUniversalOperator(size_t maxArgs, size_t maxDomain, size_t traceLength);
 
 bool a(size_t dummy) {
     rng.seed(seed_val);
@@ -145,7 +146,7 @@ double evalHydraSingle(Trace &trace, const std::vector<Formula> &formulas) {
     std::vector<Hydra> monitors;
     monitors.reserve(formulas.size());
     for (const auto &form : formulas)
-        monitors.push_back(Hydra({form}, false));
+        monitors.push_back(Hydra({form}, {}, {}, false));
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
     for (size_t i{0}; i < monitors.size(); ++i)
@@ -488,7 +489,7 @@ void test_7(std::ofstream &out);
 void test_8(std::ofstream &out);
 
 int main() {
-    size_t testNumber;
+    /*size_t testNumber;
     std::ofstream outStream;
     outStream.open("eval_performance_results.txt");
 
@@ -547,7 +548,8 @@ int main() {
     default:
         std::cout << "Unkown Test!";
     }
-    outStream.close();
+    outStream.close();*/
+    evalUniversalOperator(4, 50, 1);
 }
 /*
 void test_0() {
@@ -1141,5 +1143,50 @@ void evalFormula2Atomic(const std::vector<Formula> &formulas, size_t numExecutio
     for (const auto &length : traceLength) {
         std::cout << "Trace Length: " << length << '\n';
         executeEval(formulas, numExecutions, length);
+    }
+}
+
+void evalUniversalOperator(size_t maxArgs, size_t maxDomain, size_t traceLength) {
+    for (size_t numArgs = 1; numArgs <= maxArgs; numArgs++) {
+        for (size_t sizeDomain = 1; sizeDomain <= maxDomain; sizeDomain += 10) {
+            std::vector<Value> values;
+            for (size_t i = 0; i < sizeDomain; i++)
+                values.emplace_back(std::to_string(i));
+            DomainCollection domainCollection{Domain{"D", values}};
+            std::map<std::string, std::string> variables;
+            for (size_t i = 0; i < numArgs; i++)
+                variables.insert(std::make_pair("x" + std::to_string(i), "D"));
+            std::string universalPart{"A "};
+            std::string andPart{};
+            for (size_t i = 0; i < variables.size(); i++) {
+                auto iter{variables.begin()};
+                std::advance(iter, i);
+                if (i == variables.size() - 1) {
+                    universalPart += iter->first + " in " + iter->second + ". ";
+                    andPart += iter->first;
+                } else {
+                    universalPart += iter->first + ", ";
+                    andPart += iter->first + "& ";
+                }
+            }
+            Formula formula = Parser::parse(universalPart + andPart);
+            formula.setId("R1");
+            if (sizeDomain == 1)
+                std::cout << "Evaluation of formula: " << formula.to_string() << std::endl;
+            Hydra hydra{std::vector<Formula>{formula}, domainCollection, {}, false, false, true};
+            std::set<std::string> atomics;
+            for (Value &val : values)
+                atomics.insert(val.getVal());
+            std::vector<std::vector<std::string>> trueVerdicts;
+            for (size_t i = 0; i < traceLength; i++)
+                trueVerdicts.emplace_back(std::vector<std::string>());
+            Trace trace = Utils::createTrace(atomics, trueVerdicts);
+            auto start{std::chrono::system_clock::now()};
+            hydra.evaluate(trace);
+            auto end{std::chrono::system_clock::now()};
+            auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+            std::cout << "Num. Args: " << numArgs << " Size Domain: " << sizeDomain << " Trace Length: " << traceLength << " Eval. Time: " << elapsed.count() << std::endl;
+        }
+        std::cout << std::endl;
     }
 }

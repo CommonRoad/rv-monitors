@@ -7,13 +7,13 @@
 
 TEST(TestUniversalMonitor, testUniversalMonitorStandard) {
     Trace trace = Utils::createTrace({}, {{}, {}, {}, {}}, std::vector<size_t>{0, 1, 2, 3});
-    Formula formula = Parser::parse("A x in D0, y in D1. oneHigher(x, y)");
-    Formula formulaPredicate = Parser::parse("oneHigher(x, y)");
+    Formula formula = Parser::parse("A x in D0, y in D1. one_higher(x, y)");
+    Formula formulaPredicate = Parser::parse("one_higher(x, y)");
     formula.setId("R1");
     std::vector<Domain> domains{{"D0", {"2", "3", "4", "5", "6"}}, {"D1", {"3", "4", "5"}}};
     DomainCollection domainCollection{domains};
     FunctionCollection functionCollection;
-    functionCollection.addFunction({"oneHigher", 2,
+    functionCollection.addFunction({"one_higher", 2,
                                     [](int argc, char *args[]) -> bool {
                                         size_t timeStep = strtol(args[0], nullptr, 10);
                                         size_t fstVal = strtol(args[1], nullptr, 10);
@@ -36,14 +36,14 @@ TEST(TestUniversalMonitor, testUniversalMonitorStandard) {
 
 TEST(TestUniversalMonitor, testUniversalMonitorVariableScope) {
     Trace trace = Utils::createTrace({}, {{}}, std::vector<size_t>{0});
-    Formula formula = Parser::parse("A x in D0. A x in D1. isNegative(x)");
-    Formula formulaUniversal = Parser::parse("A x in D1. isNegative(x)");
-    Formula formulaPredicate = Parser::parse("isNegative(x)");
+    Formula formula = Parser::parse("A x in D0. A x in D1. is_negative(x)");
+    Formula formulaUniversal = Parser::parse("A x in D1. is_negative(x)");
+    Formula formulaPredicate = Parser::parse("is_negative(x)");
     formula.setId("R1");
     std::vector<Domain> domains{{"D0", {"1", "2", "3"}}, {"D1", {"-1", "-2", "-3"}}};
     DomainCollection domainCollection{domains};
     FunctionCollection functionCollection;
-    functionCollection.addFunction({"isNegative", 1,
+    functionCollection.addFunction({"is_negative", 1,
                            [](int argc, char *args[]) -> bool {
                                return strtol(args[0], nullptr, 10) < 0;
                            }
