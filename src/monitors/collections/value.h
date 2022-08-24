@@ -3,32 +3,37 @@
 #include "string"
 
 class Value {
-
-    /// Value
-    std::string  val;
-
-    /// Weight
-    float weight;
-
   public:
-
-    /// First constructor
+    /**
+     * First constructor.
+     *
+     * @param val Value.
+     * @param weight Weight.
+     */
     Value(std::string val, float weight);
 
-    /// Second constructor
+    /**
+     * Second constructor.
+     *
+     * @param val Value.
+     */
     Value(std::string val);
 
     /**
      * Returns value.
      *
-     * @return Value
+     * @return Value.
      */
     [[nodiscard]] std::string &getVal();
 
     /**
      * Returns weight.
      *
-     * @return Weight
+     * @return Weight.
      */
     [[nodiscard]] float getWeight() const;
+
+  private:
+    std::string  val; //**< Value. */
+    float weight; //**< Weight. */
 };

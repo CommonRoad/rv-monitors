@@ -6,16 +6,35 @@
 #include "monitors/rewriting/hydra_rewrite_visitor.h"
 
 class UniversalQuantifier : public Unary, public FirstOrderOperator {
-
   public:
-    /// First constructor
+    /**
+     * First constructor.
+     *
+     * @param left Child expression.
+     * @param variables Variables used by quantifier.
+     */
     explicit UniversalQuantifier(std::shared_ptr<Expression> &left, std::vector<Variable> &variables);
 
-    /// Second constructor
+    /**
+     * Second constructor.
+     *
+     * @param left Child expression.
+     * @param variable Variable used by quantifier.
+     */
     explicit UniversalQuantifier(std::shared_ptr<Expression> &left, Variable &variable);
 
+    /**
+     * Creates string representation of expression.
+     *
+     * @return String representing expression.
+     */
     [[nodiscard]] std::string to_string() const override;
 
+    /**
+     * Clones the universal quantifier expression.
+     *
+     * @return Cloned expression.
+     */
     [[nodiscard]] std::shared_ptr<Expression> clone() override;
 
     [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override;

@@ -5,49 +5,67 @@
 #include "monitors/expression_tree/first_order_operator.h"
 
 class ProbabilityInterval {
-
-  private:
-    /// Minimum of probability
-    float min;
-
-    /// Maximum of probability
-    float max;
-
   public:
-    /// Constructor
+    /**
+     * Constructor.
+     *
+     * @param min Minimum probability.
+     * @param max Maximum probability.
+     */
     explicit ProbabilityInterval(float min, float max);
 
     /**
      * Returns minimum of probability.
      *
-     * @return Minimum
+     * @return Minimum.
      */
     [[nodiscard]] float getMin() const;
 
     /**
      * Returns maximum of probability.
      *
-     * @return Maximum
+     * @return Maximum.
      */
     [[nodiscard]] float getMax() const;
+
+  private:
+    float min; //**< Minimum probability. */
+    float max; //**< Maximum probability. */
 
 };
 
 class CountingQuantifier : public Unary, public FirstOrderOperator {
-
-  private:
-    /// Probability interval
-    ProbabilityInterval probInterval;
-
   public:
-    /// First constructor
+    /**
+     * First constructor.
+     *
+     * @param left Child expression.
+     * @param variables Variables used by quantifier.
+     * @param probInterval Probability interval.
+     */
     explicit CountingQuantifier(std::shared_ptr<Expression> &left, std::vector<Variable> &variables, ProbabilityInterval &probInterval);
 
-    /// Second constructor
+    /**
+     * Second constructor.
+     *
+     * @param left Child expression.
+     * @param variable Variable used by expression.
+     * @param probInterval Probability interval.
+     */
     explicit CountingQuantifier(std::shared_ptr<Expression> &left, Variable &variable, ProbabilityInterval &probInterval);
 
+    /**
+     * Creates string representation of expression.
+     *
+     * @return String representing expression.
+     */
     [[nodiscard]] std::string to_string() const override;
 
+    /**
+     * Clones the counting quantifier expression.
+     *
+     * @return Cloned expression.
+     */
     [[nodiscard]] std::shared_ptr<Expression> clone() override;
 
     [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override;
@@ -57,9 +75,12 @@ class CountingQuantifier : public Unary, public FirstOrderOperator {
     /**
      * Returns probability interval.
      *
-     * @return Probability interval
+     * @return Probability interval.
      */
     const ProbabilityInterval &getProbInterval() const;
+
+  private:
+    ProbabilityInterval probInterval; //**< Probability interval. */
 
 };
 

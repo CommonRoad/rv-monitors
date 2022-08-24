@@ -5,85 +5,97 @@
 #include "vector"
 
 class Domain {
-
-    /// Name
-    std::string name;
-
-    /// Values
-    std::vector<Value> values;
-
   public:
 
-    /// First constructor
+    /**
+     * First constructor.
+     *
+     * @param name Name of domain.
+     * @param values Values of domain.
+     */
     Domain(std::string name, std::vector<Value> values);
 
-    /// Second constructor
+    /**
+     * Second constructor.
+     *
+     * @param name Name of domain.
+     * @param values Values of domain.
+     */
     Domain(std::string name, const std::vector<std::string> &values);
 
-    /// Add operator
+    /**
+     * Unifies two domains.
+     *
+     * @param other Other domain.
+     * @return Unified domain.
+     */
     [[nodiscard]] Domain operator+(const Domain &other);
 
     /**
-     * Returns size of collections.
+     * Returns size of domain.
      *
-     * @return Size
+     * @return Size.
      */
     [[nodiscard]] size_t size() const;
 
     /**
      * Returns iterator pointing to beginning.
      *
-     * @return Iterator
+     * @return Iterator.
      */
     [[nodiscard]] std::vector<Value>::iterator begin();
 
     /**
      * Returns iterator pointing to ending.
      *
-     * @return Iterator
+     * @return Iterator.
      */
     [[nodiscard]] std::vector<Value>::iterator end();
 
     /**
-     * Adds value to collections.
+     * Adds value to domain.
      *
-     * @param val Value
+     * @param val Value.
      */
     void addValue(const std::string &val);
 
     /**
-     * Adds value to collections.
+     * Adds value to domain.
      *
-     * @param val Value
+     * @param val Value.
      */
     void addValue(const Value &val);
 
     /**
-     * Adds values to collections.
+     * Adds values to domain.
      *
-     * @param vals Values
+     * @param vals Values.
      */
     void addValues(const std::vector<std::string> &vals);
 
     /**
-     * Adds values to collections.
+     * Adds values to domain.
      *
-     * @param values Values
+     * @param values Values.
      */
     void addValues(const std::vector<Value> &values);
 
     /**
-     * Calculates average of weight in collections.
+     * Calculates average of values weights.
      *
-     * @return Averaged weight
+     * @return Averaged weight.
      */
     float calcWeightAverage() const;
 
     /**
-     * Returns name of collections.
+     * Returns name of domain.
      *
-     * @return Name
+     * @return Name.
      */
     [[nodiscard]] std::string getName() const;
+
+  private:
+    std::string name; //**< Name of domain. */
+    std::vector<Value> values; //**< Values of domain. */
 
 };
