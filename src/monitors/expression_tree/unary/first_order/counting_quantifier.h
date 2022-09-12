@@ -1,58 +1,39 @@
-#ifndef RVMONITORS_COUNTING_QUANTIFIER_H
-#define RVMONITORS_COUNTING_QUANTIFIER_H
+#pragma once
 
 #include "monitors/expression_tree/unary/unary.h"
 #include "monitors/expression_tree/first_order_operator.h"
 
-class ProbabilityInterval {
-  public:
-    /**
-     * Constructor.
-     *
-     * @param min Minimum probability.
-     * @param max Maximum probability.
-     */
-    explicit ProbabilityInterval(float min, float max);
-
-    /**
-     * Returns minimum of probability.
-     *
-     * @return Minimum.
-     */
-    [[nodiscard]] float getMin() const;
-
-    /**
-     * Returns maximum of probability.
-     *
-     * @return Maximum.
-     */
-    [[nodiscard]] float getMax() const;
-
-  private:
-    float min; //**< Minimum probability. */
-    float max; //**< Maximum probability. */
-
-};
-
+/**
+ * Class representing counting quantifier.
+ */
 class CountingQuantifier : public Unary, public FirstOrderOperator {
   public:
+    /**
+     * Operator type of counting quantifier.
+     */
+    enum Operator { LESS_EQ, EQ, GREATER_EQ };
+
     /**
      * First constructor.
      *
      * @param left Child expression.
      * @param variables Variables used by quantifier.
-     * @param probInterval Probability interval.
+     * @param op Operator type.
+     * @param num Number.
      */
-    explicit CountingQuantifier(std::shared_ptr<Expression> &left, std::vector<Variable> &variables, ProbabilityInterval &probInterval);
+    explicit CountingQuantifier(std::shared_ptr<Expression> &left, std::vector<Variable> &variables,
+                                Operator op, size_t num);
 
     /**
      * Second constructor.
      *
      * @param left Child expression.
-     * @param variable Variable used by expression.
-     * @param probInterval Probability interval.
+     * @param variable Variable used by quantifier.
+     * @param op Operator type.
+     * @param num Number.
      */
-    explicit CountingQuantifier(std::shared_ptr<Expression> &left, Variable &variable, ProbabilityInterval &probInterval);
+    explicit CountingQuantifier(std::shared_ptr<Expression> &left, Variable &variable,
+                                Operator op, size_t num);
 
     /**
      * Creates string representation of expression.
@@ -64,7 +45,7 @@ class CountingQuantifier : public Unary, public FirstOrderOperator {
     /**
      * Clones the counting quantifier expression.
      *
-     * @return Cloned expression.
+     * @return Clones expression.
      */
     [[nodiscard]] std::shared_ptr<Expression> clone() override;
 
@@ -73,15 +54,21 @@ class CountingQuantifier : public Unary, public FirstOrderOperator {
     [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor, size_t parentId, bool connectedEval) override;
 
     /**
-     * Returns probability interval.
+     * Returns operator type.
      *
-     * @return Probability interval.
+     * @return Operator type.
      */
-    const ProbabilityInterval &getProbInterval() const;
+    const Operator &getOperator() const;
+
+    /**
+     * Returns number.
+     *
+     * @return Number.
+     */
+    size_t getNum() const;
 
   private:
-    ProbabilityInterval probInterval; //**< Probability interval. */
+    Operator op; //**< Operator type. */
+    size_t num; //**< Number. */
 
 };
-
-#endif // RVMONITORS_COUNTING_QUANTIFIER_H

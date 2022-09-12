@@ -693,13 +693,13 @@ TEST(TestHydra, testExistentialEmptyDomain) {
     Formula formula = Parser::parse("E x in D. x");
     formula.setId("R1");
     DomainCollection domainCollection{Domain{"D", std::vector<std::string>()}};
-    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, true}};
+    std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, false}, Verdict{2, false}};
     hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution}, domainCollection);
 }
 
-TEST(TestHydra, testSingleCounting) {
+TEST(TestHydra, testSingleQuote) {
     Trace trace = Utils::createTrace({}, {{}, {}, {}, {}, {}, {}});
-    Formula formula = Parser::parse("C[0.2, 0.8] x in D. lower_than_time_step(x)");
+    Formula formula = Parser::parse("Q[0.2, 0.8] x in D. lower_than_time_step(x)");
     formula.setId("R1");
     DomainCollection domainCollection{Domain{"D", {"0", "1", "2", "3", "4"}}};
     FunctionCollection functionCollection{{"lower_than_time_step", 1,
@@ -714,19 +714,37 @@ TEST(TestHydra, testSingleCounting) {
     hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution}, domainCollection, functionCollection);
 }
 
-TEST(TestHydra, testCountingAtomic) {
+TEST(TestHydra, testQuoteAtomic) {
     Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a", "b"}, {"c"}, {"a", "b", "c"}, {"a"}, {"b", "c"}});
-    Formula formula = Parser::parse("C[0.5, 1.] x in D. x");
+    Formula formula = Parser::parse("Q[0.5, 1.] x in D. x");
     formula.setId("R1");
     DomainCollection domainCollection{Domain{"D", {"a", "b", "c"}}};
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, false}, Verdict{2, true}, Verdict{3, false}, Verdict{4, true}};
     hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution}, domainCollection);
 }
 
+TEST(TestHydra, testCountingAtomic1) {
+    Trace trace = Utils::createTrace({"a", "b", "c", "d"}, {{"a"}, {"a", "d"}, {"b", "d"}, {"c"}, {"a", "b", "d"}});
+    Formula formula = Parser::parse("C=2 x in D. x");
+    formula.setId("R1");
+    DomainCollection domainCollection{Domain{"D", {"a", "b", "d"}}};
+    std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, false}, Verdict{4, false}};
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution}, domainCollection);
+}
+
+TEST(TestHydra, testCountingAtomic2) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a", "b", "c"}, {}, {"b"}, {"a", "c"}});
+    Formula formula = Parser::parse("C<=2 x in D. x");
+    formula.setId("R1");
+    DomainCollection domainCollection{Domain{"D", {"a", "b", "c"}}};
+    std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true}};
+    hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution}, domainCollection);
+}
+
 TEST(TestHydra, testQuantifierMixed1) {
     Trace trace = Utils::createTrace({"a", "b", "c", "d", "e", "f", "g"},
                                      {{"a", "b", "c", "d"}, {"b", "e"}, {"b", "c"}, {"a", "c", "e", "f"}});
-    Formula formula = Parser::parse("C[0.5, 1.] x in D0. E y in D1. x & y");
+    Formula formula = Parser::parse("Q[0.5, 1.] x in D0. E y in D1. x & y");
     formula.setId("R1");
     std::vector<Domain> domains{Domain{"D0", {"a", "b", "c"}}, Domain{"D1", {"d", "e", "f", "g"}}};
     DomainCollection domainCollection{domains};
@@ -762,7 +780,7 @@ TEST(TestHydra, testQuantifierScope) {
     hydraTestUtils::executeHydraEval(trace, {formula}, {expSolution}, domainCollection, functionCollection);
 }
 
-TEST(TestHydra, testSameFuncUniversal) {
+TEST(TestHydra, testEqualityOperatorUniversal) {
     Trace trace = Utils::createTrace({}, {{}});
     Formula formula = Parser::parse("A x, y in D. x == y -> equals(x, y)");
     formula.setId("R1");

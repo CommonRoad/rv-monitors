@@ -185,7 +185,9 @@ class EventConsumingVisitor : public ExpressionVisitor {
 
     std::shared_ptr<Expression> visitExistentialQuantifier(ExistentialQuantifier &op, Trace &trace, size_t index) override;
 
+    std::shared_ptr<Expression> visitQuoteQuantifier(QuoteQuantifier &op, Trace &trace, size_t index) override;
+
     std::shared_ptr<Expression> visitCountingQuantifier(CountingQuantifier &op, Trace &trace, size_t index) override;
 
-    std::shared_ptr<Expression> visitSameFunc(SameFunc &op, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitEqualityOperator(EqualityOperator &op, Trace &trace, size_t index) override;
 };

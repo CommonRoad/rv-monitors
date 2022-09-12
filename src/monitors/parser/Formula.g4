@@ -27,7 +27,7 @@ release_until_expr
 | <assoc=right> left=unary op=UNTIL iv=interval right=unary                            #UntilInterval
 | <assoc=right> left=unary op=SINCE right=unary                                        #Since
 | <assoc=right> left=unary op=SINCE iv=interval right=unary                            #SinceInterval
-| <assoc=right> left=(ATOMIC|CONST_VALUE) op=SAME right=(ATOMIC|CONST_VALUE)           #SameFunc
+| <assoc=right> left=(ATOMIC|CONST_VALUE) op=EQUALITY right=(ATOMIC|CONST_VALUE)       #EqualityOperator
 | unary                                                                                #UnaryExpr
 ;
 
@@ -52,7 +52,8 @@ unary
   | op=PREDICATE right=(ATOMIC|CONST_VALUE) (',' (ATOMIC|CONST_VALUE))*')'  #Predicate
   | op=UNIVERSAL dv=domain_vars '.' right=expr                              #Universal
   | op=EXISTENTIAL dv=domain_vars '.' right=expr                            #Existential
-  | op=COUNTING piv=prob_interval dv=domain_vars '.' right=expr             #Counting
+  | op=QUOTE piv=quote_interval dv=domain_vars '.' right=expr               #Quote
+  | op=COUNTING cop=('<='|'='|'>=') num=DIGIT dv=domain_vars '.' right=expr #Counting
  ;
 
 interval
@@ -60,8 +61,8 @@ interval
 | '[' l=number ',' u=INFINITY ']'       #InfiniteInterval
 ;
 
-prob_interval
- : '[' l=prob_number ',' u=prob_number ']'    #FiniteProbabilityInterval
+quote_interval
+ : '[' l=quote_number ',' u=quote_number ']'    #FiniteQuoteInterval
  ;
 
 domain_vars
@@ -78,8 +79,8 @@ number
  : DIGIT                 #Digit
  ;
 
-prob_number
- : PROB_DIGIT            #ProbDigit
+quote_number
+ : QUOTE_DIGIT            #QuoteDigit
  ;
 
 bool_
@@ -106,15 +107,16 @@ bool_
 
  UNIVERSAL                  : ('A'|'ALL');
  EXISTENTIAL                : ('E'|'EXISTS');
+ QUOTE                      : ('Q'|'QUOTE');
  COUNTING                   : ('C'|'COUNT');
+
+ EQUALITY                   : '==';
 
  AND        	            : ('&'|'and'|'AND');
  OR         	            : ('|'|'or'|'OR');
  XOR                        : ('^'|'xor');
  IMPL       	            : '->';
  EQ                         : '<->';
-
- SAME                       : '==';
 
  IN                         : 'in';
 
@@ -135,4 +137,4 @@ bool_
  WS                         : [ \t\n]+ -> skip;       //Skip whitespaces
 
  DIGIT                      : [0-9] | [1-9][0-9]+;
- PROB_DIGIT                 : [0] '.' [0-9]* | [1] '.' [0]*;
+ QUOTE_DIGIT                : [0] '.' [0-9]* | [1] '.' [0]*;

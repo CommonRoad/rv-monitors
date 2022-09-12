@@ -13,10 +13,11 @@
 #include "monitors/expression_tree/nary/bool/or.h"
 #include "monitors/expression_tree/nary/bool/xor.h"
 #include "monitors/expression_tree/unary/bool/not.h"
-#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
 #include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
-#include "monitors/expression_tree/unary/first_order/function/same_func.h"
+#include "monitors/expression_tree/unary/first_order/function/equality_operator.h"
+#include "monitors/expression_tree/unary/first_order/quote_quantifier.h"
 #include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
 #include "monitors/expression_tree/unary/temporal/future.h"
 #include "monitors/expression_tree/unary/temporal/globally.h"
 #include "monitors/expression_tree/unary/temporal/historically.h"
@@ -120,13 +121,17 @@ class Visitor : public FormulaBaseVisitor {
         if (expr.is<std::shared_ptr<ExistentialQuantifier>>()) {
             return expr.as<std::shared_ptr<ExistentialQuantifier>>();
         }
+        // Quote
+        if (expr.is<std::shared_ptr<QuoteQuantifier>>()) {
+            return expr.as<std::shared_ptr<QuoteQuantifier>>();
+        }
         // Counting
         if (expr.is<std::shared_ptr<CountingQuantifier>>()) {
             return expr.as<std::shared_ptr<CountingQuantifier>>();
         }
-        // SameFunc
-        if (expr.is<std::shared_ptr<SameFunc>>()) {
-            return expr.as<std::shared_ptr<SameFunc>>();
+        // EqualityOperator
+        if (expr.is<std::shared_ptr<EqualityOperator>>()) {
+            return expr.as<std::shared_ptr<EqualityOperator>>();
         }
 
         throw std::runtime_error("Visitor::getType() No type found. Check your formula string.");
@@ -305,7 +310,7 @@ class Visitor : public FormulaBaseVisitor {
         return std::make_shared<Since>(left, right, iv);
     }
 
-    antlrcpp::Any visitSameFunc(FormulaParser::SameFuncContext *ctx) override {
+    antlrcpp::Any visitEqualityOperator(FormulaParser::EqualityOperatorContext *ctx) override {
         auto left = ctx->left->getText();
         auto right = ctx->right->getText();
         bool isLeftConst = left[0] == '\'' and left[left.length() - 1] == '\'';
@@ -314,7 +319,7 @@ class Visitor : public FormulaBaseVisitor {
             left = left.substr(1, left.length() - 2);
         if (isRightConst)
             right = right.substr(1, right.length() - 2);
-        return std::make_shared<SameFunc>(left, right, isLeftConst, isRightConst);
+        return std::make_shared<EqualityOperator>(left, right, isLeftConst, isRightConst);
     }
 
     /**
@@ -604,18 +609,33 @@ class Visitor : public FormulaBaseVisitor {
         return std::make_shared<ExistentialQuantifier>(right, dv);
     }
 
-    antlrcpp::Any visitCounting(FormulaParser::CountingContext *ctx) override {
-        auto piv = visit(ctx->piv).as<ProbabilityInterval>();
+    antlrcpp::Any visitQuote(FormulaParser::QuoteContext *ctx) override {
+        auto piv = visit(ctx->piv).as<QuoteInterval>();
         auto right = getType(visit(ctx->right));
         auto dv = visit(ctx->dv).as<std::vector<Variable>>();
-        return std::make_shared<CountingQuantifier>(right, dv, piv);
+        return std::make_shared<QuoteQuantifier>(right, dv, piv);
     }
 
-    antlrcpp::Any visitFiniteProbabilityInterval(FormulaParser::FiniteProbabilityIntervalContext *ctx) override {
+    antlrcpp::Any visitCounting(FormulaParser::CountingContext *ctx) override {
+        auto opStr = ctx->cop->getText();
+        CountingQuantifier::Operator op;
+        if (opStr == "<=")
+            op = CountingQuantifier::LESS_EQ;
+        else if (opStr == "=")
+            op = CountingQuantifier::EQ;
+        else
+            op = CountingQuantifier::GREATER_EQ;
+        auto num = std::stol(ctx->num->getText(), nullptr, 10);
+        auto right = getType(visit(ctx->right));
+        auto dv = visit(ctx->dv).as<std::vector<Variable>>();
+        return std::make_shared<CountingQuantifier>(right, dv, op, num);
+    }
+
+    antlrcpp::Any visitFiniteQuoteInterval(FormulaParser::FiniteQuoteIntervalContext *ctx) override {
         auto lower = visit(ctx->l).as<float>();
         auto upper = visit(ctx->u).as<float>();
 
-        return ProbabilityInterval{lower, upper};
+        return QuoteInterval{lower, upper};
     }
 
     antlrcpp::Any visitDomainVariables(FormulaParser::DomainVariablesContext *ctx) override {
@@ -644,7 +664,7 @@ class Visitor : public FormulaBaseVisitor {
         return variables;
     }
 
-    antlrcpp::Any visitProbDigit(FormulaParser::ProbDigitContext *ctx) override {
+    antlrcpp::Any visitQuoteDigit(FormulaParser::QuoteDigitContext *ctx) override {
         return std::stof(ctx->getText());
     }
 

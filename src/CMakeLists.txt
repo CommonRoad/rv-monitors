@@ -23,10 +23,10 @@ set(RV_MONITOR_SRC_FILES
         monitors/expression_tree/unary/resolving_operator.cpp
         monitors/expression_tree/unary/unary.cpp
         monitors/expression_tree/unary/bool/not.cpp
-        monitors/expression_tree/unary/first_order/counting_quantifier.cpp
+        monitors/expression_tree/unary/first_order/quote_quantifier.cpp
         monitors/expression_tree/unary/first_order/existential_quantifier.cpp
         monitors/expression_tree/unary/first_order/universal_quantifier.cpp
-        monitors/expression_tree/unary/first_order/function/same_func.cpp
+        monitors/expression_tree/unary/first_order/function/equality_operator.cpp
         monitors/expression_tree/unary/temporal/future.cpp
         monitors/expression_tree/unary/temporal/globally.cpp
         monitors/expression_tree/unary/temporal/next_strong.cpp
@@ -83,9 +83,9 @@ set(RV_MONITOR_SRC_FILES
         monitors/rv_algorithms/hydra_2/hydra_monitors/negation_monitor.cpp
         monitors/rv_algorithms/hydra_2/hydra_monitors/universal_monitor.cpp
         monitors/rv_algorithms/hydra_2/hydra_monitors/existential_monitor.cpp
-        monitors/rv_algorithms/hydra_2/hydra_monitors/counting_monitor.cpp
+        monitors/rv_algorithms/hydra_2/hydra_monitors/quote_monitor.cpp
         monitors/rv_algorithms/hydra_2/hydra_monitors/quantifier_monitor.cpp
-        monitors/rv_algorithms/hydra_2/hydra_monitors/same_func_monitor.cpp
+        monitors/rv_algorithms/hydra_2/hydra_monitors/equality_operator_monitor.cpp
         monitors/trace/event.cpp
         monitors/trace/event_generator.cpp
         monitors/utils/lazy_bool.cpp
@@ -102,7 +102,7 @@ set(RV_MONITOR_SRC_FILES
         monitors/collections/domain_collection.cpp
         monitors/collections/value.cpp
         monitors/collections/function_collection.cpp
-        monitors/collections/function.cpp)
+        monitors/collections/function.cpp monitors/expression_tree/unary/first_order/counting_quantifier.h monitors/expression_tree/unary/first_order/counting_quantifier.cpp monitors/rv_algorithms/hydra_2/hydra_monitors/counting_monitor.cpp monitors/rv_algorithms/hydra_2/hydra_monitors/counting_monitor.h)
 
 
 # create library of this project

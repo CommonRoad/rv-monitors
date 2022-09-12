@@ -12,13 +12,14 @@
 class  FormulaLexer : public antlr4::Lexer {
 public:
   enum {
-    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, TRUE = 7, 
-    FALSE = 8, INFINITY = 9, NOT = 10, GLOBALLY = 11, FUTURE = 12, NEXT_WEAK = 13, 
-    NEXT_STRONG = 14, UNTIL = 15, RELEASE = 16, ONCE = 17, PREVIOUSLY = 18, 
-    SINCE = 19, HISTORICALLY = 20, UNIVERSAL = 21, EXISTENTIAL = 22, COUNTING = 23, 
-    AND = 24, OR = 25, XOR = 26, IMPL = 27, EQ = 28, SAME = 29, IN = 30, 
-    ATOMIC = 31, PREDICATE = 32, DOMAIN = 33, CONST_VALUE = 34, WS = 35, 
-    DIGIT = 36, PROB_DIGIT = 37
+    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
+    T__7 = 8, T__8 = 9, TRUE = 10, FALSE = 11, INFINITY = 12, NOT = 13, 
+    GLOBALLY = 14, FUTURE = 15, NEXT_WEAK = 16, NEXT_STRONG = 17, UNTIL = 18, 
+    RELEASE = 19, ONCE = 20, PREVIOUSLY = 21, SINCE = 22, HISTORICALLY = 23, 
+    UNIVERSAL = 24, EXISTENTIAL = 25, QUOTE = 26, COUNTING = 27, EQUALITY = 28, 
+    AND = 29, OR = 30, XOR = 31, IMPL = 32, EQ = 33, IN = 34, ATOMIC = 35, 
+    PREDICATE = 36, DOMAIN = 37, CONST_VALUE = 38, WS = 39, DIGIT = 40, 
+    QUOTE_DIGIT = 41
   };
 
   FormulaLexer(antlr4::CharStream *input);

@@ -12,19 +12,20 @@
 class  FormulaParser : public antlr4::Parser {
 public:
   enum {
-    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, TRUE = 7, 
-    FALSE = 8, INFINITY = 9, NOT = 10, GLOBALLY = 11, FUTURE = 12, NEXT_WEAK = 13, 
-    NEXT_STRONG = 14, UNTIL = 15, RELEASE = 16, ONCE = 17, PREVIOUSLY = 18, 
-    SINCE = 19, HISTORICALLY = 20, UNIVERSAL = 21, EXISTENTIAL = 22, COUNTING = 23, 
-    AND = 24, OR = 25, XOR = 26, IMPL = 27, EQ = 28, SAME = 29, IN = 30, 
-    ATOMIC = 31, PREDICATE = 32, DOMAIN = 33, CONST_VALUE = 34, WS = 35, 
-    DIGIT = 36, PROB_DIGIT = 37
+    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
+    T__7 = 8, T__8 = 9, TRUE = 10, FALSE = 11, INFINITY = 12, NOT = 13, 
+    GLOBALLY = 14, FUTURE = 15, NEXT_WEAK = 16, NEXT_STRONG = 17, UNTIL = 18, 
+    RELEASE = 19, ONCE = 20, PREVIOUSLY = 21, SINCE = 22, HISTORICALLY = 23, 
+    UNIVERSAL = 24, EXISTENTIAL = 25, QUOTE = 26, COUNTING = 27, EQUALITY = 28, 
+    AND = 29, OR = 30, XOR = 31, IMPL = 32, EQ = 33, IN = 34, ATOMIC = 35, 
+    PREDICATE = 36, DOMAIN = 37, CONST_VALUE = 38, WS = 39, DIGIT = 40, 
+    QUOTE_DIGIT = 41
   };
 
   enum {
     RuleFormula = 0, RuleExpr = 1, RuleXor_expr = 2, RuleOr_expr = 3, RuleAnd_expr = 4, 
-    RuleRelease_until_expr = 5, RuleUnary = 6, RuleInterval = 7, RuleProb_interval = 8, 
-    RuleDomain_vars = 9, RuleAtom = 10, RuleNumber = 11, RuleProb_number = 12, 
+    RuleRelease_until_expr = 5, RuleUnary = 6, RuleInterval = 7, RuleQuote_interval = 8, 
+    RuleDomain_vars = 9, RuleAtom = 10, RuleNumber = 11, RuleQuote_number = 12, 
     RuleBool_ = 13
   };
 
@@ -46,11 +47,11 @@ public:
   class Release_until_exprContext;
   class UnaryContext;
   class IntervalContext;
-  class Prob_intervalContext;
+  class Quote_intervalContext;
   class Domain_varsContext;
   class AtomContext;
   class NumberContext;
-  class Prob_numberContext;
+  class Quote_numberContext;
   class Bool_Context; 
 
   class  FormulaContext : public antlr4::ParserRuleContext {
@@ -223,21 +224,6 @@ public:
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
-  class  SameFuncContext : public Release_until_exprContext {
-  public:
-    SameFuncContext(Release_until_exprContext *ctx);
-
-    antlr4::Token *left = nullptr;
-    antlr4::Token *op = nullptr;
-    antlr4::Token *right = nullptr;
-    antlr4::tree::TerminalNode *SAME();
-    std::vector<antlr4::tree::TerminalNode *> ATOMIC();
-    antlr4::tree::TerminalNode* ATOMIC(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> CONST_VALUE();
-    antlr4::tree::TerminalNode* CONST_VALUE(size_t i);
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
   class  ReleaseIntervalContext : public Release_until_exprContext {
   public:
     ReleaseIntervalContext(Release_until_exprContext *ctx);
@@ -299,6 +285,21 @@ public:
     std::vector<UnaryContext *> unary();
     UnaryContext* unary(size_t i);
     antlr4::tree::TerminalNode *RELEASE();
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  EqualityOperatorContext : public Release_until_exprContext {
+  public:
+    EqualityOperatorContext(Release_until_exprContext *ctx);
+
+    antlr4::Token *left = nullptr;
+    antlr4::Token *op = nullptr;
+    antlr4::Token *right = nullptr;
+    antlr4::tree::TerminalNode *EQUALITY();
+    std::vector<antlr4::tree::TerminalNode *> ATOMIC();
+    antlr4::tree::TerminalNode* ATOMIC(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> CONST_VALUE();
+    antlr4::tree::TerminalNode* CONST_VALUE(size_t i);
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
@@ -496,6 +497,21 @@ public:
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
+  class  QuoteContext : public UnaryContext {
+  public:
+    QuoteContext(UnaryContext *ctx);
+
+    antlr4::Token *op = nullptr;
+    FormulaParser::Quote_intervalContext *piv = nullptr;
+    FormulaParser::Domain_varsContext *dv = nullptr;
+    FormulaParser::ExprContext *right = nullptr;
+    antlr4::tree::TerminalNode *QUOTE();
+    Quote_intervalContext *quote_interval();
+    Domain_varsContext *domain_vars();
+    ExprContext *expr();
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
   class  OnceIntervalContext : public UnaryContext {
   public:
     OnceIntervalContext(UnaryContext *ctx);
@@ -573,11 +589,12 @@ public:
     CountingContext(UnaryContext *ctx);
 
     antlr4::Token *op = nullptr;
-    FormulaParser::Prob_intervalContext *piv = nullptr;
+    antlr4::Token *cop = nullptr;
+    antlr4::Token *num = nullptr;
     FormulaParser::Domain_varsContext *dv = nullptr;
     FormulaParser::ExprContext *right = nullptr;
     antlr4::tree::TerminalNode *COUNTING();
-    Prob_intervalContext *prob_interval();
+    antlr4::tree::TerminalNode *DIGIT();
     Domain_varsContext *domain_vars();
     ExprContext *expr();
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
@@ -622,12 +639,12 @@ public:
 
   IntervalContext* interval();
 
-  class  Prob_intervalContext : public antlr4::ParserRuleContext {
+  class  Quote_intervalContext : public antlr4::ParserRuleContext {
   public:
-    Prob_intervalContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    Quote_intervalContext(antlr4::ParserRuleContext *parent, size_t invokingState);
    
-    Prob_intervalContext() = default;
-    void copyFrom(Prob_intervalContext *context);
+    Quote_intervalContext() = default;
+    void copyFrom(Quote_intervalContext *context);
     using antlr4::ParserRuleContext::copyFrom;
 
     virtual size_t getRuleIndex() const override;
@@ -635,18 +652,18 @@ public:
    
   };
 
-  class  FiniteProbabilityIntervalContext : public Prob_intervalContext {
+  class  FiniteQuoteIntervalContext : public Quote_intervalContext {
   public:
-    FiniteProbabilityIntervalContext(Prob_intervalContext *ctx);
+    FiniteQuoteIntervalContext(Quote_intervalContext *ctx);
 
-    FormulaParser::Prob_numberContext *l = nullptr;
-    FormulaParser::Prob_numberContext *u = nullptr;
-    std::vector<Prob_numberContext *> prob_number();
-    Prob_numberContext* prob_number(size_t i);
+    FormulaParser::Quote_numberContext *l = nullptr;
+    FormulaParser::Quote_numberContext *u = nullptr;
+    std::vector<Quote_numberContext *> quote_number();
+    Quote_numberContext* quote_number(size_t i);
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
-  Prob_intervalContext* prob_interval();
+  Quote_intervalContext* quote_interval();
 
   class  Domain_varsContext : public antlr4::ParserRuleContext {
   public:
@@ -740,12 +757,12 @@ public:
 
   NumberContext* number();
 
-  class  Prob_numberContext : public antlr4::ParserRuleContext {
+  class  Quote_numberContext : public antlr4::ParserRuleContext {
   public:
-    Prob_numberContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    Quote_numberContext(antlr4::ParserRuleContext *parent, size_t invokingState);
    
-    Prob_numberContext() = default;
-    void copyFrom(Prob_numberContext *context);
+    Quote_numberContext() = default;
+    void copyFrom(Quote_numberContext *context);
     using antlr4::ParserRuleContext::copyFrom;
 
     virtual size_t getRuleIndex() const override;
@@ -753,15 +770,15 @@ public:
    
   };
 
-  class  ProbDigitContext : public Prob_numberContext {
+  class  QuoteDigitContext : public Quote_numberContext {
   public:
-    ProbDigitContext(Prob_numberContext *ctx);
+    QuoteDigitContext(Quote_numberContext *ctx);
 
-    antlr4::tree::TerminalNode *PROB_DIGIT();
+    antlr4::tree::TerminalNode *QUOTE_DIGIT();
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
-  Prob_numberContext* prob_number();
+  Quote_numberContext* quote_number();
 
   class  Bool_Context : public antlr4::ParserRuleContext {
   public:

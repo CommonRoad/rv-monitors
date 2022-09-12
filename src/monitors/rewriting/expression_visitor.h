@@ -60,9 +60,11 @@ class UniversalQuantifier;
 
 class ExistentialQuantifier;
 
+class QuoteQuantifier;
+
 class CountingQuantifier;
 
-class SameFunc;
+class EqualityOperator;
 
 /**
  * Parent class to apply the visitor pattern to the expression tree.
@@ -265,6 +267,14 @@ class ExpressionVisitor {
     virtual std::shared_ptr<Expression> visitExistentialQuantifier(ExistentialQuantifier &expr, Trace &trace, size_t index) = 0;
 
     /**
+     * Visits a QuoteQuantifier.
+     * @param expr Expression.
+     * @param trace Trace.
+     * @return Transformed QuoteQuantifier as a shared_ptr.
+     */
+    virtual std::shared_ptr<Expression> visitQuoteQuantifier(QuoteQuantifier &expr, Trace &trace, size_t index) = 0;
+
+    /**
      * Visits a CountingQuantifier.
      * @param expr Expression.
      * @param trace Trace.
@@ -273,11 +283,11 @@ class ExpressionVisitor {
     virtual std::shared_ptr<Expression> visitCountingQuantifier(CountingQuantifier &expr, Trace &trace, size_t index) = 0;
 
     /**
-     * Visits a SameFunc.
+     * Visits a EqualityOperator.
      * @param expr Expression.
      * @param trace Trace.
-     * @return Transformed SameFunc as a shared_ptr.
+     * @return Transformed EqualityOperator as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitSameFunc(SameFunc &expr, Trace &trace, size_t index) = 0;
+    virtual std::shared_ptr<Expression> visitEqualityOperator(EqualityOperator &expr, Trace &trace, size_t index) = 0;
 
 };

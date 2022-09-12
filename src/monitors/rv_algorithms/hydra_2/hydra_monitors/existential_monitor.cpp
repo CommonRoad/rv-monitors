@@ -4,7 +4,10 @@ ExistentialMonitor::ExistentialMonitor(Formula formula, std::shared_ptr<HydraMon
                                        std::map<std::string, std::string> variables, DomainCollection &domains,
                                        bool connectedEval, bool shortCircuiting)
     : QuantifierMonitor(std::move(formula), subMonitor, monitorId, std::move(variables), domains,
-                        connectedEval, shortCircuiting, computeCost(subMonitor), computeSatisfactionProbability(subMonitor)) {}
+                        connectedEval, shortCircuiting, 0.0, 0.0) {
+    evalCost = computeCost(subMonitor, numCombinations());
+    satisfactionProbability = computeSatisfactionProbability(subMonitor, numCombinations());
+}
 
 Verdict ExistentialMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     Verdict verdict{false};
@@ -13,10 +16,8 @@ Verdict ExistentialMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     else
         return Verdict{false};
 
-    if (!checkNonEmptiness()) {
-        verdict.b = true;
+    if (!checkNonEmptiness())
         return verdict;
-    }
 
     while (nextCombination()) {
         verdict = subMonitor->step(monitorId, stepNumber);
@@ -30,11 +31,3 @@ Verdict ExistentialMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 }
 
 std::string ExistentialMonitor::to_string() { return formula.to_string(); }
-
-double ExistentialMonitor::computeCost(const std::shared_ptr<HydraMonitor> &monitor) {
-    return 0;
-}
-
-double ExistentialMonitor::computeSatisfactionProbability(const std::shared_ptr<HydraMonitor> &monitor) {
-    return 0;
-}

@@ -2,6 +2,7 @@
 
 #include "function.h"
 #include <map>
+#include <stdexcept>
 
 class FunctionCollection {
   public:

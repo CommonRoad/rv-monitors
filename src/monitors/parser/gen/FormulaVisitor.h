@@ -45,7 +45,7 @@ public:
 
     virtual antlrcpp::Any visitSinceInterval(FormulaParser::SinceIntervalContext *context) = 0;
 
-    virtual antlrcpp::Any visitSameFunc(FormulaParser::SameFuncContext *context) = 0;
+    virtual antlrcpp::Any visitEqualityOperator(FormulaParser::EqualityOperatorContext *context) = 0;
 
     virtual antlrcpp::Any visitUnaryExpr(FormulaParser::UnaryExprContext *context) = 0;
 
@@ -89,13 +89,15 @@ public:
 
     virtual antlrcpp::Any visitExistential(FormulaParser::ExistentialContext *context) = 0;
 
+    virtual antlrcpp::Any visitQuote(FormulaParser::QuoteContext *context) = 0;
+
     virtual antlrcpp::Any visitCounting(FormulaParser::CountingContext *context) = 0;
 
     virtual antlrcpp::Any visitFiniteInterval(FormulaParser::FiniteIntervalContext *context) = 0;
 
     virtual antlrcpp::Any visitInfiniteInterval(FormulaParser::InfiniteIntervalContext *context) = 0;
 
-    virtual antlrcpp::Any visitFiniteProbabilityInterval(FormulaParser::FiniteProbabilityIntervalContext *context) = 0;
+    virtual antlrcpp::Any visitFiniteQuoteInterval(FormulaParser::FiniteQuoteIntervalContext *context) = 0;
 
     virtual antlrcpp::Any visitDomainVariables(FormulaParser::DomainVariablesContext *context) = 0;
 
@@ -107,7 +109,7 @@ public:
 
     virtual antlrcpp::Any visitDigit(FormulaParser::DigitContext *context) = 0;
 
-    virtual antlrcpp::Any visitProbDigit(FormulaParser::ProbDigitContext *context) = 0;
+    virtual antlrcpp::Any visitQuoteDigit(FormulaParser::QuoteDigitContext *context) = 0;
 
     virtual antlrcpp::Any visitTrueBoolean(FormulaParser::TrueBooleanContext *context) = 0;
 

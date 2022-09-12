@@ -1,10 +1,12 @@
-#ifndef RVMONITORS_SAME_FUNC_H
-#define RVMONITORS_SAME_FUNC_H
+#pragma once
 
 #include "monitors/expression_tree/expression.h"
 #include "string"
 
-class SameFunc : public Expression {
+/**
+ * Class representing the equality operator.
+ */
+class EqualityOperator : public Expression {
   public:
     /**
      * Constructor.
@@ -14,7 +16,7 @@ class SameFunc : public Expression {
      * @param isLeftConst Boolean indicating whether left is constant.
      * @param isRightConst Boolean indicating whether right is constant.
      */
-    SameFunc(std::string left, std::string right, bool isLeftConst = false, bool isRightConst = false);
+    EqualityOperator(std::string left, std::string right, bool isLeftConst = false, bool isRightConst = false);
 
     /**
      * Creates string representation of expression.
@@ -70,5 +72,3 @@ class SameFunc : public Expression {
     bool rightConst; //**< Boolean indicating right is constant. */
 
 };
-
-#endif // RVMONITORS_SAME_FUNC_H

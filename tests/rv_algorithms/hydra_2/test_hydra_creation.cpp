@@ -381,11 +381,11 @@ TEST(TestHydraCreation, testUniversalExistentialMixed) {
     executeTest(formula, expectedFormula, predicateCosts, collection);
 }
 
-TEST(TestHydraCreation, testCountingSimple) {
-    Formula formula = Parser::parse("C[0.1, 0.5] x in D0, y in D1. p(x, y)");
+TEST(TestHydraCreation, testQuoteSimple) {
+    Formula formula = Parser::parse("Q[0.1, 0.5] x in D0, y in D1. p(x, y)");
     formula.setId("R1");
     std::map<std::string, std::array<double, 2>> predicateCosts{};
-    std::string expectedFormula{"C[0.100000, 0.500000] x in D0, y in D1. p(x, y)"};
+    std::string expectedFormula{"Q[0.100000, 0.500000] x in D0, y in D1. p(x, y)"};
     std::vector<Domain> domains{{"D0", {"0"}}, {"D1", {"1"}}};
     DomainCollection collection{domains};
     executeTest(formula, expectedFormula, predicateCosts, collection);

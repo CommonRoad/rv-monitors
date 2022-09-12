@@ -3,7 +3,11 @@
 #include "domain.h"
 #include <map>
 #include <string>
+#include <stdexcept>
 
+/**
+ * Storage for a set of domains.
+ */
 class DomainCollection {
   public:
 

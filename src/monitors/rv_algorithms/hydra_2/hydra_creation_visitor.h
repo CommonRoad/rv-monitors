@@ -76,9 +76,11 @@ class UniversalQuantifier;
 
 class ExistentialQuantifier;
 
+class QuoteQuantifier;
+
 class CountingQuantifier;
 
-class SameFunc;
+class EqualityOperator;
 
 class HydraCreationVisitor {
   public:
@@ -113,9 +115,11 @@ class HydraCreationVisitor {
 
     [[nodiscard]] std::shared_ptr<HydraMonitor> visitExistentialQuantifier(ExistentialQuantifier &tlop, size_t parentId, bool connectedEval);
 
+    [[nodiscard]] std::shared_ptr<HydraMonitor> visitQuoteQuantifier(QuoteQuantifier &tlop, size_t parentId, bool connectedEval);
+
     [[nodiscard]] std::shared_ptr<HydraMonitor> visitCountingQuantifier(CountingQuantifier &tlop, size_t parentId, bool connectedEval);
 
-    [[nodiscard]] std::shared_ptr<HydraMonitor> visitSameFunc(SameFunc &tlop, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<HydraMonitor> visitEqualityOperator(EqualityOperator &tlop, size_t parentId, bool connectedEval);
 
   private:
     size_t maxId{0};

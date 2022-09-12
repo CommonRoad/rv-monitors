@@ -13,6 +13,11 @@
 #include "monitors/expression_tree/unary/bool/not.h"
 #include "monitors/expression_tree/unary/deriving_operator.h"
 #include "monitors/expression_tree/unary/event_operator.h"
+#include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/function/equality_operator.h"
+#include "monitors/expression_tree/unary/first_order/quote_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
 #include "monitors/expression_tree/unary/resolving_operator.h"
 #include "monitors/expression_tree/unary/temporal/future.h"
 #include "monitors/expression_tree/unary/temporal/globally.h"
@@ -21,10 +26,6 @@
 #include "monitors/expression_tree/unary/temporal/next_weak.h"
 #include "monitors/expression_tree/unary/temporal/once.h"
 #include "monitors/expression_tree/unary/temporal/previously.h"
-#include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
-#include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
-#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
-#include "monitors/expression_tree/unary/first_order/function/same_func.h"
 #include "monitors/trace/event.h"
 #include "rewrite_visitor.h"
 #include "rewrite_visitor_utils.h"
@@ -426,12 +427,18 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitExistentialQuantifier(Exis
     return std::make_shared<ExistentialQuantifier>(op);
 }
 
+std::shared_ptr<Expression> BasicRewriteVisitor::visitQuoteQuantifier(QuoteQuantifier &op, Trace &trace,
+                                                                         size_t index) {
+    visitExpression(op, trace, index);
+    return std::make_shared<QuoteQuantifier>(op);
+}
+
 std::shared_ptr<Expression> BasicRewriteVisitor::visitCountingQuantifier(CountingQuantifier &op, Trace &trace,
                                                                          size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<CountingQuantifier>(op);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitSameFunc(SameFunc &op, Trace &trace, size_t index) {
-    return std::make_shared<SameFunc>(op);
+std::shared_ptr<Expression> BasicRewriteVisitor::visitEqualityOperator(EqualityOperator &op, Trace &trace, size_t index) {
+    return std::make_shared<EqualityOperator>(op);
 }

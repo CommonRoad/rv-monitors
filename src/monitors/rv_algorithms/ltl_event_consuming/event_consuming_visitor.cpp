@@ -13,6 +13,11 @@
 #include "monitors/expression_tree/unary/bool/not.h"
 #include "monitors/expression_tree/unary/deriving_operator.h"
 #include "monitors/expression_tree/unary/event_operator.h"
+#include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/function/equality_operator.h"
+#include "monitors/expression_tree/unary/first_order/quote_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
 #include "monitors/expression_tree/unary/resolving_operator.h"
 #include "monitors/expression_tree/unary/temporal/future.h"
 #include "monitors/expression_tree/unary/temporal/globally.h"
@@ -21,10 +26,6 @@
 #include "monitors/expression_tree/unary/temporal/next_weak.h"
 #include "monitors/expression_tree/unary/temporal/once.h"
 #include "monitors/expression_tree/unary/temporal/previously.h"
-#include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
-#include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
-#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
-#include "monitors/expression_tree/unary/first_order/function/same_func.h"
 
 void EventConsumingVisitor::consumeEvent(Formula &formula, Trace &trace, size_t index) {
     std::shared_ptr<EventOperator> eventOperator = std::make_shared<EventOperator>(formula.getExpr(), trace, index);
@@ -276,12 +277,18 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitExistentialQuantifier(Ex
     return std::make_shared<ExistentialQuantifier>(op);
 }
 
+std::shared_ptr<Expression> EventConsumingVisitor::visitQuoteQuantifier(QuoteQuantifier &op, Trace &trace,
+                                                                           size_t index) {
+    visitExpression(op, trace, index);
+    return std::make_shared<QuoteQuantifier>(op);
+}
+
 std::shared_ptr<Expression> EventConsumingVisitor::visitCountingQuantifier(CountingQuantifier &op, Trace &trace,
                                                                            size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<CountingQuantifier>(op);
 }
 
-std::shared_ptr<Expression> EventConsumingVisitor::visitSameFunc(SameFunc &op, Trace &trace, size_t index) {
-    return std::make_shared<SameFunc>(op);
+std::shared_ptr<Expression> EventConsumingVisitor::visitEqualityOperator(EqualityOperator &op, Trace &trace, size_t index) {
+    return std::make_shared<EqualityOperator>(op);
 }

@@ -67,7 +67,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitSameFunc(FormulaParser::SameFuncContext *ctx) override {
+  virtual antlrcpp::Any visitEqualityOperator(FormulaParser::EqualityOperatorContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -155,6 +155,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitQuote(FormulaParser::QuoteContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitCounting(FormulaParser::CountingContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -167,7 +171,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitFiniteProbabilityInterval(FormulaParser::FiniteProbabilityIntervalContext *ctx) override {
+  virtual antlrcpp::Any visitFiniteQuoteInterval(FormulaParser::FiniteQuoteIntervalContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -191,7 +195,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitProbDigit(FormulaParser::ProbDigitContext *ctx) override {
+  virtual antlrcpp::Any visitQuoteDigit(FormulaParser::QuoteDigitContext *ctx) override {
     return visitChildren(ctx);
   }
 

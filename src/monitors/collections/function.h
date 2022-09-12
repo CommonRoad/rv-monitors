@@ -1,7 +1,11 @@
 #pragma once
 
 #include <functional>
+#include <string>
 
+/**
+ * Function is used to evaluate a predicate and can also be time dependent.
+ */
 class Function {
   public:
     /**

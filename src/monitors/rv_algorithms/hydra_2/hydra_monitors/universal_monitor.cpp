@@ -6,7 +6,10 @@ UniversalMonitor::UniversalMonitor(Formula formula, std::shared_ptr<HydraMonitor
                                    std::map<std::string, std::string> variables, DomainCollection &domains,
                                    bool connectedEval, bool shortCircuiting)
     : QuantifierMonitor(std::move(formula), subMonitor, monitorId, std::move(variables), domains,
-                        connectedEval, shortCircuiting, computeCost(subMonitor), computeSatisfactionProbability(subMonitor)) {}
+                        connectedEval, shortCircuiting, 0.0, 0.0) {
+          evalCost = computeCost(subMonitor, numCombinations());
+          satisfactionProbability = computeSatisfactionProbability(subMonitor, numCombinations());
+}
 
 Verdict UniversalMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     Verdict verdict{true};
@@ -34,9 +37,3 @@ Verdict UniversalMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 }
 
 std::string UniversalMonitor::to_string() { return formula.to_string(); }
-
-double UniversalMonitor::computeCost(const std::shared_ptr<HydraMonitor> &monitor) { return 0; }
-
-double UniversalMonitor::computeSatisfactionProbability(const std::shared_ptr<HydraMonitor> &monitor) {
-    return 0;
-}

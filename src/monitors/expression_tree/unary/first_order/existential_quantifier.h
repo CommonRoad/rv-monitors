@@ -1,5 +1,4 @@
-#ifndef RVMONITORS_EXISTENCE_QUANTIFIER_H
-#define RVMONITORS_EXISTENCE_QUANTIFIER_H
+#pragma once
 
 #include "monitors/expression_tree/unary/unary.h"
 #include "monitors/expression_tree/first_order_operator.h"
@@ -44,5 +43,3 @@ class ExistentialQuantifier : public Unary, public FirstOrderOperator {
     [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor, size_t parentId, bool connectedEval) override;
 
 };
-
-#endif // RVMONITORS_EXISTENCE_QUANTIFIER_H

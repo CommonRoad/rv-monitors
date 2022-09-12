@@ -1,8 +1,10 @@
-#ifndef RVMONITORS_QUANTIFIER_MONITOR_H
-#define RVMONITORS_QUANTIFIER_MONITOR_H
+#pragma once
 
 #include "hydra_monitor.h"
 
+/**
+ * Hydra monitor representing quantifier monitor.
+ */
 class QuantifierMonitor : public HydraMonitor {
   public:
     /**
@@ -87,6 +89,23 @@ class QuantifierMonitor : public HydraMonitor {
      */
     void reset(std::optional<size_t> stepNumber = std::nullopt) override;
 
+    /**
+     * Computes normalized cost over provided monitor.
+     *
+     * @param monitor Monitor which should be used for universal evaluation cost computation.
+     * @param numEval Number of evaluations.
+     * @return Normalized evaluation cost of universal monitor in interval [0, 100].
+     */
+    static double computeCost(const std::shared_ptr<HydraMonitor> &monitor, size_t numEval);
+
+    /**
+     * Computes satisfaction probability over provided monitor.
+     *
+     * @param monitor Monitor which should be used for universal satisfaction probability computation.
+     * @return Satisfaction probability of universal monitor in interval [0, 1].
+     */
+    static double computeSatisfactionProbability(const std::shared_ptr<HydraMonitor> &monitor, size_t numEval);
+
   protected:
     std::shared_ptr<HydraMonitor> subMonitor; //**< Child monitor. */
     bool shortCircuiting; //**< Child monitors. */
@@ -96,5 +115,3 @@ class QuantifierMonitor : public HydraMonitor {
     std::vector<std::vector<Value>::iterator> iters; //**< Iterators forming the current combination. */
 
 };
-
-#endif // RVMONITORS_QUANTIFIER_MONITOR_H

@@ -1,10 +1,12 @@
-#ifndef RVMONITORS_UNIVERSAL_QUANTIFIER_H
-#define RVMONITORS_UNIVERSAL_QUANTIFIER_H
+#pragma once
 
 #include "monitors/expression_tree/unary/unary.h"
 #include "monitors/expression_tree/first_order_operator.h"
 #include "monitors/rewriting/hydra_rewrite_visitor.h"
 
+/**
+ * Class representing the universal quantifier.
+ */
 class UniversalQuantifier : public Unary, public FirstOrderOperator {
   public:
     /**
@@ -42,5 +44,3 @@ class UniversalQuantifier : public Unary, public FirstOrderOperator {
     [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor, size_t parentId, bool connectedEval) override;
 
 };
-
-#endif // RVMONITORS_UNIVERSAL_QUANTIFIER_H

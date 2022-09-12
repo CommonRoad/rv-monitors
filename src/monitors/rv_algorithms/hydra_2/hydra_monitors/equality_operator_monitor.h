@@ -2,7 +2,10 @@
 
 #include "hydra_monitor.h"
 
-class SameFuncMonitor : public HydraMonitor {
+/**
+ * Hydra monitor representing the equality operator monitor.
+ */
+class EqualityOperatorMonitor : public HydraMonitor {
   public:
     /**
      * Constructor.
@@ -13,7 +16,7 @@ class SameFuncMonitor : public HydraMonitor {
      * @param evalCost Evaluation costs.
      * @param satisfactionProbability Satisfaction probability.
      */
-    SameFuncMonitor(Formula formula, size_t monitorId, bool connectedEval, double evalCost = 0, double satisfactionProbability = 100.0)
+    EqualityOperatorMonitor(Formula formula, size_t monitorId, bool connectedEval, double evalCost = 0, double satisfactionProbability = 100.0)
         : HydraMonitor(std::move(formula), monitorId, connectedEval, evalCost, satisfactionProbability) {}
 
     /**

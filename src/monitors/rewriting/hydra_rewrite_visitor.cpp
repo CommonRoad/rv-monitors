@@ -15,6 +15,11 @@
 #include "monitors/expression_tree/unary/bool/not.h"
 #include "monitors/expression_tree/unary/deriving_operator.h"
 #include "monitors/expression_tree/unary/event_operator.h"
+#include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/function/equality_operator.h"
+#include "monitors/expression_tree/unary/first_order/quote_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
 #include "monitors/expression_tree/unary/resolving_operator.h"
 #include "monitors/expression_tree/unary/temporal/future.h"
 #include "monitors/expression_tree/unary/temporal/globally.h"
@@ -23,10 +28,6 @@
 #include "monitors/expression_tree/unary/temporal/next_weak.h"
 #include "monitors/expression_tree/unary/temporal/once.h"
 #include "monitors/expression_tree/unary/temporal/previously.h"
-#include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
-#include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
-#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
-#include "monitors/expression_tree/unary/first_order/function/same_func.h"
 #include "monitors/expression_tree/unary/unary.h"
 #include "monitors/rewriting/rewrite_visitor_utils.h"
 #include "monitors/trace/event.h"
@@ -550,13 +551,13 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitExistentialQuantifier(Exis
     return std::make_shared<ExistentialQuantifier>(op);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitCountingQuantifier(CountingQuantifier &op, Trace &trace,
+std::shared_ptr<Expression> HydraRewriteVisitor::visitQuoteQuantifier(QuoteQuantifier &op, Trace &trace,
                                                                          size_t index) {
     visitExpression(op, trace, index);
-    auto inner = std::dynamic_pointer_cast<CountingQuantifier>(op.getLeft());
+    auto inner = std::dynamic_pointer_cast<QuoteQuantifier>(op.getLeft());
     if (inner != nullptr) {
-        auto opProb{op.getProbInterval()};
-        auto innerProb{inner->getProbInterval()};
+        auto opProb{op.getQuoteInterval()};
+        auto innerProb{inner->getQuoteInterval()};
         if (opProb.getMin() == innerProb.getMin() and opProb.getMax() == innerProb.getMax()) {
             std::vector<Variable> variables;
             for (const auto &var : op.getVariables())
@@ -564,7 +565,37 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitCountingQuantifier(Countin
             for (const auto &var : inner->getVariables())
                 variables.push_back(var);
             std::shared_ptr<Expression> innerLeft = inner->getLeft();
-            auto newCounting = std::make_shared<CountingQuantifier>(innerLeft, variables, opProb);
+            auto newQuote = std::make_shared<QuoteQuantifier>(innerLeft, variables, opProb);
+            for (const auto &var : inner->getVariables()) {
+                newQuote->removeVariable(var.getName());
+                newQuote->addVariable(var.getName(), var.getDomain());
+            }
+            return newQuote;
+        }
+    }
+    auto innerFirstOrder = std::dynamic_pointer_cast<FirstOrderOperator>(op.getLeft());
+    if (innerFirstOrder != nullptr)
+        return removeShadowedVariables(op, *innerFirstOrder);
+    return std::make_shared<QuoteQuantifier>(op);
+}
+
+std::shared_ptr<Expression> HydraRewriteVisitor::visitCountingQuantifier(CountingQuantifier &op, Trace &trace,
+                                                                         size_t index) {
+    visitExpression(op, trace, index);
+    auto inner = std::dynamic_pointer_cast<CountingQuantifier>(op.getLeft());
+    if (inner != nullptr) {
+        auto opOpera{op.getOperator()};
+        auto innerOpera{inner->getOperator()};
+        auto opNum{op.getNum()};
+        auto innerNum{inner->getNum()};
+        if (opOpera == innerOpera and opNum == innerNum) {
+            std::vector<Variable> variables;
+            for (const auto &var : op.getVariables())
+                variables.push_back(var);
+            for (const auto &var : inner->getVariables())
+                variables.push_back(var);
+            std::shared_ptr<Expression> innerLeft = inner->getLeft();
+            auto newCounting = std::make_shared<CountingQuantifier>(innerLeft, variables, opOpera, opNum);
             for (const auto &var : inner->getVariables()) {
                 newCounting->removeVariable(var.getName());
                 newCounting->addVariable(var.getName(), var.getDomain());
@@ -578,8 +609,8 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitCountingQuantifier(Countin
     return std::make_shared<CountingQuantifier>(op);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitSameFunc(SameFunc &op, Trace &trace, size_t index) {
-    return std::make_shared<SameFunc>(op);
+std::shared_ptr<Expression> HydraRewriteVisitor::visitEqualityOperator(EqualityOperator &op, Trace &trace, size_t index) {
+    return std::make_shared<EqualityOperator>(op);
 }
 
 std::shared_ptr<Expression> HydraRewriteVisitor::removeShadowedVariables(FirstOrderOperator &outer, FirstOrderOperator &inner) {
@@ -596,7 +627,7 @@ std::shared_ptr<Expression> HydraRewriteVisitor::getFirstOrderExpression(FirstOr
         firstOrderExpr = std::make_shared<UniversalQuantifier>(*universal);
     else if (auto *existential = dynamic_cast<ExistentialQuantifier *>(&oper); existential != nullptr)
         firstOrderExpr = std::make_shared<ExistentialQuantifier>(*existential);
-    else if (auto *counting = dynamic_cast<CountingQuantifier *>(&oper); counting != nullptr)
-        firstOrderExpr = std::make_shared<CountingQuantifier>(*counting);
+    else if (auto *counting = dynamic_cast<QuoteQuantifier *>(&oper); counting != nullptr)
+        firstOrderExpr = std::make_shared<QuoteQuantifier>(*counting);
     return firstOrderExpr;
 }

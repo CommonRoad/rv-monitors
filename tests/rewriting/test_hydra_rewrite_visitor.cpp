@@ -16,11 +16,18 @@ TEST(TestHydraRewriteVisitor, multipleExistential) {
     EXPECT_EQ(formula.to_string(), "E x in D0, y in D1, z in D2. (x & y & z)");
 }
 
-TEST(TestHydraRewriteVisitor, multipleCounting) {
-    auto formula = Parser::parse("C[0.2, 0.8] x in D0. C[0.2, 0.8] y in D1. x & y");
+TEST(TestHydraRewriteVisitor, multipleQuote) {
+    auto formula = Parser::parse("Q[0.2, 0.8] x in D0. Q[0.2, 0.8] y in D1. x & y");
     HydraRewriteVisitor visitor;
     visitor.rewrite(formula);
-    EXPECT_EQ(formula.to_string(), "C[0.200000, 0.800000] x in D0, y in D1. (x & y)");
+    EXPECT_EQ(formula.to_string(), "Q[0.200000, 0.800000] x in D0, y in D1. (x & y)");
+}
+
+TEST(TestHydraRewriteVisitor, multipleCounting) {
+    auto formula = Parser::parse("C=2 x in D0. C=2 x in D1. x");
+    HydraRewriteVisitor visitor;
+    visitor.rewrite(formula);
+    EXPECT_EQ(formula.to_string(), "C=2 x in D1. x");
 }
 
 TEST(TestHydraRewriteVisitor, shadowedVarsFirstOrder) {
@@ -34,8 +41,8 @@ TEST(TestHydraRewriteVisitor, shadowedVarsFirstOrder) {
     visitor_2.rewrite(formula_2);
     EXPECT_EQ(formula_2.to_string(), "E x in D1. x");
 
-    auto formula_3 = Parser::parse("A x in D0. E y in D1. C[0.1, 0.3] x, y in D3. x & y");
+    auto formula_3 = Parser::parse("A x in D0. E y in D1. Q[0.1, 0.3] x, y in D3. x & y");
     HydraRewriteVisitor visitor_3;
     visitor_3.rewrite(formula_3);
-    EXPECT_EQ(formula_3.to_string(), "C[0.100000, 0.300000] x in D3, y in D3. (x & y)");
+    EXPECT_EQ(formula_3.to_string(), "Q[0.100000, 0.300000] x in D3, y in D3. (x & y)");
 }

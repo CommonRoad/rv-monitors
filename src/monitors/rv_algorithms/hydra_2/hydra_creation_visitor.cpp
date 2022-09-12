@@ -8,29 +8,31 @@
 #include "hydra_monitors/and_monitor.h"
 #include "hydra_monitors/atomic_monitor.h"
 #include "hydra_monitors/constant_monitor.h"
+#include "hydra_monitors/equality_operator_monitor.h"
+#include "hydra_monitors/existential_monitor.h"
+#include "hydra_monitors/counting_monitor.h"
 #include "hydra_monitors/negation_monitor.h"
 #include "hydra_monitors/next_monitor.h"
 #include "hydra_monitors/or_monitor.h"
 #include "hydra_monitors/predicate_monitor.h"
 #include "hydra_monitors/previous_monitor.h"
+#include "hydra_monitors/quote_monitor.h"
 #include "hydra_monitors/since_monitor.h"
-#include "hydra_monitors/until_monitor.h"
 #include "hydra_monitors/universal_monitor.h"
-#include "hydra_monitors/existential_monitor.h"
-#include "hydra_monitors/counting_monitor.h"
-#include "hydra_monitors/same_func_monitor.h"
+#include "hydra_monitors/until_monitor.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/binary/temporal/since.h"
 #include "monitors/expression_tree/binary/temporal/until.h"
 #include "monitors/expression_tree/nary/bool/and.h"
 #include "monitors/expression_tree/nary/bool/or.h"
 #include "monitors/expression_tree/unary/bool/not.h"
+#include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/function/equality_operator.h"
+#include "monitors/expression_tree/unary/first_order/quote_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
 #include "monitors/expression_tree/unary/temporal/next_strong.h"
 #include "monitors/expression_tree/unary/temporal/previously.h"
-#include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
-#include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
-#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
-#include "monitors/expression_tree/unary/first_order/function/same_func.h"
 #include "monitors/formula/formula.h"
 #include <numeric>
 #include <utility>
@@ -243,7 +245,24 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitExistentialQuantifier(E
     return newMonitor;
 }
 
-std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitCountingQuantifier(CountingQuantifier &tlop, size_t parentId, bool connectedEval) {
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitQuoteQuantifier(QuoteQuantifier &tlop, size_t parentId, bool connectedEval) {
+    size_t idx{maxId++};
+
+    std::map<std::string, std::string> variables;
+    for (const auto &var : tlop.getVariables())
+        variables[var.getName()] = var.getDomain();
+
+    auto newMonitor{std::make_shared<QuoteMonitor>(Formula(std::make_shared<QuoteQuantifier>(tlop)),
+                                                      tlop.getLeft()->accept(*this, idx, connectedEval), idx,
+                                                      variables, domains, tlop.getQuoteInterval().getMin(), tlop.getQuoteInterval().getMax(), connectedEval, shortCircuiting)};
+
+    baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(tlop.to_string(), newMonitor));
+    newMonitor->registerParent(parentId);
+    return newMonitor;
+}
+
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitCountingQuantifier(CountingQuantifier &tlop, size_t parentId,
+                                                                            bool connectedEval) {
     size_t idx{maxId++};
 
     std::map<std::string, std::string> variables;
@@ -251,19 +270,18 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitCountingQuantifier(Coun
         variables[var.getName()] = var.getDomain();
 
     auto newMonitor{std::make_shared<CountingMonitor>(Formula(std::make_shared<CountingQuantifier>(tlop)),
-                                                      tlop.getLeft()->accept(*this, idx, connectedEval), idx,
-                                                      variables, domains, tlop.getProbInterval().getMin(),
-                                                      tlop.getProbInterval().getMax(), connectedEval, shortCircuiting)};
+                                                   tlop.getLeft()->accept(*this, idx, connectedEval), idx,
+                                                   variables, domains, tlop.getOperator(), tlop.getNum(), connectedEval, shortCircuiting)};
 
     baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(tlop.to_string(), newMonitor));
     newMonitor->registerParent(parentId);
     return newMonitor;
 }
 
-std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitSameFunc(SameFunc &tlop, size_t parentId, bool connectedEval) {
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitEqualityOperator(EqualityOperator &tlop, size_t parentId, bool connectedEval) {
     size_t idx{maxId++};
 
-    auto newMonitor{std::make_shared<SameFuncMonitor>(Formula(std::make_shared<SameFunc>(tlop)), idx, connectedEval)};
+    auto newMonitor{std::make_shared<EqualityOperatorMonitor>(Formula(std::make_shared<EqualityOperator>(tlop)), idx, connectedEval)};
     baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(tlop.to_string(), newMonitor));
     newMonitor->registerParent(parentId);
     return newMonitor;

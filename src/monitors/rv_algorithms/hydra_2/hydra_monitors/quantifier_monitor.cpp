@@ -73,3 +73,14 @@ void QuantifierMonitor::reset(std::optional<size_t> stepNumber) {
     variableValues.clear();
     resetIterators();
 }
+
+double QuantifierMonitor::computeCost(const std::shared_ptr<HydraMonitor> &monitor, size_t numEval) {
+    return monitor->getEvalCost() * static_cast<double>(numEval);
+}
+
+double QuantifierMonitor::computeSatisfactionProbability(const std::shared_ptr<HydraMonitor> &monitor, size_t numEval) {
+    double prob{monitor->getSatisfactionProbability()};
+    for (size_t num{1}; num < numEval; num++)
+        prob *= monitor->getSatisfactionProbability() / 10.0;
+    return prob;
+}

@@ -1,11 +1,13 @@
-#ifndef RVMONITORS_FIRST_ORDER_OPERATOR_H
-#define RVMONITORS_FIRST_ORDER_OPERATOR_H
+#pragma once
 
 #include <string>
 #include <set>
 #include <memory>
 #include "expression.h"
 
+/**
+ * Class representing a variable used by a first-order operator.
+ */
 class Variable {
   public:
     /**
@@ -36,6 +38,9 @@ class Variable {
 
 };
 
+/**
+ * Class representing a first-order operator.
+ */
 class FirstOrderOperator {
   public:
     /**
@@ -89,5 +94,3 @@ class FirstOrderOperator {
     std::vector<Variable> variables; //**< Variables used by first oder operator. */
 
 };
-
-#endif // RVMONITORS_FIRST_ORDER_OPERATOR_H

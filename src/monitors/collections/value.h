@@ -2,6 +2,9 @@
 
 #include "string"
 
+/**
+ * Value wraps a weighted string and can be stored in Domain.
+ */
 class Value {
   public:
     /**

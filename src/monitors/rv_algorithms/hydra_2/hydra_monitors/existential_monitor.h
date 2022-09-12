@@ -1,10 +1,12 @@
-#ifndef RVMONITORS_EXISTENTIAL_MONITOR_H
-#define RVMONITORS_EXISTENTIAL_MONITOR_H
+#pragma once
 
 #include "quantifier_monitor.h"
 #include "monitors/utils/utils.h"
 #include "monitors/collections/value.h"
 
+/**
+ * Hydra monitor representing existential monitor.
+ */
 class ExistentialMonitor : public QuantifierMonitor {
   public:
     /**
@@ -39,22 +41,4 @@ class ExistentialMonitor : public QuantifierMonitor {
      */
     std::string to_string() override;
 
-    /**
-     * Computes normalized cost over provided monitor.
-     *
-     * @param monitor Monitor which should be used for existential evaluation cost computation.
-     * @return Normalized evaluation cost of existential monitor in interval [0, 100].
-     */
-    static double computeCost(const std::shared_ptr<HydraMonitor> &monitor);
-
-    /**
-     * Computes satisfaction probability over provided monitor.
-     *
-     * @param monitor Monitor which should be used for existential satisfaction probability computation.
-     * @return Satisfaction probability of existential monitor in interval [0, 1].
-     */
-    static double computeSatisfactionProbability(const std::shared_ptr<HydraMonitor> &monitor);
-
 };
-
-#endif // RVMONITORS_EXISTENTIAL_MONITOR_H

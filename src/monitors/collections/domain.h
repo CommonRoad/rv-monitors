@@ -4,6 +4,9 @@
 #include "value.h"
 #include "vector"
 
+/**
+ * Storage for a range of values. In particular used for quantified variables.
+ */
 class Domain {
   public:
 
