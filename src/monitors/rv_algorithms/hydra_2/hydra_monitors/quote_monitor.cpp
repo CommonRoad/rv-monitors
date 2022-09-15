@@ -20,43 +20,39 @@ Verdict QuoteMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     else
         return Verdict{false};
 
-    if (!checkNonEmptiness())
+    if (!checkNonEmptiness()) // if there is an empty domain, then a true verdict will be returned by definition
         return verdict;
+
+    size_t numComb{numCombinations()};
+    float totalQuote;
 
     size_t count{0};
     size_t trueVerdicts{0};
-    while (nextCombination()) {
-        std::shared_ptr<HydraMonitor> evalMonitor;
-        if (traceIdx[parentId] == 0) {
-            evalMonitor = subMonitor->clone();
-            evalMonitors.push_back(evalMonitor);
-        } else
-            evalMonitor = evalMonitors[count];
+    while (count != numComb) { // loop over all possible combinations
+        std::shared_ptr<HydraMonitor> evalMonitor = nextEvalMonitor(parentId, count); // request monitor for the current combination
 
         Verdict subVerdict = evalMonitor->step(monitorId, stepNumber);
-        if (subVerdict.value)
+        if (subVerdict.value) // count number of true verdicts
             trueVerdicts++;
 
-        /*if (shortCircuiting) {
-            combinationCounter++;
-            totalQuote = computeRatio(trueVerdicts);
-            float possibleProbability = computeRatio(trueVerdicts + numCombs - combinationCounter);
-            if (totalQuote > maxQuote or possibleProbability < minQuote) {
-                resetIterators();
+        if (shortCircuiting) {
+            totalQuote = computeRatio(trueVerdicts); // current quote of true verdicts
+            float possibleQuote = computeRatio(trueVerdicts + numComb - count - 1); // still reachable quote of true verdicts
+            if (totalQuote > maxQuote or possibleQuote < minQuote) {
                 verdict.value = false;
                 return verdict;
             } else if (minQuote <= totalQuote and totalQuote <= maxQuote) {
-                if (possibleProbability <= maxQuote) {
-                    resetIterators();
+                if (possibleQuote <= maxQuote) {
                     return verdict;
                 }
             }
-        }*/
+        }
+
         count++;
     }
 
-    float totalQuote = computeRatio(trueVerdicts);
-    if (minQuote > totalQuote or maxQuote < totalQuote)
+    totalQuote = computeRatio(trueVerdicts);
+    if (minQuote > totalQuote or maxQuote < totalQuote) // if quote of true verdicts is outside the quote interval, then a false verdict will be returned
         verdict.value = false;
 
     return verdict;
@@ -65,11 +61,7 @@ Verdict QuoteMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 std::shared_ptr<HydraMonitor> QuoteMonitor::clone() {
     auto clonedMonitor = std::make_shared<QuoteMonitor>(*this);
     clonedMonitor->subMonitor = subMonitor->clone();
-
-    clonedMonitor->iters.clear();
-    for (auto &varDomain : clonedMonitor->varDomains)
-        clonedMonitor->iters.push_back(varDomain.second.begin());
-
+    clonedMonitor->resetIterators();
     return clonedMonitor;
 }
 

@@ -1076,6 +1076,15 @@ TestDataBase::TestDataBase() {
             {{"a", "b"}, {"a", "b", "c"}, {"a", "c"}, {}, {"b"}, {"b", "c"}},
             {0, 1, 2, 3, 4, 5},
             {Domain{"D", {"a", "b", "c"}}}
+        },
+        {
+            "F94_1",
+            "G(X(E x in D. (x & x == 'a')))",
+            createExpectedResult({false, true, false, false}),
+            {"a", "b", "c"},
+            {{"a", "b"}, {"b"}, {"a"}, {"c"}},
+            {0, 1, 2, 3},
+            {Domain{"D", {"a", "b", "c"}}}
         }
     };
 }

@@ -79,3 +79,13 @@ TEST(TestHydra, testCombinedSinceUntilFormulas) {
         {Verdict{0, true}, Verdict{0, true}, Verdict{2, true}, Verdict{4, true}, Verdict{5, true}, Verdict{10, true}}};
     hydraTestUtils::executeHydraEval(trace, formulas, expSolutions);
 }
+
+TEST(TestHydra, testExistentialStepLooping) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a", "b", "c"}, {}, {"b"}, {"a", "c"}});
+    Formula formula = Parser::parse("G(C<=2 x in D. x)");
+    formula.setId("R1");
+    std::vector<Formula> formulas = {formula};
+    std::vector<std::vector<Verdict>> expSolutions{{Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true}}};
+    DomainCollection domainCollection = {Domain{"D", {"a", "b", "c"}}};
+    hydraTestUtils::executeHydraEval(trace, formulas, expSolutions, domainCollection);
+}

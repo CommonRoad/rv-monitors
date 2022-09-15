@@ -18,43 +18,41 @@ Verdict CountingMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     else
         return verdict;
 
-    if (!checkNonEmptiness())
+    if (!checkNonEmptiness()) // if there is an empty domain, then a true verdict will be returned by definition
         return verdict;
+
+    size_t numComb{numCombinations()};
 
     size_t count{0};
     size_t trueVerdicts{0};
-    while (nextCombination()) {
-        std::shared_ptr<HydraMonitor> evalMonitor;
-        if (traceIdx[parentId] == 0) {
-            evalMonitor = subMonitor->clone();
-            evalMonitors.push_back(evalMonitor);
-        } else
-            evalMonitor = evalMonitors[count];
+    while (count != numComb) { // loop over all possible combinations
+        std::shared_ptr<HydraMonitor> evalMonitor = nextEvalMonitor(parentId, count); // request monitor for the current combination
 
         Verdict subVerdict = evalMonitor->step(monitorId, stepNumber);
-        if (subVerdict.value)
+        if (subVerdict.value) // count number of true verdicts
             trueVerdicts++;
 
-        /*if (shortCircuiting) {
-            combinationCounter++;
-            size_t unevalVerdicts{numCombs - combinationCounter};
+        if (shortCircuiting) {
+            size_t unevalVerdicts{numComb - count - 1}; // unevaluated verdicts
             if (op == CountingQuantifier::LESS_EQ) {
-                if (unevalVerdicts + trueVerdicts <= num) {
-                    verdict.timeStamp = true;
+                if (unevalVerdicts + trueVerdicts <= num or trueVerdicts > num) {
+                    if (unevalVerdicts + trueVerdicts <= num)
+                        verdict.value = true;
                     return verdict;
-                } else if (trueVerdicts > num)
-                    return verdict;
+                }
             } else if (op == CountingQuantifier::EQ) {
-                if (trueVerdicts > num)
+                if (trueVerdicts > num or unevalVerdicts + trueVerdicts < num) {
                     return verdict;
+                }
             } else {
-                if (trueVerdicts >= num) {
-                    verdict.value = true;
+                if (trueVerdicts >= num or unevalVerdicts + trueVerdicts < num) {
+                    if (trueVerdicts >= num)
+                        verdict.value = true;
                     return verdict;
-                } else if (unevalVerdicts + trueVerdicts < num)
-                    return verdict;
+                }
             }
-        }*/
+        }
+
         count++;
     }
 
@@ -68,11 +66,7 @@ Verdict CountingMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 std::shared_ptr<HydraMonitor> CountingMonitor::clone() {
     auto clonedMonitor = std::make_shared<CountingMonitor>(*this);
     clonedMonitor->subMonitor = subMonitor->clone();
-
-    clonedMonitor->iters.clear();
-    for (auto &varDomain : clonedMonitor->varDomains)
-        clonedMonitor->iters.push_back(varDomain.second.begin());
-
+    clonedMonitor->resetIterators();
     return clonedMonitor;
 }
 

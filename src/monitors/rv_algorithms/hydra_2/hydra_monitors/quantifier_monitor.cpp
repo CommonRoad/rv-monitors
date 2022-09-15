@@ -13,8 +13,21 @@ QuantifierMonitor::QuantifierMonitor(Formula formula, std::shared_ptr<HydraMonit
         iters.push_back(varDomain.second.begin());
 }
 
+std::shared_ptr<HydraMonitor> QuantifierMonitor::nextEvalMonitor(size_t parentId, size_t count) {
+    std::shared_ptr<HydraMonitor> evalMonitor;
+    if (traceIdx[parentId] == 0 or count > evalMonitors.size() - 1) { // if there is no monitor for the current combination,
+                                                                      // then a new monitor will be cloned
+        nextCombination();
+        evalMonitor = subMonitor->clone();
+        evalMonitors.push_back(evalMonitor);
+    } else
+        evalMonitor = evalMonitors[count];
+
+    return evalMonitor;
+}
+
 bool QuantifierMonitor::nextCombination() {
-    if (iters[0] == varDomains[0].second.end()) {
+    if (iters[0] == varDomains[0].second.end()) { // if iterators cannot be shifted anymore, the iterators will be reset
         resetIterators();
         return false;
     }
@@ -28,10 +41,10 @@ bool QuantifierMonitor::nextCombination() {
             variableValues.insert(std::make_pair(varDomains[i].first, *iters[i]));
     }
 
-    subMonitor->setVariableValues(variableValues);
+    subMonitor->setVariableValues(variableValues); // the values of the new combination are inserted into the child monitor
 
     ++iters[numVars - 1];
-    for (size_t i = numVars - 1; i > 0 and iters[i] == varDomains[i].second.end(); i--) {
+    for (size_t i = numVars - 1; i > 0 and iters[i] == varDomains[i].second.end(); i--) { // iterators are shifted to form a new combination
         iters[i] = varDomains[i].second.begin();
         ++iters[i - 1];
     }

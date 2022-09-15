@@ -18,26 +18,21 @@ Verdict UniversalMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     else
         return Verdict{false};
 
-    if (!checkNonEmptiness())
+    if (!checkNonEmptiness()) // if there is an empty domain, then a true verdict will be returned by definition
         return verdict;
 
+    size_t numComb{numCombinations()};
+
     size_t count{0};
-    while (nextCombination()) {
-        std::shared_ptr<HydraMonitor> evalMonitor;
-        if (traceIdx[parentId] == 0) {
-            evalMonitor = subMonitor->clone();
-            evalMonitors.push_back(evalMonitor);
-        } else
-            evalMonitor = evalMonitors[count];
+    while (count != numComb) { // loop over all possible combinations
+        std::shared_ptr<HydraMonitor> evalMonitor = nextEvalMonitor(parentId, count); // request monitor for current combination
 
         Verdict subVerdict = evalMonitor->step(monitorId, stepNumber);
-        /*if (shortCircuiting)
-            if (!subVerdict.value) {
-                resetIterators();
+        if (shortCircuiting)
+            if (!subVerdict.value) // if a wrong verdict results, then the step evaluation will be stopped immediately
                 return subVerdict;
-            }*/
 
-        verdict = verdict && subVerdict;
+        verdict = verdict && subVerdict; // all subverdicts have to be true so that a true verdict is returned
 
         count++;
     }
@@ -48,11 +43,7 @@ Verdict UniversalMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 std::shared_ptr<HydraMonitor> UniversalMonitor::clone() {
     auto clonedMonitor = std::make_shared<UniversalMonitor>(*this);
     clonedMonitor->subMonitor = subMonitor->clone();
-
-    clonedMonitor->iters.clear();
-    for (auto &varDomain : clonedMonitor->varDomains)
-        clonedMonitor->iters.push_back(varDomain.second.begin());
-
+    clonedMonitor->resetIterators();
     return clonedMonitor;
 }
 

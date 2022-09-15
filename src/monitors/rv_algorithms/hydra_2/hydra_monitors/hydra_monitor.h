@@ -156,6 +156,7 @@ class HydraMonitor {
 
     /**
      * Clones this monitor.
+     *
      * @return New shared_ptr of this monitor.
      */
     virtual std::shared_ptr<HydraMonitor> clone() = 0;

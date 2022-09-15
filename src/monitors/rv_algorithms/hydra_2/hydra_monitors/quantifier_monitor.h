@@ -26,10 +26,10 @@ class QuantifierMonitor : public HydraMonitor {
 
     /**
      * Performs concrete step of quantifier monitor. If the current step is not covered by the trace or
-     * one of the domains of the variables is empty the step results in a false verdict. In general,
-     * for each combination determined by the domains the child monitor is started. After computing the subverdict
-     * the child monitor will be reset to the current step number and restarted for the next combination and so on.
-     * Finally, the step number is incremented for next execution of the quantifier monitor.
+     * one of the domains of the variables is empty the step evaluation stops immediately. In general,
+     * a monitor is cloned from the child monitor for each combination and the corresponding variable values
+     * are inserted. For the step evaluation not all cloned monitors have to be used. If a cloned monitor is not
+     * on the current step number, then it will be implicitly made up at its next step evaluation.
      *
      * The computation of the verdict depends on the type of quantifier monitor.
      *
@@ -38,6 +38,15 @@ class QuantifierMonitor : public HydraMonitor {
      * @return Verdict for monitoring step result.
      */
     Verdict concreteStep(size_t parentId, size_t stepNumber) override = 0;
+
+    /**
+     * Returns next monitor for evaluation.
+     *
+     * @param parentId ID of parent monitor.
+     * @param count ID of current combination.
+     * @return Monitor.
+     */
+    std::shared_ptr<HydraMonitor> nextEvalMonitor(size_t parentId, size_t count);
 
     /**
      * Shifts the iterators for each variables domain so that a new combination is formed. If all combinations

@@ -16,21 +16,19 @@ Verdict ExistentialMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     else
         return Verdict{false};
 
-    if (!checkNonEmptiness())
+    if (!checkNonEmptiness()) // if there is an empty domain, then a false verdict will be returned by definition
         return verdict;
 
+    size_t numComb{numCombinations()};
+
     size_t count{0};
-    while (nextCombination()) {
-        std::shared_ptr<HydraMonitor> evalMonitor;
-        if (traceIdx[parentId] == 0) {
-            evalMonitor = subMonitor->clone();
-            evalMonitors.push_back(evalMonitor);
-        } else
-            evalMonitor = evalMonitors[count];
+    while (count != numComb) { // loop over all possible combinations
+        std::shared_ptr<HydraMonitor> evalMonitor = nextEvalMonitor(parentId, count); // request monitor for the current combination
 
-        Verdict subVerdict = evalMonitor->step(monitorId, stepNumber);
+        verdict = evalMonitor->step(monitorId, stepNumber);
 
-        verdict = verdict || subVerdict;
+        if (verdict.value) // if a true verdict results, then the step evaluation will be stopped immediately
+            break;
 
         count++;
     }
@@ -41,11 +39,7 @@ Verdict ExistentialMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 std::shared_ptr<HydraMonitor> ExistentialMonitor::clone() {
     auto clonedMonitor = std::make_shared<ExistentialMonitor>(*this);
     clonedMonitor->subMonitor = subMonitor->clone();
-
-    clonedMonitor->iters.clear();
-    for (auto &varDomain : clonedMonitor->varDomains)
-        clonedMonitor->iters.push_back(varDomain.second.begin());
-
+    clonedMonitor->resetIterators();
     return clonedMonitor;
 }
 
