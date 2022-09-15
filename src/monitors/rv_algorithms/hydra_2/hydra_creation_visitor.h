@@ -82,8 +82,19 @@ class CountingQuantifier;
 
 class EqualityOperator;
 
+/**
+ * Creates Hydra monitors.
+ */
 class HydraCreationVisitor {
   public:
+    /**
+     * Constructor for Hydra monitor.
+     *
+     * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
+     * satisfaction probability in interval [0, 1].
+     * @param reordering Boolean indicating whether the formula should be reordered based on the predicate costs.
+     * @param shortCircuiting Boolean indicating whether short-circuiting should be used.
+     */
     HydraCreationVisitor(std::map<std::string, std::array<double, 2>> predicate_costs,
                          DomainCollection &domains,
                          FunctionCollection &functions,
@@ -122,13 +133,20 @@ class HydraCreationVisitor {
     [[nodiscard]] std::shared_ptr<HydraMonitor> visitEqualityOperator(EqualityOperator &tlop, size_t parentId, bool connectedEval);
 
   private:
-    size_t maxId{0};
-    bool reordering;
-    bool shortCircuiting;
-    std::map<std::string, std::shared_ptr<HydraMonitor>> baseline;
-    std::map<std::string, std::array<double, 2>> predicateCosts;
-    DomainCollection domains;
-    FunctionCollection functions;
+    size_t maxId{0}; //**< Maximum ID which is currently assigned to sub-monitor. */
+    bool reordering; //**< Boolean indicating whether the formula should be reordered based on the predicate costs. */
+    bool shortCircuiting; //**< Boolean indicating whether short-circuiting should be used. */
+    std::map<std::string, std::shared_ptr<HydraMonitor>> baseline; //**< Stores unique formula sub-sets which can be shared within monitor. Only relevant for connected evaluation */
+    std::map<std::string, std::array<double, 2>> predicateCosts; //**< Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and satisfaction probability in interval [0, 1]. */
+    DomainCollection domains; //**< Domains of quantified variables. */
+    FunctionCollection functions; //**< Functions used for the evaluation of predicates. */
 
+    /**
+     * Resorts the formula based on predicate costs.
+     *
+     * @param monitors List of monitors.
+     * @param increasing Boolean indicating whether predicates should be ordered in increasing or decreasing order based
+     * on cost value (and-> increasing, or->decreasing).
+     */
     static void resort(std::vector<std::shared_ptr<HydraMonitor>> &monitors, bool increasing);
 };

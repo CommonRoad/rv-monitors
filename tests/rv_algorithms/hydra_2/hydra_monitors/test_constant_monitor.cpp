@@ -17,9 +17,9 @@ TEST(TestConstantMonitor, testSingleConstant) {
     auto mon{ConstantMonitor(formula, 1, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
-    EXPECT_EQ(mon.concreteStep(0, 0).b, true);
-    EXPECT_EQ(mon.step(0, 0).b, true);
-    EXPECT_EQ(mon.step(0, 4).b, false);
+    EXPECT_EQ(mon.concreteStep(0, 0).value, true);
+    EXPECT_EQ(mon.step(0, 0).value, true);
+    EXPECT_EQ(mon.step(0, 4).value, false);
 }
 
 TEST(TestConstantMonitor, testConstantToString) {

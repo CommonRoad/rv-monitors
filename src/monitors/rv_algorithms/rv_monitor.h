@@ -16,8 +16,6 @@
 #include <iostream>
 #include <vector>
 
-enum AlgorithmType { dynamic_programming_ltl, event_consuming_ltl, mt_fsm, btt_fsm, hydra_mtl };
-
 /**
  * List of configuration parameters for the different monitoring algorithms.
  */
@@ -27,32 +25,29 @@ struct MonitorConfiguration {
      * Constructor defining all configuration variables.
      *
      * @param algorithm Algorithm type, e.g., hydra, event-consuming LTL, etc.
-     * @param past Only past evaluation (only relevant for certain algorithms, i.e. LTL algorithms)
      * @param measurement Indicates whether evaluation with time measurement should be performed
      * @param hydraConnectedEvaluation Indicates whether HYDRA monitor should perform connected evaluation
      * @param hydraReordering Indicates whether HYDRA monitor should perform reordering
      * @param hydraShortCircuiting Indicates whether HYDRA monitor should perform short circuiting
      */
-    MonitorConfiguration(AlgorithmType algorithm, bool past, bool measurement, bool hydraConnectedEvaluation,
-                         bool hydraReordering, bool hydraShortCircuiting);
+    MonitorConfiguration(AlgorithmType algorithm, bool measurement, bool hydraConnectedEvaluation, bool hydraReordering,
+                         bool hydraShortCircuiting);
 
     /**
      * Constructor defining only algorithm type, past evaluation, and performance evaluation.
      *
      * @param algorithm Algorithm type, e.g., hydra, event-consuming LTL, etc.
-     * @param past Only past evaluation (only relevant for certain algorithms, i.e. LTL algorithms)
      * @param measurement Indicates whether evaluation with time measurement should be performed
      */
-    MonitorConfiguration(AlgorithmType algorithm, bool past, bool measurement);
+    MonitorConfiguration(AlgorithmType algorithm, bool measurement);
 
     /*
-     *
+     * Default constructor.
      */
     MonitorConfiguration() = default;
 
     const AlgorithmType algorithm{
         AlgorithmType::hydra_mtl}; /**< Algorithm to use, e.g., Hydra, LTL event consuming, .... */
-    const bool past{false}; /**< Set only past evaluation (only relevant for certain algorithms, i.e. LTL algorithms) */
     const bool performanceMeasurement{
         false}; /**< Indicates whether evaluation with time measurement should be performed */
     const bool hydraConnectedEvaluation{
@@ -66,27 +61,34 @@ class RVMonitor {
     /**
      * Constructor
      *
-     * @param algorithm Algorithm type, e.g., event-consuming LTL, BTT-FSM, etc.
      * @param formula Temporal logic formula.
-     * @param past Boolean indicating whether formula specifies only future or past properties (true if formula is in
-     * PLTLf).
-     * @param measurement Boolean indicating whether performance evaluation should be performed.
+     * @param configuration List of configuration parameters for the different monitoring algorithms.
+     * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
+     * satisfaction probability in interval [0, 1].
      */
     RVMonitor(const Formula &formula, MonitorConfiguration configuration = {},
               const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
 
+    /*
+     * Copy constructor.
+     * @param obj New RVMonitor object.
+     */
     RVMonitor(const RVMonitor &obj);
 
+    /*
+     * Copy assignment
+     *
+     * @param other New RVMonitor object.
+     */
     RVMonitor &operator=(const RVMonitor &other);
 
     /**
      * Constructor
      *
-     * @param algorithm Algorithm type, e.g., event-consuming LTL, BTT-FSM, etc.
-     * @param formula List of temporal logic formulas.
-     * @param past Boolean indicating whether formula specifies only future or past properties (true if formula is in
-     * PLTLf).
-     * @param measurement Boolean indicating whether performance evaluation should be performed.
+     * @param formula Temporal logic formula.
+     * @param configuration List of configuration parameters for the different monitoring algorithms.
+     * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
+     * satisfaction probability in interval [0, 1].
      */
     RVMonitor(const std::vector<Formula> &formula, MonitorConfiguration configuration,
               const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
@@ -106,6 +108,11 @@ class RVMonitor {
      */
     const ExecutionStatistic &getExecutionStatistic() const;
 
+    /**
+     * Creates string representation of activated monitoring algorithm.
+     *
+     * @return String representation of activated monitoring algorithm.
+     */
     std::string to_string();
 
   protected:

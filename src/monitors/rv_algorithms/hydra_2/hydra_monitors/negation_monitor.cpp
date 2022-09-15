@@ -21,4 +21,10 @@ void NegationMonitor::reset(std::optional<size_t> stepNumber) {
     subMonitor->reset(stepNumber);
 }
 
+std::shared_ptr<HydraMonitor> NegationMonitor::clone() {
+    auto clonedMonitor = std::make_shared<NegationMonitor>(*this);
+    clonedMonitor->subMonitor = subMonitor->clone();
+    return clonedMonitor;
+}
+
 std::string NegationMonitor::to_string() { return "!(" + subMonitor->to_string() + ")"; }

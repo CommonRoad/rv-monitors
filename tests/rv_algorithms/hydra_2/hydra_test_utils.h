@@ -12,11 +12,11 @@
 #include "monitors/utils/utils.h"
 
 namespace hydraTestUtils {
-void executeHydraEval(Trace &trace, const std::vector<Formula> &formulas,
-                      const std::vector<std::vector<Verdict>> &expSolution,
-                      const DomainCollection &domainCollection = {},
-                      const FunctionCollection &functionCollection = {});
+size_t executeHydraEval(Trace trace, const std::vector<Formula> &formulas,
+                        const std::vector<std::vector<Verdict>> &expSolution,
+                        const DomainCollection &domainCollection = {},
+                        const FunctionCollection &functionCollection = {});
 
-void evalHydra(const std::vector<Formula> &formulas, const std::vector<std::vector<Verdict>> &expSolution,
-               Hydra &monitor, Trace &trac, const std::string &evaluation);
+size_t evalHydra(const std::vector<Formula> &formulas, const std::vector<std::vector<Verdict>> &expSolution,
+                 Hydra &monitor, Trace &trac, const std::string &evaluation);
 } // namespace hydraTestUtils

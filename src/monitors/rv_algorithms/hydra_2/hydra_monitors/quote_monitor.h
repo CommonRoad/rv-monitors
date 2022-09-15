@@ -17,14 +17,14 @@ class QuoteMonitor : public QuantifierMonitor {
      * @param monitorId ID of monitor.
      * @param variables Variables used by quantifier.
      * @param domains Collection of domains.
-     * @param minProbability Minimum probability.
-     * @param maxProbability Maximum probability.
+     * @param minQuote Minimum quote.
+     * @param maxQuote Maximum quote.
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @param shortCircuiting Boolean indicating whether short circuiting should be used.
      */
     QuoteMonitor(Formula formula, std::shared_ptr<HydraMonitor> subMonitor, size_t monitorId,
                  std::map<std::string, std::string> variables, DomainCollection &domains,
-                 float minProbability, float maxProbability, bool connectedEval, bool shortCircuiting);
+                 float minQuote, float maxQuote, bool connectedEval, bool shortCircuiting);
 
     /**
      * Computes the ratio of true subverdicts and number of combinations.
@@ -45,6 +45,12 @@ class QuoteMonitor : public QuantifierMonitor {
     Verdict concreteStep(size_t parentId, size_t stepNumber) override;
 
     /**
+     * Clones this monitor.
+     * @return New shared_ptr of this monitor.
+     */
+    std::shared_ptr<HydraMonitor> clone() override;
+
+    /**
      * Creates string representation of monitor.
      *
      * @return String representation monitor.
@@ -52,7 +58,7 @@ class QuoteMonitor : public QuantifierMonitor {
     std::string to_string() override;
 
   private:
-    float minProbability; //**< Minimum probability. */
-    float maxProbability; //**< Maximum probability. */
+    float minQuote; //**< Minimum quote. */
+    float maxQuote; //**< Maximum quote. */
 
 };

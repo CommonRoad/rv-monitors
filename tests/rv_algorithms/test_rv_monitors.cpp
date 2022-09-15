@@ -17,7 +17,7 @@ void TestRVMonitors::SetUp() {
 std::vector<Verdict> TestRVMonitors::executeRVMonitor(AlgorithmType algorithm) {
     Trace tra{*trace};
     Formula form{*formula};
-    auto monitor{RVMonitor({form, MonitorConfiguration(algorithm, false, false)})};
+    auto monitor{RVMonitor({form, MonitorConfiguration(algorithm, false)})};
     std::cout << algorithm;
 
     return monitor.verify(tra)[form.getId()];
@@ -25,7 +25,7 @@ std::vector<Verdict> TestRVMonitors::executeRVMonitor(AlgorithmType algorithm) {
 
 TEST_F(TestRVMonitors, EventConsumingLTL) {
     testing::internal::CaptureStdout();
-    EXPECT_FALSE(executeRVMonitor(AlgorithmType::event_consuming_ltl).at(0).b);
+    EXPECT_FALSE(executeRVMonitor(AlgorithmType::event_consuming_ltl).at(0).value);
     auto consoleOutputAlgorithmType{testing::internal::GetCapturedStdout()};
     EXPECT_EQ(consoleOutputAlgorithmType, "EventConsuming-LTL");
 }
@@ -42,21 +42,21 @@ TEST_F(TestRVMonitors, HydraMTL) {
 
 TEST_F(TestRVMonitors, BTT_FSM_LTL) {
     testing::internal::CaptureStdout();
-    EXPECT_FALSE(executeRVMonitor(AlgorithmType::btt_fsm).at(0).b);
+    EXPECT_FALSE(executeRVMonitor(AlgorithmType::btt_fsm).at(0).value);
     auto consoleOutputAlgorithmType{testing::internal::GetCapturedStdout()};
     EXPECT_EQ(consoleOutputAlgorithmType, "BTT-FSM*");
 }
 
 TEST_F(TestRVMonitors, MT_FSM_LTL) {
     testing::internal::CaptureStdout();
-    EXPECT_FALSE(executeRVMonitor(AlgorithmType::mt_fsm).at(0).b);
+    EXPECT_FALSE(executeRVMonitor(AlgorithmType::mt_fsm).at(0).value);
     auto consoleOutputAlgorithmType{testing::internal::GetCapturedStdout()};
     EXPECT_EQ(consoleOutputAlgorithmType, "MT-FSM*");
 }
 
 TEST_F(TestRVMonitors, DynamicProgrammingLTL) {
     testing::internal::CaptureStdout();
-    EXPECT_FALSE(executeRVMonitor(AlgorithmType::dynamic_programming_ltl).at(0).b);
+    EXPECT_FALSE(executeRVMonitor(AlgorithmType::dynamic_programming_ltl).at(0).value);
     auto consoleOutputAlgorithmType{testing::internal::GetCapturedStdout()};
     EXPECT_EQ(consoleOutputAlgorithmType, "DynamicProgramming");
 }
@@ -67,13 +67,14 @@ TEST_F(TestRVMonitors, StringToAlgorithm) {
     EXPECT_EQ(stringToAlgorithm("hydra-mtl"), AlgorithmType::hydra_mtl);
     EXPECT_EQ(stringToAlgorithm("btt-fsm*"), AlgorithmType::btt_fsm);
     EXPECT_EQ(stringToAlgorithm("mt-fsm*"), AlgorithmType::mt_fsm);
+    EXPECT_EQ(stringToAlgorithm("event-consuming-mtl"), AlgorithmType::event_consuming_mtl);
     EXPECT_THROW(stringToAlgorithm("test"), std::runtime_error);
 }
 
 TEST_F(TestRVMonitors, PerformanceMeasurement) {
     Trace tra{*trace};
     Formula form{*formula};
-    auto monitor{RVMonitor({form, MonitorConfiguration(AlgorithmType::hydra_mtl, false, true)})};
+    auto monitor{RVMonitor({form, MonitorConfiguration(AlgorithmType::hydra_mtl, true)})};
 
     monitor.verify(tra);
 

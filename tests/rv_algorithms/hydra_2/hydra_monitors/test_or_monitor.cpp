@@ -25,9 +25,9 @@ TEST(TestOrMonitor, testSingleOrMonitor) {
     auto mon{OrMonitor(formula, {mon1, mon2}, 1, false, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
-    EXPECT_EQ(mon.concreteStep(0, 0).b, true);
-    EXPECT_EQ(mon.step(0, 0).b, true);
-    EXPECT_EQ(mon.step(0, 4).b, false);
+    EXPECT_EQ(mon.concreteStep(0, 0).value, true);
+    EXPECT_EQ(mon.step(0, 0).value, true);
+    EXPECT_EQ(mon.step(0, 4).value, false);
 }
 
 TEST(TestOrMonitor, testSingleOrMonitorShortCircuiting1) {
@@ -43,9 +43,9 @@ TEST(TestOrMonitor, testSingleOrMonitorShortCircuiting1) {
     auto mon{OrMonitor(formula, {mon1, mon2}, 1, false, true)};
     mon.registerParent(0);
     mon.setTrace(trace);
-    EXPECT_EQ(mon.concreteStep(0, 0).b, true);
-    EXPECT_EQ(mon.step(0, 0).b, true);
-    EXPECT_EQ(mon.step(0, 4).b, false);
+    EXPECT_EQ(mon.concreteStep(0, 0).value, true);
+    EXPECT_EQ(mon.step(0, 0).value, true);
+    EXPECT_EQ(mon.step(0, 4).value, false);
 }
 
 TEST(TestOrMonitor, testSingleOrMonitorShortCircuiting2) {
@@ -62,10 +62,10 @@ TEST(TestOrMonitor, testSingleOrMonitorShortCircuiting2) {
     auto mon{OrMonitor(formula, {mon2, mon1}, 1, false, true)};
     mon.registerParent(0);
     mon.setTrace(trace);
-    EXPECT_EQ(mon.concreteStep(0, 0).b, true);
-    EXPECT_EQ(mon.step(0, 0).b, true);
-    EXPECT_EQ(mon.step(0, 4).b, true);
-    EXPECT_EQ(mon.concreteStep(0, 4).b, true);
+    EXPECT_EQ(mon.concreteStep(0, 0).value, true);
+    EXPECT_EQ(mon.step(0, 0).value, true);
+    EXPECT_EQ(mon.step(0, 4).value, true);
+    EXPECT_EQ(mon.concreteStep(0, 4).value, true);
 }
 
 TEST(TestOrMonitor, testSingleOrMonitorShortCircuiting3) {
@@ -82,10 +82,10 @@ TEST(TestOrMonitor, testSingleOrMonitorShortCircuiting3) {
     auto mon{OrMonitor(formula, {mon1, mon2}, 1, false, true)};
     mon.registerParent(0);
     mon.setTrace(trace);
-    EXPECT_EQ(mon.concreteStep(0, 0).b, true);
-    EXPECT_EQ(mon.step(0, 0).b, true);
-    EXPECT_EQ(mon.step(0, 4).b, true);
-    EXPECT_EQ(mon.concreteStep(0, 4).b, true);
+    EXPECT_EQ(mon.concreteStep(0, 0).value, true);
+    EXPECT_EQ(mon.step(0, 0).value, true);
+    EXPECT_EQ(mon.step(0, 4).value, true);
+    EXPECT_EQ(mon.concreteStep(0, 4).value, true);
 }
 
 TEST(TestOrMonitor, testToString) {

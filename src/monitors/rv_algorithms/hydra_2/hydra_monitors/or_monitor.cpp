@@ -5,27 +5,27 @@
 // Credits: BMW Car@TUM
 //
 #include "or_monitor.h"
+#include <iostream>
 
 Verdict OrMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     Verdict verdict{subMonitors.at(0)->step(monitorId, stepNumber)};
     if (shortCircuiting) {
-        if (verdict.b) {
-            if (!verdict.ts.has_value()) // happens when we are behind last trace element with submonitor
+        if (verdict.value) {
+            if (!verdict.timeStamp.has_value()) // happens when we are behind last trace element with submonitor
                 return {true};
             else
-                return {verdict.ts.value(), true};
+                return {verdict.timeStamp.value(), true};
         }
-        auto current{subMonitors.at(0)->getTraceIdxByParentId(monitorId)};
-        for (size_t i{1}; i < subMonitors.size(); ++i) {
-            if (subMonitors.at(i)->step(monitorId, current - 1).b) {
-                if (!verdict.ts.has_value())
+        for (size_t i{1}; i < subMonitors.size(); ++i) { // verdict of first monitor is evaluated above
+            if (subMonitors.at(i)->step(monitorId, stepNumber).value) {
+                if (!verdict.timeStamp.has_value())
                     return {true};
                 else
-                    return {verdict.ts.value(), true};
+                    return {verdict.timeStamp.value(), true};
             }
         }
-    } else {
-        for (size_t i{1}; i < subMonitors.size(); ++i)
+    } else {                                           // if no short-circuiting, check all verdicts of submonitors
+        for (size_t i{1}; i < subMonitors.size(); ++i) // verdict of first monitor is evaluated above
             verdict = verdict || subMonitors.at(i)->step(monitorId, stepNumber);
     }
     return verdict;
@@ -47,6 +47,15 @@ void OrMonitor::reset(std::optional<size_t> stepNumber) {
         mon->reset(stepNumber);
 }
 
+std::shared_ptr<HydraMonitor> OrMonitor::clone() {
+    auto clonedMonitor = std::make_shared<OrMonitor>(*this);
+    std::vector<std::shared_ptr<HydraMonitor>> clonedSubMonitors;
+    for (const auto &mon : subMonitors)
+        clonedSubMonitors.push_back(mon->clone());
+    clonedMonitor->subMonitors = clonedSubMonitors;
+    return clonedMonitor;
+}
+
 std::string OrMonitor::to_string() {
     std::string str{"("};
     for (const auto &mon : subMonitors)
@@ -56,16 +65,17 @@ std::string OrMonitor::to_string() {
     return str;
 }
 
-double OrMonitor::computeCost(const std::vector<std::shared_ptr<HydraMonitor>> &monitors) {
-    double cost{0.0};
-    for (const auto &mon : monitors)
-        cost += mon->getEvalCost();
-    return cost / static_cast<double>(monitors.size());
+double OrMonitor::computeEvaluationCost(const std::vector<std::shared_ptr<HydraMonitor>> &monitors) {
+    double cost{monitors.at(0)->getEvalCost()};
+    for (size_t idx{0}; idx < monitors.size(); ++idx)
+        cost += monitors.at(idx)->getEvalCost() * monitors.at(idx)->getSatisfactionProbability();
+    return cost / static_cast<double>(monitors.size()); // normalize cost
 }
 
 double OrMonitor::computeSatisfactionProbability(const std::vector<std::shared_ptr<HydraMonitor>> &monitors) {
-    double prob{monitors.at(0)->getSatisfactionProbability()};
-    for (size_t idx{1}; idx < monitors.size(); ++idx)
-        prob *= monitors.at(idx)->getSatisfactionProbability() / 10.0;
-    return prob;
+    std::set<double> probs;
+    for (const auto &mon : monitors) {
+        probs.insert(mon->getSatisfactionProbability());
+    }
+    return *probs.rbegin();
 }

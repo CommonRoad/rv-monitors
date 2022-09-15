@@ -8,21 +8,67 @@
 
 #include "hydra_monitor.h"
 
+/**
+ * Hydra monitor representing atomic proposition.
+ */
 class AtomicMonitor : public HydraMonitor {
   public:
-    AtomicMonitor(const Formula &formula, size_t id, bool connectedEval) : HydraMonitor(formula, id, connectedEval){};
+    /**
+     * Constructor.
+     *
+     * @param formula Formula to be monitored.
+     * @param monitorId ID of monitor.
+     * @param connectedEval Boolean indicating whether connected evaluation should be used.
+     */
+    AtomicMonitor(const Formula &formula, size_t monitorId, bool connectedEval)
+        : HydraMonitor(formula, monitorId, connectedEval){};
 
+    /**
+     * Performs concrete step of atomic monitor. It evaluates the trace element of the concrete step. Returns false if
+     * stepNumber >= traceLength.
+     *
+     * @param parentId ID of parent monitor.
+     * @param stepNumber Current step/position in trace.
+     * @return Verdict for monitoring step result.
+     */
     Verdict concreteStep(size_t parentId, size_t stepNumber) override;
 
+    /**
+     * Setter for trace.
+     *
+     * @param trace Trace.
+     */
     void setTrace(const Trace &trace) override;
 
+    /**
+     * Setter for the current values of the quantified variables.
+     *
+     * @param values Current values.
+     */
     void setVariableValues(std::map<std::string, Value> values) override;
 
+    /**
+     * Resets monitor variables to default values at a specified step number.
+     *
+     * @param stepNumber Optional step number.
+     */
     void reset(std::optional<size_t> stepNumber = std::nullopt) override;
 
+    /**
+     * Clones this monitor.
+     * @return New shared_ptr of this monitor.
+     */
+    std::shared_ptr<HydraMonitor> clone() override;
+
+    /**
+     * Creates string representation of monitor.
+     *
+     * @return String representing monitor.
+     */
     std::string to_string() override;
 
   private:
-    Trace trace;
-    std::map<std::string, Value> variableValues;
+    Trace trace; //**< Trace which should be monitored. */
+    std::map<std::string, Value> variableValues; //**< Current values of quantified variables. */
+
 };

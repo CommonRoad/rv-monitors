@@ -12,22 +12,41 @@ ExistentialMonitor::ExistentialMonitor(Formula formula, std::shared_ptr<HydraMon
 Verdict ExistentialMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     Verdict verdict{false};
     if (traceIdx[parentId] < trace.getLength())
-        verdict.ts = trace.getEvent(traceIdx[parentId]).getTimeStep();
+        verdict.timeStamp = trace.getEvent(traceIdx[parentId]).getTimeStep();
     else
         return Verdict{false};
 
     if (!checkNonEmptiness())
         return verdict;
 
+    size_t count{0};
     while (nextCombination()) {
-        verdict = subMonitor->step(monitorId, stepNumber);
-        if (verdict.b)
-            break;
-        subMonitor->reset(traceIdx[parentId]);
+        std::shared_ptr<HydraMonitor> evalMonitor;
+        if (traceIdx[parentId] == 0) {
+            evalMonitor = subMonitor->clone();
+            evalMonitors.push_back(evalMonitor);
+        } else
+            evalMonitor = evalMonitors[count];
+
+        Verdict subVerdict = evalMonitor->step(monitorId, stepNumber);
+
+        verdict = verdict || subVerdict;
+
+        count++;
     }
 
-    subMonitor->reset(traceIdx[parentId] + 1);
     return verdict;
+}
+
+std::shared_ptr<HydraMonitor> ExistentialMonitor::clone() {
+    auto clonedMonitor = std::make_shared<ExistentialMonitor>(*this);
+    clonedMonitor->subMonitor = subMonitor->clone();
+
+    clonedMonitor->iters.clear();
+    for (auto &varDomain : clonedMonitor->varDomains)
+        clonedMonitor->iters.push_back(varDomain.second.begin());
+
+    return clonedMonitor;
 }
 
 std::string ExistentialMonitor::to_string() { return formula.to_string(); }

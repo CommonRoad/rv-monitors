@@ -8,6 +8,8 @@
 
 #include "../utils/utils.h"
 
+enum AlgorithmType { dynamic_programming_ltl, event_consuming_ltl, mt_fsm, btt_fsm, hydra_mtl, event_consuming_mtl };
+
 /**
  * Interface for runtime verification algorithms/monitors.
  */
@@ -17,15 +19,21 @@ class MonitorInterface {
      * Constructor for monitor.
      *
      * @param formula Temporal logic formula.
+     * @param algorithm Name of algorithm.
+     * @param formulaCompatibilityCheck Boolean which activates check whether formula provided to monitor is evaluated
+     * for monitor compatibility.
      */
-    MonitorInterface(Formula formula);
+    MonitorInterface(Formula formula, AlgorithmType algorithm, bool formulaCompatibilityCheck = true);
 
     /**
      * Constructor for monitor based on several formulas.
      *
      * @param formula List of formulas.
+     * @param algorithm Name of algorithm.
+     * @param formulaCompatibilityCheck Boolean which activates check whether formula provided to monitor is evaluated
+     * for monitor compatibility.
      */
-    MonitorInterface(std::vector<Formula> formulas);
+    MonitorInterface(std::vector<Formula> formulas, AlgorithmType algorithm, bool formulaCompatibilityCheck = true);
 
     /**
      * Evaluation function for monitor algorithms.
@@ -53,4 +61,8 @@ class MonitorInterface {
 
   protected:
     std::vector<Formula> formulas; //**< Temporal logic formulas which are evaluated by monitor */
+    AlgorithmType algorithm;       //**< Name of algorithm. */
 };
+
+extern const std::map<AlgorithmType, std::vector<MonitoringProperties>>
+    supportedFormulaTypes; //**< Map of supported formula types to algorithm. */

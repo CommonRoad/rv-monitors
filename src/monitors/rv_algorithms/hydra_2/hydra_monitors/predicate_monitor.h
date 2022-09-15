@@ -8,6 +8,9 @@
 
 #include "hydra_monitor.h"
 
+/**
+ * Hydra monitor representing predicate.
+ */
 class PredicateMonitor : public HydraMonitor {
   public:
     PredicateMonitor(Formula formula, size_t id, FunctionCollection &functions,
@@ -15,19 +18,53 @@ class PredicateMonitor : public HydraMonitor {
         : HydraMonitor(std::move(formula), id, connectedEval, evalCost, satisfactionProbability),
           functions(functions) {};
 
+    /**
+     * Performs concrete step of predicate monitor. It evaluates the trace element of the concrete step. Returns false
+     * if stepNumber >= traceLength.
+     *
+     * @param parentId ID of parent monitor.
+     * @param stepNumber Current step/position in trace.
+     * @return Verdict for monitoring step result.
+     */
     Verdict concreteStep(size_t parentId, size_t stepNumber) override;
 
+    /**
+     * Setter for trace.
+     *
+     * @param trace Trace.
+     */
     void setTrace(const Trace &trace) override;
 
+    /**
+     * Setter for the current values of the quantified variables.
+     *
+     * @param values Current values.
+     */
     void setVariableValues(std::map<std::string, Value> values) override;
 
+    /**
+     * Clones this monitor.
+     * @return New shared_ptr of this monitor.
+     */
+    std::shared_ptr<HydraMonitor> clone() override;
+
+    /**
+     * Resets monitor variables to default values at a specified step number.
+     *
+     * @param stepNumber Optional step number.
+     */
     void reset(std::optional<size_t> stepNumber = std::nullopt) override;
 
+    /**
+     * Creates string representation of monitor.
+     *
+     * @return String representing monitor.
+     */
     std::string to_string() override;
 
   private:
-    Trace trace;
-    std::map<std::string, Value> variableValues;
-    FunctionCollection functions;
+    Trace trace; //**< Trace. */
+    std::map<std::string, Value> variableValues; //**< Current values of quantified variables. */
+    FunctionCollection functions; //**< Functions used for evaluation of predicates. */
 
 };

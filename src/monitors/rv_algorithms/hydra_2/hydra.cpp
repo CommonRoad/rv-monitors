@@ -30,7 +30,7 @@ std::map<std::string, std::vector<Verdict>> Hydra::evaluate(Trace &trace) {
 std::string Hydra::to_string() const {
     std::string str;
     for (const auto &mon : monitors)
-        str += mon->to_string();
+        str += "G(" + mon->to_string() + ")";
     return str;
 }
 
@@ -46,6 +46,8 @@ void Hydra::setTraceMonitors(const Trace &tra) {
 
 void Hydra::createMonitor(const std::vector<Formula> &formulas, DomainCollection &domainCollection, FunctionCollection &functionCollection,
                           bool connectedEval, bool reordering, bool shortCircuiting, const std::map<std::string, std::array<double, 2>> &predicateCosts) {
+    for (const auto &pred : predicateCosts)
+        assert(pred.second[0] < 0 or pred.second[0] > 1 or pred.second[1] < 0 or pred.second[1] > 1);
     HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts, domainCollection, functionCollection, reordering, shortCircuiting)};
     for (const auto &form : formulas) {
         if (form.getId().empty())
@@ -63,6 +65,8 @@ void Hydra::createMonitor(const std::vector<Formula> &formulas, DomainCollection
 
 Hydra::Hydra(const std::vector<Formula> &formulas, DomainCollection domainCollection, FunctionCollection functionCollection,
              bool connectedEval, bool reordering, bool shortCircuiting, const std::map<std::string, std::array<double, 2>> &predicateCosts)
-    : MonitorInterface(formulas) {
+    : MonitorInterface(formulas, AlgorithmType::hydra_mtl) {
+    for (const auto &pred : predicateCosts)
+        assert(pred.second[0] < 0 or pred.second[0] > 1 or pred.second[1] < 0 or pred.second[1] > 1);
     createMonitor(formulas, domainCollection, functionCollection, connectedEval, reordering, shortCircuiting, predicateCosts);
 }

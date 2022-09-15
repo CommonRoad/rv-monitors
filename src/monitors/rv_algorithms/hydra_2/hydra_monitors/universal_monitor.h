@@ -35,6 +35,12 @@ class UniversalMonitor : public QuantifierMonitor {
     Verdict concreteStep(size_t parentId, size_t stepNumber) override;
 
     /**
+     * Clones this monitor.
+     * @return New shared_ptr of this monitor.
+     */
+    std::shared_ptr<HydraMonitor> clone() override;
+
+    /**
      * Creates string representation of monitor.
      *
      * @return String representing monitor.

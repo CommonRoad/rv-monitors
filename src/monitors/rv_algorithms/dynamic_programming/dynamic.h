@@ -18,8 +18,11 @@
 class DynamicProgrammingLTL : public MonitorInterface {
   public:
     DynamicProgrammingLTL(const std::vector<Formula> &formulas, bool pastEvaluation = false);
+
     std::map<std::string, std::vector<Verdict>> evaluate(Trace &trace) override;
+
     std::string to_string() const override;
+
     bool isPastEvaluation() const;
 
   private:
@@ -27,39 +30,39 @@ class DynamicProgrammingLTL : public MonitorInterface {
 
     /**
      * Initializes vector pre/next with values according to eventMap.
-     * @param j Index of subformula in initVector.
+     * @param idx Index of subformula in initVector.
      * @param initVector Vector where initial values are written to.
      * @param eventMap Map of events with truth values of all predicates.
      * @param subformulas Vector of all subformulas of the formula to be verified.
      */
-    void initialize(size_t j, std::vector<bool> &initVector, event_map_t &eventMap,
+    void initialize(size_t idx, std::vector<bool> &initVector, event_map_t &eventMap,
                     const std::vector<std::shared_ptr<Expression>> &subformulas);
 
     /**
      * Updates newVector according to the values in oldVector.
-     * @param j Index of subformula vectors.
+     * @param idx Index of subformula vectors.
      * @param updateVector Subformula values of current event.
      * @param oldVector Subformula values of previous event.
      * @param eventMap Map of events with truth values of all predicates.
      * @param subformulas Vector of all subformulas of the formula to be verified.
      */
-    void update(size_t j, std::vector<bool> &updateVector, std::vector<bool> oldVector, event_map_t &eventMap,
+    void update(size_t idx, std::vector<bool> &updateVector, std::vector<bool> oldVector, event_map_t &eventMap,
                 const std::vector<std::shared_ptr<Expression>> &subformulas);
 
     /**
      * Computes truth value of an expression of type Implication or Nary.
      * @tparam F Expects two bool and return one bool.
-     * @param j Current index in vector that is evaluated.
+     * @param idx Current index in vector that is evaluated.
      * @param subformulas Vector of all subformulas of the formula to be verified.
      * @param values Evaluation vector.
      * @param function Function for fold.
      * @return Value of expression at index j in values vector.
      */
     template <class F>
-    [[nodiscard]] bool applyBooleanOperation(size_t j, const std::vector<std::shared_ptr<Expression>> &subformulas,
+    [[nodiscard]] bool applyBooleanOperation(size_t idx, const std::vector<std::shared_ptr<Expression>> &subformulas,
                                              const std::vector<bool> &values, F function) {
         // Implication
-        if (auto impl = std::dynamic_pointer_cast<Implication>(subformulas[j])) {
+        if (auto impl = std::dynamic_pointer_cast<Implication>(subformulas[idx])) {
             auto itr = std::find(subformulas.begin(), subformulas.end(), impl->getLeft());
             auto indexLeft = std::distance(subformulas.begin(), itr);
             itr = std::find(subformulas.begin(), subformulas.end(), impl->getRight());
@@ -69,7 +72,7 @@ class DynamicProgrammingLTL : public MonitorInterface {
 
         // And/Or/Xor
         // Iterate over set and apply function
-        if (auto nary = std::dynamic_pointer_cast<NaryInterface>(subformulas[j])) {
+        if (auto nary = std::dynamic_pointer_cast<NaryInterface>(subformulas[idx])) {
             bool res;
             for (auto exprItr = nary->begin(); exprItr != nary->end(); ++exprItr) {
                 auto itr = std::find(subformulas.begin(), subformulas.end(), *exprItr);
@@ -83,7 +86,7 @@ class DynamicProgrammingLTL : public MonitorInterface {
             return res;
         }
 
-        throw std::runtime_error("Dynamic::applyBooleanOperation() subformulas[j] has to be Nary or Implication.");
+        throw std::runtime_error("Dynamic::applyBooleanOperation() subformulas[idx] has to be Nary or Implication.");
     }
 
     /**

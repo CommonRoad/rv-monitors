@@ -24,19 +24,18 @@ TEST(TestUntilMonitor, testUntilMonitorEvaluation) {
     mon1->registerParent(1);
     auto mon2{std::make_shared<AtomicMonitor>(formulaB, 3, false)};
     mon2->registerParent(1);
-    auto tmpConstSubMonitor{std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(true)), 1, false)};
-    auto mon{UntilMonitor(formula, mon1, mon2, tmpConstSubMonitor, 0, 4, 1, false)};
+    auto mon{UntilMonitor(formula, mon1, mon2, 0, 4, 1, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
-    EXPECT_EQ(mon.step(0, 0).b, true);
-    EXPECT_EQ(mon.step(0, 1).b, true);
-    EXPECT_EQ(mon.step(0, 2).b, true);
-    EXPECT_EQ(mon.step(0, 3).b, false);
-    EXPECT_EQ(mon.step(0, 4).b, true);
-    EXPECT_EQ(mon.step(0, 5).b, true);
-    EXPECT_EQ(mon.step(0, 6).b, true);
-    EXPECT_EQ(mon.step(0, 7).b, false);
-    EXPECT_EQ(mon.step(0, 8).b, true);
+    EXPECT_EQ(mon.step(0, 0).value, true);
+    EXPECT_EQ(mon.step(0, 1).value, true);
+    EXPECT_EQ(mon.step(0, 2).value, true);
+    EXPECT_EQ(mon.step(0, 3).value, false);
+    EXPECT_EQ(mon.step(0, 4).value, true);
+    EXPECT_EQ(mon.step(0, 5).value, true);
+    EXPECT_EQ(mon.step(0, 6).value, true);
+    EXPECT_EQ(mon.step(0, 7).value, false);
+    EXPECT_EQ(mon.step(0, 8).value, true);
 }
 
 TEST(TestUntilMonitor, testToString) {
@@ -48,8 +47,7 @@ TEST(TestUntilMonitor, testToString) {
     mon1->registerParent(1);
     auto mon2{std::make_shared<AtomicMonitor>(formulaB, 3, false)};
     mon2->registerParent(1);
-    auto tmpConstSubMonitor{std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(true)), 4, false)};
-    auto mon{UntilMonitor(formula, mon1, mon2, tmpConstSubMonitor, 0, 4, 1, false)};
+    auto mon{UntilMonitor(formula, mon1, mon2, 0, 4, 1, false)};
     EXPECT_EQ(mon.to_string(), "(a U[0, 4] b)");
 }
 
@@ -62,7 +60,6 @@ TEST(TestUntilMonitor, testReset) {
     mon1->registerParent(1);
     auto mon2{std::make_shared<AtomicMonitor>(formulaB, 3, false)};
     mon2->registerParent(1);
-    auto tmpConstSubMonitor{std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(true)), 4, false)};
-    auto mon{UntilMonitor(formula, mon1, mon2, tmpConstSubMonitor, 0, 4, 1, false)};
+    auto mon{UntilMonitor(formula, mon1, mon2, 0, 4, 1, false)};
     EXPECT_NO_THROW(mon.reset());
 }

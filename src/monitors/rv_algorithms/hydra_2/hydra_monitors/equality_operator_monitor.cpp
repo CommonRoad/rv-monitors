@@ -39,4 +39,7 @@ void EqualityOperatorMonitor::reset(std::optional<size_t> stepNumber) {
     variableValues.clear();
 }
 
+std::shared_ptr<HydraMonitor> EqualityOperatorMonitor::clone() { return std::make_shared<EqualityOperatorMonitor>(*this); }
+
+
 std::string EqualityOperatorMonitor::to_string() { return formula.to_string(); }

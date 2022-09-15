@@ -25,11 +25,11 @@ TEST(TestExistentialMonitor, testExistentialMonitorStandard) {
     auto mon{ExistentialMonitor(formula, mon1, 1, variables, domainCollection, false, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
-    EXPECT_EQ(mon.step(0, 0).b, true);
-    EXPECT_EQ(mon.step(0, 1).b, true);
-    EXPECT_EQ(mon.step(0, 2).b, false);
-    EXPECT_EQ(mon.step(0, 3).b, true);
-    EXPECT_EQ(mon.step(0, 4).b, false);
+    EXPECT_EQ(mon.step(0, 0).value, true);
+    EXPECT_EQ(mon.step(0, 1).value, true);
+    EXPECT_EQ(mon.step(0, 2).value, false);
+    EXPECT_EQ(mon.step(0, 3).value, true);
+    EXPECT_EQ(mon.step(0, 4).value, false);
 }
 
 TEST(TestExistentialMonitor, testExistentialMonitorToString) {

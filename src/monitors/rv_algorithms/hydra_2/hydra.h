@@ -30,7 +30,8 @@ class Hydra : public MonitorInterface {
     std::map<std::string, std::vector<Verdict>> evaluate(Trace &trace) override;
 
     /**
-     * to_string() function.
+     * Creates string representation for corresponding monitors.
+     *
      * @return String representation of Hydra.
      */
     [[nodiscard]] std::string to_string() const override;
@@ -39,9 +40,18 @@ class Hydra : public MonitorInterface {
     void createMonitor(const std::vector<Formula> &formulas, DomainCollection &domainCollection, FunctionCollection &functionCollection, bool connectedEval, bool reordering, bool shortCircuiting,
                        const std::map<std::string, std::array<double, 2>> &predicateCosts);
 
+    /**
+     * Resets monitor variables to default values.
+     */
     void resetMonitors();
 
+    /**
+     * Setter for trace.
+     *
+     * @param tra Trace.
+     */
     void setTraceMonitors(const Trace &tra);
 
-    std::vector<std::shared_ptr<HydraMonitor>> monitors;
+    std::vector<std::shared_ptr<HydraMonitor>>
+        monitors; //**< List of monitors corresponding to the formulas which should be evaluated. */
 };

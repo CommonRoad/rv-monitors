@@ -24,7 +24,6 @@ class QuantifierMonitor : public HydraMonitor {
                       std::map<std::string, std::string> variables, DomainCollection &domains,
                       bool connectedEval, bool shortCircuiting, double cost, double satisfactionProbability);
 
-
     /**
      * Performs concrete step of quantifier monitor. If the current step is not covered by the trace or
      * one of the domains of the variables is empty the step results in a false verdict. In general,
@@ -108,6 +107,7 @@ class QuantifierMonitor : public HydraMonitor {
 
   protected:
     std::shared_ptr<HydraMonitor> subMonitor; //**< Child monitor. */
+    std::vector<std::shared_ptr<HydraMonitor>> evalMonitors; //**< Monitors for evaluation. */
     bool shortCircuiting; //**< Child monitors. */
     std::map<std::string, Value> variableValues; //**< Variables values from higher quantifier scopes. */
     Trace trace; //**< Trace. */

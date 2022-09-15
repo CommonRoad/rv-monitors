@@ -8,7 +8,7 @@
 #include <iostream>
 
 Verdict PredicateMonitor::concreteStep(size_t parentId, size_t stepNumber) {
-    if (traceIdx[parentId] < trace.getLength()) {
+    if (stepNumber < trace.getLength()) {
         const Predicate &predicate = *std::dynamic_pointer_cast<Predicate>(formula.getExpr());
         auto event{trace.getEvent(traceIdx[parentId])};
         if (trace.isTraced(predicate, traceIdx[parentId])) {
@@ -62,5 +62,7 @@ void PredicateMonitor::reset(std::optional<size_t> stepNumber) {
     HydraMonitor::reset(stepNumber);
     variableValues.clear();
 }
+
+std::shared_ptr<HydraMonitor> PredicateMonitor::clone() { return std::make_shared<PredicateMonitor>(*this); }
 
 std::string PredicateMonitor::to_string() { return formula.to_string(); }

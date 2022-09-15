@@ -1,11 +1,11 @@
 #include <algorithm>
 #include <iostream>
 #include <queue>
-#include <random>
 #include <set>
 
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/binary/binary.h"
+#include "monitors/expression_tree/first_order_operator.h"
 #include "monitors/expression_tree/nary/bool/and.h"
 #include "monitors/expression_tree/nary/bool/or.h"
 #include "monitors/expression_tree/nary/bool/xor.h"
@@ -64,7 +64,7 @@ bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr, e
     if (auto xorExpr = std::dynamic_pointer_cast<Xor>(expr)) {
         auto res = evaluateBooleanExpression(*xorExpr->begin(), eventMap);
         for (auto itr = ++xorExpr->begin(); itr != xorExpr->end(); ++itr) {
-            res xor_eq evaluateBooleanExpression(*itr, eventMap);
+            res xor_eq static_cast<int>(evaluateBooleanExpression(*itr, eventMap));
         }
 
         return res;
@@ -72,9 +72,22 @@ bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr, e
     return false;
 }
 
+Trace Utils::createTrace(const std::vector<std::vector<std::string>> &trueAtomics, const std::vector<size_t> &timeSteps,
+                         const std::shared_ptr<Formula> &formula) {
+    std::set<std::string> atomics;
+    for (const auto &step : trueAtomics)
+        for (const auto &elem : step)
+            atomics.emplace(elem);
+    auto formulaAtomics{getAtomicsAndPredicates(formula->getExpr())};
+    std::set<std::string> mergedAtomics;
+    std::set_union(atomics.begin(), atomics.end(), formulaAtomics.begin(), formulaAtomics.end(),
+                   std::inserter(mergedAtomics, mergedAtomics.begin()));
+    return createTrace(mergedAtomics, trueAtomics, timeSteps);
+}
+
 Trace Utils::createTrace(const std::set<std::string> &atomics, const std::vector<std::vector<std::string>> &trueAtomics,
-                         const std::optional<std::vector<size_t>> &timeSteps) {
-    if (timeSteps and trueAtomics.size() != timeSteps.value().size())
+                         const std::vector<size_t> &timeSteps) {
+    if (!timeSteps.empty() and trueAtomics.size() != timeSteps.size())
         throw std::runtime_error("Utils::createTrace: Number time steps does not correspond to number of atomics.");
     std::vector<Event> finalTrace;
     size_t timeStepIdx{0};
@@ -88,9 +101,8 @@ Trace Utils::createTrace(const std::set<std::string> &atomics, const std::vector
             bool atomicValue = trueAtomic.end() != std::find(trueAtomic.begin(), trueAtomic.end(), atomic);
             event[atomic] = lazy_bool(atomicValue);
         }
-        if (timeSteps)
-            finalTrace.emplace_back(std::move(event), timeSteps.value()[timeStepIdx],
-                                    &trueAtomic == &trueAtomics.back());
+        if (!timeSteps.empty())
+            finalTrace.emplace_back(std::move(event), timeSteps[timeStepIdx], &trueAtomic == &trueAtomics.back());
         else
             finalTrace.emplace_back(std::move(event), timeStepIdx, &trueAtomic == &trueAtomics.back());
         ++timeStepIdx;
@@ -99,10 +111,10 @@ Trace Utils::createTrace(const std::set<std::string> &atomics, const std::vector
 }
 
 // Wrapper
-std::set<std::string> Utils::getAtomics(const Formula &formula) { return getAtomics(formula.getExpr(), {}); }
+std::set<std::string> Utils::getAtomics(const Formula &formula) { return getAtomics(formula.getExpr(), {}, {}); }
 
 // Wrapper
-std::set<std::string> Utils::getPredicates(const Formula &formula) { return getPredicates(formula.getExpr(), {}); }
+std::set<std::string> Utils::getPredicates(const Formula &formula) { return getPredicates(formula.getExpr(), {}, {}); }
 
 // Wrapper
 std::map<std::string, std::tuple<std::string, std::vector<std::pair<std::string, Predicate::Argument>>>>
@@ -111,9 +123,9 @@ Utils::getPredicatesAndParameters(const Formula &formula) {
 }
 
 // Wrapper
-std::set<std::string> Utils::getAtomics(const std::shared_ptr<Expression> &expr) { return getAtomics(expr, {}); }
+std::set<std::string> Utils::getAtomics(const std::shared_ptr<Expression> &expr) { return getAtomics(expr, {}, {}); }
 
-std::set<std::string> Utils::getAtomics(const std::shared_ptr<Expression> &expr, std::set<std::string> atomics) {
+std::set<std::string> Utils::getAtomics(const std::shared_ptr<Expression> &expr, std::set<std::string> atomics, std::set<std::string> variables) {
     if (!expr) {
         return atomics;
     }
@@ -121,24 +133,29 @@ std::set<std::string> Utils::getAtomics(const std::shared_ptr<Expression> &expr,
     // Nary
     if (auto nary = std::dynamic_pointer_cast<NaryInterface>(expr)) {
         for (const auto &itr : *nary) {
-            atomics = getAtomics(itr, atomics);
+            atomics = getAtomics(itr, atomics, variables);
         }
     }
 
     // Binary
     else if (auto binary = std::dynamic_pointer_cast<Binary>(expr)) {
-        atomics = getAtomics(binary->getLeft(), atomics);
-        atomics = getAtomics(binary->getRight(), atomics);
+        atomics = getAtomics(binary->getLeft(), atomics, variables);
+        atomics = getAtomics(binary->getRight(), atomics, variables);
     }
 
     // Unary
     else if (auto unary = std::dynamic_pointer_cast<Unary>(expr)) {
-        atomics = getAtomics(unary->getLeft(), atomics);
+        if (auto firstOrder = std::dynamic_pointer_cast<FirstOrderOperator>(expr))
+            for (const auto &var : firstOrder->getVariables())
+                variables.insert(var.getName());
+        atomics = getAtomics(unary->getLeft(), atomics, variables);
     }
 
     // Atomic
     else if (auto atomic = std::dynamic_pointer_cast<Atomic>(expr)) {
-        atomics.emplace(atomic->to_string());
+        std::string name{atomic->to_string()};
+        if (variables.find(name) == variables.end())
+            atomics.emplace(name);
     }
 
     // Don't count constants
@@ -146,7 +163,7 @@ std::set<std::string> Utils::getAtomics(const std::shared_ptr<Expression> &expr,
     return atomics;
 }
 
-std::set<std::string> Utils::getPredicates(const std::shared_ptr<Expression> &expr, std::set<std::string> predicates) {
+std::set<std::string> Utils::getPredicates(const std::shared_ptr<Expression> &expr, std::set<std::string> predicates, std::set<std::string> variables) {
     if (!expr) {
         return predicates;
     }
@@ -154,24 +171,32 @@ std::set<std::string> Utils::getPredicates(const std::shared_ptr<Expression> &ex
     // Nary
     if (auto nary = std::dynamic_pointer_cast<NaryInterface>(expr)) {
         for (const auto &itr : *nary) {
-            predicates = getPredicates(itr, predicates);
+            predicates = getPredicates(itr, predicates, variables);
         }
     }
 
     // Binary
     else if (auto binary = std::dynamic_pointer_cast<Binary>(expr)) {
-        predicates = getPredicates(binary->getLeft(), predicates);
-        predicates = getPredicates(binary->getRight(), predicates);
+        predicates = getPredicates(binary->getLeft(), predicates, variables);
+        predicates = getPredicates(binary->getRight(), predicates, variables);
     }
 
     // Unary
     else if (auto unary = std::dynamic_pointer_cast<Unary>(expr)) {
-        predicates = getPredicates(unary->getLeft(), predicates);
+        if (auto firstOrder = std::dynamic_pointer_cast<FirstOrderOperator>(expr))
+            for (const auto &var : firstOrder->getVariables())
+                variables.insert(var.getName());
+        predicates = getPredicates(unary->getLeft(), predicates, variables);
     }
 
     // Predicate
     else if (auto predicate = std::dynamic_pointer_cast<Predicate>(expr)) {
-        predicates.emplace(predicate->to_string());
+        bool traced = true;
+        for (const auto &arg : predicate->getArguments())
+            if (variables.find(arg.first) != variables.end())
+                traced = false;
+        if (traced)
+            predicates.emplace(predicate->to_string());
     }
 
     // Don't count constants and atomics
@@ -180,9 +205,9 @@ std::set<std::string> Utils::getPredicates(const std::shared_ptr<Expression> &ex
 }
 
 std::set<std::string> Utils::getAtomicsAndPredicates(const std::shared_ptr<Expression> &expr,
-                                                     const std::set<std::string> &atomics) {
-    auto collectedAtomics{getAtomics(expr, atomics)};
-    auto predicates{getPredicates(expr, atomics)};
+                                                     const std::set<std::string> &atomics, const std::set<std::string> &variables) {
+    auto collectedAtomics{getAtomics(expr, atomics, variables)};
+    auto predicates{getPredicates(expr, atomics, variables)};
     std::set<std::string> combinedSet;
     std::set_union(collectedAtomics.begin(), collectedAtomics.end(), predicates.begin(), predicates.end(),
                    std::inserter(combinedSet, combinedSet.begin()));
@@ -190,7 +215,7 @@ std::set<std::string> Utils::getAtomicsAndPredicates(const std::shared_ptr<Expre
 }
 
 std::set<std::string> Utils::getAtomicsAndPredicates(const std::shared_ptr<Expression> &expr) {
-    return getAtomicsAndPredicates(expr, {});
+    return getAtomicsAndPredicates(expr, {}, {});
 }
 
 std::set<std::string> Utils::getAtomicsAndPredicates(const Formula &formula) {
@@ -229,10 +254,10 @@ std::map<std::string, std::tuple<std::string, std::vector<std::pair<std::string,
     return predicatesWithParameters;
 }
 
-size_t Utils::getNumberOfAtomics(const std::shared_ptr<Expression> &expr) { return getAtomics(expr, {}).size(); }
+size_t Utils::getNumberOfAtomics(const std::shared_ptr<Expression> &expr) { return getAtomics(expr, {}, {}).size(); }
 
 size_t Utils::getNumberOfAtomicsAndPredicates(const std::shared_ptr<Expression> &expr) {
-    return getAtomics(expr, {}).size() + getPredicates(expr, {}).size();
+    return getAtomics(expr, {}, {}).size() + getPredicates(expr, {}, {}).size();
 }
 
 Trace Utils::boolVectorToTrace(const std::set<std::string> &atomics, const std::vector<bool> &vector, bool terminal) {
@@ -243,10 +268,10 @@ Trace Utils::boolVectorToTrace(const std::set<std::string> &atomics, const std::
 // TODO terminal not needed (additional Event constructor)
 Event Utils::boolVectorToEvent(const std::set<std::string> &atomics, const std::vector<bool> &vector, bool terminal) {
     event_map_t eventMap;
-    size_t i = 0;
+    size_t idx{0};
     for (const auto &atomic : atomics) {
-        eventMap.emplace(atomic, lazy_bool(vector[i]));
-        ++i;
+        eventMap.emplace(atomic, lazy_bool(vector[idx]));
+        ++idx;
     }
     return Event(std::move(eventMap), 0, terminal); // TODO check whether other/correct time step should be used
 }
@@ -332,16 +357,16 @@ Trace Utils::createLazyTrace(const std::map<std::string, std::function<bool(size
     finalTrace.reserve(length);
     size_t initialTimeStep{timeSteps.at(0)};
 
-    for (auto const i : timeSteps) {
+    for (auto const idx : timeSteps) {
         event_map_t event;
 
         event.reserve(atomicsAndFunctions.size());
 
         for (auto const &[atomic, valueFetcher] : atomicsAndFunctions) {
-            auto valueFetcherBound = std::bind(valueFetcher, i);
-            event.emplace(std::move(atomic), lazy_bool(std::move(valueFetcherBound)));
+            auto valueFetcherBound = std::bind(valueFetcher, idx);
+            event.emplace(atomic, lazy_bool(std::move(valueFetcherBound)));
         }
-        finalTrace.emplace_back(std::move(event), i, i == length + initialTimeStep - 1);
+        finalTrace.emplace_back(std::move(event), idx, idx == length + initialTimeStep - 1);
     }
     return Trace{std::move(finalTrace)};
 }
@@ -353,16 +378,16 @@ Trace Utils::createLazyTrace(std::map<std::string, std::function<bool(size_t)>> 
     finalTrace.reserve(length);
     size_t initialTimeStep{timeSteps.at(0)};
 
-    for (auto const i : timeSteps) {
+    for (auto const idx : timeSteps) {
         event_map_t event;
 
         event.reserve(atomicsAndFunctions.size());
 
         for (auto &[atomic, valueFetcher] : atomicsAndFunctions) {
-            auto valueFetcherBound = std::bind(valueFetcher, i);
+            auto valueFetcherBound = std::bind(valueFetcher, idx);
             event.emplace(atomic, lazy_bool(std::move(valueFetcherBound)));
         }
-        finalTrace.emplace_back(std::move(event), i, i == length + initialTimeStep - 1);
+        finalTrace.emplace_back(std::move(event), idx, idx == length + initialTimeStep - 1);
     }
     return Trace{std::move(finalTrace)};
 }

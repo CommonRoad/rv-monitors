@@ -29,4 +29,6 @@ void AtomicMonitor::reset(std::optional<size_t> stepNumber) {
     variableValues.clear();
 }
 
+std::shared_ptr<HydraMonitor> AtomicMonitor::clone() { return std::make_shared<AtomicMonitor>(*this); }
+
 std::string AtomicMonitor::to_string() { return formula.to_string(); }

@@ -25,9 +25,9 @@ TEST(TestAndMonitor, testSingleAndMonitorFalseEvaluation) {
     auto mon{AndMonitor(formula, {mon1, mon2}, 1, false, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
-    EXPECT_EQ(mon.concreteStep(0, 0).b, false);
-    EXPECT_EQ(mon.step(0, 0).b, false);
-    EXPECT_EQ(mon.step(0, 4).b, false);
+    EXPECT_EQ(mon.concreteStep(0, 0).value, false);
+    EXPECT_EQ(mon.step(0, 0).value, false);
+    EXPECT_EQ(mon.step(0, 4).value, false);
 }
 
 TEST(TestAndMonitor, testSingleAndMonitorTrueEvaluation) {
@@ -42,8 +42,8 @@ TEST(TestAndMonitor, testSingleAndMonitorTrueEvaluation) {
     auto mon{AndMonitor(formula, {mon1, mon2}, 1, false, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
-    EXPECT_EQ(mon.concreteStep(0, 0).b, true);
-    EXPECT_EQ(mon.step(0, 0).b, true);
+    EXPECT_EQ(mon.concreteStep(0, 0).value, true);
+    EXPECT_EQ(mon.step(0, 0).value, true);
 }
 
 TEST(TestAndMonitor, testSingleAndMonitorFalseEvaluationShortCircuiting) {
@@ -59,9 +59,9 @@ TEST(TestAndMonitor, testSingleAndMonitorFalseEvaluationShortCircuiting) {
     auto mon{AndMonitor(formula, {mon1, mon2}, 1, false, true)};
     mon.registerParent(0);
     mon.setTrace(trace);
-    EXPECT_EQ(mon.concreteStep(0, 0).b, false);
-    EXPECT_EQ(mon.step(0, 0).b, false);
-    EXPECT_EQ(mon.step(0, 4).b, false);
+    EXPECT_EQ(mon.concreteStep(0, 0).value, false);
+    EXPECT_EQ(mon.step(0, 0).value, false);
+    EXPECT_EQ(mon.step(0, 4).value, false);
 }
 
 TEST(TestAndMonitor, testSingleAndMonitorTrueEvaluationShortCircuiting) {
@@ -76,8 +76,8 @@ TEST(TestAndMonitor, testSingleAndMonitorTrueEvaluationShortCircuiting) {
     auto mon{AndMonitor(formula, {mon1, mon2}, 1, false, true)};
     mon.registerParent(0);
     mon.setTrace(trace);
-    EXPECT_EQ(mon.concreteStep(0, 0).b, true);
-    EXPECT_EQ(mon.step(0, 0).b, true);
+    EXPECT_EQ(mon.concreteStep(0, 0).value, true);
+    EXPECT_EQ(mon.step(0, 0).value, true);
 }
 
 TEST(TestAndMonitor, testSingleAndMonitorShortCircuitingForLoop) {
@@ -94,10 +94,10 @@ TEST(TestAndMonitor, testSingleAndMonitorShortCircuitingForLoop) {
     auto mon{AndMonitor(formula, {mon1, mon2}, 1, false, true)};
     mon.registerParent(0);
     mon.setTrace(trace);
-    EXPECT_EQ(mon.concreteStep(0, 0).b, false);
-    EXPECT_EQ(mon.step(0, 0).b, false);
-    EXPECT_EQ(mon.step(0, 4).b, false);
-    EXPECT_EQ(mon.concreteStep(0, 4).b, false);
+    EXPECT_EQ(mon.concreteStep(0, 0).value, false);
+    EXPECT_EQ(mon.step(0, 0).value, false);
+    EXPECT_EQ(mon.step(0, 4).value, false);
+    EXPECT_EQ(mon.concreteStep(0, 4).value, false);
 }
 
 TEST(TestAndMonitor, testToString) {

@@ -28,12 +28,12 @@ TEST(TestQuoteMonitor, testQuoteMonitorStandard) {
                                 quantifier->getQuoteInterval().getMax(), false, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
-    EXPECT_EQ(mon.step(0, 0).b, false);
-    EXPECT_EQ(mon.step(0, 1).b, false);
-    EXPECT_EQ(mon.step(0, 2).b, true);
-    EXPECT_EQ(mon.step(0, 3).b, true);
-    EXPECT_EQ(mon.step(0, 4).b, false);
-    EXPECT_EQ(mon.step(0, 5).b, false);
+    EXPECT_EQ(mon.step(0, 0).value, false);
+    EXPECT_EQ(mon.step(0, 1).value, false);
+    EXPECT_EQ(mon.step(0, 2).value, true);
+    EXPECT_EQ(mon.step(0, 3).value, true);
+    EXPECT_EQ(mon.step(0, 4).value, false);
+    EXPECT_EQ(mon.step(0, 5).value, false);
 }
 
 TEST(TestQuoteMonitor, testWrongIntervalOrder) {
@@ -58,7 +58,7 @@ TEST(TestQuoteMonitor, testWrongIntervalOrder) {
     mon.registerParent(0);
     mon.setTrace(trace);
     for (size_t i = 0; i < 5; i++)
-        EXPECT_EQ(mon.step(0, i).b, false);
+        EXPECT_EQ(mon.step(0, i).value, false);
 }
 
 TEST(TestQuoteMonitor, testQuoteMonitorToString) {

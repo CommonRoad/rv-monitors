@@ -5,10 +5,11 @@
 #include "monitors/rewriting/rewrite_visitor.h"
 #include <iostream>
 #include <memory>
-#include <utility>
 
-EventConsumingLTL::EventConsumingLTL(const std::vector<Formula> &formulas, bool pastEvaluation)
-    : MonitorInterface((std::move(formulas))), pastEvaluation(pastEvaluation) {}
+EventConsumingLTL::EventConsumingLTL(const std::vector<Formula> &formulas, bool pastEvaluation,
+                                     bool formulaCompatibilityCheck)
+    : MonitorInterface(formulas, AlgorithmType::event_consuming_ltl, formulaCompatibilityCheck),
+      pastEvaluation(pastEvaluation) {}
 
 Formula EventConsumingLTL::eventConsumingFuture(Trace &trace) {
     // Empty trace
@@ -18,14 +19,14 @@ Formula EventConsumingLTL::eventConsumingFuture(Trace &trace) {
     }
     // Copy formula before working on it
     auto formulaCopy = formulas.at(0).deepCopy();
-    RewriteVisitor rw;
-    EventConsumingVisitor ec;
+    RewriteVisitor rwv;
+    EventConsumingVisitor ecv;
 
     // Rewrite
-    rw.rewrite(formulaCopy);
+    rwv.rewrite(formulaCopy);
     for (size_t i = 0; i < trace.getLength(); ++i) {
-        ec.consumeEvent(formulaCopy, trace, i);
-        rw.rewrite(formulaCopy);
+        ecv.consumeEvent(formulaCopy, trace, i);
+        rwv.rewrite(formulaCopy);
         if (formulaCopy.to_string() == "false") {
             break;
         }
@@ -43,18 +44,18 @@ Formula EventConsumingLTL::eventConsumingPast(Trace &trace) {
     }
     // Copy formula before working on it
     auto formulaCopy = formulas.at(0).deepCopy();
-    RewriteVisitor rw;
-    EventConsumingVisitor ec;
+    RewriteVisitor rwv;
+    EventConsumingVisitor ecv;
 
     // Update terminal event
     trace.setTerminalEvent(false);
     // Rewrite
-    rw.rewrite(formulaCopy);
+    rwv.rewrite(formulaCopy);
     auto &traceRef = trace.getTraceRef();
     // Traverse trace backwards
-    for (size_t i = traceRef.size() - 1; i >= 0 && i < traceRef.size(); --i) {
-        ec.consumeEvent(formulaCopy, trace, i);
-        rw.rewrite(formulaCopy);
+    for (int i = static_cast<int>(traceRef.size()) - 1; i >= 0; --i) {
+        ecv.consumeEvent(formulaCopy, trace, static_cast<size_t>(i));
+        rwv.rewrite(formulaCopy);
         if (formulaCopy.to_string() == "false") {
             break;
         }

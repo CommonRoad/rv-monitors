@@ -51,6 +51,12 @@ class EqualityOperatorMonitor : public HydraMonitor {
     void reset(std::optional<size_t> stepNumber = std::nullopt) override;
 
     /**
+     * Clones this monitor.
+     * @return New shared_ptr of this monitor.
+     */
+    std::shared_ptr<HydraMonitor> clone() override;
+
+    /**
      * Creates string representation of monitor.
      *
      * @return String representing monitor.

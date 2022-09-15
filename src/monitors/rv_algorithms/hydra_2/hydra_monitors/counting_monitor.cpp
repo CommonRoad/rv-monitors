@@ -14,29 +14,33 @@ CountingMonitor::CountingMonitor(Formula formula, std::shared_ptr<HydraMonitor> 
 Verdict CountingMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     Verdict verdict{false};
     if (traceIdx[parentId] < trace.getLength())
-        verdict.ts = trace.getEvent(traceIdx[parentId]).getTimeStep();
+        verdict.timeStamp = trace.getEvent(traceIdx[parentId]).getTimeStep();
     else
         return verdict;
 
     if (!checkNonEmptiness())
         return verdict;
 
-    size_t numCombs{numCombinations()};
-
-    size_t combinationCounter{0};
+    size_t count{0};
     size_t trueVerdicts{0};
     while (nextCombination()) {
-        Verdict subVerdict = subMonitor->step(monitorId, stepNumber);
-        if (subVerdict.b)
-            trueVerdicts++;
-        subMonitor->reset(traceIdx[parentId]);
+        std::shared_ptr<HydraMonitor> evalMonitor;
+        if (traceIdx[parentId] == 0) {
+            evalMonitor = subMonitor->clone();
+            evalMonitors.push_back(evalMonitor);
+        } else
+            evalMonitor = evalMonitors[count];
 
-        if (shortCircuiting) {
+        Verdict subVerdict = evalMonitor->step(monitorId, stepNumber);
+        if (subVerdict.value)
+            trueVerdicts++;
+
+        /*if (shortCircuiting) {
             combinationCounter++;
             size_t unevalVerdicts{numCombs - combinationCounter};
             if (op == CountingQuantifier::LESS_EQ) {
                 if (unevalVerdicts + trueVerdicts <= num) {
-                    verdict.b = true;
+                    verdict.timeStamp = true;
                     return verdict;
                 } else if (trueVerdicts > num)
                     return verdict;
@@ -45,20 +49,31 @@ Verdict CountingMonitor::concreteStep(size_t parentId, size_t stepNumber) {
                     return verdict;
             } else {
                 if (trueVerdicts >= num) {
-                    verdict.b = true;
+                    verdict.value = true;
                     return verdict;
                 } else if (unevalVerdicts + trueVerdicts < num)
                     return verdict;
             }
-        }
+        }*/
+        count++;
     }
 
-    verdict.b = (op == CountingQuantifier::LESS_EQ and trueVerdicts <= num) or
-                (op == CountingQuantifier::EQ and trueVerdicts == num) or
-                (op == CountingQuantifier::GREATER_EQ and trueVerdicts >= num);
+    verdict.value = (op == CountingQuantifier::LESS_EQ and trueVerdicts <= num) or
+                    (op == CountingQuantifier::EQ and trueVerdicts == num) or
+                    (op == CountingQuantifier::GREATER_EQ and trueVerdicts >= num);
 
-    subMonitor->reset(traceIdx[parentId] + 1);
     return verdict;
+}
+
+std::shared_ptr<HydraMonitor> CountingMonitor::clone() {
+    auto clonedMonitor = std::make_shared<CountingMonitor>(*this);
+    clonedMonitor->subMonitor = subMonitor->clone();
+
+    clonedMonitor->iters.clear();
+    for (auto &varDomain : clonedMonitor->varDomains)
+        clonedMonitor->iters.push_back(varDomain.second.begin());
+
+    return clonedMonitor;
 }
 
 std::string CountingMonitor::to_string() { return formula.to_string(); }

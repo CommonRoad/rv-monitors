@@ -5,40 +5,82 @@
 #include <optional>
 #include <vector>
 
+/**
+ * Verdict representing result of monitor.
+ */
 struct Verdict {
+    /**
+     * Constructor.
+     *
+     * @param timeStamp Time stamp of verdict.
+     * @param value Boolean value of verdict.
+     */
+    Verdict(size_t timeStamp, bool value) : timeStamp(timeStamp), value(value) {}
 
-    Verdict(size_t ts, bool b) : ts(ts), b(b) {}
-    Verdict(bool b) : b(b) {}
-    std::optional<size_t> ts;
-    bool b;
+    /**
+     *  Constructor.
+     *
+     * @param value Boolean value of verdict.
+     */
+    Verdict(bool value) : value(value) {}
 
-    bool operator==(const Verdict &bv) const {
-        return bv.ts.has_value() and this->ts.has_value() and this->ts == bv.ts and this->b == bv.b;
+    std::optional<size_t> timeStamp; //**< Time stamp of verdict. */
+    bool value;                      //**< Boolean value of verdict. */
+
+    /**
+     * Equality operator for two verdicts.
+     *
+     * @param verdict Verdict to which base verdict should be compared with.
+     * @return Boolean value indicating equality.
+     */
+    bool operator==(const Verdict &verdict) const {
+        return (verdict.timeStamp.has_value() and this->timeStamp.has_value() and
+                this->timeStamp == verdict.timeStamp and this->value == verdict.value) or
+               (!verdict.timeStamp.has_value() and !this->timeStamp.has_value() and this->value == verdict.value);
     }
 
+    /**
+     * Negation operator for verdict.
+     *
+     * @return Negated verdict.
+     */
     Verdict operator!() const {
-        if (this->ts.has_value())
-            return {this->ts.value(), !this->b};
+        if (this->timeStamp.has_value())
+            return {this->timeStamp.value(), !this->value};
         else
-            return {!this->b};
+            return {!this->value};
     }
-    Verdict operator&&(const Verdict &w) const {
-        if (!this->ts.has_value() or !w.ts.has_value())
+
+    /**
+     * Logical and operator for verdict.
+     *
+     * @param verdict Verdict on right side of logical and operator.
+     * @return Verdict representing result of logical and operation on two verdicts.
+     */
+    Verdict operator&&(const Verdict &verdict) const {
+        if (!this->timeStamp.has_value() or !verdict.timeStamp.has_value())
             return {false};
-        if (this->ts.value() != w.ts.value())
-            throw std::runtime_error(
-                "Verdict logical and: time steps do not match. Time step this: " + std::to_string(this->ts.value()) +
-                ". Time step w: " + std::to_string(w.ts.value()));
-        return {this->ts.value(), this->b && w.b};
+        if (this->timeStamp.value() != verdict.timeStamp.value())
+            throw std::runtime_error("Verdict logical and: time steps do not match. Time step this: " +
+                                     std::to_string(this->timeStamp.value()) +
+                                     ". Time step w: " + std::to_string(verdict.timeStamp.value()));
+        return {this->timeStamp.value(), this->value && verdict.value};
     }
-    Verdict operator||(const Verdict &w) const {
-        if (!this->ts.has_value() or !w.ts.has_value())
+
+    /**
+     * Logical or operator for verdict.
+     *
+     * @param verdict Verdict on right side of logical or operator.
+     * @return Verdict representing result of logical or operation on two verdicts.
+     */
+    Verdict operator||(const Verdict &verdict) const {
+        if (!this->timeStamp.has_value() or !verdict.timeStamp.has_value())
             return {false};
-        if (this->ts.value() != w.ts.value())
-            throw std::runtime_error(
-                "Verdict logical or: time steps do not match. Time step this: " + std::to_string(this->ts.value()) +
-                ". Time step w: " + std::to_string(w.ts.value()));
-        return {this->ts.value(), this->b || w.b};
+        if (this->timeStamp.value() != verdict.timeStamp.value())
+            throw std::runtime_error("Verdict logical or: time steps do not match. Time step this: " +
+                                     std::to_string(this->timeStamp.value()) +
+                                     ". Time step w: " + std::to_string(verdict.timeStamp.value()));
+        return {this->timeStamp.value(), this->value || verdict.value};
     }
 };
 
@@ -75,9 +117,19 @@ template <typename T> bool isInInterval(const T &value, const T &low, const T &h
  * @param trueAtomics Vector of vectors containing predicates that are true in each event.
  * @return Trace.
  */
-[[nodiscard]] Trace
-createTrace(const std::set<std::string> &atomics, const std::vector<std::vector<std::string>> &trueAtomics,
-            const std::optional<std::vector<size_t>> &timeSteps = std::optional<std::vector<size_t>>{});
+[[nodiscard]] Trace createTrace(const std::set<std::string> &atomics,
+                                const std::vector<std::vector<std::string>> &trueAtomics,
+                                const std::vector<size_t> &timeSteps = std::vector<size_t>{});
+
+/**
+ * Creates a Trace.
+ *
+ * @param trueAtomics Vector of vectors containing predicates that are true in each event.
+ * @return Trace.
+ */
+[[nodiscard]] Trace createTrace(const std::vector<std::vector<std::string>> &trueAtomics,
+                                const std::vector<size_t> &timeSteps = std::vector<size_t>{},
+                                const std::shared_ptr<Formula> &formula = {});
 
 /**
  * Creates a Trace with lazy evaluation of the predicates.
@@ -142,29 +194,32 @@ createTrace(const std::set<std::string> &atomics, const std::vector<std::vector<
  *
  * @param expr Expression.
  * @param atomics Set of all atomics that is built recursively.
+ * @param variables Set of all variables that is built recursively.
  * @return string set of all atomics in @param expr.
  */
-[[nodiscard]] std::set<std::string> getAtomics(const std::shared_ptr<Expression> &expr, std::set<std::string> atomics);
+[[nodiscard]] std::set<std::string> getAtomics(const std::shared_ptr<Expression> &expr, std::set<std::string> atomics, std::set<std::string> variables);
 
 /**
  * Creates a string set of all predicates in an expression.
  *
  * @param expr Expression.
  * @param atomics Set of all predicates that is built recursively.
+ * @param variables Set of all variables that is built recursively.
  * @return string set of all predicates in @param expr.
  */
 [[nodiscard]] std::set<std::string> getPredicates(const std::shared_ptr<Expression> &expr,
-                                                  std::set<std::string> predicates);
+                                                  std::set<std::string> predicates, std::set<std::string> variables);
 
 /**
  * Creates a string set of all atomics and predicates in an expression.
  *
  * @param expr Expression.
  * @param atomics Set of all atomics and predicates that is built recursively.
+ * @param variables Set of all variables that is built recursively.
  * @return string set of all atomics and predicates in @param expr.
  */
 [[nodiscard]] std::set<std::string> getAtomicsAndPredicates(const std::shared_ptr<Expression> &expr,
-                                                            const std::set<std::string> &atomics);
+                                                            const std::set<std::string> &atomics, const std::set<std::string> &variables);
 
 /**
  * Creates a string set of all atomics and predicates in an expression.

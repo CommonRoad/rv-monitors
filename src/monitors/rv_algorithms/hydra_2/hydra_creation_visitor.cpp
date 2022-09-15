@@ -147,12 +147,9 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitUntil(Until &tlop, size
         return baseline.at(tlop.to_string());
     } else {
         size_t idx{maxId++};
-        auto tmpConstSubMonitor{
-            std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(true)), maxId++, connectedEval)};
-        tmpConstSubMonitor->registerParent(idx);
         auto newMonitor{std::make_shared<UntilMonitor>(
             Formula(std::make_shared<Until>(tlop)), tlop.getLeft()->accept(*this, idx, connectedEval),
-            tlop.getRight()->accept(*this, idx, connectedEval), tmpConstSubMonitor, tlop.getInterval()->getStart(),
+            tlop.getRight()->accept(*this, idx, connectedEval), tlop.getInterval()->getStart(),
             tlop.getInterval()->getEnd(), idx, connectedEval)};
         baseline.insert(std::make_pair<std::string, std::shared_ptr<HydraMonitor>>(tlop.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
@@ -292,7 +289,10 @@ HydraCreationVisitor::HydraCreationVisitor(std::map<std::string, std::array<doub
                                            FunctionCollection &functions,
                                            bool reordering, bool shortCircuiting)
     : reordering(reordering), shortCircuiting(shortCircuiting), predicateCosts(std::move(predicateCosts)),
-      domains(domains), functions(functions) {}
+      domains(domains), functions(functions) {
+    for (const auto &pred : this->predicateCosts)
+        assert(pred.second[0] >= 0 and pred.second[0] <= 100 and pred.second[1] >= 0 and pred.second[1] <= 1);
+}
 
 void HydraCreationVisitor::resort(std::vector<std::shared_ptr<HydraMonitor>> &monitors, bool increasing) {
     std::vector<double> cost;
@@ -300,12 +300,12 @@ void HydraCreationVisitor::resort(std::vector<std::shared_ptr<HydraMonitor>> &mo
     cost.reserve(monitors.size());
 
     std::iota(tmp.begin(), tmp.end(), 0);
-    if (increasing) {
+    if (increasing) { // and-operator
         for (const auto &mon : monitors)
-            cost.push_back(mon->getSatisfactionProbability() + static_cast<double>(mon->getEvalCost()));
-    } else {
+            cost.push_back(mon->getSatisfactionProbability() * 10 + static_cast<double>(mon->getEvalCost()));
+    } else { // or-operator
         for (const auto &mon : monitors)
-            cost.push_back((1 - mon->getSatisfactionProbability()) + static_cast<double>(mon->getEvalCost()));
+            cost.push_back((1 - mon->getSatisfactionProbability()) * 10 + static_cast<double>(mon->getEvalCost()));
     }
     sort(tmp.begin(), tmp.end(), [&](size_t idx1, size_t idx2) { return cost[idx1] < cost[idx2]; });
     auto tmpSubMonitors{monitors};

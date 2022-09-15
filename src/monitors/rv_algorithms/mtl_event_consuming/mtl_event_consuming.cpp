@@ -11,23 +11,24 @@
 #include "monitors/expression_tree/unary/temporal/globally.h"
 #include "mtl_event_consuming_visitor.h"
 #include <iostream>
-#include <utility>
+#include <spdlog/spdlog.h>
 
-MTLEventConsuming::MTLEventConsuming(const std::vector<Formula> &formulas) : MonitorInterface((std::move(formulas))) {}
-// MTLEventConsuming::MTLEventConsuming(const Formula &formula) : MonitorInterface((formula)) {}
+MTLEventConsuming::MTLEventConsuming(const std::vector<Formula> &formulas)
+    : MonitorInterface(formulas, AlgorithmType::event_consuming_mtl) {}
 
 std::map<std::string, std::vector<Verdict>> MTLEventConsuming::evaluate(Trace &trace) {
     std::map<std::string, std::vector<Verdict>> result;
     // Empty trace
     if (trace.getTrace().empty()) {
-        std::cout << "Trace is empty" << std::endl;
-        result[formulas.at(0).getId()] = {Verdict{false}};
+        spdlog::info("Hydra::evaluate | Trace is empty");
+        result[formulas.at(0).getId()] = {};
         return result;
     }
+
     // Copy formula before working on it
     auto formulaCopy = formulas.at(0).deepCopy();
-    MtlRewriteVisitor rw;
-    MTLEventConsumingVisitor ev;
+    MtlRewriteVisitor rwv;
+    MTLEventConsumingVisitor ecv;
 
     // Check global satisfiability of the formula
     if (auto globalExpr = std::dynamic_pointer_cast<Globally>(formulaCopy.getExpr())) {
@@ -36,11 +37,11 @@ std::map<std::string, std::vector<Verdict>> MTLEventConsuming::evaluate(Trace &t
     } else {
         formulaCopy.setExpr(std::make_shared<Globally>(formulaCopy.getExpr()));
     }
-    rw.rewrite(formulaCopy);
+    rwv.rewrite(formulaCopy);
 
     for (size_t i{0}; i < trace.getLength(); ++i) {
-        ev.consumeEvent(formulaCopy, trace, i);
-        rw.rewrite(formulaCopy);
+        ecv.consumeEvent(formulaCopy, trace, i);
+        rwv.rewrite(formulaCopy);
         if (formulaCopy.to_string() == "false") {
             break;
         }
@@ -52,4 +53,5 @@ std::map<std::string, std::vector<Verdict>> MTLEventConsuming::evaluate(Trace &t
     result[formulas.at(0).getId()] = {Verdict{formulaCopy.to_string() == "true"}};
     return result;
 }
+
 std::string MTLEventConsuming::to_string() const { return "MTL Event Consuming"; }

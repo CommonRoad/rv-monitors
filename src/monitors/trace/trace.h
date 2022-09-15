@@ -21,7 +21,7 @@ class Trace {
      * Constructor.
      * @param trace
      */
-    Trace() : trace() {}
+    Trace() = default;
 
     /**
      * Getter for an event.
@@ -89,4 +89,18 @@ class Trace {
         }
     }
 
+    /**
+     * Checks whether the distance between two adjacent time stamps are always equal in the complete trace.
+     *
+     * @return Boolean indicating whether the trace is equidistant or not.
+     */
+    bool isEquidistant() {
+        size_t expTimeStamp{0};
+        for (const Event &event : trace) {
+            if (event.getTimeStep() != expTimeStamp)
+                return false;
+            expTimeStamp++;
+        }
+        return true;
+    }
 };
