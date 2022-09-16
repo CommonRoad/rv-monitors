@@ -46,3 +46,52 @@ TEST(TestHydraRewriteVisitor, shadowedVarsFirstOrder) {
     visitor_3.rewrite(formula_3);
     EXPECT_EQ(formula_3.to_string(), "Q[0.100000, 0.300000] x in D3, y in D3. (x & y)");
 }
+
+TEST(TestHydraRewriteVisitor, unusedVarsFirstOrder) {
+    auto formula_1 = Parser::parse("A x, y, z in D. ((a)U(x & z))");
+    HydraRewriteVisitor visitor_1;
+    visitor_1.rewrite(formula_1);
+    EXPECT_EQ(formula_1.to_string(), "A x in D, z in D. (a U (x & z))");
+
+    auto formula_2 = Parser::parse("A x in D. ((a)U(A y in D. y))");
+    HydraRewriteVisitor visitor_2;
+    visitor_2.rewrite(formula_2);
+    EXPECT_EQ(formula_2.to_string(), "(a U A y in D. y)");
+
+    auto formula_3 = Parser::parse("E x, y, z in D. (X(y & z)U(C=2 y in D. y))");
+    HydraRewriteVisitor visitor_3;
+    visitor_3.rewrite(formula_3);
+    EXPECT_EQ(formula_3.to_string(), "E y in D, z in D. (X((y & z)) U C=2 y in D. y)");
+}
+
+TEST(TestHydraRewriteVisitor, quantifierUnaryTempOperator) {
+    auto formula_1 = Parser::parse("A x in D. X(x)");
+    HydraRewriteVisitor visitor_1;
+    visitor_1.rewrite(formula_1);
+    EXPECT_EQ(formula_1.to_string(), "X(A x in D. x)");
+
+    auto formula_2 = Parser::parse("E x in D. G[0, 10](x)");
+    HydraRewriteVisitor visitor_2;
+    visitor_2.rewrite(formula_2);
+    EXPECT_EQ(formula_2.to_string(), "!((true U[0, 10] !(E x in D. x)))");
+
+    auto formula_3 = Parser::parse("C=2 x in D. X((x)S(x))");
+    HydraRewriteVisitor visitor_3;
+    visitor_3.rewrite(formula_3);
+    EXPECT_EQ(formula_3.to_string(), "X(C=2 x in D. (x S x))");
+
+    auto formula_4 = Parser::parse("C=2 x in D. P(P(x))");
+    HydraRewriteVisitor visitor_4;
+    visitor_4.rewrite(formula_4);
+    EXPECT_EQ(formula_4.to_string(), "P(P(C=2 x in D. x))");
+
+    auto formula_5 = Parser::parse("A x in D. E y in D. P(x U y)");
+    HydraRewriteVisitor visitor_5;
+    visitor_5.rewrite(formula_5);
+    EXPECT_EQ(formula_5.to_string(), "P(A x in D. E y in D. (x U y))");
+
+    auto formula_6 = Parser::parse("Q[0., 0.5] x in D. F(F(x))");
+    HydraRewriteVisitor visitor_6;
+    visitor_6.rewrite(formula_6);
+    EXPECT_EQ(formula_6.to_string(), "(true U[0, 10000] (true U[0, 10000] Q[0.000000, 0.500000] x in D. x))");
+}

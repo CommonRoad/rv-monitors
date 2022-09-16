@@ -70,8 +70,34 @@ class HydraRewriteVisitor : public ExpressionVisitor {
     [[nodiscard]] std::shared_ptr<Expression> visitEqualityOperator(EqualityOperator &op, Trace &trace, size_t index) override;
 
   private:
-    std::shared_ptr<Expression> removeShadowedVariables(FirstOrderOperator &outer, FirstOrderOperator &inner);
+    /**
+     * Swaps a first-order quantifier and a following unary temporal operator. If the child expression of the
+     * first-order quantifier is not an unary temporal operator, a nullptr will be returned.
+     *
+     * @param oper First-order quantifier.
+     * @param trace Trace.
+     * @param index Index.
+     * @return Expression with swapped quantifier and unary operator.
+     */
+    std::shared_ptr<Expression> swapQuantifierAndTempUnary(const std::shared_ptr<FirstOrderOperator> &oper, Trace &trace, size_t index);
 
-    std::shared_ptr<Expression> getFirstOrderExpression(FirstOrderOperator &oper);
+    /**
+     * Removes quantified variables which are unused. If a quantifier has no variable anymore, the complete quantifier
+     * will be removed. A shadowed variable is also be seen as a unused one.
+     *
+     * @param oper First-order quantifier.
+     * @param left Child expression.
+     * @return Expression with removed shadowed quantified variables.
+     */
+    static std::shared_ptr<Expression> removeUnusedVariables(const std::shared_ptr<FirstOrderOperator> &oper);
+
+    /**
+     * Searches an expression to check if a certain quantified variable is used.
+     *
+     * @param expr Expression.
+     * @param varName Name of quantified variable.
+     * @return Boolean indicating whether a quantified variable is used.
+     */
+    static bool hasUsedQuantifiedVariable(Expression &expr, std::string &varName);
 
 };
