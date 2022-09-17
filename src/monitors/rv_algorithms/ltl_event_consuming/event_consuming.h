@@ -9,10 +9,20 @@
  */
 class EventConsumingLTL : public MonitorInterface {
   private:
-    bool pastEvaluation;
+    bool pastEvaluation; //**< Boolean indicating whether past evaluation has to be applied. */
 
   public:
-    EventConsumingLTL(const std::vector<Formula> &formulas, bool pastEvaluation = false);
+    /**
+     * Constructor.
+     *
+     * @param formulas List of formulas, where event consuming supports only a single formula.
+     * @param pastEvaluation Boolean indicating whether past evaluation has to be applied.
+     * @param formulaCompatibilityCheck Boolean which activates check whether formula provided to monitor is evaluated
+     * for monitor compatibility.
+     */
+    EventConsumingLTL(const std::vector<Formula> &formulas, bool pastEvaluation = false,
+                      bool formulaCompatibilityCheck = true);
+
     /**
      * Monitors a formula in LTLf on a trace.
      * @param formula Formula.

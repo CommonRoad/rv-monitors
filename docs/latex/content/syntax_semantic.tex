@@ -5,11 +5,28 @@
 \label{sec:syntax_semantics}
 
 \subsection{Syntax}
+
+%\subsubsection{Propositional Logic}
+%
+%\subsubsection{First-Order Logic}
+%
+%\subsubsection{Higher-Order Logic}
+
+\subsubsection{Temporal Logic}
+
 \begin{align*}
 \phi ::= \, & \sigma_i \,|\, \neg \phi \,|\, \phi_1 \land \phi_2 \,|\, \phi_1 \lor \phi_2 \,|\, \phi_1 \veebar  \phi_2  \\
 \phi ::= \,	& \globally_\text{I}\phi \,|\, \future_\text{I}\phi \,|\, \strongNext_\text{I}\phi \,|\, \weakNext_\text{I}\phi  \,|\, \phi_1 \until_\text{I} \phi_2 \,|\, \phi_1 \release_\text{I} \phi_2 \\
 \phi ::= \,	& \historically_\text{I}\phi \,|\, \once_\text{I}\phi  \,|\,  \strongPrevious_\text{I}\phi \,|\,  \weakPrevious_\text{I}\phi \,|\, \phi_1 \since_\text{I} \phi_2 \,|\, \phi_1 \trigger_\text{I} \phi_2 \\
 \end{align*}
+Subsequently, we define those operators informally:
+\begin{itemize}
+	\item $\globally_\text{I}(\phi)$: $\phi$ holds \underline{g}lobally for all future states within the time interval I.
+	\item $\strongNext_\text{I}(\phi)$: $\phi$ holds for the ne\underline{x}t state within the time interval I.
+	\item $\future_\text{I}(\phi)$: $\phi$ holds for some \underline{f}uture state within the time interval I.
+	\item $\strongPrevious_\text{I}(\phi)$: $\phi$ holds for the \underline{p}revious state within the time interval I.
+	\item $\once_\text{I}(\phi)$: $\phi$ holds at least \underline{o}nce for some previous state within the time interval I.
+\end{itemize}
 
 \subsection{Precedence and Associativity}
 Tab.~\ref{prec} illustrates the precedence relations including the respective associativity. By left associative we mean that the operator is evaluated from left to right, e.g., $\varphi_1\land \varphi_2 \land \varphi_3 := (\varphi_1\land \varphi_2) \land \varphi_3$. Analogously, right-associative operators such as \until~are evaluated from right to left: $\varphi_1$\until$\varphi_2$\until$\varphi_3 := \varphi_1$\until$(\varphi_2$\until$\varphi_3)$.

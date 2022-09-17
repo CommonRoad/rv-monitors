@@ -21,7 +21,7 @@ class Trace {
      * Constructor.
      * @param trace
      */
-    Trace() : trace() {}
+    Trace() = default;
 
     /**
      * Getter for an event.
@@ -52,7 +52,7 @@ class Trace {
      * To_string().
      * @return String representation of the trace.
      */
-    [[nodiscard]] std::string to_string() {
+    [[nodiscard]] std::string to_string() const {
         std::stringstream ret;
         for (const Event &event : trace) {
             ret << event.to_string() << std::endl;
@@ -72,5 +72,15 @@ class Trace {
             trace.front().setTerminal(true);
             trace.back().setTerminal(false);
         }
+    }
+
+    bool isEquidistant() {
+        size_t expTimeStamp{0};
+        for (const Event &event : trace) {
+            if (event.getTimeStep() != expTimeStamp)
+                return false;
+            expTimeStamp++;
+        }
+        return true;
     }
 };

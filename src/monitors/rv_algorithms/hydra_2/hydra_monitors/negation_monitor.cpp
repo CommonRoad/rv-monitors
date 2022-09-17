@@ -10,10 +10,11 @@ Verdict NegationMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     return !subMonitor->step(monitorId, stepNumber);
 }
 
-void NegationMonitor::setTrace(const Trace &tr) { subMonitor->setTrace(tr); }
+void NegationMonitor::setTrace(const Trace &tra) { subMonitor->setTrace(tra); }
 
 void NegationMonitor::reset() {
-    HydraMonitor::reset();
+    Hydra2Monitor::reset();
     subMonitor->reset();
 }
+
 std::string NegationMonitor::to_string() { return "!(" + subMonitor->to_string() + ")"; }

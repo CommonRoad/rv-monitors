@@ -40,7 +40,7 @@ class MultiTransition {
      * @param eventMap
      * @return Next state in MT-FSM*.
      */
-    [[nodiscard]] size_t evaluate(std::map<std::string, lazy_bool> &eventMap) const;
+    [[nodiscard]] size_t evaluate(event_map_t &eventMap) const;
 
     /**
      * Counts the frequency of all atomics in a MultiTransition.

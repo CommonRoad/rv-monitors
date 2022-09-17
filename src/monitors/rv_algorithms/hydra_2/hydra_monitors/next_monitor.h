@@ -8,25 +8,61 @@
 
 #include <utility>
 
-#include "monitors/rv_algorithms/hydra_2/hydra_monitors/hydra_monitor.h"
+#include "hydra_monitor.h"
 
-class NextMonitor : public HydraMonitor {
+/**
+ * Monitor representing (strong) next Hydra2 operator.
+ */
+class NextMonitor : public Hydra2Monitor {
   public:
-    NextMonitor(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitor, size_t from, size_t to, size_t id,
-                bool connectedEval)
-        : HydraMonitor(formula, id, connectedEval, subMonitor->getEvalCost(), subMonitor->getSatisfactionProbability()),
-          subMonitor(std::move(subMonitor)), from(from), to(to){};
+    /**
+     * Constructor
+     *
+     * @param formula Formula to be monitored.
+     * @param subMonitor Child monitor.
+     * @param intervalFrom Start of time interval.
+     * @param intervalTo End of time interval.
+     * @param monitorId ID of monitor.
+     * @param connectedEval Boolean indicating whether connected evaluation should be used.
+     */
+    NextMonitor(const Formula &formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t intervalFrom,
+                size_t intervalTo, size_t monitorId, bool connectedEval)
+        : Hydra2Monitor(formula, monitorId, connectedEval, subMonitor->getEvalCost(),
+                        subMonitor->getSatisfactionProbability()),
+          subMonitor(std::move(subMonitor)), from(intervalFrom), to(intervalTo){};
 
+    /**
+     * Performs concrete step of next operator monitor.
+     *
+     * @param parentId ID of parent monitor.
+     * @param stepNumber Current step/position in trace.
+     * @return Verdict for monitoring step result.
+     */
     Verdict concreteStep(size_t parentId, size_t stepNumber) override;
 
-    void setTrace(const Trace &tr) override;
+    /**
+     * Setter for trace.
+     *
+     * @param trace Trace.
+     */
+    void setTrace(const Trace &tra) override;
 
+    /**
+     * Resets monitor variables to default values.
+     */
     void reset() override;
 
+    /**
+     * Creates string representation of monitor.
+     *
+     * @return String representing monitor.
+     */
     std::string to_string() override;
 
   private:
-    std::shared_ptr<HydraMonitor> subMonitor;
-    size_t from, to;
-    std::optional<size_t> currentTime;
+    std::shared_ptr<Hydra2Monitor> subMonitor; //**< Child monitor. */
+    size_t from;                               //**< Start of time interval. */
+    size_t to;                                 //**< End of time interval. */
+    std::optional<size_t> currentTime;         //**< Previous time step to check whether next verdict lies in interval.
+                                               // Initialized after first event has been seen. */
 };
