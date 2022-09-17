@@ -86,7 +86,7 @@ TEST_F(TestRVMonitors, PerformanceMeasurement) {
     EXPECT_GT(monitor.getExecutionStatistic().getTotalTime(), 0.0);
 }
 
-void copyMonitor(Trace & tra, AlgorithmType alg) {
+void copyMonitor(Trace &tra, AlgorithmType alg) {
     Formula form{Formula(Parser::parse("G(!(a | b) & !c)"))};
     form.setId("R_U1");
     auto conf1{MonitorConfiguration(alg, false)};
@@ -97,8 +97,7 @@ void copyMonitor(Trace & tra, AlgorithmType alg) {
     monitor.verify(tra);
 }
 
-TEST_F(TestRVMonitors, CopyAndAssignmentConstructor)
-{
+TEST_F(TestRVMonitors, CopyAndAssignmentConstructor) {
     Trace tra{*trace};
     copyMonitor(tra, AlgorithmType::hydra_2_mtl);
     copyMonitor(tra, AlgorithmType::hydra_mtl);
