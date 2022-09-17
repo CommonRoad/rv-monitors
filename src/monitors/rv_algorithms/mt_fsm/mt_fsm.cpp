@@ -8,9 +8,10 @@
 #include "monitors/rv_algorithms/ltl_event_consuming/event_consuming.h"
 #include "monitors/trace/event_generator.h"
 
-MtFsm::MtFsm(const std::vector<Formula> &formulas, bool pastEvaluation)
-    : MonitorInterface((formulas)), states(formulaToMT_FSM(formulas.at(0), pastEvaluation)),
-      pastEvaluation(pastEvaluation) {}
+MtFsm::MtFsm(const std::vector<Formula> &formulas)
+    : MonitorInterface(formulas, AlgorithmType::mt_fsm),
+      states(formulaToMT_FSM(formulas.at(0), formulas[0].checkCompatibility(TemporalFormulaType::pastSafety))),
+      pastEvaluation(formulas[0].checkCompatibility(TemporalFormulaType::pastSafety)) {}
 
 // TODO check if empty
 std::string MtFsm::to_string() const {
@@ -64,7 +65,7 @@ std::map<std::string, std::vector<Verdict>> MtFsm::evaluate(Trace &trace) {
 void MtFsm::formulaToMT_FSM(Formula &currentFormula, std::vector<StateMT_FSM> &currentStates, bool past) {
     MultiTransition mtTerminal({});
     MultiTransition mtNonTerminal({});
-    auto eventConsuming = EventConsumingLTL(std::vector<Formula>{currentFormula});
+    auto eventConsuming = EventConsumingLTL({currentFormula}, false, false);
     auto atomics = Utils::getAtomicsAndPredicates(currentFormula.getExpr(), {});
     auto numberOfAtomics = Utils::getNumberOfAtomicsAndPredicates(currentFormula.getExpr());
     // All possible events
@@ -187,7 +188,7 @@ bool MtFsm::valid(Formula &formula) {
 bool MtFsm::valid(Formula &formulaToCheck, std::set<Formula> &statesToCheck) {
     auto atomics = Utils::getAtomicsAndPredicates(formulaToCheck.getExpr(), {});
     auto numberOfAtomics = Utils::getNumberOfAtomicsAndPredicates(formulaToCheck.getExpr());
-    auto eventConsuming = EventConsumingLTL(std::vector<Formula>{formulaToCheck});
+    auto eventConsuming = EventConsumingLTL(std::vector<Formula>{formulaToCheck}, false, false);
 
     // Only constants
     if (numberOfAtomics == 0) {

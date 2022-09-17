@@ -1,3 +1,9 @@
+//
+// Created by Sebastian Maierhofer and Evald Nexhipi.
+// Technical University of Munich - Cyber-Physical Systems Group
+// Copyright (c) 2021 Technical University of Munich. All rights reserved.
+// Credits: BMW Car@TUM
+//
 #pragma once
 
 #include "monitors/formula/formula.h"
@@ -175,9 +181,27 @@ class MTLEventConsumingVisitor : public ExpressionVisitor {
      */
     std::shared_ptr<Expression> visitResolvingOperator(ResolvingOperator &op, Trace &trace, size_t index) override;
 
+    /**
+     * Applies event to its child and applies rewriting rules from deriving algorithm.
+     * @param op EventOperator.
+     * @param event Event.
+     * @return Expression transformed according to rewriting rules.
+     */
     std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &op, Trace &trace, size_t index) override;
 
+    /**
+     * Applies event to its child and applies rewriting rules from event consuming algorithm.
+     * @param op EventOperator.
+     * @param event Event.
+     * @return Expression transformed according to rewriting rules.
+     */
     std::shared_ptr<Expression> visitEventOperator(EventOperator &op, Trace &trace, size_t index) override;
 
+    /**
+     * Converts op to a shared_ptr.
+     * @param op Predicate
+     * @param event Event.
+     * @return op as a shared_ptr.
+     */
     std::shared_ptr<Expression> visitPredicate(Predicate &op, Trace &trace, size_t index) override;
 };

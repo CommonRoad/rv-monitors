@@ -16,3 +16,5 @@ static constexpr char previousSymbol[] = "P";
 static constexpr char onceSymbol[] = "O";
 static constexpr char sinceSymbol[] = "S";
 static constexpr char historicallySymbol[] = "H";
+static constexpr std::array<char, 5> futureOperators{'G', 'W', 'X', 'F', 'U'};
+static constexpr std::array<char, 5> pastOperators{'R', 'P', 'O', 'S', 'H'};

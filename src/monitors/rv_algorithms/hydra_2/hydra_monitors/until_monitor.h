@@ -8,34 +8,86 @@
 
 #include <utility>
 
-#include "monitors/rv_algorithms/hydra_2/hydra_monitors/hydra_monitor.h"
+#include "../../../expression_tree/atomic/constant.h"
+#include "constant_monitor.h"
+#include "hydra_monitor.h"
 
-class UntilMonitor : public HydraMonitor {
+/**
+ * Hydra2 monitor for representing until operator.
+ */
+class UntilMonitor : public Hydra2Monitor {
   public:
-    UntilMonitor(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitorF,
-                 std::shared_ptr<HydraMonitor> subMonitorG, std::shared_ptr<HydraMonitor> subMonitorH, size_t from,
-                 size_t to, size_t id, bool connectedEval)
-        : HydraMonitor(formula, id, connectedEval, (subMonitorG->getEvalCost() + subMonitorF->getEvalCost()) / 2,
-                       (subMonitorG->getSatisfactionProbability() + subMonitorG->getSatisfactionProbability()) / 2),
-          subMonitorF(std::move(subMonitorF)), subMonitorG(std::move(subMonitorG)), subMonitorH(std::move(subMonitorH)),
-          from(from), to(to){};
+    /**
+     *
+     * @param formula Formula to be monitored.
+     * @param subMonitorLeft Monitor from left side of until operator.
+     * @param subMonitorRight Monitor from right side of until operator.
+     * @param intervalFrom Start of time interval.
+     * @param intervalTo End of time interval.
+     * @param monitorId ID of monitor.
+     * @param connectedEval Boolean indicating whether connected evaluation should be used.
+     */
+    UntilMonitor(const Formula &formula, std::shared_ptr<Hydra2Monitor> subMonitorLeft,
+                 std::shared_ptr<Hydra2Monitor> subMonitorRight, size_t intervalFrom, size_t intervalTo,
+                 size_t monitorId, bool connectedEval)
+        : Hydra2Monitor(
+              formula, monitorId, connectedEval, (subMonitorRight->getEvalCost() + subMonitorLeft->getEvalCost()) / 2,
+              (subMonitorRight->getSatisfactionProbability() + subMonitorRight->getSatisfactionProbability()) / 2),
+          subMonitorLeft(std::move(subMonitorLeft)), subMonitorRight(std::move(subMonitorRight)),
+          subMonitorBaseTimeStep(
+              std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(true)), 0, connectedEval)),
+          from(intervalFrom), to(intervalTo){};
 
+    /**
+     * Performs concrete step of until-monitor.
+     *
+     * @param parentId ID of parent monitor.
+     * @param stepNumber Current step/position in trace.
+     * @return Verdict for monitoring step result.
+     */
     Verdict concreteStep(size_t parentId, size_t stepNumber) override;
 
-    void setTrace(const Trace &tr) override;
+    /**
+     * Setter for trace.
+     *
+     * @param trace Trace.
+     */
+    void setTrace(const Trace &tra) override;
 
+    /**
+     * Resets monitor variables to default values.
+     */
     void reset() override;
 
+    /**
+     * Creates string representation of monitor.
+     *
+     * @return String representing monitor.
+     */
     std::string to_string() override;
 
   private:
-    void readFG(size_t stepNumber);
-    void handleEof();
+    /**
+     * Executes left and right monitors of until.
+     */
+    void stepLeftRightMonitors();
 
-    std::shared_ptr<HydraMonitor> subMonitorF, subMonitorG, subMonitorH;
-    std::optional<Verdict> subVerdictF, subVerdictG, subVerdictH;
-    size_t from, to;
-    HeadPos positionMonitorF, positionMonitorG, positionMonitorH;
-    std::optional<std::pair<size_t, int>> lastSatisfaction;
-    std::optional<std::pair<size_t, int>> lastViolation;
+    std::shared_ptr<Hydra2Monitor> subMonitorLeft;  //**< Monitor for specification on left side of until. */
+    std::shared_ptr<Hydra2Monitor> subMonitorRight; //**< Monitor for specification on right side of until. */
+    std::shared_ptr<Hydra2Monitor>
+        subMonitorBaseTimeStep; //**< Monitor to extract time step and index from trace at position of until monitor
+                                // head. Represented by Constant-True-Monitor. */
+    std::optional<Verdict> subVerdictLeft;         //**< Verdict for monitor on left side of until. */
+    std::optional<Verdict> subVerdictRight;        //**< Verdict for monitor on right side of until. */
+    std::optional<Verdict> subVerdictBaseTimeStep; //**< Monitor to extract time step and index from trace at position
+                                                   // of until monitor head. Represented by Constant-True-Monitor. */
+    size_t from;                                   //**< Start of time interval. */
+    size_t to;                                     //**< End of time interval. */
+    HeadPosHydra2 headPositionMonitorLeft;         //**< Head position of left monitor. */
+    HeadPosHydra2 headPositionMonitorRight;        //**< Head position of right monitor. *
+    HeadPosHydra2 headPositionMonitorBaseTimeStep; //**< Head position of base time monitor. *
+    std::optional<HeadPosHydra2> lastSatisfaction; //**< Last time right side of until was satisfied. */
+    std::optional<HeadPosHydra2> lastViolation;    //**< Last time left side of until was violated. */
+    bool endReached{false};                        //**< Boolean indicating whether end of trace was reached. */
+    size_t stepNumberUntil{0}; //**< Stores real step number because until operator can be before parent step number. */
 };

@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <iostream>
 #include <queue>
-#include <random>
 #include <set>
 
 #include "monitors/expression_tree/atomic/constant.h"
@@ -16,8 +15,7 @@
 #include "monitors/trace/trace.h"
 #include "utils.h"
 
-bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr,
-                                      std::map<std::string, lazy_bool> &eventMap) {
+bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr, event_map_t &eventMap) {
     // Atomic
     if (auto atomicExpr = std::dynamic_pointer_cast<Atomic>(expr)) {
         return eventMap.at(atomicExpr->to_string());
@@ -65,7 +63,7 @@ bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr,
     if (auto xorExpr = std::dynamic_pointer_cast<Xor>(expr)) {
         auto res = evaluateBooleanExpression(*xorExpr->begin(), eventMap);
         for (auto itr = ++xorExpr->begin(); itr != xorExpr->end(); ++itr) {
-            res xor_eq evaluateBooleanExpression(*itr, eventMap);
+            res xor_eq static_cast<int>(evaluateBooleanExpression(*itr, eventMap));
         }
 
         return res;
@@ -73,24 +71,39 @@ bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr,
     return false;
 }
 
+Trace Utils::createTrace(const std::vector<std::vector<std::string>> &trueAtomics, const std::vector<size_t> &timeSteps,
+                         const std::shared_ptr<Formula> &formula) {
+    std::set<std::string> atomics;
+    for (const auto &step : trueAtomics)
+        for (const auto &elem : step)
+            atomics.emplace(elem);
+    auto formulaAtomics{getAtomicsAndPredicates(formula->getExpr())};
+    std::set<std::string> mergedAtomics;
+    std::set_union(atomics.begin(), atomics.end(), formulaAtomics.begin(), formulaAtomics.end(),
+                   std::inserter(mergedAtomics, mergedAtomics.begin()));
+    return createTrace(mergedAtomics, trueAtomics, timeSteps);
+}
+
 Trace Utils::createTrace(const std::set<std::string> &atomics, const std::vector<std::vector<std::string>> &trueAtomics,
-                         const std::optional<std::vector<size_t>> &timeSteps) {
-    if (timeSteps and trueAtomics.size() != timeSteps.value().size())
+                         const std::vector<size_t> &timeSteps) {
+    if (!timeSteps.empty() and trueAtomics.size() != timeSteps.size())
         throw std::runtime_error("Utils::createTrace: Number time steps does not correspond to number of atomics.");
     std::vector<Event> finalTrace;
-    std::map<std::string, lazy_bool> event;
     size_t timeStepIdx{0};
     for (auto const &trueAtomic : trueAtomics) {
+        event_map_t event;
+
+        event.reserve(atomics.size());
+
         for (auto const &atomic : atomics) {
             // Check if atomic exists in vector at current position
             bool atomicValue = trueAtomic.end() != std::find(trueAtomic.begin(), trueAtomic.end(), atomic);
             event[atomic] = lazy_bool(atomicValue);
         }
-        if (timeSteps)
-            finalTrace.emplace_back(Event(event, timeSteps.value()[timeStepIdx], &trueAtomic == &trueAtomics.back()));
+        if (!timeSteps.empty())
+            finalTrace.emplace_back(std::move(event), timeSteps[timeStepIdx], &trueAtomic == &trueAtomics.back());
         else
-            finalTrace.emplace_back(Event(event, timeStepIdx, &trueAtomic == &trueAtomics.back()));
-        event.clear();
+            finalTrace.emplace_back(std::move(event), timeStepIdx, &trueAtomic == &trueAtomics.back());
         ++timeStepIdx;
     }
     return Trace{finalTrace};
@@ -240,17 +253,17 @@ Trace Utils::boolVectorToTrace(const std::set<std::string> &atomics, const std::
 
 // TODO terminal not needed (additional Event constructor)
 Event Utils::boolVectorToEvent(const std::set<std::string> &atomics, const std::vector<bool> &vector, bool terminal) {
-    std::map<std::string, lazy_bool> eventMap;
-    size_t i = 0;
+    event_map_t eventMap;
+    size_t idx{0};
     for (const auto &atomic : atomics) {
-        eventMap.emplace(atomic, lazy_bool(vector[i]));
-        ++i;
+        eventMap.emplace(atomic, lazy_bool(vector[idx]));
+        ++idx;
     }
-    return Event(eventMap, 0, terminal); // TODO check whether other/correct time step should be used
+    return Event(std::move(eventMap), 0, terminal); // TODO check whether other/correct time step should be used
 }
 
 Formula Utils::eventToFormula(Event &event) {
-    std::map<std::string, lazy_bool> eventMap = event.getEventMap();
+    event_map_t eventMap = event.getEventMap();
     std::shared_ptr<Expression> firstExpr, secondExpr;
 
     And::SetType_T newSet;
@@ -330,15 +343,37 @@ Trace Utils::createLazyTrace(const std::map<std::string, std::function<bool(size
     finalTrace.reserve(length);
     size_t initialTimeStep{timeSteps.at(0)};
 
-    for (auto const i : timeSteps) {
-        std::map<std::string, lazy_bool> event;
+    for (auto const idx : timeSteps) {
+        event_map_t event;
+
+        event.reserve(atomicsAndFunctions.size());
 
         for (auto const &[atomic, valueFetcher] : atomicsAndFunctions) {
-            auto valueFetcherBound = std::bind(valueFetcher, i);
-            event[atomic] = lazy_bool(valueFetcherBound);
+            auto valueFetcherBound = std::bind(valueFetcher, idx);
+            event.emplace(atomic, lazy_bool(std::move(valueFetcherBound)));
         }
-        finalTrace.emplace_back(Event(event, i, i == length + initialTimeStep - 1));
-        event.clear();
+        finalTrace.emplace_back(std::move(event), idx, idx == length + initialTimeStep - 1);
     }
-    return Trace{finalTrace};
+    return Trace{std::move(finalTrace)};
+}
+
+Trace Utils::createLazyTrace(std::map<std::string, std::function<bool(size_t)>> &&atomicsAndFunctions,
+                             const std::vector<size_t> &timeSteps) {
+    std::vector<Event> finalTrace;
+    size_t length = timeSteps.size();
+    finalTrace.reserve(length);
+    size_t initialTimeStep{timeSteps.at(0)};
+
+    for (auto const idx : timeSteps) {
+        event_map_t event;
+
+        event.reserve(atomicsAndFunctions.size());
+
+        for (auto &[atomic, valueFetcher] : atomicsAndFunctions) {
+            auto valueFetcherBound = std::bind(valueFetcher, idx);
+            event.emplace(atomic, lazy_bool(std::move(valueFetcherBound)));
+        }
+        finalTrace.emplace_back(std::move(event), idx, idx == length + initialTimeStep - 1);
+    }
+    return Trace{std::move(finalTrace)};
 }

@@ -30,6 +30,7 @@ set(RV_MONITOR_SRC_FILES
         monitors/expression_tree/unary/temporal/once.cpp
         monitors/expression_tree/unary/temporal/previously.cpp
         monitors/formula/formula.cpp
+        monitors/formula/supported_formula_type.cpp
         monitors/formula/nff.cpp
         monitors/parser/parser.cpp
         monitors/parser/gen/FormulaBaseVisitor.cpp
@@ -47,6 +48,8 @@ set(RV_MONITOR_SRC_FILES
         monitors/rewriting/basic_rewrite_visitor.cpp
         monitors/rewriting/expression_visitor.cpp
         monitors/rewriting/rewrite_visitor.cpp
+        monitors/rewriting/mtl_rewrite_visitor.cpp
+        monitors/rewriting/hydra_rewrite_visitor.cpp
         monitors/rv_algorithms/monitor_interface.cpp
         monitors/rv_algorithms/rv_monitor.cpp
         monitors/rv_algorithms/btt_fsm/btt_fsm.cpp
@@ -60,10 +63,7 @@ set(RV_MONITOR_SRC_FILES
         monitors/rv_algorithms/mt_fsm/multi_transition.cpp
         monitors/rv_algorithms/mt_fsm/state_mt_fsm.cpp
         monitors/rv_algorithms/mtl_event_consuming/mtl_event_consuming.cpp
-        monitors/rv_algorithms/mtl_event_consuming/mtl_deriving_future_visitor.cpp
         monitors/rv_algorithms/mtl_event_consuming/mtl_event_consuming_visitor.cpp
-        monitors/rv_algorithms/mtl_event_consuming/mtl_resolving_past_visitor.cpp
-        monitors/rewriting/mtl_rewrite_visitor.cpp
         monitors/rv_algorithms/hydra_2/hydra.cpp
         monitors/rv_algorithms/hydra_2/hydra_monitors/hydra_monitor.cpp
         monitors/rv_algorithms/hydra_2/hydra_monitors/previous_monitor.cpp
@@ -77,12 +77,30 @@ set(RV_MONITOR_SRC_FILES
         monitors/rv_algorithms/hydra_2/hydra_monitors/or_monitor.cpp
         monitors/rv_algorithms/hydra_2/hydra_monitors/and_monitor.cpp
         monitors/rv_algorithms/hydra_2/hydra_monitors/negation_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/previous_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_creation_visitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/predicate_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/constant_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/atomic_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/next_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/since_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/until_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/or_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/and_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/negation_monitor.cpp
         monitors/trace/event.cpp
         monitors/trace/event_generator.cpp
         monitors/utils/lazy_bool.cpp
         monitors/utils/execution_statistic.cpp
         monitors/utils/utils.cpp
-        )
+        monitors/utils/generators/formula_generator/formula_generator.h
+        monitors/utils/generators/formula_generator/formula_generator.cpp
+        monitors/utils/generators/trace_generator/trace_generator.h
+        monitors/utils/generators/trace_generator/trace_generator.cpp
+        monitors/utils/generators/computation_time_generator/computation_time_generator.h
+        monitors/utils/generators/computation_time_generator/computation_time_generator.cpp)
 
 
 # create library of this project
@@ -108,6 +126,7 @@ target_include_directories(${LIBRARY_NAME}
 
 target_link_libraries(${LIBRARY_NAME} PRIVATE
         antlr4cpp
+        spdlog::spdlog
         )
 
 add_executable(rvmonitors_eval monitors/evaluation/evaluation.cpp)

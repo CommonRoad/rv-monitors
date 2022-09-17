@@ -9,24 +9,29 @@
 Verdict PreviousMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     Verdict subVerdict = subMonitor->step(monitorId, stepNumber);
 
-    if (currentVerdict.has_value() and subVerdict.ts.has_value()) {
+    if (currentVerdict.has_value() and subVerdict.timeStamp.has_value()) {
         Verdict lastSubVerdict = *currentVerdict;
         currentVerdict = subVerdict;
-        if (Utils::isInInterval(subVerdict.ts.value() - lastSubVerdict.ts.value(), from, to))
-            return Verdict(subVerdict.ts.value(), lastSubVerdict.b);
+        if (Utils::isInInterval(subVerdict.timeStamp.value() - lastSubVerdict.timeStamp.value(), from, to))
+            return {subVerdict.timeStamp.value(), lastSubVerdict.value};
         else
-            return Verdict(subVerdict.ts.value(), false);
-    } else if (subVerdict.ts.has_value()) {
+            return {subVerdict.timeStamp.value(), false};
+    } else if (subVerdict.timeStamp.has_value()) { // first trace element
         currentVerdict = subVerdict;
-        return Verdict(subVerdict.ts.value(), false);
-    } else
-        return Verdict(false);
+        return {subVerdict.timeStamp.value(), false};
+    } else // behind trace (no more trace element exist)
+        return {false};
 }
-void PreviousMonitor::setTrace(const Trace &tr) { subMonitor->setTrace(tr); }
+void PreviousMonitor::setTrace(const Trace &tra) { subMonitor->setTrace(tra); }
 
 void PreviousMonitor::reset() {
-    HydraMonitor::reset();
+    Hydra2Monitor::reset();
     subMonitor->reset();
     currentVerdict = {};
 }
-std::string PreviousMonitor::to_string() { return "P(" + subMonitor->to_string() + ")"; }
+std::string PreviousMonitor::to_string() {
+    std::string interval;
+    if (from != 0 or to != 10000)
+        interval = "[" + std::to_string(from) + ", " + std::to_string(to) + "]";
+    return std::string{"P"} + interval + "(" + subMonitor->to_string() + ")";
+}

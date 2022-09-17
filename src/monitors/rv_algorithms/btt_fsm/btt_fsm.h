@@ -11,18 +11,20 @@
  */
 class BttFsm : public MonitorInterface {
   private:
-    std::vector<StateBttFsm> states;
-    bool pastEvaluation;
+    std::vector<StateBttFsm> states; //**< States of BTT-FSM. */
+    bool pastEvaluation;             //**< Boolean indicating whether past-based evaluation should be applied. */
 
   public:
     /**
      * Constructor for a BTT-FSM.
+     *
      * @param formula Formula that we want the BTT-FSM for.
-     * @param pastEvaluation Boolean indicating whether past-based evaluation should be applied.
      */
-    BttFsm(const std::vector<Formula> &formulas, bool pastEvaluation = false);
+    BttFsm(const std::vector<Formula> &formulas);
 
     /**
+     * Getter for BTT-FSM states.
+     *
      * Returns a vector of all states in the BTT-FSM.
      * @return Vector of StateBttFsm.
      */
@@ -30,6 +32,7 @@ class BttFsm : public MonitorInterface {
 
     /**
      * to_string() function.
+     *
      * @return String representation of the BTT-FSM.
      */
     [[nodiscard]] std::string to_string() const override;
