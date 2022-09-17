@@ -144,9 +144,19 @@ const ExecutionStatistic &RVMonitor::getExecutionStatistic() const { return exec
 RVMonitor::RVMonitor(const RVMonitor &obj) : configuration(obj.configuration) {
     if (auto *dynLTL = dynamic_cast<DynamicProgrammingLTL *>(obj.monitor.get()))
         monitor = std::make_unique<DynamicProgrammingLTL>(dynLTL->getFormulas(), dynLTL->isPastEvaluation());
-    else if (auto *hydra = dynamic_cast<Hydra2 *>(obj.monitor.get())) {
+    else if (auto *hydra = dynamic_cast<Hydra *>(obj.monitor.get())) {
+        monitor = std::make_unique<Hydra>(hydra->getFormulas());
+    } else if (auto *ecltl = dynamic_cast<EventConsumingLTL *>(obj.monitor.get())) {
+        monitor = std::make_unique<EventConsumingLTL>(ecltl->getFormulas());
+    } else if (auto *mtfsm = dynamic_cast<MtFsm *>(obj.monitor.get())) {
+        monitor = std::make_unique<MtFsm>(mtfsm->getFormulas());
+    } else if (auto *bttfsm = dynamic_cast<BttFsm *>(obj.monitor.get())) {
+        monitor = std::make_unique<BttFsm>(bttfsm->getFormulas());
+    } else if (auto *ecmtl = dynamic_cast<MTLEventConsuming *>(obj.monitor.get())) {
+        monitor = std::make_unique<MTLEventConsuming>(ecmtl->getFormulas());
+    } else if (auto *hydra2 = dynamic_cast<Hydra2 *>(obj.monitor.get())) {
         std::vector<Formula> formulas;
-        for (const auto &form : hydra->getFormulas()) {
+        for (const auto &form : hydra2->getFormulas()) {
             auto formulaCopy{form.deepCopy()};
             formulaCopy.setId(form.getId());
             formulas.push_back(formulaCopy);
@@ -154,7 +164,6 @@ RVMonitor::RVMonitor(const RVMonitor &obj) : configuration(obj.configuration) {
         monitor = std::make_unique<Hydra2>(formulas, configuration.hydraConnectedEvaluation,
                                            configuration.hydraReordering, configuration.hydraShortCircuiting);
     }
-    // TODO other algorithms
     executionStatistic = obj.executionStatistic;
 }
 
