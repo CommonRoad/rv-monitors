@@ -7,52 +7,62 @@
 #include "since_monitor.h"
 
 Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
-    subVerdictF = subMonitorF->step(monitorId, stepNumber);
-    if (subVerdictF->ts.has_value())
-        positionMonitorF.update(subVerdictF->ts.value());
-    if (!subVerdictF->b)
-        lastViolation = std::make_pair(positionMonitorF.ts, positionMonitorF.tp);
+    subVerdictLeft = subMonitorLeft->step(monitorId, stepNumber);
+    if (subVerdictLeft->timeStamp.has_value())
+        headPositionMonitorLeft.update(subVerdictLeft->timeStamp.value());
+    if (!subVerdictLeft->value)
+        lastViolation = HeadPosHydra2(headPositionMonitorLeft.timeStep, headPositionMonitorLeft.traceIdx);
 
-    if (positionMonitorG.tp == -1) {
-        subVerdictG = subMonitorG->step(monitorId, stepNumberG);
-        stepNumberG += 1;
-        if (subVerdictG->ts.has_value())
-            positionMonitorG.update(subVerdictG->ts.value());
+    if (stepNumber == 0) {
+        subVerdictRight = subMonitorRight->step(monitorId, stepNumberRight);
+        stepNumberRight++;
+        if (subVerdictRight->timeStamp.has_value())
+            headPositionMonitorRight.update(subVerdictRight->timeStamp.value());
     }
 
-    while (!positionMonitorG.eof && positionMonitorG.tp <= positionMonitorF.tp &&
-           positionMonitorF.ts - positionMonitorG.ts >= from) {
-        if (subVerdictG->b)
-            lastSatisfaction = std::make_pair(positionMonitorG.ts, positionMonitorG.tp);
-        subVerdictG = subMonitorG->step(monitorId, stepNumberG);
-        stepNumberG += 1;
-        if (subVerdictG->ts.has_value())
-            positionMonitorG.update(subVerdictG->ts.value());
+    // loop until end is reached, right monitor time points equals (is greater) than left monitor's time point, or lower
+    // time bound is violated
+    while (!endReached && headPositionMonitorRight.traceIdx <= headPositionMonitorLeft.traceIdx &&
+           headPositionMonitorLeft.timeStep - headPositionMonitorRight.timeStep >= from) {
+        if (subVerdictRight->value)
+            lastSatisfaction = HeadPosHydra2(headPositionMonitorRight.timeStep, headPositionMonitorRight.traceIdx);
+        subVerdictRight = subMonitorRight->step(monitorId, stepNumberRight);
+        stepNumberRight++;
+        if (subVerdictRight->timeStamp.has_value())
+            headPositionMonitorRight.update(subVerdictRight->timeStamp.value());
         else {
-            positionMonitorG.eof = true;
-            positionMonitorG.tp++;
+            endReached = true;
+            headPositionMonitorRight.traceIdx++;
         }
     }
 
-    int v = static_cast<int>(lastSatisfaction && positionMonitorF.ts - lastSatisfaction->first <= to &&
-                             (!lastViolation || lastSatisfaction->second >= lastViolation->second));
-    return Verdict(positionMonitorF.ts, v != 0);
+    // check whether right side of until was satisfied and whether satisfaction is before end of allowed time interval
+    if (lastSatisfaction && headPositionMonitorLeft.timeStep - lastSatisfaction->timeStep <= to &&
+        (!lastViolation || lastSatisfaction->traceIdx >= lastViolation->traceIdx))
+        return {headPositionMonitorLeft.timeStep, true};
+    else
+        return {headPositionMonitorLeft.timeStep, false};
 }
-void SinceMonitor::setTrace(const Trace &tr) {
-    subMonitorF->setTrace(tr);
-    subMonitorG->setTrace(tr);
+
+void SinceMonitor::setTrace(const Trace &tra) {
+    subMonitorLeft->setTrace(tra);
+    subMonitorRight->setTrace(tra);
 }
 void SinceMonitor::reset() {
-    HydraMonitor::reset();
-    subMonitorG->reset();
-    subMonitorF->reset();
-    subVerdictF = {};
-    subVerdictG = {};
+    Hydra2Monitor::reset();
+    subMonitorRight->reset();
+    subMonitorLeft->reset();
+    subVerdictLeft = {};
+    subVerdictRight = {};
     lastSatisfaction = {};
     lastViolation = {};
-    positionMonitorG.reset();
-    positionMonitorF.reset();
+    headPositionMonitorRight.reset();
+    headPositionMonitorLeft.reset();
+    stepNumberRight = 0;
 }
 std::string SinceMonitor::to_string() {
-    return "(" + subMonitorF->to_string() + ")S(" + subMonitorG->to_string() + ")";
+    std::string interval{" "};
+    if (from != 0 or to != 10000)
+        interval = "[" + std::to_string(from) + ", " + std::to_string(to) + "] ";
+    return "(" + subMonitorLeft->to_string() + " S" + interval + subMonitorRight->to_string() + ")";
 }

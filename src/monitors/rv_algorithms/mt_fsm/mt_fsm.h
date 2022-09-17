@@ -13,8 +13,8 @@
  */
 class MtFsm : public MonitorInterface {
   private:
-    std::vector<StateMT_FSM> states;
-    bool pastEvaluation;
+    std::vector<StateMT_FSM> states; //**< States of MT-FSM. */
+    bool pastEvaluation;             //**< Boolean indicating whether past-based evaluation should be applied. */
 
   public:
     /**
@@ -22,7 +22,7 @@ class MtFsm : public MonitorInterface {
      * @param formula Formula that we want the BTT-FSM for.
      * @param pastEvaluation Boolean indicating whether past-based evaluation should be applied.
      */
-    MtFsm(const std::vector<Formula> &formulas, bool pastEvaluation = false);
+    MtFsm(const std::vector<Formula> &formulas);
 
     /**
      * Getter for states.

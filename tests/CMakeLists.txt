@@ -14,22 +14,51 @@ include(monitors_googletest)
 
 set(RV_MONITOR_TEST_SRC_FILES
         all_tests.cpp
-        rv_algorithms/btt_fsm/test_btt_fsm_evaluation_future.cpp
-        rv_algorithms/btt_fsm/test_btt_fsm_evaluation_past.cpp
+        rv_algorithms/btt_fsm/test_btt_fsm.cpp
         rv_algorithms/dynamic_programming/test_dynamic_programming_ltl.cpp
-        rv_algorithms/event_consuming/test_event_consuming_future.cpp
-        rv_algorithms/event_consuming/test_event_consuming_past.cpp
-        rv_algorithms/mt_fsm/test_mt_fsm_evaluation_future.cpp
-        rv_algorithms/mt_fsm/test_mt_fsm_evaluation_past.cpp
+        rv_algorithms/event_consuming/test_event_consuming_ltl.cpp
+        rv_algorithms/mtl_event_consuming/test_mtl_event_consuming.cpp
+        rv_algorithms/mt_fsm/test_mt_fsm.cpp
+        rv_algorithms/hydra_2/hydra_test_utils.cpp
         rv_algorithms/hydra_2/test_hydra.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_constant_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_or_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_and_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_negation_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_atomic_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_predicate_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_next_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_previous_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_since_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_until_monitor.cpp
         rv_algorithms/hydra_2/test_hydra_creation.cpp
-     #   rv_algorithms/mtl_event_consuming/test_mtl_event_consuming.cpp
+        rv_algorithms/hydra/hydra_test_utils.cpp
+        rv_algorithms/hydra/test_hydra.cpp
+        rv_algorithms/hydra/hydra_monitors/test_constant_monitor.cpp
+        rv_algorithms/hydra/hydra_monitors/test_or_monitor.cpp
+        rv_algorithms/hydra/hydra_monitors/test_and_monitor.cpp
+        rv_algorithms/hydra/hydra_monitors/test_negation_monitor.cpp
+        rv_algorithms/hydra/hydra_monitors/test_atomic_monitor.cpp
+        rv_algorithms/hydra/hydra_monitors/test_predicate_monitor.cpp
+        rv_algorithms/hydra/hydra_monitors/test_next_monitor.cpp
+        rv_algorithms/hydra/hydra_monitors/test_previous_monitor.cpp
+        rv_algorithms/hydra/hydra_monitors/test_since_monitor.cpp
+        rv_algorithms/hydra/hydra_monitors/test_until_monitor.cpp
+        rv_algorithms/test_database.cpp
         rv_algorithms/test_rv_monitors.cpp
         parser/test_parser.cpp
+        formula/test_formula.cpp
         qmc/test_qmc.cpp
         rewriting/test_basic_rewrite_visitor.cpp
         rewriting/test_rewrite_visitor.cpp
         utils/test_lazy_bool.cpp
+        utils/generators/formula_generator/test_formula_generator.cpp
+        utils/generators/formula_generator/test_formula_generator.cpp
+        utils/generators/trace_generator/test_trace_generator.cpp
+        utils/generators/trace_generator/test_trace_generator.cpp
+        utils/generators/computation_time_generator/test_computation_time_generator.cpp
+        utils/generators/computation_time_generator/test_computation_time_generator.cpp
+
         )
 
 

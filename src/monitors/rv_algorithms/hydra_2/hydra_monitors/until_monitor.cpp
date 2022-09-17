@@ -6,82 +6,92 @@
 //
 #include "until_monitor.h"
 
-void UntilMonitor::handleEof() {
-    if (!(!positionMonitorF.eof && !positionMonitorG.eof))
-        throw std::runtime_error("Hydra UntilMonitor readFG error in end of line");
-    positionMonitorF.tp++;
-    positionMonitorF.eof = true;
-    positionMonitorG.tp++;
-    positionMonitorG.eof = true;
-}
-
-void UntilMonitor::readFG(size_t stepNumber) {
-    if (!(positionMonitorF.tp == -1 || positionMonitorF.ts == positionMonitorG.ts ||
-          positionMonitorF.tp == positionMonitorG.tp))
-        throw std::runtime_error("Hydra UntilMonitor readFG error");
-
-    subVerdictF = subMonitorF->step(monitorId, stepNumber, true);
-    if (subVerdictF->ts)
-        positionMonitorF.update(subVerdictF->ts.value());
+void UntilMonitor::stepLeftRightMonitors() {
+    subVerdictLeft = subMonitorLeft->step(monitorId, stepNumberUntil, true);
+    if (subVerdictLeft->timeStamp)
+        headPositionMonitorLeft.update(subVerdictLeft->timeStamp.value());
     else {
-        handleEof();
-        return;
+        endReached = true;
+        ++stepNumberUntil;
     }
-    subVerdictG = subMonitorG->step(monitorId, stepNumber, true);
-    if (subVerdictG->ts)
-        positionMonitorG.update(subVerdictG->ts.value());
+    subVerdictRight = subMonitorRight->step(monitorId, stepNumberUntil, true);
+    if (subVerdictRight->timeStamp)
+        headPositionMonitorRight.update(subVerdictRight->timeStamp.value());
     else
-        handleEof();
+        endReached = true;
+    ++stepNumberUntil;
 }
 
 Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
-    subVerdictH = subMonitorH->step(monitorId, stepNumber, true);
-    if (subVerdictH->ts)
-        positionMonitorH.update(subVerdictH->ts.value());
+    subVerdictBaseTimeStep = subMonitorBaseTimeStep->step(monitorId, stepNumber, true);
+    if (subVerdictBaseTimeStep->timeStamp)
+        headPositionMonitorBaseTimeStep.update(subVerdictBaseTimeStep->timeStamp.value());
 
-    if (lastSatisfaction && lastSatisfaction->second < positionMonitorH.tp)
+    if (lastSatisfaction &&
+        lastSatisfaction->traceIdx <
+            headPositionMonitorBaseTimeStep.traceIdx) // if last satisfaction (-> right side of until satisfied) is
+                                                      // before current time step, reset last satisfaction
         lastSatisfaction = {};
-    if (lastViolation && lastViolation->second < positionMonitorH.tp)
+    if (lastViolation &&
+        lastViolation->traceIdx <
+            headPositionMonitorBaseTimeStep.traceIdx) // if last violation (-> left side of until violated) is
+                                                      // before current time step, reset last satisfaction
         lastViolation = {};
 
-    if (positionMonitorF.tp == -1) {
-        readFG(stepNumber);
-        stepNumber += 1;
+    // if not step was performed yet or last verdicts are behind base time step, execute step for current base step
+    if (stepNumberUntil == 0 or
+        (subVerdictLeft->timeStamp.has_value() and
+         subVerdictLeft->timeStamp.value() < headPositionMonitorBaseTimeStep.timeStep) or
+        (subVerdictRight->timeStamp.has_value() and
+         subVerdictRight->timeStamp.value() <
+             headPositionMonitorBaseTimeStep.timeStep)) { // only executed at first call of function
+        stepLeftRightMonitors();
     }
 
-    while (!positionMonitorF.eof && !lastViolation && positionMonitorF.ts - positionMonitorH.ts <= to) {
-        if (subVerdictG->b) {
-            lastSatisfaction = std::make_pair(positionMonitorF.ts, positionMonitorF.tp);
+    while (!endReached && !lastViolation &&
+           (headPositionMonitorLeft.timeStep - headPositionMonitorBaseTimeStep.timeStep <= to ||
+            headPositionMonitorLeft.timeStep <
+                headPositionMonitorBaseTimeStep.timeStep)) { // loop until end is reached, until left side of monitor is
+                                                             // false, or until upper bound of time
+                                                             // interval is violated
+        if (subVerdictRight->value) {
+            lastSatisfaction = HeadPosHydra2(headPositionMonitorRight.timeStep, headPositionMonitorRight.traceIdx);
         }
-        if (!subVerdictF->b) {
-            lastViolation = std::make_pair(positionMonitorF.ts, positionMonitorF.tp);
+        if (!subVerdictLeft->value) {
+            lastViolation = HeadPosHydra2(headPositionMonitorLeft.timeStep, headPositionMonitorLeft.traceIdx);
         }
-        readFG(stepNumber);
-        stepNumber += 1;
+        stepLeftRightMonitors();
     }
-
-    int v = static_cast<int>(lastSatisfaction && lastSatisfaction->first - positionMonitorH.ts >= from);
-    return Verdict(positionMonitorH.ts, v != 0);
+    // check whether right side of until was satisfied, whether satisfaction is after start of allowed time interval,
+    // and whether left side of from is greater/equal zero (required since unsigned, and we have an overflow
+    if (lastSatisfaction && lastSatisfaction->timeStep - headPositionMonitorBaseTimeStep.timeStep >= from &&
+        lastSatisfaction->timeStep >= headPositionMonitorBaseTimeStep.timeStep)
+        return {headPositionMonitorBaseTimeStep.timeStep, true};
+    else
+        return {headPositionMonitorBaseTimeStep.timeStep, false};
 }
-void UntilMonitor::setTrace(const Trace &tr) {
-    subMonitorF->setTrace(tr);
-    subMonitorG->setTrace(tr);
-    subMonitorH->setTrace(tr);
+
+void UntilMonitor::setTrace(const Trace &tra) {
+    subMonitorLeft->setTrace(tra);
+    subMonitorRight->setTrace(tra);
+    subMonitorBaseTimeStep->setTrace(tra);
 }
 void UntilMonitor::reset() {
-    HydraMonitor::reset();
-    subMonitorG->reset();
-    subMonitorF->reset();
-    subMonitorH->reset();
-    subVerdictF = {};
-    subVerdictG = {};
-    subVerdictH = {};
+    Hydra2Monitor::reset();
+    subMonitorRight->reset();
+    subMonitorLeft->reset();
+    subMonitorBaseTimeStep->reset();
+    subVerdictLeft = {};
+    subVerdictRight = {};
     lastSatisfaction = {};
     lastViolation = {};
-    positionMonitorG.reset();
-    positionMonitorF.reset();
-    positionMonitorH.reset();
+    headPositionMonitorRight.reset();
+    headPositionMonitorLeft.reset();
+    headPositionMonitorBaseTimeStep.reset();
 }
 std::string UntilMonitor::to_string() {
-    return "(" + subMonitorF->to_string() + ")U(" + subMonitorG->to_string() + ")";
+    std::string interval{" "};
+    if (from != 0 or to != 10000)
+        interval = "[" + std::to_string(from) + ", " + std::to_string(to) + "] ";
+    return "(" + subMonitorLeft->to_string() + " U" + interval + subMonitorRight->to_string() + ")";
 }

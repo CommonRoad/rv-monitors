@@ -178,12 +178,12 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitEventOperator(EventOpera
             newExprSet.emplace(eventConsumingExpr);
         }
         ret = std::make_shared<Xor>(newExprSet);
-
     }
     // Globally
     else if (auto globally = std::dynamic_pointer_cast<Globally>(op.getLeft())) {
         if (!trace.getEvent(index).isTerminal()) {
             And::SetType_T newSet;
+            // Propagating down the expression tree
             auto eventOperatorExpr = std::make_shared<EventOperator>(globally->getLeft(), trace, index);
             newSet.emplace(eventOperatorExpr);
             newSet.emplace(globally);

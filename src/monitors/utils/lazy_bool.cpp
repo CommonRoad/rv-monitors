@@ -4,7 +4,7 @@
 
 lazy_bool::lazy_bool(std::function<bool()> valueFetcher) : valueFetcher(std::move(valueFetcher)) {}
 
-bool lazy_bool::get() {
+bool lazy_bool::get() const {
     if (not initialized) {
         value = valueFetcher();
         initialized = true;
