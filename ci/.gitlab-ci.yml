@@ -1,7 +1,6 @@
 stages:
   - compile
   - test
-  #  - sanitizer TODO
   - coverage
   - static-test
   - docs
@@ -9,7 +8,7 @@ stages:
 
 
 
-image: $CI_REGISTRY/maierhofer/rv-monitors/ci:0.5.0
+image: $CI_REGISTRY/cps/rapid-prototyping-setup/ci:1.2
 
 ### static test ###
 clang-format:
@@ -140,7 +139,9 @@ coverage-analyze:
   coverage: /^\s*lines:\s*\d+.\d+\%/
   artifacts:
     reports:
-      cobertura: coverage.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
 
 coverage-report:
   stage: coverage

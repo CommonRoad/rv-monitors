@@ -31,6 +31,8 @@ class Interval {
 
     [[nodiscard]] bool containsZero() const;
 
+    [[nodiscard]] int getLength() const;
+
     [[nodiscard]] std::shared_ptr<Interval> clone() { return std::make_shared<Interval>(*this); }
 
   private:

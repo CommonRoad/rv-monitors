@@ -13,12 +13,21 @@
 #include <monitors/trace/trace.h>
 
 /**
- * Class for monitoring a trace using the Hydra MTL monitor.
+ * Class for monitoring a trace using the Hydra2 MTL monitor.
  */
-class Hydra : public MonitorInterface {
+class Hydra2 : public MonitorInterface {
   public:
-    Hydra(const std::vector<Formula> &formulas, bool connectedEval = true,
-          std::vector<std::tuple<std::string, double, double>> predicateCosts = {});
+    /**
+     * Constructor
+     * @param formulas List of formulas which should be monitored.
+     * @param connectedEval Boolean indicating whether connected evaluation should be used.
+     * @param reordering Boolean indicating whether the formula should be reordered based on the predicate costs.
+     * @param shortCircuiting Boolean indicating whether short circuiting should be used.
+     * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
+     * satisfaction probability in interval [0, 1].
+     */
+    Hydra2(const std::vector<Formula> &formulas, bool connectedEval = true, bool reordering = true,
+           bool shortCircuiting = true, const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
 
     /**
      * Evaluation function for monitor algorithms.
@@ -30,16 +39,38 @@ class Hydra : public MonitorInterface {
     std::map<std::string, std::vector<Verdict>> evaluate(Trace &trace) override;
 
     /**
-     * to_string() function.
+     * Creates string representation for corresponding monitors.
+     *
      * @return String representation of Hydra.
      */
     [[nodiscard]] std::string to_string() const override;
 
   private:
-    void createMonitor(const std::vector<Formula> &formulas, bool connectedEval,
-                       std::vector<std::tuple<std::string, double, double>> predicateCosts);
-    void resetMonitors();
-    void setTraceMonitors(const Trace &tr);
+    /**
+     * Creates monitors for specified formulas based on provided configuration information.
+     *
+     * @param formulas List of formulas which should be monitored.
+     * @param connectedEval Boolean indicating whether connected evaluation should be used.
+     * @param reordering Boolean indicating whether the formula should be reordered based on the predicate costs.
+     * @param shortCircuiting Boolean indicating whether short circuiting should be used.
+     * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
+     * satisfaction probability in interval [0, 1].
+     */
+    void createMonitor(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting,
+                       const std::map<std::string, std::array<double, 2>> &predicateCosts);
 
-    std::vector<std::shared_ptr<HydraMonitor>> monitors;
+    /**
+     * Resets monitor variables to default values.
+     */
+    void resetMonitors();
+
+    /**
+     * Setter for trace.
+     *
+     * @param tra Trace object.
+     */
+    void setTraceMonitors(const Trace &tra);
+
+    std::vector<std::shared_ptr<Hydra2Monitor>>
+        monitors; //**< List of monitors corresponding to the formulas which should be evaluated. */
 };

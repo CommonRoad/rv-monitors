@@ -8,4 +8,6 @@
 
 #include <gtest/gtest.h>
 
-class TestHydraCreation {};
+class TestHydraCreation {
+  private:
+};

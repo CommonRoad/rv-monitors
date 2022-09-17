@@ -4,6 +4,7 @@
 #include "monitors/expression_tree/nary/nary_interface.h"
 #include "monitors/expression_tree/unary/unary.h"
 #include "monitors/trace/event.h"
+#include "supported_formula_type.h"
 #include <optional>
 #include <utility>
 
@@ -12,46 +13,39 @@
  */
 class Formula {
   private:
-    std::string id;
-    std::shared_ptr<Expression> expr;
-    std::shared_ptr<Event> event = nullptr;
+    std::string id;                   //**< Id of formula. */
+    std::shared_ptr<Expression> expr; //**< Expression object corresponding to formula. */
 
   public:
     /**
      * Constructor.
+     *
      * @param expr Expression as root of the expression tree.
      */
     explicit Formula(std::shared_ptr<Expression> expr) : expr(std::move(expr)) {}
 
     /**
      * Constructor.
+     *
      * @param expr Expression as root of the expression tree.
+     * @param formulaId ID of formula.
      */
-    explicit Formula(std::shared_ptr<Expression> expr, std::string id) : id(std::move(id)), expr(std::move(expr)) {}
+    explicit Formula(std::shared_ptr<Expression> expr, std::string formulaId)
+        : id(std::move(formulaId)), expr(std::move(expr)) {}
 
     /**
      * Getter for expression.
+     *
      * @return The formula's expression.
      */
     [[nodiscard]] std::shared_ptr<Expression> getExpr() const;
 
     /**
      * Setter for expression.
+     *
      * @param expression Expression.
      */
     void setExpr(const std::shared_ptr<Expression> &expression);
-
-    /**
-     * Getter for event.
-     * @return event.
-     */
-    [[nodiscard]] const std::shared_ptr<Event> &getEvent() const;
-
-    /**
-     * Setter for event.
-     * @param ev Event.
-     */
-    void setEvent(std::shared_ptr<Event> ev);
 
     /**
      * Transforms a formula to its negative normal form (NNF).
@@ -60,12 +54,14 @@ class Formula {
 
     /**
      * to_string() for Formula.
+     *
      * @return String representation of this formula.
      */
     [[nodiscard]] std::string to_string() const;
 
     /**
      * Checks if specified atomic is in this formula.
+     *
      * @param atomic Atomic.
      * @return True if atomic is in formula, false otherwise.
      */
@@ -73,6 +69,7 @@ class Formula {
 
     /**
      * Checks if two expression trees are identical.
+     *
      * @param before First tree.
      * @param after Second tree.
      * @return True if they are identical, false otherwise.
@@ -82,12 +79,14 @@ class Formula {
 
     /**
      * Getter for formula id.
-     * @param id Formula identifier
+     *
+     * @param formulaId Formula identifier
      */
-    void setId(const std::string &id);
+    void setId(const std::string &formulaId);
 
     /**
      * Creates a deep copy of the given expression.
+     *
      * @tparam T Type of expression.
      * @param exprOrig Expression to be deep copied.
      * @return Deep copy of exprOrig.
@@ -134,37 +133,58 @@ class Formula {
 
     /**
      * Creates a deep copy of this formula' expression.
+     *
      * @return
      */
     [[nodiscard]] Formula deepCopy() const;
 
     /**
      * Getter for unique id/name;
+     *
      * @return ID/name of formula.
      */
     const std::string &getId() const;
 
     /**
-     * Adjusted ostream operator.
-     * @param os Stream.
-     * @param formula Formula.
-     * @return ostream.
+     * Checks if the formula type is compatible with the formulaTypes parameter.
+     *
+     * @param formulaType what formula type the formula should be compared with.
+     * @return boolean indicating whether compatibility was discovered or not.
      */
-    friend std::ostream &operator<<(std::ostream &os, const Formula &formula);
+    bool checkCompatibility(MonitoringProperties formulaType) const;
+
+    /**
+     * Checks compatibility of formula with respect to given formula types
+     *
+     * @param formulaTypes List of formula types the formula should be compared with
+     * @return boolean indicating whether compatibility was discovered or not.
+     */
+    bool checkCompatibility(std::vector<MonitoringProperties> formulaTypes) const;
+
+    /**
+     * Writes formula on existing output stream.
+     *
+     * @param ost output stream
+     * @param formula formula which should be written on output stream
+     * @return output stream with formula
+     */
+    friend std::ostream &operator<<(std::ostream &ost, const Formula &formula);
 };
 
 /**
- * Custom < operator for comparing two formulas f1 and f2 by their string representations.
- * @param f1 Formula.
- * @param f2 Formula.
- * @return True if f1 < f2, false otherwise.
+ * Custom < operator for comparing two formulas formula1 and formula2 by their string representations.
+ *
+ * @param formula1 Formula.
+ * @param formula2 Formula.
+ * @return True if formula1 < formula2, false otherwise.
  */
-bool operator<(const Formula &f1, const Formula &f2);
+bool operator<(const Formula &formula1, const Formula &formula2);
 
 /**
- * Custom == operator for comparing two formulas f1 and f2 by their string representations.
- * @param f1 Formula.
- * @param f2 Formula.
- * @return True if f1 == f2, false otherwise.
+ * Custom == operator for comparing two formulas formula1 and f2 by their string representations.
+ *
+ * @param formula1 Formula.
+ * @param formula1 Formula.
+ * @return True if formula1 == formula2, false otherwise.
  */
-bool operator==(const Formula &f1, const Formula &f2);
+bool operator==(const Formula &formula1, const Formula &formula2);

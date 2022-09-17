@@ -1,18 +1,18 @@
 #include "event.h"
 
-bool Event::getValue(const std::string &atomic) { return eventMap.at(atomic).get(); }
+bool Event::getValue(const std::string &atomic) const { return eventMap.at(atomic).get(); }
 
-std::map<std::string, lazy_bool> Event::getEventMap() const { return this->eventMap; }
+event_map_t Event::getEventMap() const { return this->eventMap; }
 
-std::map<std::string, lazy_bool> &Event::getEventMapRef() { return this->eventMap; }
+event_map_t &Event::getEventMapRef() { return this->eventMap; }
 
-bool Event::getValue(const Atomic &atomic) { return getValue(atomic.to_string()); }
+bool Event::getValue(const Atomic &atomic) const { return getValue(atomic.to_string()); }
 
-bool Event::getValue(const Predicate &predicate) { return getValue(predicate.to_string()); }
+bool Event::getValue(const Predicate &predicate) const { return getValue(predicate.to_string()); }
 
 bool Event::isTerminal() const { return terminal; }
 
-void Event::setEventMap(const std::map<std::string, lazy_bool> &newEventMap) { Event::eventMap = newEventMap; }
+void Event::setEventMap(const event_map_t &newEventMap) { Event::eventMap = newEventMap; }
 
 void Event::setTerminal(bool isTerminal) { Event::terminal = isTerminal; }
 
@@ -22,7 +22,7 @@ std::string Event::to_string() const {
     for (const auto &[key, value] : eventMap) {
         res << key << ": " << value << "; ";
     }
-    res << terminal << "}";
+    res << timeStep << "}";
     return res.str();
 }
 

@@ -16,9 +16,9 @@ Formula Parser::parse(const std::string &formula, const std::string &formulaId) 
     FormulaParser parser(&tokens);
     antlr4::tree::ParseTree *treePointer = parser.formula();
     Visitor visitor;
-    Formula fm{visitor.visit(treePointer).as<Formula>()};
-    fm.setId(formulaId);
-    return fm;
+    Formula form{visitor.visit(treePointer).as<Formula>()};
+    form.setId(formulaId);
+    return form;
 }
 
 Trace Parser::parse_log(const std::string &log) {

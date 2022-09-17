@@ -8,28 +8,32 @@
 #include <iostream>
 
 Verdict NextMonitor::concreteStep(size_t parentId, size_t stepNumber) {
-    do {
-        auto subVerdict = subMonitor->step(monitorId, stepNumber);
-        if (subVerdict.ts.has_value() and currentTime) {
-            size_t lastTime = *currentTime;
-            currentTime = subVerdict.ts;
-            if (Utils::isInInterval(subVerdict.ts.value() - lastTime, from, to))
-                return Verdict(lastTime, subVerdict.b);
-            else
-                return Verdict(lastTime, false);
-        } else if (!subVerdict.ts.has_value()) {
-            return Verdict(*currentTime, false);
-        } else {
-            currentTime = subVerdict.ts;
-        }
-    } while (true);
+
+    if (!currentTime) // first event in trace (next time step specifies verdict
+        currentTime = subMonitor->step(monitorId, stepNumber).timeStamp;
+
+    auto subVerdict{subMonitor->step(monitorId, stepNumber + 1)};
+    if (subVerdict.timeStamp.has_value() and currentTime) {
+        size_t lastTime = *currentTime;
+        currentTime = subVerdict.timeStamp;
+        if (Utils::isInInterval(subVerdict.timeStamp.value() - lastTime, from, to))
+            return {lastTime, subVerdict.value};
+        else
+            return {lastTime, false};
+    } else // last event in trace
+        return {*currentTime, false};
 }
 
-void NextMonitor::setTrace(const Trace &tr) { subMonitor->setTrace(tr); }
+void NextMonitor::setTrace(const Trace &tra) { subMonitor->setTrace(tra); }
 
 void NextMonitor::reset() {
-    HydraMonitor::reset();
+    Hydra2Monitor::reset();
     currentTime = {};
     subMonitor->reset();
 }
-std::string NextMonitor::to_string() { return "X(" + subMonitor->to_string() + ")"; }
+std::string NextMonitor::to_string() {
+    std::string interval;
+    if (from != 0 or to != 10000)
+        interval = "[" + std::to_string(from) + ", " + std::to_string(to) + "]";
+    return std::string{"X"} + interval + "(" + subMonitor->to_string() + ")";
+}

@@ -9,51 +9,57 @@
 
 Verdict AndMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     Verdict verdict{subMonitors.at(0)->step(monitorId, stepNumber)};
-    if (!verdict.b) {
-        if (!verdict.ts.has_value())
-            return Verdict(false);
-        else
-            return Verdict(verdict.ts.value(), false);
-    }
-    for (size_t i{1}; i < subMonitors.size(); ++i)
-        if (!subMonitors.at(i)->step(monitorId, stepNumber).b) {
-            if (!verdict.ts.has_value())
-                return Verdict(false);
+    if (shortCircuiting) {
+        if (!verdict.value) {
+            if (!verdict.timeStamp.has_value()) // happens when we are behind last trace element with submonitor
+                return {false};
             else
-                return Verdict(verdict.ts.value(), false);
+                return {verdict.timeStamp.value(), false};
         }
+        for (size_t i{1}; i < subMonitors.size(); ++i) // verdict of first monitor is evaluated above
+            if (!subMonitors.at(i)->step(monitorId, stepNumber).value) {
+                if (!verdict.timeStamp.has_value())
+                    return {false};
+                else
+                    return {verdict.timeStamp.value(), false};
+            }
+    } else {
+        for (size_t i{1}; i < subMonitors.size(); ++i)
+            verdict = verdict && subMonitors.at(i)->step(monitorId, stepNumber);
+    }
     return verdict;
 }
 
-void AndMonitor::setTrace(const Trace &tr) {
+void AndMonitor::setTrace(const Trace &tra) {
     for (const auto &mon : subMonitors)
-        mon->setTrace(tr);
+        mon->setTrace(tra);
 }
 
 void AndMonitor::reset() {
-    HydraMonitor::reset();
+    Hydra2Monitor::reset();
     for (const auto &mon : subMonitors)
         mon->reset();
 }
 
 std::string AndMonitor::to_string() {
-    std::string s;
+    std::string str{"("};
     for (const auto &mon : subMonitors)
-        s += mon->to_string() + " and ";
-    s.erase(s.size() - 5);
-    return s;
+        str += mon->to_string() + " & ";
+    str.erase(str.size() - 3);
+    str += ")";
+    return str;
 }
 
-double AndMonitor::computeCost(const std::vector<std::shared_ptr<HydraMonitor>> &monitors) {
-    double cost{0.0};
-    for (const auto &mon : monitors)
-        cost += mon->getEvalCost();
-    return cost / static_cast<double>(monitors.size());
+double AndMonitor::computeCost(const std::vector<std::shared_ptr<Hydra2Monitor>> &monitors) {
+    double cost{monitors.at(0)->getEvalCost()};
+    for (size_t idx{0}; idx < monitors.size(); ++idx)
+        cost += monitors.at(idx)->getEvalCost() * (1 - monitors.at(idx)->getSatisfactionProbability());
+    return cost / static_cast<double>(monitors.size()); // normalize value
 }
 
-double AndMonitor::computeSatisfactionProbability(const std::vector<std::shared_ptr<HydraMonitor>> &monitors) {
+double AndMonitor::computeSatisfactionProbability(const std::vector<std::shared_ptr<Hydra2Monitor>> &monitors) {
     double prob{monitors.at(0)->getSatisfactionProbability()};
     for (size_t idx{1}; idx < monitors.size(); ++idx)
-        prob *= monitors.at(idx)->getSatisfactionProbability() / 10.0;
+        prob *= monitors.at(idx)->getSatisfactionProbability();
     return prob;
 }
