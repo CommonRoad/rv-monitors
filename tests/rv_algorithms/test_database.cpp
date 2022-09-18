@@ -855,6 +855,12 @@ TestDataBase::TestDataBase() {
             createExpectedResult({true, true, true, true, true, false}),
             {{"a"}, {"a"}, {"a"}, {"a", "b"}, {"a"}, {"b"}},
         },
+        {
+            "F76_1",
+            "G((b & X(!(b)) & b & !(a)) -> (O(G[0,5](b & d))))",
+            createExpectedResult({true, true, true, true, true, false, true}),
+            {{"c"}, {"c"}, {"c"}, {"c"}, {"c"}, {"b", "c"}, {"c"}},
+        },
     };
 }
 

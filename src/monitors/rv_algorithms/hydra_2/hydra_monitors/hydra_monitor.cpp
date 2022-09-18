@@ -13,7 +13,7 @@ Hydra2Monitor::Hydra2Monitor(Formula formula, size_t monitorId, bool connectedEv
                              double satisfactionProbability)
     : formula(std::move(formula)), monitorId((monitorId)), connectedEval(connectedEval), evalCost(evalCost),
       satisfactionProbability(satisfactionProbability) {
-    assert(evalCost >= 0 or evalCost <= 100 or satisfactionProbability >= 0 or satisfactionProbability <= 1);
+    assert(evalCost >= 0 and evalCost <= 100 and satisfactionProbability >= 0 and satisfactionProbability <= 1);
 }
 
 void Hydra2Monitor::reset() {
