@@ -196,7 +196,8 @@ class HydraCreationVisitor2 {
 
   private:
     size_t maxId{0}; //**< Maximum ID which is currently assigned to sub-monitor. */
-    mutable bool reordering; //**< Boolean indicating whether the formula should be reordered based on the predicate costs. */
+    mutable bool
+        reordering; //**< Boolean indicating whether the formula should be reordered based on the predicate costs. */
     mutable bool shortCircuiting; //**< Boolean indicating whether short-circuiting should be used. */
     std::map<std::string, std::shared_ptr<Hydra2Monitor>>
         baseline; //**< Stores unique formula sub-sets which can be shared within monitor. Only relevant for connected

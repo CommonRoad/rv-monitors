@@ -14,7 +14,7 @@ Hydra2Monitor::Hydra2Monitor(Formula formula, size_t monitorId, bool connectedEv
     : formula(std::move(formula)), monitorId((monitorId)), connectedEval(connectedEval), evalCost(evalCost),
       satisfactionProbability(satisfactionProbability) {
     assert((evalCost >= 0 and evalCost <= 100 and satisfactionProbability >= 0 and satisfactionProbability <= 1) &&
-            "Invalid predicate costs/probabilities Hydra2 Monitor.");
+           "Invalid predicate costs/probabilities Hydra2 Monitor.");
 }
 
 void Hydra2Monitor::reset() {
