@@ -857,9 +857,9 @@ TestDataBase::TestDataBase() {
         },
         {
             "F76_1",
-            "G((b & X(!(b)) & b & !(a)) -> (O(G[0,5](b & d))))",
-            createExpectedResult({true, true, true, true, true, false, true}),
-            {{"c"}, {"c"}, {"c"}, {"c"}, {"c"}, {"b", "c"}, {"c"}},
+            "G((b & X(!(b)) & d & !(a)) -> (O(G[0,30](b & c))))",
+            createExpectedResult({true, true, true, true, true, false, true, true, true, true, true, true, true}),
+            {{"d"}, {"d"}, {"d"}, {"d"}, {"d"}, {"b", "d"}, {"d"}, {"d"}, {"d"}, {}, {}, {}, {}},
         },
     };
 }

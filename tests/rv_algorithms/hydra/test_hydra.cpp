@@ -24,7 +24,7 @@ TEST(TestHydra, testFormulaType) {
 TEST(TestHydra, specificFormulaTest) {
     auto testDataBase{TestDataBase()};
     auto testCase = testDataBase.getTestSample("F11_1");
-    hydraTestUtils::evalHydra({*testCase.formula}, {testCase.expectedResult}, testCase.trace);
+    hydraTestUtils::executeHydraEval({*testCase.formula}, {testCase.expectedResult}, testCase.trace);
 }
 
 TEST(TestHydra, formulaTest) {
@@ -36,7 +36,7 @@ TEST(TestHydra, formulaTest) {
                         [testCase](const std::string &name) { return name == testCase.formula->getId(); }))
             continue;
         Trace tra{testCase.trace};
-        failures += hydraTestUtils::evalHydra({*testCase.formula}, {testCase.expectedResult}, tra);
+        failures += hydraTestUtils::executeHydraEval({*testCase.formula}, {testCase.expectedResult}, tra);
     }
     std::cout << "Hydra Formula Test: " << std::to_string(failures) << " failing formulas.";
 }
