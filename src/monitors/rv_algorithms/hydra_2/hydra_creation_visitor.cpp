@@ -205,7 +205,7 @@ HydraCreationVisitor2::HydraCreationVisitor2(std::map<std::string, std::array<do
     : reordering(reordering), shortCircuiting(shortCircuiting), predicateCosts(std::move(predicateCosts)) {
     for (const auto &pred : this->predicateCosts)
         assert((pred.second[0] >= 0 and pred.second[0] <= 100 and pred.second[1] >= 0 and pred.second[1] <= 1) &&
-               "Invalid predicate costs/probabilities.");
+               "Invalid predicate costs/probabilities Hydra2 Creation Visitor.");
 }
 
 void HydraCreationVisitor2::reorder(std::vector<std::shared_ptr<Hydra2Monitor>> &monitors, bool increasing) {
