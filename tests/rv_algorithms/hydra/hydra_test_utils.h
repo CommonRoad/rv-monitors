@@ -12,6 +12,8 @@
 #include "monitors/utils/utils.h"
 
 namespace hydraTestUtils {
-size_t evalHydra(const std::vector<Formula> &formulas, const std::vector<std::vector<Verdict>> &expSolution,
-                 Trace &trac);
+size_t executeHydraEval(const std::vector<Formula> &formulas, const std::vector<std::vector<Verdict>> &expSolution,
+                        Trace &trac);
+bool evalHydra(const std::vector<Formula> &formulas, const std::vector<std::vector<Verdict>> &expSolution,
+               Hydra &monitor, Trace &trace);
 } // namespace hydraTestUtils

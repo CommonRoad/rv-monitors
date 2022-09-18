@@ -88,6 +88,8 @@ void UntilMonitor::reset() {
     headPositionMonitorRight.reset();
     headPositionMonitorLeft.reset();
     headPositionMonitorBaseTimeStep.reset();
+    stepNumberUntil = 0;
+    endReached = false;
 }
 std::string UntilMonitor::to_string() {
     std::string interval{" "};

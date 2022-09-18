@@ -59,6 +59,7 @@ void SinceMonitor::reset() {
     headPositionMonitorRight.reset();
     headPositionMonitorLeft.reset();
     stepNumberRight = 0;
+    endReached = false;
 }
 std::string SinceMonitor::to_string() {
     std::string interval{" "};
