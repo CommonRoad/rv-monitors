@@ -69,8 +69,8 @@ std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitPredicate(Predicate &
         return baseline.at(top.to_string());
     } else {
         size_t idx{maxId++};
-        double cost;
-        double prob;
+        double cost{0.0};
+        double prob{1.0};
         for (const auto &pred : predicateCosts)
             if (std::get<0>(pred) == top.getName()) {
                 cost = pred.second[0];
