@@ -18,15 +18,6 @@ std::string Interval::to_string() const {
     return "[" + std::to_string(this->start) + ", " + endStr + "]";
 }
 
-void Interval::reduceInterval() {
-    if (!finite)
-        start--;
-    else {
-        end--;
-        start--;
-    }
-}
-
 int Interval::getStart() const { return start; }
 
 int Interval::getEnd() const { return end; }

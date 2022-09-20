@@ -6,19 +6,32 @@
 
 #include "interval.h"
 
+/**
+ * Representation of temporal operator expression.
+ */
 class TemporalOperator {
   private:
-    std::shared_ptr<Interval> interval;
+    std::shared_ptr<Interval> interval; //**< Temporal interval.  */
 
   public:
+    /**
+     * Constructor.
+     *
+     * @param interval Temporal interval.
+     */
     explicit TemporalOperator(std::shared_ptr<Interval> interval) : interval(std::move(interval)) {}
 
-    void reduceInterval() { interval->reduceInterval(); }
-
+    /**
+     * Getter for interval.
+     *
+     * @return Interval.
+     */
     [[nodiscard]] const std::shared_ptr<Interval> &getInterval() const { return interval; }
 
-    TemporalOperator(const TemporalOperator &old) {
-        interval = std::make_shared<Interval>(old.interval->getStart(), old.interval->getEnd(),
-                                              old.interval->isFinite(), old.interval->isEmpty());
-    }
+    /**
+     * Copy constructor of temporal operator.
+     *
+     * @param old Temporal operator object which should be copied.
+     */
+    TemporalOperator(const TemporalOperator &old);
 };
