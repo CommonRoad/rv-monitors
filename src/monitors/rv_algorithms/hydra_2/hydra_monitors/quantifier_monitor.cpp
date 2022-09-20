@@ -11,6 +11,8 @@ QuantifierMonitor::QuantifierMonitor(Formula formula, std::shared_ptr<Hydra2Moni
 
     for (auto &varDomain : varDomains)
         iters.push_back(varDomain.second.begin());
+
+    numberCombinations = numCombinations();
 }
 
 std::shared_ptr<Hydra2Monitor> QuantifierMonitor::nextEvalMonitor(size_t parentId, size_t count) {
@@ -26,12 +28,7 @@ std::shared_ptr<Hydra2Monitor> QuantifierMonitor::nextEvalMonitor(size_t parentI
     return evalMonitor;
 }
 
-bool QuantifierMonitor::nextCombination() {
-    if (iters[0] == varDomains[0].second.end()) { // if iterators cannot be shifted anymore, the iterators will be reset
-        resetIterators();
-        return false;
-    }
-
+void QuantifierMonitor::nextCombination() {
     size_t numVars = varDomains.size();
     for (size_t i = 0; i < numVars; i++) {
         auto varIter{variableValues.find(varDomains[i].first)};
@@ -48,8 +45,6 @@ bool QuantifierMonitor::nextCombination() {
         iters[i] = varDomains[i].second.begin();
         ++iters[i - 1];
     }
-
-    return true;
 }
 
 void QuantifierMonitor::resetIterators() {
@@ -80,9 +75,9 @@ void QuantifierMonitor::setVariableValues(std::map<std::string, Value> values) {
     subMonitor->setVariableValues(values);
 }
 
-void QuantifierMonitor::reset(std::optional<size_t> stepNumber) {
-    Hydra2Monitor::reset(stepNumber);
-    subMonitor->reset(stepNumber);
+void QuantifierMonitor::reset() {
+    Hydra2Monitor::reset();
+    subMonitor->reset();
     evalMonitors.clear();
     variableValues.clear();
     resetIterators();
@@ -95,6 +90,6 @@ double QuantifierMonitor::computeCost(const std::shared_ptr<Hydra2Monitor> &moni
 double QuantifierMonitor::computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &monitor, size_t numEval) {
     double prob{monitor->getSatisfactionProbability()};
     for (size_t num{1}; num < numEval; num++)
-        prob *= monitor->getSatisfactionProbability() / 10.0;
+        prob *= monitor->getSatisfactionProbability();
     return prob;
 }

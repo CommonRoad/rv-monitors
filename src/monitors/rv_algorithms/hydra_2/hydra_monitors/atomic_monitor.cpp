@@ -12,7 +12,7 @@ Verdict AtomicMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         auto event{trace.getEvent(traceIdx[parentId])};
 
         auto iter{variableValues.find(atomic.to_string())};
-        if (iter != variableValues.end())
+        if (iter != variableValues.end()) // handled as atomic proposition or variable representing a bundle of atomic propositions
             return {event.getTimeStep(), event.getValue(iter->second.getVal())};
         else
             return {event.getTimeStep(), event.getValue(atomic)};
@@ -24,8 +24,8 @@ void AtomicMonitor::setTrace(const Trace &tra) { trace = tra; }
 
 void AtomicMonitor::setVariableValues(std::map<std::string, Value> values) { variableValues = values; }
 
-void AtomicMonitor::reset(std::optional<size_t> stepNumber) {
-    Hydra2Monitor::reset(stepNumber);
+void AtomicMonitor::reset() {
+    Hydra2Monitor::reset();
     variableValues.clear();
 }
 

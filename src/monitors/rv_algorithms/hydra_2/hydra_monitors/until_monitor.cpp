@@ -83,11 +83,11 @@ void UntilMonitor::setVariableValues(std::map<std::string, Value> values) {
     subMonitorBaseTimeStep->setVariableValues(values);
 }
 
-void UntilMonitor::reset(std::optional<size_t> stepNumber) {
-    Hydra2Monitor::reset(stepNumber);
-    subMonitorRight->reset(stepNumber);
-    subMonitorLeft->reset(stepNumber);
-    subMonitorBaseTimeStep->reset(stepNumber);
+void UntilMonitor::reset() {
+    Hydra2Monitor::reset();
+    subMonitorRight->reset();
+    subMonitorLeft->reset();
+    subMonitorBaseTimeStep->reset();
     subVerdictLeft = {};
     subVerdictRight = {};
     lastSatisfaction = {};

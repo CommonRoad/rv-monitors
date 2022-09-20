@@ -40,10 +40,10 @@ void AndMonitor::setVariableValues(std::map<std::string, Value> values) {
         mon->setVariableValues(values);
 }
 
-void AndMonitor::reset(std::optional<size_t> stepNumber) {
-    Hydra2Monitor::reset(stepNumber);
+void AndMonitor::reset() {
+    Hydra2Monitor::reset();
     for (const auto &mon : subMonitors)
-        mon->reset(stepNumber);
+        mon->reset();
 }
 
 std::shared_ptr<Hydra2Monitor> AndMonitor::clone() {

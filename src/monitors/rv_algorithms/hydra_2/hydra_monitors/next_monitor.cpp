@@ -30,10 +30,10 @@ void NextMonitor::setVariableValues(std::map<std::string, Value> values) {
     subMonitor->setVariableValues(values);
 }
 
-void NextMonitor::reset(std::optional<size_t> stepNumber) {
-    Hydra2Monitor::reset(stepNumber);
+void NextMonitor::reset() {
+    Hydra2Monitor::reset();
     currentTime = {};
-    subMonitor->reset(stepNumber);
+    subMonitor->reset();
 }
 
 std::shared_ptr<Hydra2Monitor> NextMonitor::clone() {

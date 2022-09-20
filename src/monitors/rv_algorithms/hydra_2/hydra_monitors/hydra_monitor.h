@@ -114,11 +114,10 @@ class Hydra2Monitor {
     virtual void setVariableValues(std::map<std::string, Value> values) = 0;
 
     /**
-     * Resets monitor variables to default values at a specified step number.
+     * Resets monitor variables.
      *
-     * @param stepNumber Optional step number.
      */
-    virtual void reset(std::optional<size_t> stepNumber = std::nullopt);
+    virtual void reset();
 
     /**
      * Registers parent monitor.

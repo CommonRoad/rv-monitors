@@ -54,10 +54,10 @@ void SinceMonitor::setVariableValues(std::map<std::string, Value> values) {
     subMonitorRight->setVariableValues(values);
 }
 
-void SinceMonitor::reset(std::optional<size_t> stepNumber) {
-    Hydra2Monitor::reset(stepNumber);
-    subMonitorRight->reset(stepNumber);
-    subMonitorLeft->reset(stepNumber);
+void SinceMonitor::reset() {
+    Hydra2Monitor::reset();
+    subMonitorRight->reset();
+    subMonitorLeft->reset();
     subVerdictLeft = {};
     subVerdictRight = {};
     lastSatisfaction = {};

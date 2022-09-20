@@ -7,8 +7,8 @@ CountingMonitor::CountingMonitor(Formula formula, std::shared_ptr<Hydra2Monitor>
     : QuantifierMonitor(std::move(formula), subMonitor, monitorId, std::move(variables), domains,
                         connectedEval, shortCircuiting, 0.0, 0.0),
     op(op), num(num) {
-    evalCost = computeCost(subMonitor, numCombinations());
-    satisfactionProbability = computeSatisfactionProbability(subMonitor, numCombinations());
+    evalCost = computeCost(subMonitor, numberCombinations);
+    satisfactionProbability = computeSatisfactionProbability(subMonitor, numberCombinations);
 }
 
 Verdict CountingMonitor::concreteStep(size_t parentId, size_t stepNumber) {
@@ -21,11 +21,8 @@ Verdict CountingMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     if (!checkNonEmptiness()) // if there is an empty domain, then a true verdict will be returned by definition
         return verdict;
 
-    size_t numComb{numCombinations()};
-
-    size_t count{0};
     size_t trueVerdicts{0};
-    while (count != numComb) { // loop over all possible combinations
+    for (size_t count{0}; count != numberCombinations; count++) { // loop over all possible combinations
         std::shared_ptr<Hydra2Monitor> evalMonitor = nextEvalMonitor(parentId, count); // request monitor for the current combination
 
         Verdict subVerdict = evalMonitor->step(monitorId, stepNumber);
@@ -33,7 +30,7 @@ Verdict CountingMonitor::concreteStep(size_t parentId, size_t stepNumber) {
             trueVerdicts++;
 
         if (shortCircuiting) {
-            size_t unevalVerdicts{numComb - count - 1}; // unevaluated verdicts
+            size_t unevalVerdicts{numberCombinations - count - 1}; // unevaluated verdicts
             if (op == CountingQuantifier::LESS_EQ) {
                 if (unevalVerdicts + trueVerdicts <= num or trueVerdicts > num) {
                     if (unevalVerdicts + trueVerdicts <= num)
@@ -52,8 +49,6 @@ Verdict CountingMonitor::concreteStep(size_t parentId, size_t stepNumber) {
                 }
             }
         }
-
-        count++;
     }
 
     verdict.value = (op == CountingQuantifier::LESS_EQ and trueVerdicts <= num) or

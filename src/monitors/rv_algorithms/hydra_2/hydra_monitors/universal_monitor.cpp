@@ -7,8 +7,8 @@ UniversalMonitor::UniversalMonitor(Formula formula, std::shared_ptr<Hydra2Monito
                                    bool connectedEval, bool shortCircuiting)
     : QuantifierMonitor(std::move(formula), subMonitor, monitorId, std::move(variables), domains,
                         connectedEval, shortCircuiting, 0.0, 0.0) {
-          evalCost = computeCost(subMonitor, numCombinations());
-          satisfactionProbability = computeSatisfactionProbability(subMonitor, numCombinations());
+          evalCost = computeCost(subMonitor, numberCombinations);
+          satisfactionProbability = computeSatisfactionProbability(subMonitor, numberCombinations);
 }
 
 Verdict UniversalMonitor::concreteStep(size_t parentId, size_t stepNumber) {
@@ -21,10 +21,7 @@ Verdict UniversalMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     if (!checkNonEmptiness()) // if there is an empty domain, then a true verdict will be returned by definition
         return verdict;
 
-    size_t numComb{numCombinations()};
-
-    size_t count{0};
-    while (count != numComb) { // loop over all possible combinations
+    for (size_t count{0}; count != numberCombinations; count++) { // loop over all possible combinations
         std::shared_ptr<Hydra2Monitor> evalMonitor = nextEvalMonitor(parentId, count); // request monitor for current combination
 
         Verdict subVerdict = evalMonitor->step(monitorId, stepNumber);
@@ -33,8 +30,6 @@ Verdict UniversalMonitor::concreteStep(size_t parentId, size_t stepNumber) {
                 return subVerdict;
 
         verdict = verdict && subVerdict; // all subverdicts have to be true so that a true verdict is returned
-
-        count++;
     }
 
     return verdict;

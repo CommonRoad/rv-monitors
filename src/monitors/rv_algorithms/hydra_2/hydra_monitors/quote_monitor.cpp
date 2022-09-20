@@ -5,12 +5,12 @@ QuoteMonitor::QuoteMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMo
     : QuantifierMonitor(std::move(formula), subMonitor, monitorId, std::move(variables), domains,
                         connectedEval, shortCircuiting, 0.0, 0.0),
       minQuote(minQuote), maxQuote(maxQuote) {
-    evalCost = computeCost(subMonitor, numCombinations());
-    satisfactionProbability = computeSatisfactionProbability(subMonitor, numCombinations());
+    evalCost = computeCost(subMonitor, numberCombinations);
+    satisfactionProbability = computeSatisfactionProbability(subMonitor, numberCombinations);
 }
 
 float QuoteMonitor::computeRatio(size_t trueVerdicts) {
-    return static_cast<float>(trueVerdicts) / static_cast<float>(numCombinations());
+    return static_cast<float>(trueVerdicts) / static_cast<float>(numberCombinations);
 }
 
 Verdict QuoteMonitor::concreteStep(size_t parentId, size_t stepNumber) {
@@ -23,12 +23,10 @@ Verdict QuoteMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     if (!checkNonEmptiness()) // if there is an empty domain, then a true verdict will be returned by definition
         return verdict;
 
-    size_t numComb{numCombinations()};
     float totalQuote;
 
-    size_t count{0};
     size_t trueVerdicts{0};
-    while (count != numComb) { // loop over all possible combinations
+    for (size_t count{0}; count != numberCombinations; count++) { // loop over all possible combinations
         std::shared_ptr<Hydra2Monitor> evalMonitor = nextEvalMonitor(parentId, count); // request monitor for the current combination
 
         Verdict subVerdict = evalMonitor->step(monitorId, stepNumber);
@@ -37,7 +35,7 @@ Verdict QuoteMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 
         if (shortCircuiting) {
             totalQuote = computeRatio(trueVerdicts); // current quote of true verdicts
-            float possibleQuote = computeRatio(trueVerdicts + numComb - count - 1); // still reachable quote of true verdicts
+            float possibleQuote = computeRatio(trueVerdicts + numberCombinations - count - 1); // still reachable quote of true verdicts
             if (totalQuote > maxQuote or possibleQuote < minQuote) {
                 verdict.value = false;
                 return verdict;
@@ -47,8 +45,6 @@ Verdict QuoteMonitor::concreteStep(size_t parentId, size_t stepNumber) {
                 }
             }
         }
-
-        count++;
     }
 
     totalQuote = computeRatio(trueVerdicts);

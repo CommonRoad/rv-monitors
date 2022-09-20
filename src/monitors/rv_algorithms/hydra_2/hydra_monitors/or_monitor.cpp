@@ -41,10 +41,10 @@ void OrMonitor::setVariableValues(std::map<std::string, Value> values) {
         mon->setVariableValues(values);
 }
 
-void OrMonitor::reset(std::optional<size_t> stepNumber) {
-    Hydra2Monitor::reset(stepNumber);
+void OrMonitor::reset() {
+    Hydra2Monitor::reset();
     for (const auto &mon : subMonitors)
-        mon->reset(stepNumber);
+        mon->reset();
 }
 
 std::shared_ptr<Hydra2Monitor> OrMonitor::clone() {

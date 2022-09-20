@@ -75,12 +75,12 @@ class Trace {
     }
 
     /**
-     * Checks predicate is traced.
-     * @param predicate Predicate
-     * @param index Index
-     * @return Is traced or not
+     * Checks whether predicate is included by trace.
+     * @param predicate Predicate.
+     * @param index Index of trace.
+     * @return Boolean indicating whether the predicate is included by trace.
      */
-    bool isTraced(const Predicate &predicate, size_t index) {
+    bool predicateIncludedByTrace(const Predicate &predicate, size_t index) {
         if (index < trace.size()) {
             Event &event = trace[index];
             return event.hasPredicate(predicate);

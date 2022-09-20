@@ -28,9 +28,9 @@ void PreviousMonitor::setVariableValues(std::map<std::string, Value> values) {
     subMonitor->setVariableValues(values);
 }
 
-void PreviousMonitor::reset(std::optional<size_t> stepNumber) {
-    Hydra2Monitor::reset(stepNumber);
-    subMonitor->reset(stepNumber);
+void PreviousMonitor::reset() {
+    Hydra2Monitor::reset();
+    subMonitor->reset();
     currentVerdict = {};
 }
 

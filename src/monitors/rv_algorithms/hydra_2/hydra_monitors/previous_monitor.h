@@ -55,11 +55,10 @@ class PreviousMonitor : public Hydra2Monitor {
     void setVariableValues(std::map<std::string, Value> values) override;
 
     /**
-     * Resets monitor variables to default values at a specified step number.
+     * Resets monitor variables to default values.
      *
-     * @param stepNumber Optional step number.
      */
-    void reset(std::optional<size_t> stepNumber = std::nullopt) override;
+    void reset() override;
 
     /**
      * Clones this monitor.

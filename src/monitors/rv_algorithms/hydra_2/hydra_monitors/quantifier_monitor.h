@@ -51,10 +51,8 @@ class QuantifierMonitor : public Hydra2Monitor {
     /**
      * Shifts the iterators for each variables domain so that a new combination is formed. If all combinations
      * are already requested the iterators will be reset.
-     *
-     * @return Boolean indicating whether a new combination can be formed.
      */
-    bool nextCombination();
+    void nextCombination();
 
     /**
      * Resets the iterators forming the current combination.
@@ -90,12 +88,10 @@ class QuantifierMonitor : public Hydra2Monitor {
     void setVariableValues(std::map<std::string, Value> values) override;
 
     /**
-     * Resets the variables to default values and desired time step. If specific time step is not defined,
-     * the step number 0 will be considered.
+     * Resets the variables to default values.
      *
-     * @param stepNumber Step number.
      */
-    void reset(std::optional<size_t> stepNumber = std::nullopt) override;
+    void reset() override;
 
     /**
      * Computes normalized cost over provided monitor.
@@ -122,5 +118,6 @@ class QuantifierMonitor : public Hydra2Monitor {
     Trace trace; //**< Trace. */
     std::vector<std::pair<std::string, Domain>> varDomains; //**< Domains of variables. */
     std::vector<std::vector<Value>::iterator> iters; //**< Iterators forming the current combination. */
+    size_t numberCombinations; //**< Number of combinations. */
 
 };

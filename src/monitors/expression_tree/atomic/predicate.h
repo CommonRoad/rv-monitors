@@ -14,7 +14,6 @@ class Predicate : public Expression {
   public:
     enum Argument {
         VARIABLE,
-        PARAMETER,
         CONSTANT
     };
 
@@ -24,7 +23,7 @@ class Predicate : public Expression {
     Predicate(std::string symbol, std::string na, std::vector<std::string> args)
         : Expression(std::move(symbol)), name(std::move(na)) {
         for (const auto &arg : args)
-            arguments.emplace_back(arg, PARAMETER);
+            arguments.emplace_back(arg, CONSTANT);
     }
 
     [[nodiscard]] std::string to_string() const override;

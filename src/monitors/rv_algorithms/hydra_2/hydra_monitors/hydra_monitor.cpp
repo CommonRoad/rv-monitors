@@ -16,10 +16,10 @@ Hydra2Monitor::Hydra2Monitor(Formula formula, size_t monitorId, bool connectedEv
     assert(evalCost >= 0 or evalCost <= 100 or satisfactionProbability >= 0 or satisfactionProbability <= 1);
 }
 
-void Hydra2Monitor::reset(std::optional<size_t> stepNumber) {
+void Hydra2Monitor::reset() {
     verdictHistory = {};
     for (auto &[_, id] : traceIdx)
-        id = stepNumber.has_value() ? stepNumber.value() : 0;
+        id = 0;
 }
 
 void Hydra2Monitor::registerParent(size_t parentId) { traceIdx[parentId] = 0; }

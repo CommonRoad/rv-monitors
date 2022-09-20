@@ -58,11 +58,10 @@ class PredicateMonitor : public Hydra2Monitor {
     std::shared_ptr<Hydra2Monitor> clone() override;
 
     /**
-     * Resets monitor variables to default values at a specified step number.
+     * Resets monitor variables to default values.
      *
-     * @param stepNumber Optional step number.
      */
-    void reset(std::optional<size_t> stepNumber = std::nullopt) override;
+    void reset() override;
 
     /**
      * Creates string representation of monitor.
@@ -75,5 +74,15 @@ class PredicateMonitor : public Hydra2Monitor {
     Trace trace; //**< Trace. */
     std::map<std::string, Value> variableValues; //**< Current values of quantified variables. */
     FunctionCollection functions; //**< Functions used for evaluation of predicates. */
+
+    /**
+     * Evaluates a predicate with quantified variables.
+     *
+     * @param parentId ID of parent.
+     * @param predicate Predicate.
+     * @param event Event.
+     * @return Verdict for evaluation of quantified predicate.
+     */
+    Verdict evalPredicateWithQuantifiedVars(size_t parentId, const Predicate &predicate, const Event &event);
 
 };

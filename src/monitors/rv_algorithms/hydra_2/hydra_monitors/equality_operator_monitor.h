@@ -43,12 +43,10 @@ class EqualityOperatorMonitor : public Hydra2Monitor {
     void setVariableValues(std::map<std::string, Value> values) override;
 
     /**
-     * Resets the variables to default values and desired time step. If specific time step is not defined,
-     * the step number 0 will be considered.
+     * Resets the variables to default values.
      *
-     * @param stepNumber Step number.
      */
-    void reset(std::optional<size_t> stepNumber = std::nullopt) override;
+    void reset() override;
 
     /**
      * Clones this monitor.
