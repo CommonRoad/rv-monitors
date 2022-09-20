@@ -1,9 +1,4 @@
-//
-// Created by Sebastian Maierhofer on 14.01.21.
-//
-
-#ifndef RV_MONITORS_TEMPORAL_OPERATOR_H
-#define RV_MONITORS_TEMPORAL_OPERATOR_H
+#pragma once
 
 #include "memory"
 #include <iostream>
@@ -23,9 +18,7 @@ class TemporalOperator {
     [[nodiscard]] const std::shared_ptr<Interval> &getInterval() const { return interval; }
 
     TemporalOperator(const TemporalOperator &old) {
-        interval =
-            std::make_shared<Interval>(old.interval->getStart(), old.interval->getEnd(), old.interval->isFinite());
+        interval = std::make_shared<Interval>(old.interval->getStart(), old.interval->getEnd(),
+                                              old.interval->isFinite(), old.interval->isEmpty());
     }
 };
-
-#endif // RV_MONITORS_TEMPORAL_OPERATOR_H

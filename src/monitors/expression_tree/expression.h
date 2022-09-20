@@ -99,6 +99,6 @@ class Expression {
     [[nodiscard]] bool isConstFalse() const;
 };
 
-bool operator==(const Expression &e1, const Expression &e2);
+bool operator==(const Expression &expr1, const Expression &expr2);
 
-bool operator<(const Expression &e1, const Expression &e2);
+bool operator<(const Expression &expr1, const Expression &expr2);

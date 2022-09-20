@@ -59,6 +59,7 @@ Verdict Hydra2Monitor::step(size_t parentId, size_t stepNumber, bool singleStep)
         verdict = simulateVerdict(parentId, stepNumber);
     return verdict;
 }
+
 Verdict Hydra2Monitor::simulateVerdict(size_t parentId, size_t stepNumber) {
     auto verdict{Verdict(0, false)};
     while (stepNumber >= traceIdx[parentId]) {
