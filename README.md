@@ -75,14 +75,14 @@ cd build-debug
 make doc_doxygen
 ```
 
-## Evaluation against Hydra/Vydra
+## Evaluation against Hydra2/Vydra
 
 The Continuous Integration (CI) pipeline for this repository includes an automated
-evaluation step which checks the Hydra monitor implementation against the
-[verified reference implementation Vydra](https://bitbucket.org/krle/hydra) by the authors of the Hydra paper [[2]](#2).
+evaluation step which checks the Hydra2 monitor implementation against the
+[verified reference implementation Vydra](https://bitbucket.org/krle/hydra) by the authors of the Hydra2 paper [[2]](#2).
 The evaluation job needs to be triggered manually in Gitlab.
 If the evaluation fails for some formulas
-(i.e. the Hydra monitor in RV-Monitors does not arrive at the same results as either Vydra or Hydra),
+(i.e. the Hydra2 monitor in RV-Monitors does not arrive at the same results as either Vydra or Hydra2),
 follow the instructions provided in the job output in order to locally test the failing formula.
 
 The evaluation executable is called `rvmonitors_eval` and takes two arguments,

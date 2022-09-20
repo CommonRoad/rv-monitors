@@ -23,7 +23,7 @@ std::shared_ptr<Expression> Predicate::accept(ExpressionVisitor &visitor, Trace 
     return visitor.visitPredicate(*this, trace, index);
 }
 
-std::shared_ptr<HydraMonitor> Predicate::accept(HydraCreationVisitor &visitor, size_t parentId, bool connectedEval) {
+std::shared_ptr<Hydra2Monitor> Predicate::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval) {
     return visitor.visitPredicate(*this, parentId, connectedEval);
 }
 

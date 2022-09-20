@@ -8,9 +8,9 @@
 #include "hydra_monitor.h"
 
 /**
- * Hydra monitor representing and-operator.
+ * Hydra2 monitor representing and-operator.
  */
-class AndMonitor : public HydraMonitor {
+class AndMonitor : public Hydra2Monitor {
   public:
     /**
      * Constructor of and-monitor.
@@ -21,9 +21,9 @@ class AndMonitor : public HydraMonitor {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @param shortCircuiting Boolean indicating whether short circuiting should be used.
      */
-    AndMonitor(Formula formula, const std::vector<std::shared_ptr<HydraMonitor>> &subMonitors, size_t monitorId,
+    AndMonitor(Formula formula, const std::vector<std::shared_ptr<Hydra2Monitor>> &subMonitors, size_t monitorId,
                bool connectedEval, bool shortCircuiting)
-        : HydraMonitor(std::move(formula), monitorId, connectedEval, computeCost(subMonitors),
+        : Hydra2Monitor(std::move(formula), monitorId, connectedEval, computeCost(subMonitors),
                        computeSatisfactionProbability(subMonitors)),
           subMonitors(subMonitors), shortCircuiting(shortCircuiting){};
 
@@ -61,7 +61,7 @@ class AndMonitor : public HydraMonitor {
      * Clones this monitor.
      * @return New shared_ptr of this monitor.
      */
-    std::shared_ptr<HydraMonitor> clone() override;
+    std::shared_ptr<Hydra2Monitor> clone() override;
 
     /**
      * Creates string representation of monitor.
@@ -71,7 +71,7 @@ class AndMonitor : public HydraMonitor {
     std::string to_string() override;
 
   private:
-    std::vector<std::shared_ptr<HydraMonitor>> subMonitors; //**< Child monitors. */
+    std::vector<std::shared_ptr<Hydra2Monitor>> subMonitors; //**< Child monitors. */
     bool shortCircuiting; //**< Boolean indicating whether short-circuiting should be used. */
 
     /**
@@ -80,7 +80,7 @@ class AndMonitor : public HydraMonitor {
      * @param monitors List of monitors which should be used for predicate evaluation cost computation.
      * @return Normalized evaluation cost of or-monitor in interval [0, 100]
      */
-    static double computeCost(const std::vector<std::shared_ptr<HydraMonitor>> &monitors);
+    static double computeCost(const std::vector<std::shared_ptr<Hydra2Monitor>> &monitors);
 
     /**
      * Computest satisfaction probability over all provided monitors.
@@ -88,5 +88,5 @@ class AndMonitor : public HydraMonitor {
      * @param monitors List of monitors which should be used for predicate satisfaction probability computation.
      * @return Satisfaction probability of or-monitor in interval [0, 1]
      */
-    static double computeSatisfactionProbability(const std::vector<std::shared_ptr<HydraMonitor>> &monitors);
+    static double computeSatisfactionProbability(const std::vector<std::shared_ptr<Hydra2Monitor>> &monitors);
 };

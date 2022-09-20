@@ -9,22 +9,22 @@
 #include <iostream>
 #include <utility>
 
-HydraMonitor::HydraMonitor(Formula formula, size_t monitorId, bool connectedEval, double evalCost,
+Hydra2Monitor::Hydra2Monitor(Formula formula, size_t monitorId, bool connectedEval, double evalCost,
                            double satisfactionProbability)
     : formula(std::move(formula)), monitorId((monitorId)), connectedEval(connectedEval), evalCost(evalCost),
       satisfactionProbability(satisfactionProbability) {
     assert(evalCost >= 0 or evalCost <= 100 or satisfactionProbability >= 0 or satisfactionProbability <= 1);
 }
 
-void HydraMonitor::reset(std::optional<size_t> stepNumber) {
+void Hydra2Monitor::reset(std::optional<size_t> stepNumber) {
     verdictHistory = {};
     for (auto &[_, id] : traceIdx)
         id = stepNumber.has_value() ? stepNumber.value() : 0;
 }
 
-void HydraMonitor::registerParent(size_t parentId) { traceIdx[parentId] = 0; }
+void Hydra2Monitor::registerParent(size_t parentId) { traceIdx[parentId] = 0; }
 
-size_t HydraMonitor::getMaxTraceIdx() {
+size_t Hydra2Monitor::getMaxTraceIdx() {
     if (traceIdx.empty())
         return 0;
     else
@@ -36,9 +36,9 @@ size_t HydraMonitor::getMaxTraceIdx() {
             ->second;
 }
 
-size_t HydraMonitor::getTraceIdxByParentId(size_t parentId) const { return traceIdx.at(parentId); }
+size_t Hydra2Monitor::getTraceIdxByParentId(size_t parentId) const { return traceIdx.at(parentId); }
 
-Verdict HydraMonitor::step(size_t parentId, size_t stepNumber, bool singleStep) {
+Verdict Hydra2Monitor::step(size_t parentId, size_t stepNumber, bool singleStep) {
     auto verdict{Verdict(0, false)};
     if (!connectedEval)
         if (stepNumber >= traceIdx[parentId]) { // required step equals stored step, perform next step directly
@@ -61,7 +61,7 @@ Verdict HydraMonitor::step(size_t parentId, size_t stepNumber, bool singleStep) 
     return verdict;
 }
 
-Verdict HydraMonitor::simulateVerdict(size_t parentId, size_t stepNumber) {
+Verdict Hydra2Monitor::simulateVerdict(size_t parentId, size_t stepNumber) {
     auto verdict{Verdict(0, false)};
     while (stepNumber >= traceIdx[parentId]) {
         if (!connectedEval) { // since no connected evaluation, perform step directly
@@ -80,10 +80,10 @@ Verdict HydraMonitor::simulateVerdict(size_t parentId, size_t stepNumber) {
     }
     return verdict;
 }
-const std::string &HydraMonitor::getFormulaId() const { return formulaId; }
+const std::string &Hydra2Monitor::getFormulaId() const { return formulaId; }
 
-void HydraMonitor::setFormulaId(const std::string &formula_id) { formulaId = formula_id; }
+void Hydra2Monitor::setFormulaId(const std::string &formula_id) { formulaId = formula_id; }
 
-double HydraMonitor::getEvalCost() const { return evalCost; }
+double Hydra2Monitor::getEvalCost() const { return evalCost; }
 
-double HydraMonitor::getSatisfactionProbability() const { return satisfactionProbability; }
+double Hydra2Monitor::getSatisfactionProbability() const { return satisfactionProbability; }

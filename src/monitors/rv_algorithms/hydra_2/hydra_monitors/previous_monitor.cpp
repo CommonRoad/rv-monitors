@@ -29,12 +29,12 @@ void PreviousMonitor::setVariableValues(std::map<std::string, Value> values) {
 }
 
 void PreviousMonitor::reset(std::optional<size_t> stepNumber) {
-    HydraMonitor::reset(stepNumber);
+    Hydra2Monitor::reset(stepNumber);
     subMonitor->reset(stepNumber);
     currentVerdict = {};
 }
 
-std::shared_ptr<HydraMonitor> PreviousMonitor::clone() {
+std::shared_ptr<Hydra2Monitor> PreviousMonitor::clone() {
     auto clonedMonitor = std::make_shared<PreviousMonitor>(*this);
     clonedMonitor->subMonitor = subMonitor->clone();
     return clonedMonitor;

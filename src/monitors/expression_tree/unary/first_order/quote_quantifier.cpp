@@ -42,7 +42,7 @@ std::shared_ptr<Expression> QuoteQuantifier::accept(ExpressionVisitor &visitor, 
     return visitor.visitQuoteQuantifier(*this, trace, index);
 }
 
-std::shared_ptr<HydraMonitor> QuoteQuantifier::accept(HydraCreationVisitor &visitor, size_t parentId, bool connectedEval) {
+std::shared_ptr<Hydra2Monitor> QuoteQuantifier::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval) {
     return visitor.visitQuoteQuantifier(*this, parentId, connectedEval);
 }
 

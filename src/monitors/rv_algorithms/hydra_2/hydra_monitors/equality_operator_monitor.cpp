@@ -35,11 +35,11 @@ void EqualityOperatorMonitor::setTrace(const Trace &tra) { trace = tra; }
 void EqualityOperatorMonitor::setVariableValues(std::map<std::string, Value> values) { variableValues = values; }
 
 void EqualityOperatorMonitor::reset(std::optional<size_t> stepNumber) {
-    HydraMonitor::reset(stepNumber);
+    Hydra2Monitor::reset(stepNumber);
     variableValues.clear();
 }
 
-std::shared_ptr<HydraMonitor> EqualityOperatorMonitor::clone() { return std::make_shared<EqualityOperatorMonitor>(*this); }
+std::shared_ptr<Hydra2Monitor> EqualityOperatorMonitor::clone() { return std::make_shared<EqualityOperatorMonitor>(*this); }
 
 
 std::string EqualityOperatorMonitor::to_string() { return formula.to_string(); }

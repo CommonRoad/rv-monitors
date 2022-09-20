@@ -9,9 +9,9 @@
 #include "hydra_monitor.h"
 
 /**
- * Hydra monitor representing atomic proposition.
+ * Hydra2 monitor representing atomic proposition.
  */
-class AtomicMonitor : public HydraMonitor {
+class AtomicMonitor : public Hydra2Monitor {
   public:
     /**
      * Constructor.
@@ -21,7 +21,7 @@ class AtomicMonitor : public HydraMonitor {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      */
     AtomicMonitor(const Formula &formula, size_t monitorId, bool connectedEval)
-        : HydraMonitor(formula, monitorId, connectedEval){};
+        : Hydra2Monitor(formula, monitorId, connectedEval){};
 
     /**
      * Performs concrete step of atomic monitor. It evaluates the trace element of the concrete step. Returns false if
@@ -58,7 +58,7 @@ class AtomicMonitor : public HydraMonitor {
      * Clones this monitor.
      * @return New shared_ptr of this monitor.
      */
-    std::shared_ptr<HydraMonitor> clone() override;
+    std::shared_ptr<Hydra2Monitor> clone() override;
 
     /**
      * Creates string representation of monitor.

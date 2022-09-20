@@ -9,13 +9,13 @@
 #include "hydra_monitor.h"
 
 /**
- * Hydra monitor representing predicate.
+ * Hydra2 monitor representing predicate.
  */
-class PredicateMonitor : public HydraMonitor {
+class PredicateMonitor : public Hydra2Monitor {
   public:
     PredicateMonitor(Formula formula, size_t id, FunctionCollection &functions,
                      bool connectedEval, size_t evalCost = 0, double satisfactionProbability = 100.0)
-        : HydraMonitor(std::move(formula), id, connectedEval, evalCost, satisfactionProbability),
+        : Hydra2Monitor(std::move(formula), id, connectedEval, evalCost, satisfactionProbability),
           functions(functions) {};
 
     /**
@@ -46,7 +46,7 @@ class PredicateMonitor : public HydraMonitor {
      * Clones this monitor.
      * @return New shared_ptr of this monitor.
      */
-    std::shared_ptr<HydraMonitor> clone() override;
+    std::shared_ptr<Hydra2Monitor> clone() override;
 
     /**
      * Resets monitor variables to default values at a specified step number.

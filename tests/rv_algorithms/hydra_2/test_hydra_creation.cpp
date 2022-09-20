@@ -14,19 +14,19 @@
 void executeTest(Formula inputFormula, const std::string &expectedFormulaStringReordered,
                  const std::map<std::string, std::array<double, 2>> &predicateCosts,
                  DomainCollection domainCollection = {}, FunctionCollection functionCollection = {}) {
-    HydraCreationVisitor hcv{HydraCreationVisitor(predicateCosts, domainCollection, functionCollection, false)};
-    std::shared_ptr<HydraMonitor> mon = hcv.createMonitor(inputFormula, 0, false);
+    HydraCreationVisitor2 hcv{HydraCreationVisitor2(predicateCosts, domainCollection, functionCollection, false)};
+    std::shared_ptr<Hydra2Monitor> mon = hcv.createMonitor(inputFormula, 0, false);
     EXPECT_EQ(mon->to_string(), inputFormula.to_string());
 
-    hcv = HydraCreationVisitor(predicateCosts, domainCollection, functionCollection, false);
+    hcv = HydraCreationVisitor2(predicateCosts, domainCollection, functionCollection, false);
     mon = hcv.createMonitor(inputFormula, 0, true);
     EXPECT_EQ(mon->to_string(), inputFormula.to_string());
 
-    hcv = HydraCreationVisitor(predicateCosts, domainCollection, functionCollection, true);
+    hcv = HydraCreationVisitor2(predicateCosts, domainCollection, functionCollection, true);
     mon = hcv.createMonitor(inputFormula, 0, false);
     EXPECT_EQ(mon->to_string(), expectedFormulaStringReordered);
 
-    hcv = HydraCreationVisitor(predicateCosts, domainCollection, functionCollection, true);
+    hcv = HydraCreationVisitor2(predicateCosts, domainCollection, functionCollection, true);
     mon = hcv.createMonitor(inputFormula, 0, true);
     EXPECT_EQ(mon->to_string(), expectedFormulaStringReordered);
 }

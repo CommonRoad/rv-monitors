@@ -28,6 +28,6 @@ std::shared_ptr<Expression> UniversalQuantifier::accept(ExpressionVisitor &visit
     return visitor.visitUniversalQuantifier(*this, trace, index);
 }
 
-std::shared_ptr<HydraMonitor> UniversalQuantifier::accept(HydraCreationVisitor &visitor, size_t parentId, bool connectedEval) {
+std::shared_ptr<Hydra2Monitor> UniversalQuantifier::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval) {
     return visitor.visitUniversalQuantifier(*this, parentId, connectedEval);
 }

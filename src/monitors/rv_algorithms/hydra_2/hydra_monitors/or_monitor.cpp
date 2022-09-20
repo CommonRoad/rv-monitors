@@ -42,14 +42,14 @@ void OrMonitor::setVariableValues(std::map<std::string, Value> values) {
 }
 
 void OrMonitor::reset(std::optional<size_t> stepNumber) {
-    HydraMonitor::reset(stepNumber);
+    Hydra2Monitor::reset(stepNumber);
     for (const auto &mon : subMonitors)
         mon->reset(stepNumber);
 }
 
-std::shared_ptr<HydraMonitor> OrMonitor::clone() {
+std::shared_ptr<Hydra2Monitor> OrMonitor::clone() {
     auto clonedMonitor = std::make_shared<OrMonitor>(*this);
-    std::vector<std::shared_ptr<HydraMonitor>> clonedSubMonitors;
+    std::vector<std::shared_ptr<Hydra2Monitor>> clonedSubMonitors;
     for (const auto &mon : subMonitors)
         clonedSubMonitors.push_back(mon->clone());
     clonedMonitor->subMonitors = clonedSubMonitors;
@@ -65,14 +65,14 @@ std::string OrMonitor::to_string() {
     return str;
 }
 
-double OrMonitor::computeEvaluationCost(const std::vector<std::shared_ptr<HydraMonitor>> &monitors) {
+double OrMonitor::computeEvaluationCost(const std::vector<std::shared_ptr<Hydra2Monitor>> &monitors) {
     double cost{monitors.at(0)->getEvalCost()};
     for (size_t idx{0}; idx < monitors.size(); ++idx)
         cost += monitors.at(idx)->getEvalCost() * monitors.at(idx)->getSatisfactionProbability();
     return cost / static_cast<double>(monitors.size()); // normalize cost
 }
 
-double OrMonitor::computeSatisfactionProbability(const std::vector<std::shared_ptr<HydraMonitor>> &monitors) {
+double OrMonitor::computeSatisfactionProbability(const std::vector<std::shared_ptr<Hydra2Monitor>> &monitors) {
     std::set<double> probs;
     for (const auto &mon : monitors) {
         probs.insert(mon->getSatisfactionProbability());

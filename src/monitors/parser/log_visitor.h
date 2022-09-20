@@ -8,7 +8,7 @@
 namespace impl {
 
 /**
- * Visitor for parsing Hydra-style logs.
+ * Visitor for parsing Hydra2-style logs.
  */
 class LogVisitor : public LogBaseVisitor {
   public:

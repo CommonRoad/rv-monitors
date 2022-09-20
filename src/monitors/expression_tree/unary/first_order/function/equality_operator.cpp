@@ -19,7 +19,7 @@ std::shared_ptr<Expression> EqualityOperator::accept(ExpressionVisitor &visitor,
     return visitor.visitEqualityOperator(*this, trace, index);
 }
 
-std::shared_ptr<HydraMonitor> EqualityOperator::accept(HydraCreationVisitor &visitor, size_t parentId, bool connectedEval) {
+std::shared_ptr<Hydra2Monitor> EqualityOperator::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval) {
     return visitor.visitEqualityOperator(*this, parentId, connectedEval);
 }
 

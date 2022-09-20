@@ -15,7 +15,7 @@ Event ResolvingOperator::getEvent() { return trace.getEvent(index); }
 std::string ResolvingOperator::to_string() const {
     return "RE(" + getLeft()->to_string() + trace.getTrace().at(index).to_string() + ")";
 }
-std::shared_ptr<HydraMonitor> ResolvingOperator::accept(HydraCreationVisitor &visitor, size_t parentId,
+std::shared_ptr<Hydra2Monitor> ResolvingOperator::accept(HydraCreationVisitor2 &visitor, size_t parentId,
                                                         bool connectedEval) {
-    return std::shared_ptr<HydraMonitor>();
+    return std::shared_ptr<Hydra2Monitor>();
 }

@@ -1,9 +1,9 @@
 #include "quantifier_monitor.h"
 
-QuantifierMonitor::QuantifierMonitor(Formula formula, std::shared_ptr<HydraMonitor> subMonitor, size_t monitorId,
+QuantifierMonitor::QuantifierMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
                                      std::map<std::string, std::string> variables, DomainCollection &domains,
                                      bool connectedEval, bool shortCircuiting, double cost, double satisfactionProbability)
-    : HydraMonitor(std::move(formula), monitorId, connectedEval, cost, satisfactionProbability),
+    : Hydra2Monitor(std::move(formula), monitorId, connectedEval, cost, satisfactionProbability),
       subMonitor(std::move(subMonitor)), shortCircuiting(shortCircuiting) {
 
     for (auto &[varName, domainName] : variables)
@@ -13,8 +13,8 @@ QuantifierMonitor::QuantifierMonitor(Formula formula, std::shared_ptr<HydraMonit
         iters.push_back(varDomain.second.begin());
 }
 
-std::shared_ptr<HydraMonitor> QuantifierMonitor::nextEvalMonitor(size_t parentId, size_t count) {
-    std::shared_ptr<HydraMonitor> evalMonitor;
+std::shared_ptr<Hydra2Monitor> QuantifierMonitor::nextEvalMonitor(size_t parentId, size_t count) {
+    std::shared_ptr<Hydra2Monitor> evalMonitor;
     if (traceIdx[parentId] == 0 or count > evalMonitors.size() - 1) { // if there is no monitor for the current combination,
                                                                       // then a new monitor will be cloned
         nextCombination();
@@ -81,17 +81,17 @@ void QuantifierMonitor::setVariableValues(std::map<std::string, Value> values) {
 }
 
 void QuantifierMonitor::reset(std::optional<size_t> stepNumber) {
-    HydraMonitor::reset(stepNumber);
+    Hydra2Monitor::reset(stepNumber);
     subMonitor->reset(stepNumber);
     variableValues.clear();
     resetIterators();
 }
 
-double QuantifierMonitor::computeCost(const std::shared_ptr<HydraMonitor> &monitor, size_t numEval) {
+double QuantifierMonitor::computeCost(const std::shared_ptr<Hydra2Monitor> &monitor, size_t numEval) {
     return monitor->getEvalCost() * static_cast<double>(numEval);
 }
 
-double QuantifierMonitor::computeSatisfactionProbability(const std::shared_ptr<HydraMonitor> &monitor, size_t numEval) {
+double QuantifierMonitor::computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &monitor, size_t numEval) {
     double prob{monitor->getSatisfactionProbability()};
     for (size_t num{1}; num < numEval; num++)
         prob *= monitor->getSatisfactionProbability() / 10.0;

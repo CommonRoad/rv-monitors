@@ -55,7 +55,7 @@ void SinceMonitor::setVariableValues(std::map<std::string, Value> values) {
 }
 
 void SinceMonitor::reset(std::optional<size_t> stepNumber) {
-    HydraMonitor::reset(stepNumber);
+    Hydra2Monitor::reset(stepNumber);
     subMonitorRight->reset(stepNumber);
     subMonitorLeft->reset(stepNumber);
     subVerdictLeft = {};
@@ -67,7 +67,7 @@ void SinceMonitor::reset(std::optional<size_t> stepNumber) {
     stepNumberRight = 0;
 }
 
-std::shared_ptr<HydraMonitor> SinceMonitor::clone() {
+std::shared_ptr<Hydra2Monitor> SinceMonitor::clone() {
     auto clonedMonitor =  std::make_shared<SinceMonitor>(*this);
     clonedMonitor->subMonitorRight = subMonitorRight->clone();
     clonedMonitor->subMonitorLeft = subMonitorLeft->clone();

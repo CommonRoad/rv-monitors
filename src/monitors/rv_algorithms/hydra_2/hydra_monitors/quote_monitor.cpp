@@ -1,5 +1,5 @@
 #include "quote_monitor.h"
-QuoteMonitor::QuoteMonitor(Formula formula, std::shared_ptr<HydraMonitor> subMonitor, size_t monitorId,
+QuoteMonitor::QuoteMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
                                  std::map<std::string, std::string> variables, DomainCollection &domains,
                                  float minQuote, float maxQuote, bool connectedEval, bool shortCircuiting)
     : QuantifierMonitor(std::move(formula), subMonitor, monitorId, std::move(variables), domains,
@@ -29,7 +29,7 @@ Verdict QuoteMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     size_t count{0};
     size_t trueVerdicts{0};
     while (count != numComb) { // loop over all possible combinations
-        std::shared_ptr<HydraMonitor> evalMonitor = nextEvalMonitor(parentId, count); // request monitor for the current combination
+        std::shared_ptr<Hydra2Monitor> evalMonitor = nextEvalMonitor(parentId, count); // request monitor for the current combination
 
         Verdict subVerdict = evalMonitor->step(monitorId, stepNumber);
         if (subVerdict.value) // count number of true verdicts
@@ -58,7 +58,7 @@ Verdict QuoteMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     return verdict;
 }
 
-std::shared_ptr<HydraMonitor> QuoteMonitor::clone() {
+std::shared_ptr<Hydra2Monitor> QuoteMonitor::clone() {
     auto clonedMonitor = std::make_shared<QuoteMonitor>(*this);
     clonedMonitor->subMonitor = subMonitor->clone();
     clonedMonitor->resetIterators();

@@ -8,7 +8,7 @@
 #include "monitors/utils/utils.h"
 
 /**
- * Representation of Hydra monitor head position consisting of time step and trace position.
+ * Representation of Hydra2 monitor head position consisting of time step and trace position.
  */
 struct HeadPos {
     size_t timeStep;   //**< Time step of monitor head position. */
@@ -47,9 +47,9 @@ struct HeadPos {
 };
 
 /**
- * Hydra monitor interface.
+ * Hydra2 monitor interface.
  */
-class HydraMonitor {
+class Hydra2Monitor {
   private:
     /**
      * Extracts maximum trace idx of monitor given all parent monitors (required for connected evaluation).
@@ -77,7 +77,7 @@ class HydraMonitor {
      * @param evalCost Evaluation cost assigned to monitor.
      * @param satisfactionProbability Satisfaction probability of monitor.
      */
-    HydraMonitor(Formula formula, size_t monitorId, bool connectedEval = true, double evalCost = 0,
+    Hydra2Monitor(Formula formula, size_t monitorId, bool connectedEval = true, double evalCost = 0,
                  double satisfactionProbability = 1.0);
 
     /**
@@ -159,7 +159,7 @@ class HydraMonitor {
      *
      * @return New shared_ptr of this monitor.
      */
-    virtual std::shared_ptr<HydraMonitor> clone() = 0;
+    virtual std::shared_ptr<Hydra2Monitor> clone() = 0;
 
     /**
      * Creates string representation of monitor.

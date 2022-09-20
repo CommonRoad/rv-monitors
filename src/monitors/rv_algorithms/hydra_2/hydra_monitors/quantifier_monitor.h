@@ -3,9 +3,9 @@
 #include "hydra_monitor.h"
 
 /**
- * Hydra monitor representing quantifier monitor.
+ * Hydra2 monitor representing quantifier monitor.
  */
-class QuantifierMonitor : public HydraMonitor {
+class QuantifierMonitor : public Hydra2Monitor {
   public:
     /**
      * Constructor.
@@ -20,7 +20,7 @@ class QuantifierMonitor : public HydraMonitor {
      * @param cost Evaluation cost assigned to monitor.
      * @param satisfactionProbability Satisfaction probability of monitor.
      */
-    QuantifierMonitor(Formula formula, std::shared_ptr<HydraMonitor> subMonitor, size_t monitorId,
+    QuantifierMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
                       std::map<std::string, std::string> variables, DomainCollection &domains,
                       bool connectedEval, bool shortCircuiting, double cost, double satisfactionProbability);
 
@@ -46,7 +46,7 @@ class QuantifierMonitor : public HydraMonitor {
      * @param count ID of current combination.
      * @return Monitor.
      */
-    std::shared_ptr<HydraMonitor> nextEvalMonitor(size_t parentId, size_t count);
+    std::shared_ptr<Hydra2Monitor> nextEvalMonitor(size_t parentId, size_t count);
 
     /**
      * Shifts the iterators for each variables domain so that a new combination is formed. If all combinations
@@ -104,7 +104,7 @@ class QuantifierMonitor : public HydraMonitor {
      * @param numEval Number of evaluations.
      * @return Normalized evaluation cost of universal monitor in interval [0, 100].
      */
-    static double computeCost(const std::shared_ptr<HydraMonitor> &monitor, size_t numEval);
+    static double computeCost(const std::shared_ptr<Hydra2Monitor> &monitor, size_t numEval);
 
     /**
      * Computes satisfaction probability over provided monitor.
@@ -112,11 +112,11 @@ class QuantifierMonitor : public HydraMonitor {
      * @param monitor Monitor which should be used for universal satisfaction probability computation.
      * @return Satisfaction probability of universal monitor in interval [0, 1].
      */
-    static double computeSatisfactionProbability(const std::shared_ptr<HydraMonitor> &monitor, size_t numEval);
+    static double computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &monitor, size_t numEval);
 
   protected:
-    std::shared_ptr<HydraMonitor> subMonitor; //**< Child monitor. */
-    std::vector<std::shared_ptr<HydraMonitor>> evalMonitors; //**< Monitors for evaluation. */
+    std::shared_ptr<Hydra2Monitor> subMonitor; //**< Child monitor. */
+    std::vector<std::shared_ptr<Hydra2Monitor>> evalMonitors; //**< Monitors for evaluation. */
     bool shortCircuiting; //**< Child monitors. */
     std::map<std::string, Value> variableValues; //**< Variables values from higher quantifier scopes. */
     Trace trace; //**< Trace. */

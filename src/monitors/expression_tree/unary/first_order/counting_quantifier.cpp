@@ -33,7 +33,7 @@ std::shared_ptr<Expression> CountingQuantifier::accept(ExpressionVisitor &visito
     return visitor.visitCountingQuantifier(*this, trace, index);
 }
 
-std::shared_ptr<HydraMonitor> CountingQuantifier::accept(HydraCreationVisitor &visitor, size_t parentId,
+std::shared_ptr<Hydra2Monitor> CountingQuantifier::accept(HydraCreationVisitor2 &visitor, size_t parentId,
                                                          bool connectedEval) {
     return visitor.visitCountingQuantifier(*this, parentId, connectedEval);
 }

@@ -84,7 +84,7 @@ void UntilMonitor::setVariableValues(std::map<std::string, Value> values) {
 }
 
 void UntilMonitor::reset(std::optional<size_t> stepNumber) {
-    HydraMonitor::reset(stepNumber);
+    Hydra2Monitor::reset(stepNumber);
     subMonitorRight->reset(stepNumber);
     subMonitorLeft->reset(stepNumber);
     subMonitorBaseTimeStep->reset(stepNumber);
@@ -98,7 +98,7 @@ void UntilMonitor::reset(std::optional<size_t> stepNumber) {
     headPositionMonitorBaseTimeStep.reset();
 }
 
-std::shared_ptr<HydraMonitor> UntilMonitor::clone() {
+std::shared_ptr<Hydra2Monitor> UntilMonitor::clone() {
     auto clonedMonitor = std::make_shared<UntilMonitor>(*this);
     clonedMonitor->subMonitorRight = subMonitorRight->clone();
     clonedMonitor->subMonitorLeft = subMonitorLeft->clone();

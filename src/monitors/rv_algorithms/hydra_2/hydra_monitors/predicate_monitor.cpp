@@ -59,10 +59,10 @@ void PredicateMonitor::setTrace(const Trace &tra) { trace = tra; }
 void PredicateMonitor::setVariableValues(std::map<std::string, Value> values) { variableValues = values; }
 
 void PredicateMonitor::reset(std::optional<size_t> stepNumber) {
-    HydraMonitor::reset(stepNumber);
+    Hydra2Monitor::reset(stepNumber);
     variableValues.clear();
 }
 
-std::shared_ptr<HydraMonitor> PredicateMonitor::clone() { return std::make_shared<PredicateMonitor>(*this); }
+std::shared_ptr<Hydra2Monitor> PredicateMonitor::clone() { return std::make_shared<PredicateMonitor>(*this); }
 
 std::string PredicateMonitor::to_string() { return formula.to_string(); }

@@ -47,7 +47,7 @@ struct MonitorConfiguration {
     MonitorConfiguration() = default;
 
     const AlgorithmType algorithm{
-        AlgorithmType::hydra_mtl}; /**< Algorithm to use, e.g., Hydra, LTL event consuming, .... */
+        AlgorithmType::hydra_mtl}; /**< Algorithm to use, e.g., Hydra2, LTL event consuming, .... */
     const bool performanceMeasurement{
         false}; /**< Indicates whether evaluation with time measurement should be performed */
     const bool hydraConnectedEvaluation{

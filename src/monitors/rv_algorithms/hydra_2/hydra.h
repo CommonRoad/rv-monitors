@@ -13,11 +13,11 @@
 #include <monitors/trace/trace.h>
 
 /**
- * Class for monitoring a trace using the Hydra MTL monitor.
+ * Class for monitoring a trace using the Hydra2 MTL monitor.
  */
-class Hydra : public MonitorInterface {
+class Hydra2 : public MonitorInterface {
   public:
-    Hydra(const std::vector<Formula> &formulas, DomainCollection domains = {}, FunctionCollection functions = {}, bool connectedEval = true, bool reordering = true,
+    Hydra2(const std::vector<Formula> &formulas, DomainCollection domains = {}, FunctionCollection functions = {}, bool connectedEval = true, bool reordering = true,
           bool shortCircuiting = true, const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
 
     /**
@@ -32,7 +32,7 @@ class Hydra : public MonitorInterface {
     /**
      * Creates string representation for corresponding monitors.
      *
-     * @return String representation of Hydra.
+     * @return String representation of Hydra2.
      */
     [[nodiscard]] std::string to_string() const override;
 
@@ -52,6 +52,6 @@ class Hydra : public MonitorInterface {
      */
     void setTraceMonitors(const Trace &tra);
 
-    std::vector<std::shared_ptr<HydraMonitor>>
+    std::vector<std::shared_ptr<Hydra2Monitor>>
         monitors; //**< List of monitors corresponding to the formulas which should be evaluated. */
 };

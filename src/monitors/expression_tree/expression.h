@@ -68,7 +68,7 @@ class Expression {
      * @param visitor Visitor.
      * @return Result of visit function of respective expression.
      */
-    virtual std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor, size_t parentId,
+    virtual std::shared_ptr<Hydra2Monitor> accept(HydraCreationVisitor2 &visitor, size_t parentId,
                                                  bool connectedEval) = 0;
 
     /**

@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
 
     Trace trace = Parser::parse_log(log_buffer.str());
 
-    auto monitor{Hydra({formula})};
+    auto monitor{Hydra2({formula})};
     auto solution_map{monitor.evaluate(trace)};
     const auto &solution = solution_map[formula.getId()];
     print_solution(solution);

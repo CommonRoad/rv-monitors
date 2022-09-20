@@ -39,7 +39,7 @@ std::ostream &operator<<(std::ostream &stream, const AlgorithmType &algorithm) {
         stream << "BTT-FSM*";
         break;
     case hydra_mtl:
-        stream << "Hydra-MTL";
+        stream << "Hydra2-MTL";
         break;
     case event_consuming_mtl:
         stream << "EventConsuming-MTL";
@@ -92,7 +92,7 @@ RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration 
         break;
     case hydra_mtl:
         monitor =
-            std::make_unique<Hydra>(formulas, domainCollection, functionCollection, configuration.hydraConnectedEvaluation, configuration.hydraReordering,
+            std::make_unique<Hydra2>(formulas, domainCollection, functionCollection, configuration.hydraConnectedEvaluation, configuration.hydraReordering,
                                     configuration.hydraShortCircuiting, predicateCosts);
         break;
     case event_consuming_mtl:
@@ -124,7 +124,7 @@ RVMonitor::RVMonitor(const Formula &formula, MonitorConfiguration configuration,
         break;
     case hydra_mtl:
         monitor =
-            std::make_unique<Hydra>(std::vector<Formula>{formula}, domainCollection, functionCollection, configuration.hydraConnectedEvaluation,
+            std::make_unique<Hydra2>(std::vector<Formula>{formula}, domainCollection, functionCollection, configuration.hydraConnectedEvaluation,
                                     configuration.hydraReordering, configuration.hydraShortCircuiting, predicateCosts);
         break;
     case event_consuming_mtl:
@@ -138,7 +138,7 @@ const ExecutionStatistic &RVMonitor::getExecutionStatistic() const { return exec
 RVMonitor::RVMonitor(const RVMonitor &obj) : configuration(obj.configuration) {
     if (auto *dynLTL = dynamic_cast<DynamicProgrammingLTL *>(obj.monitor.get()))
         monitor = std::make_unique<DynamicProgrammingLTL>(dynLTL->getFormulas(), dynLTL->isPastEvaluation());
-    else if (auto *hydra = dynamic_cast<Hydra *>(obj.monitor.get())) {
+    else if (auto *hydra = dynamic_cast<Hydra2 *>(obj.monitor.get())) {
         std::vector<Formula> formulas;
         for (const auto &form : hydra->getFormulas()) {
             auto formulaCopy{form.deepCopy()};
@@ -147,7 +147,7 @@ RVMonitor::RVMonitor(const RVMonitor &obj) : configuration(obj.configuration) {
         }
         DomainCollection domainCollection; // TODO: Transfer domain and function collection
         FunctionCollection functionCollection;
-        monitor = std::make_unique<Hydra>(formulas, domainCollection, functionCollection, configuration.hydraConnectedEvaluation,
+        monitor = std::make_unique<Hydra2>(formulas, domainCollection, functionCollection, configuration.hydraConnectedEvaluation,
                                           configuration.hydraReordering, configuration.hydraShortCircuiting);
     }
     // TODO other algorithms
@@ -158,7 +158,7 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
     if (this != &other) { // prevent self-assignment{
         if (auto *dynLTL = dynamic_cast<DynamicProgrammingLTL *>(other.monitor.get()))
             monitor = std::make_unique<DynamicProgrammingLTL>(dynLTL->getFormulas(), dynLTL->isPastEvaluation());
-        else if (auto *hydra = dynamic_cast<Hydra *>(other.monitor.get())) {
+        else if (auto *hydra = dynamic_cast<Hydra2 *>(other.monitor.get())) {
             std::vector<Formula> formulas;
             for (const auto &form : hydra->getFormulas()) {
                 auto formulaCopy{form.deepCopy()};
@@ -167,7 +167,7 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
             }
             DomainCollection domainCollection; // TODO: Transfer domain and function collection
             FunctionCollection functionCollection;
-            monitor = std::make_unique<Hydra>(formulas, domainCollection, functionCollection, configuration.hydraConnectedEvaluation,
+            monitor = std::make_unique<Hydra2>(formulas, domainCollection, functionCollection, configuration.hydraConnectedEvaluation,
                                               configuration.hydraReordering, configuration.hydraShortCircuiting);
         }
         // TODO other algorithms

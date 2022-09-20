@@ -15,10 +15,10 @@ TEST(TestHydra, testFormulaType) {
     Formula formulaTwo = Parser::parse("H(a -> F(b))", "R1");
     Formula formulaThree = Parser::parse("G(a -> F(b) & O(c))", "R1");
     Formula formulaFour = Parser::parse("a U b", "R1");
-    EXPECT_NO_THROW(Hydra({formulaOne}));
-    EXPECT_THROW(Hydra({formulaTwo}), std::logic_error);
-    EXPECT_NO_THROW(Hydra({formulaThree}));
-    EXPECT_THROW(Hydra({formulaFour}), std::logic_error);
+    EXPECT_NO_THROW(Hydra2({formulaOne}));
+    EXPECT_THROW(Hydra2({formulaTwo}), std::logic_error);
+    EXPECT_NO_THROW(Hydra2({formulaThree}));
+    EXPECT_THROW(Hydra2({formulaFour}), std::logic_error);
 }
 
 TEST(TestHydra, specificFormulaTest) {
@@ -37,25 +37,25 @@ TEST(TestHydra, formulaTest) {
             continue;
         failures += hydraTestUtils::executeHydraEval(testCase.trace, {*testCase.formula}, {testCase.expectedResult}, testCase.domainCollection, testCase.functionCollection);
     }
-    std::cout << "Hydra Formula Test: " << std::to_string(failures - excludedTestCases.size()) << " failing formulas.";
+    std::cout << "Hydra2 Formula Test: " << std::to_string(failures - excludedTestCases.size()) << " failing formulas.";
 }
 
 TEST(TestHydra, testToString) {
     Formula formula = Parser::parse("G(P(c))");
     formula.setId("R1");
-    auto monitor{Hydra({formula}, {}, {}, false, false, false)};
+    auto monitor{Hydra2({formula}, {}, {}, false, false, false)};
     EXPECT_EQ(monitor.to_string(), "G(P(c))");
 }
 
 TEST(TestHydra, testNoValidId) {
     Formula formula = Parser::parse("G(P[0, 1](c))");
-    EXPECT_THROW(auto monitor{Hydra({formula}, {}, {}, false, false, false)}, std::logic_error);
+    EXPECT_THROW(auto monitor{Hydra2({formula}, {}, {}, false, false, false)}, std::logic_error);
 }
 
 TEST(TestHydra, testGetFormula) {
     Formula formula = Parser::parse("G(P[0, 1](c))");
     formula.setId("R1");
-    auto monitor{Hydra({formula}, {}, {}, false, false, false)};
+    auto monitor{Hydra2({formula}, {}, {}, false, false, false)};
     EXPECT_EQ(monitor.getFormulas().size(), 1);
     EXPECT_EQ(monitor.getFormulas().at(0).getId(), "R1");
     EXPECT_EQ(monitor.getFormulas().at(0).to_string(), "G(P[0, 1](c))");

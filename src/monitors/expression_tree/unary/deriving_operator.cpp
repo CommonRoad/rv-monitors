@@ -16,7 +16,7 @@ std::string DerivingOperator::to_string() const {
     return "D(" + getLeft()->to_string() + ")";
     // return "D(" + getLeft()->to_string()+ trace.getTrace().at(index).to_string() + ")";
 }
-std::shared_ptr<HydraMonitor> DerivingOperator::accept(HydraCreationVisitor &visitor, size_t parentId,
+std::shared_ptr<Hydra2Monitor> DerivingOperator::accept(HydraCreationVisitor2 &visitor, size_t parentId,
                                                        bool connectedEval) {
     return {};
 }

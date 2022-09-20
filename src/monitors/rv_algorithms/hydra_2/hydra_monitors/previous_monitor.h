@@ -11,9 +11,9 @@
 #include "hydra_monitor.h"
 
 /**
- * Hydra monitor representing (strong) previous operator.
+ * Hydra2 monitor representing (strong) previous operator.
  */
-class PreviousMonitor : public HydraMonitor {
+class PreviousMonitor : public Hydra2Monitor {
   public:
     /**
      * Constructor.
@@ -25,9 +25,9 @@ class PreviousMonitor : public HydraMonitor {
      * @param monitorId ID of monitor.
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      */
-    PreviousMonitor(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitor, size_t intervalFrom,
+    PreviousMonitor(const Formula &formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t intervalFrom,
                     size_t intervalTo, size_t monitorId, bool connectedEval)
-        : HydraMonitor(formula, monitorId, connectedEval, subMonitor->getEvalCost(),
+        : Hydra2Monitor(formula, monitorId, connectedEval, subMonitor->getEvalCost(),
                        subMonitor->getSatisfactionProbability()),
           subMonitor(std::move(subMonitor)), from(intervalFrom), to(intervalTo){};
 
@@ -65,7 +65,7 @@ class PreviousMonitor : public HydraMonitor {
      * Clones this monitor.
      * @return New shared_ptr of this monitor.
      */
-    std::shared_ptr<HydraMonitor> clone() override;
+    std::shared_ptr<Hydra2Monitor> clone() override;
 
     /**
      * Creates string representation of monitor.
@@ -75,7 +75,7 @@ class PreviousMonitor : public HydraMonitor {
     std::string to_string() override;
 
   private:
-    std::shared_ptr<HydraMonitor> subMonitor; //**< Child monitor. */
+    std::shared_ptr<Hydra2Monitor> subMonitor; //**< Child monitor. */
     std::optional<Verdict> currentVerdict;    //**< Stores previous verdict. */
     size_t from;                              //**< Start of time interval. */
     size_t to;                                //**< End of time interval. */

@@ -37,7 +37,7 @@ TEST_F(TestRVMonitors, HydraMTL) {
     for (size_t i{0}; i < expSolution.size(); ++i)
         EXPECT_TRUE(expSolution[i] == solution[i]) << "Mismatch at time step: " << i;
     auto consoleOutputAlgorithmType{testing::internal::GetCapturedStdout()};
-    EXPECT_EQ(consoleOutputAlgorithmType, "Hydra-MTL");
+    EXPECT_EQ(consoleOutputAlgorithmType, "Hydra2-MTL");
 }
 
 TEST_F(TestRVMonitors, BTT_FSM_LTL) {

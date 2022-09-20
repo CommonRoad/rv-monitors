@@ -3,9 +3,9 @@
 #include "hydra_monitor.h"
 
 /**
- * Hydra monitor representing the equality operator monitor.
+ * Hydra2 monitor representing the equality operator monitor.
  */
-class EqualityOperatorMonitor : public HydraMonitor {
+class EqualityOperatorMonitor : public Hydra2Monitor {
   public:
     /**
      * Constructor.
@@ -17,7 +17,7 @@ class EqualityOperatorMonitor : public HydraMonitor {
      * @param satisfactionProbability Satisfaction probability.
      */
     EqualityOperatorMonitor(Formula formula, size_t monitorId, bool connectedEval, double evalCost = 0, double satisfactionProbability = 100.0)
-        : HydraMonitor(std::move(formula), monitorId, connectedEval, evalCost, satisfactionProbability) {}
+        : Hydra2Monitor(std::move(formula), monitorId, connectedEval, evalCost, satisfactionProbability) {}
 
     /**
      * Performs concrete step of same function monitor. Constants and variables are compared for equality.
@@ -54,7 +54,7 @@ class EqualityOperatorMonitor : public HydraMonitor {
      * Clones this monitor.
      * @return New shared_ptr of this monitor.
      */
-    std::shared_ptr<HydraMonitor> clone() override;
+    std::shared_ptr<Hydra2Monitor> clone() override;
 
     /**
      * Creates string representation of monitor.

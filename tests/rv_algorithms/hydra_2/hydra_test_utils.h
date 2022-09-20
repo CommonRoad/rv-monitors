@@ -18,5 +18,5 @@ size_t executeHydraEval(Trace trace, const std::vector<Formula> &formulas,
                         const FunctionCollection &functionCollection = {});
 
 size_t evalHydra(const std::vector<Formula> &formulas, const std::vector<std::vector<Verdict>> &expSolution,
-                 Hydra &monitor, Trace &trac, const std::string &evaluation);
+                 Hydra2 &monitor, Trace &trac, const std::string &evaluation);
 } // namespace hydraTestUtils

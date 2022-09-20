@@ -5,7 +5,7 @@
 #include "monitors/collections/value.h"
 
 /**
- * Hydra monitor representing quote monitor.
+ * Hydra2 monitor representing quote monitor.
  */
 class QuoteMonitor : public QuantifierMonitor {
   public:
@@ -22,7 +22,7 @@ class QuoteMonitor : public QuantifierMonitor {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @param shortCircuiting Boolean indicating whether short circuiting should be used.
      */
-    QuoteMonitor(Formula formula, std::shared_ptr<HydraMonitor> subMonitor, size_t monitorId,
+    QuoteMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
                  std::map<std::string, std::string> variables, DomainCollection &domains,
                  float minQuote, float maxQuote, bool connectedEval, bool shortCircuiting);
 
@@ -48,7 +48,7 @@ class QuoteMonitor : public QuantifierMonitor {
      * Clones this monitor.
      * @return New shared_ptr of this monitor.
      */
-    std::shared_ptr<HydraMonitor> clone() override;
+    std::shared_ptr<Hydra2Monitor> clone() override;
 
     /**
      * Creates string representation of monitor.

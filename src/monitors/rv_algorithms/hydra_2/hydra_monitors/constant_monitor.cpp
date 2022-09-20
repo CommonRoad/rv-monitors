@@ -21,6 +21,6 @@ void ConstantMonitor::setTrace(const Trace &tra) { trace = tra; }
 
 void ConstantMonitor::setVariableValues(std::map<std::string, Value> values) {}
 
-std::shared_ptr<HydraMonitor> ConstantMonitor::clone() { return std::make_shared<ConstantMonitor>(*this); }
+std::shared_ptr<Hydra2Monitor> ConstantMonitor::clone() { return std::make_shared<ConstantMonitor>(*this); }
 
 std::string ConstantMonitor::to_string() { return formula.getExpr()->getSymbol(); }

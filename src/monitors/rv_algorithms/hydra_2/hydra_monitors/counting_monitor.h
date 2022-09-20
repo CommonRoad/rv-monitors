@@ -6,7 +6,7 @@
 #include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
 
 /**
- * Hydra monitor representing counting monitor.
+ * Hydra2 monitor representing counting monitor.
  */
 class CountingMonitor : public QuantifierMonitor {
   public:
@@ -23,7 +23,7 @@ class CountingMonitor : public QuantifierMonitor {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @param shortCircuiting Boolean indicating whether short circuiting should be used.
      */
-    CountingMonitor(Formula formula, std::shared_ptr<HydraMonitor> subMonitor, size_t monitorId,
+    CountingMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
                     std::map<std::string, std::string> variables, DomainCollection &domains,
                     CountingQuantifier::Operator op, size_t num, bool connectedEval, bool shortCircuiting);
 
@@ -40,7 +40,7 @@ class CountingMonitor : public QuantifierMonitor {
      * Clones this monitor.
      * @return New shared_ptr of this monitor.
      */
-    std::shared_ptr<HydraMonitor> clone() override;
+    std::shared_ptr<Hydra2Monitor> clone() override;
 
     /**
      * Creates string representation of monitor.

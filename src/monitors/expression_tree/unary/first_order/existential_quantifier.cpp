@@ -28,6 +28,6 @@ std::shared_ptr<Expression> ExistentialQuantifier::accept(ExpressionVisitor &vis
     return visitor.visitExistentialQuantifier(*this, trace, index);
 }
 
-std::shared_ptr<HydraMonitor> ExistentialQuantifier::accept(HydraCreationVisitor &visitor, size_t parentId, bool connectedEval) {
+std::shared_ptr<Hydra2Monitor> ExistentialQuantifier::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval) {
     return visitor.visitExistentialQuantifier(*this, parentId, connectedEval);
 }

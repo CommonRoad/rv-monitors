@@ -12,9 +12,9 @@
 #include <utility>
 
 /**
- * Hydra monitor representing Constant (true/false).
+ * Hydra2 monitor representing Constant (true/false).
  */
-class ConstantMonitor : public HydraMonitor {
+class ConstantMonitor : public Hydra2Monitor {
   public:
     /**
      * Constructor.
@@ -24,7 +24,7 @@ class ConstantMonitor : public HydraMonitor {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      */
     ConstantMonitor(Formula formula, size_t monitorId, bool connectedEval)
-        : HydraMonitor(std::move(formula), monitorId, connectedEval){};
+        : Hydra2Monitor(std::move(formula), monitorId, connectedEval){};
 
     /**
      * Performs concrete step of constant monitor. It evaluates the trace element of the concrete step. Returns false if
@@ -54,7 +54,7 @@ class ConstantMonitor : public HydraMonitor {
      * Clones this monitor.
      * @return New shared_ptr of this monitor.
      */
-    std::shared_ptr<HydraMonitor> clone() override;
+    std::shared_ptr<Hydra2Monitor> clone() override;
 
     /**
      * Creates string representation of monitor.

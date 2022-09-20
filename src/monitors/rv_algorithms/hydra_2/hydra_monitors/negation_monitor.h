@@ -9,9 +9,9 @@
 #include "hydra_monitor.h"
 
 /**
- * Hydra monitor representing negation monitor.
+ * Hydra2 monitor representing negation monitor.
  */
-class NegationMonitor : public HydraMonitor {
+class NegationMonitor : public Hydra2Monitor {
   public:
     /**
      * Constructor of negation monitor.
@@ -21,8 +21,8 @@ class NegationMonitor : public HydraMonitor {
      * @param monitorId ID of monitor.
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      */
-    NegationMonitor(Formula formula, std::shared_ptr<HydraMonitor> subMonitor, size_t monitorId, bool connectedEval)
-        : HydraMonitor(std::move(formula), monitorId, connectedEval, subMonitor->getEvalCost(),
+    NegationMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId, bool connectedEval)
+        : Hydra2Monitor(std::move(formula), monitorId, connectedEval, subMonitor->getEvalCost(),
                        1 - subMonitor->getSatisfactionProbability()),
           subMonitor(std::move(subMonitor)){};
 
@@ -60,7 +60,7 @@ class NegationMonitor : public HydraMonitor {
      * Clones this monitor.
      * @return New shared_ptr of this monitor.
      */
-    std::shared_ptr<HydraMonitor> clone() override;
+    std::shared_ptr<Hydra2Monitor> clone() override;
 
     /**
      * Creates string representation of monitor.
@@ -70,5 +70,5 @@ class NegationMonitor : public HydraMonitor {
     std::string to_string() override;
 
   private:
-    std::shared_ptr<HydraMonitor> subMonitor; //**< Child monitor. */
+    std::shared_ptr<Hydra2Monitor> subMonitor; //**< Child monitor. */
 };

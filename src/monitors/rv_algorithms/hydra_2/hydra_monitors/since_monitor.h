@@ -10,7 +10,7 @@
 
 #include "hydra_monitor.h"
 
-class SinceMonitor : public HydraMonitor {
+class SinceMonitor : public Hydra2Monitor {
   public:
     /**
      *
@@ -22,10 +22,10 @@ class SinceMonitor : public HydraMonitor {
      * @param monitorId ID of monitor.
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      */
-    SinceMonitor(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitorF,
-                 std::shared_ptr<HydraMonitor> subMonitorG, size_t intervalFrom, size_t intervalTo, size_t monitorId,
+    SinceMonitor(const Formula &formula, std::shared_ptr<Hydra2Monitor> subMonitorF,
+                 std::shared_ptr<Hydra2Monitor> subMonitorG, size_t intervalFrom, size_t intervalTo, size_t monitorId,
                  bool connectedEval)
-        : HydraMonitor(formula, monitorId, connectedEval, (subMonitorG->getEvalCost() + subMonitorF->getEvalCost()) / 2,
+        : Hydra2Monitor(formula, monitorId, connectedEval, (subMonitorG->getEvalCost() + subMonitorF->getEvalCost()) / 2,
                        (subMonitorG->getSatisfactionProbability() + subMonitorG->getSatisfactionProbability()) / 2),
           subMonitorLeft(std::move(subMonitorF)), subMonitorRight(std::move(subMonitorG)), from(intervalFrom),
           to(intervalTo){};
@@ -64,7 +64,7 @@ class SinceMonitor : public HydraMonitor {
      * Clones this monitor.
      * @return New shared_ptr of this monitor.
      */
-    std::shared_ptr<HydraMonitor> clone() override;
+    std::shared_ptr<Hydra2Monitor> clone() override;
 
     /**
      * Creates string representation of monitor.
@@ -74,8 +74,8 @@ class SinceMonitor : public HydraMonitor {
     std::string to_string() override;
 
   private:
-    std::shared_ptr<HydraMonitor> subMonitorLeft;  //**< Monitor for specification on left side of since. */
-    std::shared_ptr<HydraMonitor> subMonitorRight; //**< Monitor for specification on right side of since. */
+    std::shared_ptr<Hydra2Monitor> subMonitorLeft;  //**< Monitor for specification on left side of since. */
+    std::shared_ptr<Hydra2Monitor> subMonitorRight; //**< Monitor for specification on right side of since. */
     std::optional<Verdict> subVerdictLeft;         //**< Verdict for monitor on left side of since. */
     std::optional<Verdict> subVerdictRight;        //**< Verdict for monitor on right side of since. */
     size_t from;                                   //**< Start of time interval. */

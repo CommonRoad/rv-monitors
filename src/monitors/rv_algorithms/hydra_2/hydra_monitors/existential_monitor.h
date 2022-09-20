@@ -5,7 +5,7 @@
 #include "monitors/collections/value.h"
 
 /**
- * Hydra monitor representing existential monitor.
+ * Hydra2 monitor representing existential monitor.
  */
 class ExistentialMonitor : public QuantifierMonitor {
   public:
@@ -20,7 +20,7 @@ class ExistentialMonitor : public QuantifierMonitor {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @param shortCircuiting Boolean indicating whether short circuiting should be used.
      */
-    ExistentialMonitor(Formula formula, std::shared_ptr<HydraMonitor> subMonitor, size_t monitorId,
+    ExistentialMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
                        std::map<std::string, std::string> variables, DomainCollection &domains,
                        bool connectedEval, bool shortCircuiting);
 
@@ -38,7 +38,7 @@ class ExistentialMonitor : public QuantifierMonitor {
      * Clones this monitor.
      * @return New shared_ptr of this monitor.
      */
-    std::shared_ptr<HydraMonitor> clone() override;
+    std::shared_ptr<Hydra2Monitor> clone() override;
 
     /**
      * Creates string representation of monitor.

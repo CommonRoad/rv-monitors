@@ -41,14 +41,14 @@ void AndMonitor::setVariableValues(std::map<std::string, Value> values) {
 }
 
 void AndMonitor::reset(std::optional<size_t> stepNumber) {
-    HydraMonitor::reset(stepNumber);
+    Hydra2Monitor::reset(stepNumber);
     for (const auto &mon : subMonitors)
         mon->reset(stepNumber);
 }
 
-std::shared_ptr<HydraMonitor> AndMonitor::clone() {
+std::shared_ptr<Hydra2Monitor> AndMonitor::clone() {
     auto clonedMonitor = std::make_shared<AndMonitor>(*this);
-    std::vector<std::shared_ptr<HydraMonitor>> clonedSubMonitors;
+    std::vector<std::shared_ptr<Hydra2Monitor>> clonedSubMonitors;
     for (const auto &mon : subMonitors)
         clonedSubMonitors.push_back(mon->clone());
     clonedMonitor->subMonitors = clonedSubMonitors;
@@ -64,14 +64,14 @@ std::string AndMonitor::to_string() {
     return str;
 }
 
-double AndMonitor::computeCost(const std::vector<std::shared_ptr<HydraMonitor>> &monitors) {
+double AndMonitor::computeCost(const std::vector<std::shared_ptr<Hydra2Monitor>> &monitors) {
     double cost{monitors.at(0)->getEvalCost()};
     for (size_t idx{0}; idx < monitors.size(); ++idx)
         cost += monitors.at(idx)->getEvalCost() * (1 - monitors.at(idx)->getSatisfactionProbability());
     return cost / static_cast<double>(monitors.size()); // normalize value
 }
 
-double AndMonitor::computeSatisfactionProbability(const std::vector<std::shared_ptr<HydraMonitor>> &monitors) {
+double AndMonitor::computeSatisfactionProbability(const std::vector<std::shared_ptr<Hydra2Monitor>> &monitors) {
     double prob{monitors.at(0)->getSatisfactionProbability()};
     for (size_t idx{1}; idx < monitors.size(); ++idx)
         prob *= monitors.at(idx)->getSatisfactionProbability();

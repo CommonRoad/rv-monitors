@@ -17,11 +17,11 @@ void NegationMonitor::setVariableValues(std::map<std::string, Value> values) {
 }
 
 void NegationMonitor::reset(std::optional<size_t> stepNumber) {
-    HydraMonitor::reset(stepNumber);
+    Hydra2Monitor::reset(stepNumber);
     subMonitor->reset(stepNumber);
 }
 
-std::shared_ptr<HydraMonitor> NegationMonitor::clone() {
+std::shared_ptr<Hydra2Monitor> NegationMonitor::clone() {
     auto clonedMonitor = std::make_shared<NegationMonitor>(*this);
     clonedMonitor->subMonitor = subMonitor->clone();
     return clonedMonitor;
