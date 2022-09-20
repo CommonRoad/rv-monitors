@@ -46,6 +46,8 @@ std::shared_ptr<Hydra2Monitor> QuoteQuantifier::accept(HydraCreationVisitor2 &vi
     return visitor.visitQuoteQuantifier(*this, parentId, connectedEval);
 }
 
+std::shared_ptr<HydraMonitor> QuoteQuantifier::accept(HydraCreationVisitor &visitor) { return nullptr; }
+
 const QuoteInterval &QuoteQuantifier::getQuoteInterval() const
 // Returns probability interval
 { return quoteInterval; }

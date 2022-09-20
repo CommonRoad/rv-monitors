@@ -38,6 +38,8 @@ std::shared_ptr<Hydra2Monitor> CountingQuantifier::accept(HydraCreationVisitor2 
     return visitor.visitCountingQuantifier(*this, parentId, connectedEval);
 }
 
+std::shared_ptr<HydraMonitor> CountingQuantifier::accept(HydraCreationVisitor &visitor) { return nullptr; }
+
 const CountingQuantifier::Operator &CountingQuantifier::getOperator() const { return op; }
 
 size_t CountingQuantifier::getNum() const { return num; }

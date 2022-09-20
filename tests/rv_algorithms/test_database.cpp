@@ -1085,6 +1085,12 @@ TestDataBase::TestDataBase() {
             {{"a", "b"}, {"b"}, {"a"}, {"c"}},
             {0, 1, 2, 3},
             {Domain{"D", {"a", "b", "c"}}}
+        },
+        {
+            "F95_1",
+            "G((b & X(!(b)) & d & !(a)) -> (O(G[0,30](b & c))))",
+            createExpectedResult({true, true, true, true, true, false, true, true, true, true, true, true, true}),
+            {{"d"}, {"d"}, {"d"}, {"d"}, {"d"}, {"b", "d"}, {"d"}, {"d"}, {"d"}, {}, {}, {}, {}},
         }
     };
 }

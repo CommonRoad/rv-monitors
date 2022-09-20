@@ -390,3 +390,11 @@ TEST(TestHydraCreation, testQuoteSimple) {
     DomainCollection collection{domains};
     executeTest(formula, expectedFormula, predicateCosts, collection);
 }
+
+TEST(TestHydraCreation, testInvalidPredicateCost) {
+    Formula formula = Parser::parse("G(P[0, 1](c))", "R1");
+    std::map<std::string, std::array<double, 2>> predicateCosts{{"test", {1, 2}}};
+    DomainCollection domains;
+    FunctionCollection functions;
+    EXPECT_DEATH(HydraCreationVisitor2(predicateCosts, domains, functions, false);, "Invalid predicate costs/probabilities");
+}

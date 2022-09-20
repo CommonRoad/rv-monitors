@@ -87,6 +87,19 @@ set(RV_MONITOR_SRC_FILES
         monitors/rv_algorithms/hydra_2/hydra_monitors/quote_monitor.cpp
         monitors/rv_algorithms/hydra_2/hydra_monitors/quantifier_monitor.cpp
         monitors/rv_algorithms/hydra_2/hydra_monitors/equality_operator_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/previous_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_creation_visitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/predicate_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/constant_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/atomic_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/next_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/since_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/until_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/or_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/and_monitor.cpp
+        monitors/rv_algorithms/hydra/hydra_monitors/negation_monitor.cpp
         monitors/trace/event.cpp
         monitors/trace/event_generator.cpp
         monitors/utils/lazy_bool.cpp
@@ -103,7 +116,11 @@ set(RV_MONITOR_SRC_FILES
         monitors/collections/domain_collection.cpp
         monitors/collections/value.cpp
         monitors/collections/function_collection.cpp
-        monitors/collections/function.cpp monitors/expression_tree/unary/first_order/counting_quantifier.h monitors/expression_tree/unary/first_order/counting_quantifier.cpp monitors/rv_algorithms/hydra_2/hydra_monitors/counting_monitor.cpp monitors/rv_algorithms/hydra_2/hydra_monitors/counting_monitor.h)
+        monitors/collections/function.cpp
+        monitors/expression_tree/unary/first_order/counting_quantifier.h
+        monitors/expression_tree/unary/first_order/counting_quantifier.cpp
+        monitors/rv_algorithms/hydra_2/hydra_monitors/counting_monitor.cpp
+        monitors/rv_algorithms/hydra_2/hydra_monitors/counting_monitor.h)
 
 
 # create library of this project

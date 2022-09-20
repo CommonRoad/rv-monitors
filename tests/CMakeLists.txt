@@ -21,6 +21,16 @@ set(RV_MONITOR_TEST_SRC_FILES
         rv_algorithms/mt_fsm/test_mt_fsm.cpp
         rv_algorithms/hydra_2/hydra_test_utils.cpp
         rv_algorithms/hydra_2/test_hydra.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_constant_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_or_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_and_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_negation_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_atomic_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_predicate_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_next_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_previous_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_since_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_until_monitor.cpp
         rv_algorithms/hydra_2/test_hydra_creation.cpp
         rv_algorithms/hydra_2/hydra_monitors/test_constant_monitor.cpp
         rv_algorithms/hydra_2/hydra_monitors/test_or_monitor.cpp
@@ -36,6 +46,18 @@ set(RV_MONITOR_TEST_SRC_FILES
         rv_algorithms/hydra_2/hydra_monitors/test_existential_monitor.cpp
         rv_algorithms/hydra_2/hydra_monitors/test_quote_monitor.cpp
         rv_algorithms/hydra_2/hydra_monitors/test_equality_operator_monitor.cpp
+        rv_algorithms/hydra/hydra_test_utils.cpp
+        rv_algorithms/hydra/test_hydra.cpp
+        rv_algorithms/hydra/hydra_monitors/test_constant_monitor.cpp
+        rv_algorithms/hydra/hydra_monitors/test_or_monitor.cpp
+        rv_algorithms/hydra/hydra_monitors/test_and_monitor.cpp
+        rv_algorithms/hydra/hydra_monitors/test_negation_monitor.cpp
+        rv_algorithms/hydra/hydra_monitors/test_atomic_monitor.cpp
+        rv_algorithms/hydra/hydra_monitors/test_predicate_monitor.cpp
+        rv_algorithms/hydra/hydra_monitors/test_next_monitor.cpp
+        rv_algorithms/hydra/hydra_monitors/test_previous_monitor.cpp
+        rv_algorithms/hydra/hydra_monitors/test_since_monitor.cpp
+        rv_algorithms/hydra/hydra_monitors/test_until_monitor.cpp
         rv_algorithms/test_database.cpp
         rv_algorithms/test_rv_monitors.cpp
         parser/test_parser.cpp

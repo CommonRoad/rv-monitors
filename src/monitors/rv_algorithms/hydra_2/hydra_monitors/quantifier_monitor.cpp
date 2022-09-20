@@ -83,6 +83,7 @@ void QuantifierMonitor::setVariableValues(std::map<std::string, Value> values) {
 void QuantifierMonitor::reset(std::optional<size_t> stepNumber) {
     Hydra2Monitor::reset(stepNumber);
     subMonitor->reset(stepNumber);
+    evalMonitors.clear();
     variableValues.clear();
     resetIterators();
 }

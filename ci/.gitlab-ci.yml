@@ -10,6 +10,29 @@ stages:
 
 image: $CI_REGISTRY/cps/rapid-prototyping-setup/ci:1.2
 
+### static test ###
+clang-format:
+  stage: static-test
+  script: bash ./ci/clang-format.sh
+  needs: []
+
+clang-tidy:
+  stage: static-test
+  script: bash ./ci/clang-tidy.sh
+  needs:
+    - job: build-compile-commands
+      artifacts: true
+
+cppcheck:
+  stage: static-test
+  script:
+    cppcheck
+    --project=build/compile_commands.json
+    -i"$(pwd)/external"
+  needs:
+    - job: build-compile-commands
+      artifacts: true
+
 ### build project ###
 build-compile-commands:
   stage: compile
@@ -97,36 +120,6 @@ test-coverage:
     reports:
       junit: ./report.xml
 
-### static test ###
-clang-format:
-  stage: static-test
-  script: bash ./ci/clang-format.sh
-  needs: []
-
-clang-tidy:
-  stage: static-test
-  variables:
-    GIT_STRATEGY: clone
-  before_script:
-    - git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME $CI_DEFAULT_BRANCH
-    # The compile_commands.json mention build/src as a directory, and clang-tidy
-    # gets confused if that directory does not exist.
-    # The contents of build/src don't actually matter here.
-    - mkdir build/src
-  script: bash ./ci/clang-tidy.sh
-  needs:
-    - job: build-compile-commands
-      artifacts: true
-
-cppcheck:
-  stage: static-test
-  script:
-    cppcheck
-    --project=build/compile_commands.json
-    -i"$(pwd)/external"
-  needs:
-    - job: build-compile-commands
-      artifacts: true
 
 ### coverage ###
 coverage-analyze:
@@ -202,7 +195,7 @@ evaluation:
       /opt/hydra/evaluation/fmlas
       /opt/hydra/evaluation/logs
       /opt/hydra/evaluation/error.log
-      /opt/hydra/evaluation/bug*.mdl 
+      /opt/hydra/evaluation/bug*.mdl
   needs:
     - job: build-evaluation
       artifacts: true

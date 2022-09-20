@@ -5,6 +5,7 @@
 // Credits: BMW Car@TUM
 //
 #include "rv_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra.h"
 #include "monitors/rv_algorithms/hydra_2/hydra.h"
 #include "monitors/rv_algorithms/ltl_event_consuming/event_consuming.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
@@ -39,7 +40,10 @@ std::ostream &operator<<(std::ostream &stream, const AlgorithmType &algorithm) {
         stream << "BTT-FSM*";
         break;
     case hydra_mtl:
-        stream << "Hydra2-MTL";
+        stream << "Hydra-MTL";
+        break;
+    case hydra_2_mtl:
+        stream << "Hydra_2-MTL";
         break;
     case event_consuming_mtl:
         stream << "EventConsuming-MTL";
@@ -55,6 +59,8 @@ AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
         return event_consuming_ltl;
     } else if (algorithmString == "hydra-mtl") {
         return hydra_mtl;
+    } else if (algorithmString == "hydra_2-mtl") {
+        return hydra_2_mtl;
     } else if (algorithmString == "mt-fsm*") {
         return mt_fsm;
     } else if (algorithmString == "btt-fsm*") {
@@ -72,6 +78,7 @@ AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
 RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration configuration,
                      const std::map<std::string, std::array<double, 2>> &predicateCosts)
     : configuration(configuration) {
+
     DomainCollection domainCollection; // TODO: Transfer domain and function collection
     FunctionCollection functionCollection;
 
@@ -91,9 +98,12 @@ RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration 
         monitor = std::make_unique<BttFsm>(formulas);
         break;
     case hydra_mtl:
+        monitor = std::make_unique<Hydra>(formulas);
+        break;
+    case hydra_2_mtl:
         monitor =
-            std::make_unique<Hydra2>(formulas, domainCollection, functionCollection, configuration.hydraConnectedEvaluation, configuration.hydraReordering,
-                                    configuration.hydraShortCircuiting, predicateCosts);
+            std::make_unique<Hydra2>(formulas, domainCollection, functionCollection,  configuration.hydraConnectedEvaluation,
+                                     configuration.hydraReordering, configuration.hydraShortCircuiting, predicateCosts);
         break;
     case event_consuming_mtl:
         monitor = std::make_unique<MTLEventConsuming>(formulas);
@@ -104,6 +114,7 @@ RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration 
 RVMonitor::RVMonitor(const Formula &formula, MonitorConfiguration configuration,
                      const std::map<std::string, std::array<double, 2>> &predicateCosts)
     : configuration(configuration) {
+
     DomainCollection domainCollection; // TODO: Transfer domain and function collection
     FunctionCollection functionCollection;
 
@@ -123,9 +134,12 @@ RVMonitor::RVMonitor(const Formula &formula, MonitorConfiguration configuration,
         monitor = std::make_unique<BttFsm>(std::vector<Formula>{formula});
         break;
     case hydra_mtl:
+        monitor = std::make_unique<Hydra>(std::vector<Formula>{formula});
+        break;
+    case hydra_2_mtl:
         monitor =
-            std::make_unique<Hydra2>(std::vector<Formula>{formula}, domainCollection, functionCollection, configuration.hydraConnectedEvaluation,
-                                    configuration.hydraReordering, configuration.hydraShortCircuiting, predicateCosts);
+            std::make_unique<Hydra2>(std::vector<Formula>{formula}, domainCollection, functionCollection,configuration.hydraConnectedEvaluation,
+                                     configuration.hydraReordering, configuration.hydraShortCircuiting, predicateCosts);
         break;
     case event_consuming_mtl:
         monitor = std::make_unique<MTLEventConsuming>(std::vector<Formula>{formula});
@@ -138,19 +152,29 @@ const ExecutionStatistic &RVMonitor::getExecutionStatistic() const { return exec
 RVMonitor::RVMonitor(const RVMonitor &obj) : configuration(obj.configuration) {
     if (auto *dynLTL = dynamic_cast<DynamicProgrammingLTL *>(obj.monitor.get()))
         monitor = std::make_unique<DynamicProgrammingLTL>(dynLTL->getFormulas(), dynLTL->isPastEvaluation());
-    else if (auto *hydra = dynamic_cast<Hydra2 *>(obj.monitor.get())) {
+    else if (auto *hydra = dynamic_cast<Hydra *>(obj.monitor.get())) {
+        monitor = std::make_unique<Hydra>(hydra->getFormulas());
+    } else if (auto *ecltl = dynamic_cast<EventConsumingLTL *>(obj.monitor.get())) {
+        monitor = std::make_unique<EventConsumingLTL>(ecltl->getFormulas());
+    } else if (auto *mtfsm = dynamic_cast<MtFsm *>(obj.monitor.get())) {
+        monitor = std::make_unique<MtFsm>(mtfsm->getFormulas());
+    } else if (auto *bttfsm = dynamic_cast<BttFsm *>(obj.monitor.get())) {
+        monitor = std::make_unique<BttFsm>(bttfsm->getFormulas());
+    } else if (auto *ecmtl = dynamic_cast<MTLEventConsuming *>(obj.monitor.get())) {
+        monitor = std::make_unique<MTLEventConsuming>(ecmtl->getFormulas());
+    } else if (auto *hydra2 = dynamic_cast<Hydra2 *>(obj.monitor.get())) {
         std::vector<Formula> formulas;
-        for (const auto &form : hydra->getFormulas()) {
+        for (const auto &form : hydra2->getFormulas()) {
             auto formulaCopy{form.deepCopy()};
             formulaCopy.setId(form.getId());
             formulas.push_back(formulaCopy);
         }
+
         DomainCollection domainCollection; // TODO: Transfer domain and function collection
         FunctionCollection functionCollection;
         monitor = std::make_unique<Hydra2>(formulas, domainCollection, functionCollection, configuration.hydraConnectedEvaluation,
                                           configuration.hydraReordering, configuration.hydraShortCircuiting);
     }
-    // TODO other algorithms
     executionStatistic = obj.executionStatistic;
 }
 
@@ -165,6 +189,7 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
                 formulaCopy.setId(form.getId());
                 formulas.push_back(formulaCopy);
             }
+
             DomainCollection domainCollection; // TODO: Transfer domain and function collection
             FunctionCollection functionCollection;
             monitor = std::make_unique<Hydra2>(formulas, domainCollection, functionCollection, configuration.hydraConnectedEvaluation,

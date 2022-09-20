@@ -20,7 +20,7 @@ std::map<std::string, std::vector<Verdict>> MTLEventConsuming::evaluate(Trace &t
     std::map<std::string, std::vector<Verdict>> result;
     // Empty trace
     if (trace.getTrace().empty()) {
-        spdlog::info("Hydra2::evaluate | Trace is empty");
+        spdlog::info("Hydra::evaluate | Trace is empty");
         result[formulas.at(0).getId()] = {};
         return result;
     }

@@ -9,3 +9,5 @@ std::shared_ptr<Expression> Until::accept(ExpressionVisitor &visitor, Trace &tra
 std::shared_ptr<Hydra2Monitor> Until::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval) {
     return visitor.visitUntil(*this, parentId, connectedEval);
 }
+
+std::shared_ptr<HydraMonitor> Until::accept(HydraCreationVisitor &visitor) { return visitor.visitUntil(*this); }

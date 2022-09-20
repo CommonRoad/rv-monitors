@@ -117,7 +117,7 @@ class QuantifierMonitor : public Hydra2Monitor {
   protected:
     std::shared_ptr<Hydra2Monitor> subMonitor; //**< Child monitor. */
     std::vector<std::shared_ptr<Hydra2Monitor>> evalMonitors; //**< Monitors for evaluation. */
-    bool shortCircuiting; //**< Child monitors. */
+    bool shortCircuiting; //**< Boolean indicating whether short circuiting should be used. */
     std::map<std::string, Value> variableValues; //**< Variables values from higher quantifier scopes. */
     Trace trace; //**< Trace. */
     std::vector<std::pair<std::string, Domain>> varDomains; //**< Domains of variables. */

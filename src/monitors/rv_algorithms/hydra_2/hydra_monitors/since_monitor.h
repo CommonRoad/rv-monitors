@@ -10,6 +10,9 @@
 
 #include "hydra_monitor.h"
 
+/**
+ * Hydra2 monitor for representing since operator.
+ */
 class SinceMonitor : public Hydra2Monitor {
   public:
     /**
@@ -25,8 +28,9 @@ class SinceMonitor : public Hydra2Monitor {
     SinceMonitor(const Formula &formula, std::shared_ptr<Hydra2Monitor> subMonitorF,
                  std::shared_ptr<Hydra2Monitor> subMonitorG, size_t intervalFrom, size_t intervalTo, size_t monitorId,
                  bool connectedEval)
-        : Hydra2Monitor(formula, monitorId, connectedEval, (subMonitorG->getEvalCost() + subMonitorF->getEvalCost()) / 2,
-                       (subMonitorG->getSatisfactionProbability() + subMonitorG->getSatisfactionProbability()) / 2),
+        : Hydra2Monitor(formula, monitorId, connectedEval,
+                        (subMonitorG->getEvalCost() + subMonitorF->getEvalCost()) / 2,
+                        (subMonitorG->getSatisfactionProbability() + subMonitorG->getSatisfactionProbability()) / 2),
           subMonitorLeft(std::move(subMonitorF)), subMonitorRight(std::move(subMonitorG)), from(intervalFrom),
           to(intervalTo){};
 
@@ -76,14 +80,14 @@ class SinceMonitor : public Hydra2Monitor {
   private:
     std::shared_ptr<Hydra2Monitor> subMonitorLeft;  //**< Monitor for specification on left side of since. */
     std::shared_ptr<Hydra2Monitor> subMonitorRight; //**< Monitor for specification on right side of since. */
-    std::optional<Verdict> subVerdictLeft;         //**< Verdict for monitor on left side of since. */
-    std::optional<Verdict> subVerdictRight;        //**< Verdict for monitor on right side of since. */
-    size_t from;                                   //**< Start of time interval. */
-    size_t to;                                     //**< End of time interval. */
-    HeadPos headPositionMonitorLeft;               //**< Head position of left monitor. */
-    HeadPos headPositionMonitorRight;              //**< Head position of right monitor. *
-    std::optional<HeadPos> lastSatisfaction;       //**< Last time right side of until was satisfied. */
-    std::optional<HeadPos> lastViolation;          //**< Last time left side of until was violated. */
+    std::optional<Verdict> subVerdictLeft;          //**< Verdict for monitor on left side of since. */
+    std::optional<Verdict> subVerdictRight;         //**< Verdict for monitor on right side of since. */
+    size_t from;                                    //**< Start of time interval. */
+    size_t to;                                      //**< End of time interval. */
+    HeadPosHydra2 headPositionMonitorLeft;          //**< Head position of left monitor. */
+    HeadPosHydra2 headPositionMonitorRight;         //**< Head position of right monitor. *
+    std::optional<HeadPosHydra2> lastSatisfaction;  //**< Last time right side of until was satisfied. */
+    std::optional<HeadPosHydra2> lastViolation;     //**< Last time left side of until was violated. */
     size_t stepNumberRight{0}; // Custom step number for right monitor since left monitor is only called once
     bool endReached{false};    //**< Boolean indicating whether end of trace was reached. */
 };

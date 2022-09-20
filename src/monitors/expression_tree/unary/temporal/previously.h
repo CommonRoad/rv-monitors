@@ -19,14 +19,13 @@ class Previously : public Unary, public TemporalOperator {
     explicit Previously(const std::shared_ptr<Expression> &left, const std::shared_ptr<Interval> &interval)
         : Unary(previousSymbol + interval->to_string(), left), TemporalOperator(interval) {}
 
-    [[nodiscard]] std::shared_ptr<Expression> clone() override { return std::make_shared<Previously>(*this); }
+    [[nodiscard]] std::shared_ptr<Expression> clone() override;
 
-    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override {
-        return visitor.visitPreviously(*this, trace, index);
-    }
+    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override;
 
     [[nodiscard]] std::shared_ptr<Hydra2Monitor> accept(HydraCreationVisitor2 &visitor, size_t parentId,
-                                                       bool connectedEval) override {
-        return visitor.visitPreviously(*this, parentId, connectedEval);
-    }
+                                                        bool connectedEval) override;
+
+    [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override;
+
 };

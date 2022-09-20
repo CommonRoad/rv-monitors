@@ -531,19 +531,23 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitResolvingOperator(ResolvingO
 std::shared_ptr<Expression> MtlRewriteVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace, size_t index) {
     return std::make_shared<DerivingOperator>(op);
 }
+
 std::shared_ptr<Expression> MtlRewriteVisitor::visitPredicate(Predicate &op, Trace &trace, size_t index) {
     return std::make_shared<Predicate>(op);
 }
+
 std::shared_ptr<Expression> MtlRewriteVisitor::visitUniversalQuantifier(UniversalQuantifier &op, Trace &trace,
                                                                         size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<UniversalQuantifier>(op);
 }
+
 std::shared_ptr<Expression> MtlRewriteVisitor::visitExistentialQuantifier(ExistentialQuantifier &op, Trace &trace,
                                                                           size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<ExistentialQuantifier>(op);
 }
+
 std::shared_ptr<Expression> MtlRewriteVisitor::visitQuoteQuantifier(QuoteQuantifier &op, Trace &trace,
                                                                        size_t index) {
     visitExpression(op, trace, index);

@@ -10,7 +10,7 @@
 #include "hydra_test_utils.h"
 #include "monitors/parser/parser.h"
 
-TEST(TestHydra, testFormulaType) {
+TEST(TestHydra2, testFormulaType) {
     Formula formulaOne = Parser::parse("G(a -> F(b))", "R1");
     Formula formulaTwo = Parser::parse("H(a -> F(b))", "R1");
     Formula formulaThree = Parser::parse("G(a -> F(b) & O(c))", "R1");
@@ -21,38 +21,39 @@ TEST(TestHydra, testFormulaType) {
     EXPECT_THROW(Hydra2({formulaFour}), std::logic_error);
 }
 
-TEST(TestHydra, specificFormulaTest) {
+TEST(TestHydra2, specificFormulaTest) {
     auto testDataBase{TestDataBase()};
-    auto testCase = testDataBase.getTestSample("F11_1");
+    auto testCase = testDataBase.getTestSample("F95_1");
     hydraTestUtils::executeHydraEval(testCase.trace, {*testCase.formula}, {testCase.expectedResult});
 }
 
-TEST(TestHydra, formulaTest) {
+TEST(TestHydra2, formulaTest) {
     std::vector<std::string> excludedTestCases{"F49_1"}; // TODO add Weak next support
     size_t failures{0};
     auto testDataBase{TestDataBase()};
-    for (const auto &testCase : testDataBase.getDatabaseEntries(supportedFormulaTypes.at(AlgorithmType::hydra_mtl))) {
+    for (const auto &testCase : testDataBase.getDatabaseEntries(supportedFormulaTypes.at(AlgorithmType::hydra_2_mtl))) {
         if (std::any_of(excludedTestCases.begin(), excludedTestCases.end(),
                         [testCase](const std::string &name) { return name == testCase.formula->getId(); }))
             continue;
+        std::cout << testCase.testName << std::endl;
         failures += hydraTestUtils::executeHydraEval(testCase.trace, {*testCase.formula}, {testCase.expectedResult}, testCase.domainCollection, testCase.functionCollection);
     }
-    std::cout << "Hydra2 Formula Test: " << std::to_string(failures - excludedTestCases.size()) << " failing formulas.";
+    std::cout << "Hydra Formula Test: " << std::to_string(failures) << " failing formulas.";
 }
 
-TEST(TestHydra, testToString) {
+TEST(TestHydra2, testToString) {
     Formula formula = Parser::parse("G(P(c))");
     formula.setId("R1");
     auto monitor{Hydra2({formula}, {}, {}, false, false, false)};
     EXPECT_EQ(monitor.to_string(), "G(P(c))");
 }
 
-TEST(TestHydra, testNoValidId) {
+TEST(TestHydra2, testNoValidId) {
     Formula formula = Parser::parse("G(P[0, 1](c))");
     EXPECT_THROW(auto monitor{Hydra2({formula}, {}, {}, false, false, false)}, std::logic_error);
 }
 
-TEST(TestHydra, testGetFormula) {
+TEST(TestHydra2, testGetFormula) {
     Formula formula = Parser::parse("G(P[0, 1](c))");
     formula.setId("R1");
     auto monitor{Hydra2({formula}, {}, {}, false, false, false)};
@@ -61,7 +62,7 @@ TEST(TestHydra, testGetFormula) {
     EXPECT_EQ(monitor.getFormulas().at(0).to_string(), "G(P[0, 1](c))");
 }
 
-TEST(TestHydra, testCombinedSinceUntilFormulas) {
+TEST(TestHydra2, testCombinedSinceUntilFormulas) {
     Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"a"}, {"a"}, {"a", "b"}, {"a"}, {"b"}},
                                      std::vector<size_t>{0, 0, 2, 4, 5, 10});
     std::vector<Formula> formulas = {Parser::parse("G((a)S[0, 4](b))"), Parser::parse("G((a)U[0, 4](b))"),
@@ -80,7 +81,7 @@ TEST(TestHydra, testCombinedSinceUntilFormulas) {
     hydraTestUtils::executeHydraEval(trace, formulas, expSolutions);
 }
 
-TEST(TestHydra, testExistentialStepLooping) {
+TEST(TestHydra2, testExistentialStepLooping) {
     Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a", "b", "c"}, {}, {"b"}, {"a", "c"}});
     Formula formula = Parser::parse("G(C<=2 x in D. x)");
     formula.setId("R1");
@@ -88,4 +89,9 @@ TEST(TestHydra, testExistentialStepLooping) {
     std::vector<std::vector<Verdict>> expSolutions{{Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true}}};
     DomainCollection domainCollection = {Domain{"D", {"a", "b", "c"}}};
     hydraTestUtils::executeHydraEval(trace, formulas, expSolutions, domainCollection);
+}
+
+TEST(TestHydra2, testInvalidPredicateCost) {
+    Formula formula = Parser::parse("G(P[0, 1](c))", "R1");
+    EXPECT_DEATH(Hydra2({formula}, {}, {}, false, false, false, {{"test", {1, 2}}}), "Invalid predicate costs/probabilities");
 }

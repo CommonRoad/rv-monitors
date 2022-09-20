@@ -23,6 +23,8 @@ std::shared_ptr<Hydra2Monitor> EqualityOperator::accept(HydraCreationVisitor2 &v
     return visitor.visitEqualityOperator(*this, parentId, connectedEval);
 }
 
+std::shared_ptr<HydraMonitor> EqualityOperator::accept(HydraCreationVisitor &visitor) { return nullptr; }
+
 std::string EqualityOperator::getLeft() const { return left; }
 
 std::string EqualityOperator::getRight() const { return right; }

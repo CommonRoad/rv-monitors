@@ -55,10 +55,10 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
                                                              // false, or until upper bound of time
                                                              // interval is violated
         if (subVerdictRight->value) {
-            lastSatisfaction = HeadPos(headPositionMonitorRight.timeStep, headPositionMonitorRight.traceIdx);
+            lastSatisfaction = HeadPosHydra2(headPositionMonitorRight.timeStep, headPositionMonitorRight.traceIdx);
         }
         if (!subVerdictLeft->value) {
-            lastViolation = HeadPos(headPositionMonitorLeft.timeStep, headPositionMonitorLeft.traceIdx);
+            lastViolation = HeadPosHydra2(headPositionMonitorLeft.timeStep, headPositionMonitorLeft.traceIdx);
         }
         stepLeftRightMonitors();
     }
@@ -90,12 +90,13 @@ void UntilMonitor::reset(std::optional<size_t> stepNumber) {
     subMonitorBaseTimeStep->reset(stepNumber);
     subVerdictLeft = {};
     subVerdictRight = {};
-    subVerdictBaseTimeStep = {};
     lastSatisfaction = {};
     lastViolation = {};
     headPositionMonitorRight.reset();
     headPositionMonitorLeft.reset();
     headPositionMonitorBaseTimeStep.reset();
+    stepNumberUntil = 0;
+    endReached = false;
 }
 
 std::shared_ptr<Hydra2Monitor> UntilMonitor::clone() {

@@ -28,7 +28,7 @@ class PreviousMonitor : public Hydra2Monitor {
     PreviousMonitor(const Formula &formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t intervalFrom,
                     size_t intervalTo, size_t monitorId, bool connectedEval)
         : Hydra2Monitor(formula, monitorId, connectedEval, subMonitor->getEvalCost(),
-                       subMonitor->getSatisfactionProbability()),
+                        subMonitor->getSatisfactionProbability()),
           subMonitor(std::move(subMonitor)), from(intervalFrom), to(intervalTo){};
 
     /**
@@ -76,7 +76,7 @@ class PreviousMonitor : public Hydra2Monitor {
 
   private:
     std::shared_ptr<Hydra2Monitor> subMonitor; //**< Child monitor. */
-    std::optional<Verdict> currentVerdict;    //**< Stores previous verdict. */
-    size_t from;                              //**< Start of time interval. */
-    size_t to;                                //**< End of time interval. */
+    std::optional<Verdict> currentVerdict;     //**< Stores previous verdict. */
+    size_t from;                               //**< Start of time interval. */
+    size_t to;                                 //**< End of time interval. */
 };

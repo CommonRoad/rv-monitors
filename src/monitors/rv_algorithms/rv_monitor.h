@@ -47,7 +47,7 @@ struct MonitorConfiguration {
     MonitorConfiguration() = default;
 
     const AlgorithmType algorithm{
-        AlgorithmType::hydra_mtl}; /**< Algorithm to use, e.g., Hydra2, LTL event consuming, .... */
+        AlgorithmType::hydra_2_mtl}; /**< Algorithm to use, e.g., Hydra, LTL event consuming, .... */
     const bool performanceMeasurement{
         false}; /**< Indicates whether evaluation with time measurement should be performed */
     const bool hydraConnectedEvaluation{
@@ -69,13 +69,13 @@ class RVMonitor {
     RVMonitor(const Formula &formula, MonitorConfiguration configuration = {},
               const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
 
-    /*
+    /**
      * Copy constructor.
      * @param obj New RVMonitor object.
      */
     RVMonitor(const RVMonitor &obj);
 
-    /*
+    /**
      * Copy assignment
      *
      * @param other New RVMonitor object.

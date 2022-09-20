@@ -12,4 +12,6 @@ std::shared_ptr<Hydra2Monitor> Constant::accept(HydraCreationVisitor2 &visitor, 
     return visitor.visitConstant(*this, parentId, connectedEval);
 }
 
+std::shared_ptr<HydraMonitor> Constant::accept(HydraCreationVisitor &visitor) { return visitor.visitConstant(*this); }
+
 bool Constant::getValue() const { return value; }

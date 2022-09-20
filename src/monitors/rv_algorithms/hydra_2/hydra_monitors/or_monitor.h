@@ -25,7 +25,7 @@ class OrMonitor : public Hydra2Monitor {
     OrMonitor(Formula formula, const std::vector<std::shared_ptr<Hydra2Monitor>> &subMonitors, size_t monitorId,
               bool connectedEval, bool shortCircuiting)
         : Hydra2Monitor(std::move(formula), monitorId, connectedEval, computeEvaluationCost(subMonitors),
-                       computeSatisfactionProbability(subMonitors)),
+                        computeSatisfactionProbability(subMonitors)),
           subMonitors(subMonitors), shortCircuiting(shortCircuiting){};
 
     /**

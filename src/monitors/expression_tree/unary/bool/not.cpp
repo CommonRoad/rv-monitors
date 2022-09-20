@@ -8,3 +8,5 @@ std::shared_ptr<Expression> Not::accept(ExpressionVisitor &visitor, Trace &trace
 std::shared_ptr<Hydra2Monitor> Not::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval) {
     return visitor.visitNot(*this, parentId, connectedEval);
 }
+
+std::shared_ptr<HydraMonitor> Not::accept(HydraCreationVisitor &visitor) { return visitor.visitNot(*this); }

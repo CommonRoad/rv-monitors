@@ -9,12 +9,12 @@
 #include "hydra_monitor.h"
 
 /**
- * Hydra2 monitor representing negation monitor.
+ * Monitor representing negation Hydra2 operator.
  */
 class NegationMonitor : public Hydra2Monitor {
   public:
     /**
-     * Constructor of negation monitor.
+     * Constructor.
      *
      * @param formula Formula to be monitored.
      * @param subMonitor Child monitor.
@@ -23,11 +23,11 @@ class NegationMonitor : public Hydra2Monitor {
      */
     NegationMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId, bool connectedEval)
         : Hydra2Monitor(std::move(formula), monitorId, connectedEval, subMonitor->getEvalCost(),
-                       1 - subMonitor->getSatisfactionProbability()),
+                        1 - subMonitor->getSatisfactionProbability()),
           subMonitor(std::move(subMonitor)){};
 
     /**
-     * Performs concrete step of negation monitor.
+     * Performs concrete step of negation operator monitor.
      *
      * @param parentId ID of parent monitor.
      * @param stepNumber Current step/position in trace.

@@ -27,6 +27,8 @@ std::shared_ptr<Hydra2Monitor> Predicate::accept(HydraCreationVisitor2 &visitor,
     return visitor.visitPredicate(*this, parentId, connectedEval);
 }
 
+std::shared_ptr<HydraMonitor> Predicate::accept(HydraCreationVisitor &visitor) { return visitor.visitPredicate(*this); }
+
 const std::string &Predicate::getName() const { return name; }
 
 const std::vector<std::pair<std::string, Predicate::Argument>> &Predicate::getArguments() const { return arguments; }

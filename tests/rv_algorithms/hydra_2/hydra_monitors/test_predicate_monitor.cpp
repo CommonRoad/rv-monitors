@@ -5,6 +5,7 @@
 // Credits: BMW Car@TUM
 //
 
+#include "test_predicate_monitor.h"
 #include "monitors/parser/parser.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/predicate_monitor.h"
 #include "monitors/utils/utils.h"

@@ -38,263 +38,261 @@
 #include <utility>
 
 std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::createMonitor(Formula &formula, size_t parentId,
-                                                                  bool connectedEval) {
+                                                                    bool connectedEval) {
     auto newMonitor{formula.getExpr()->accept(*this, parentId, connectedEval)};
     newMonitor->setFormulaId(formula.getId());
     return newMonitor;
 }
 
-std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitAtomic(Atomic &tlop, size_t parentId, bool connectedEval) {
-    if (connectedEval and baseline.find(tlop.to_string()) != baseline.end()) {
-        baseline.at(tlop.to_string())->registerParent(parentId);
-        return baseline.at(tlop.to_string());
+std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitAtomic(Atomic &top, size_t parentId, bool connectedEval) {
+    if (connectedEval and baseline.find(top.to_string()) != baseline.end()) {
+        baseline.at(top.to_string())->registerParent(parentId);
+        return baseline.at(top.to_string());
     } else {
         size_t idx{maxId++};
-        auto newMonitor{std::make_shared<AtomicMonitor>(Formula(std::make_shared<Atomic>(tlop)), idx, connectedEval)};
-        baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(tlop.to_string(), newMonitor));
+        auto newMonitor{std::make_shared<AtomicMonitor>(Formula(std::make_shared<Atomic>(top)), idx, connectedEval)};
+        baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
     }
 }
 
-std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitConstant(Constant &tlop, size_t parentId, bool connectedEval) {
-    if (connectedEval and baseline.find(tlop.to_string()) != baseline.end()) {
-        baseline.at(tlop.to_string())->registerParent(parentId);
-        return baseline.at(tlop.to_string());
+std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitConstant(Constant &top, size_t parentId,
+                                                                    bool connectedEval) {
+    if (connectedEval and baseline.find(top.to_string()) != baseline.end()) {
+        baseline.at(top.to_string())->registerParent(parentId);
+        return baseline.at(top.to_string());
     } else {
         size_t idx{maxId++};
         auto newMonitor{
-            std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(tlop)), idx, connectedEval)};
-        baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(tlop.to_string(), newMonitor));
+            std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(top)), idx, connectedEval)};
+        baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
     }
 }
 
-std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitPredicate(Predicate &tlop, size_t parentId,
-                                                                   bool connectedEval) {
-    if (connectedEval and baseline.find(tlop.to_string()) != baseline.end()) {
-        baseline.at(tlop.to_string())->registerParent(parentId);
-        return baseline.at(tlop.to_string());
+std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitPredicate(Predicate &top, size_t parentId,
+                                                                     bool connectedEval) {
+    if (connectedEval and baseline.find(top.to_string()) != baseline.end()) {
+        baseline.at(top.to_string())->registerParent(parentId);
+        return baseline.at(top.to_string());
     } else {
         size_t idx{maxId++};
-        double cost;
-        double prob;
+        double cost{0.0};
+        double prob{1.0};
         for (const auto &pred : predicateCosts)
-            if (std::get<0>(pred) == tlop.getName()) {
+            if (std::get<0>(pred) == top.getName()) {
                 cost = pred.second[0];
                 prob = pred.second[1];
                 break;
             }
-        auto newMonitor{std::make_shared<PredicateMonitor>(Formula(std::make_shared<Predicate>(tlop)), idx,
+        auto newMonitor{std::make_shared<PredicateMonitor>(Formula(std::make_shared<Predicate>(top)), idx,
                                                            functions, connectedEval, cost, prob)};
-        baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(tlop.to_string(), newMonitor));
+        baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
     }
 }
 
-std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitPreviously(Previously &tlop, size_t parentId,
-                                                                    bool connectedEval) {
-    if (connectedEval and baseline.find(tlop.to_string()) != baseline.end()) {
-        baseline.at(tlop.to_string())->registerParent(parentId);
-        return baseline.at(tlop.to_string());
+std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitPreviously(Previously &top, size_t parentId,
+                                                                      bool connectedEval) {
+    if (connectedEval and baseline.find(top.to_string()) != baseline.end()) {
+        baseline.at(top.to_string())->registerParent(parentId);
+        return baseline.at(top.to_string());
     } else {
         size_t idx{maxId++};
         auto newMonitor{std::make_shared<PreviousMonitor>(
-            Formula(std::make_shared<Previously>(tlop)), tlop.getLeft()->accept(*this, idx, connectedEval),
-            tlop.getInterval()->getStart(), tlop.getInterval()->getEnd(), idx, connectedEval)};
-        baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(tlop.to_string(), newMonitor));
+            Formula(std::make_shared<Previously>(top)), top.getLeft()->accept(*this, idx, connectedEval),
+            top.getInterval()->getStart(), top.getInterval()->getEnd(), idx, connectedEval)};
+        baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
     }
 }
 
-std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitNext(NextStrong &tlop, size_t parentId, bool connectedEval) {
-    if (connectedEval and baseline.find(tlop.to_string()) != baseline.end()) {
-        baseline.at(tlop.to_string())->registerParent(parentId);
-        return baseline.at(tlop.to_string());
+std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitNext(NextStrong &top, size_t parentId, bool connectedEval) {
+    if (connectedEval and baseline.find(top.to_string()) != baseline.end()) {
+        baseline.at(top.to_string())->registerParent(parentId);
+        return baseline.at(top.to_string());
     } else {
         size_t idx{maxId++};
         auto newMonitor{std::make_shared<NextMonitor>(
-            Formula(std::make_shared<NextStrong>(tlop)), tlop.getLeft()->accept(*this, idx, connectedEval),
-            tlop.getInterval()->getStart(), tlop.getInterval()->getEnd(), idx, connectedEval)};
-        baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(tlop.to_string(), newMonitor));
+            Formula(std::make_shared<NextStrong>(top)), top.getLeft()->accept(*this, idx, connectedEval),
+            top.getInterval()->getStart(), top.getInterval()->getEnd(), idx, connectedEval)};
+        baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
     }
 }
 
-std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitSince(Since &tlop, size_t parentId, bool connectedEval) {
-    if (connectedEval and baseline.find(tlop.to_string()) != baseline.end()) {
-        baseline.at(tlop.to_string())->registerParent(parentId);
-        return baseline.at(tlop.to_string());
+std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitSince(Since &top, size_t parentId, bool connectedEval) {
+    if (connectedEval and baseline.find(top.to_string()) != baseline.end()) {
+        baseline.at(top.to_string())->registerParent(parentId);
+        return baseline.at(top.to_string());
     } else {
         size_t idx{maxId++};
         auto newMonitor{std::make_shared<SinceMonitor>(
-            Formula(std::make_shared<Since>(tlop)), tlop.getLeft()->accept(*this, idx, connectedEval),
-            tlop.getRight()->accept(*this, idx, connectedEval), tlop.getInterval()->getStart(),
-            tlop.getInterval()->getEnd(), idx, connectedEval)};
-        baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(tlop.to_string(), newMonitor));
+            Formula(std::make_shared<Since>(top)), top.getLeft()->accept(*this, idx, connectedEval),
+            top.getRight()->accept(*this, idx, connectedEval), top.getInterval()->getStart(),
+            top.getInterval()->getEnd(), idx, connectedEval)};
+        baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
     }
 }
 
-std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitUntil(Until &tlop, size_t parentId, bool connectedEval) {
-    if (connectedEval and baseline.find(tlop.to_string()) != baseline.end()) {
-        baseline.at(tlop.to_string())->registerParent(parentId);
-        return baseline.at(tlop.to_string());
+std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitUntil(Until &top, size_t parentId, bool connectedEval) {
+    if (connectedEval and baseline.find(top.to_string()) != baseline.end()) {
+        baseline.at(top.to_string())->registerParent(parentId);
+        return baseline.at(top.to_string());
     } else {
         size_t idx{maxId++};
         auto newMonitor{std::make_shared<UntilMonitor>(
-            Formula(std::make_shared<Until>(tlop)), tlop.getLeft()->accept(*this, idx, connectedEval),
-            tlop.getRight()->accept(*this, idx, connectedEval), tlop.getInterval()->getStart(),
-            tlop.getInterval()->getEnd(), idx, connectedEval)};
-        baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(tlop.to_string(), newMonitor));
+            Formula(std::make_shared<Until>(top)), top.getLeft()->accept(*this, idx, connectedEval),
+            top.getRight()->accept(*this, idx, connectedEval), top.getInterval()->getStart(),
+            top.getInterval()->getEnd(), idx, connectedEval)};
+        baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
     }
 }
 
-std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitOr(Or &tlop, size_t parentId, bool connectedEval) {
+std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitOr(Or &top, size_t parentId, bool connectedEval) {
     std::vector<std::shared_ptr<Hydra2Monitor>> monitors;
-    if (connectedEval and baseline.find(tlop.to_string()) != baseline.end()) {
-        baseline.at(tlop.to_string())->registerParent(parentId);
-        return baseline.at(tlop.to_string());
+    if (connectedEval and baseline.find(top.to_string()) != baseline.end()) {
+        baseline.at(top.to_string())->registerParent(parentId);
+        return baseline.at(top.to_string());
     } else {
         size_t idx{maxId++};
-        for (const auto &expr : tlop.getExpressions())
+        for (const auto &expr : top.getExpressions())
             monitors.push_back(expr->accept(*this, idx, connectedEval));
         if (reordering)
-            resort(monitors, false);
-        auto newMonitor{std::make_shared<OrMonitor>(Formula(std::make_shared<Or>(tlop)), monitors, idx, connectedEval,
+            reorder(monitors, false);
+        auto newMonitor{std::make_shared<OrMonitor>(Formula(std::make_shared<Or>(top)), monitors, idx, connectedEval,
                                                     shortCircuiting)};
-        baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(tlop.to_string(), newMonitor));
+        baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
     }
 }
 
-std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitAnd(And &tlop, size_t parentId, bool connectedEval) {
+std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitAnd(And &top, size_t parentId, bool connectedEval) {
     std::vector<std::shared_ptr<Hydra2Monitor>> monitors;
-    if (connectedEval and baseline.find(tlop.to_string()) != baseline.end()) {
-        baseline.at(tlop.to_string())->registerParent(parentId);
-        return baseline.at(tlop.to_string());
+    if (connectedEval and baseline.find(top.to_string()) != baseline.end()) {
+        baseline.at(top.to_string())->registerParent(parentId);
+        return baseline.at(top.to_string());
     } else {
         size_t idx{maxId++};
-        for (const auto &expr : tlop.getExpressions())
+        for (const auto &expr : top.getExpressions())
             monitors.push_back(expr->accept(*this, idx, connectedEval));
         if (reordering)
-            resort(monitors, true);
-        auto newMonitor{std::make_shared<AndMonitor>(Formula(std::make_shared<And>(tlop)), monitors, idx, connectedEval,
+            reorder(monitors, true);
+        auto newMonitor{std::make_shared<AndMonitor>(Formula(std::make_shared<And>(top)), monitors, idx, connectedEval,
                                                      shortCircuiting)};
-        baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(tlop.to_string(), newMonitor));
+        baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
     }
 }
 
-std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitNot(Not &tlop, size_t parentId, bool connectedEval) {
-    if (connectedEval and baseline.find(tlop.to_string()) != baseline.end()) {
-        baseline.at(tlop.to_string())->registerParent(parentId);
-        return baseline.at(tlop.to_string());
+std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitNot(Not &top, size_t parentId, bool connectedEval) {
+    if (connectedEval and baseline.find(top.to_string()) != baseline.end()) {
+        baseline.at(top.to_string())->registerParent(parentId);
+        return baseline.at(top.to_string());
     } else {
         size_t idx{maxId++};
-        auto newMonitor{std::make_shared<NegationMonitor>(Formula(std::make_shared<Not>(tlop)),
-                                                          tlop.getLeft()->accept(*this, idx, connectedEval), idx,
-                                                          connectedEval)};
-        baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(tlop.to_string(), newMonitor));
+        auto newMonitor{std::make_shared<NegationMonitor>(
+            Formula(std::make_shared<Not>(top)), top.getLeft()->accept(*this, idx, connectedEval), idx, connectedEval)};
+        baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
     }
 }
 
-std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitUniversalQuantifier(UniversalQuantifier &tlop, size_t parentId, bool connectedEval) {
+std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitUniversalQuantifier(UniversalQuantifier &top, size_t parentId, bool connectedEval) {
     size_t idx{maxId++};
 
     std::map<std::string, std::string> variables;
-    for (const auto &var : tlop.getVariables())
+    for (const auto &var : top.getVariables())
         variables[var.getName()] = var.getDomain();
 
-    auto newMonitor{std::make_shared<UniversalMonitor>(Formula(std::make_shared<UniversalQuantifier>(tlop)),
-                                                      tlop.getLeft()->accept(*this, idx, connectedEval), idx,
+    auto newMonitor{std::make_shared<UniversalMonitor>(Formula(std::make_shared<UniversalQuantifier>(top)),
+                                                       top.getLeft()->accept(*this, idx, connectedEval), idx,
                                                       variables, domains, connectedEval, shortCircuiting)};
 
-    baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(tlop.to_string(), newMonitor));
+    baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
     newMonitor->registerParent(parentId);
     return newMonitor;
 }
 
-std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitExistentialQuantifier(ExistentialQuantifier &tlop, size_t parentId, bool connectedEval) {
+std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitExistentialQuantifier(ExistentialQuantifier &top, size_t parentId, bool connectedEval) {
     size_t idx{maxId++};
 
     std::map<std::string, std::string> variables;
-    for (const auto &var : tlop.getVariables())
+    for (const auto &var : top.getVariables())
         variables[var.getName()] = var.getDomain();
 
-    auto newMonitor{std::make_shared<ExistentialMonitor>(Formula(std::make_shared<ExistentialQuantifier>(tlop)),
-                                                       tlop.getLeft()->accept(*this, idx, connectedEval), idx,
+    auto newMonitor{std::make_shared<ExistentialMonitor>(Formula(std::make_shared<ExistentialQuantifier>(top)),
+                                                         top.getLeft()->accept(*this, idx, connectedEval), idx,
                                                        variables, domains, connectedEval, shortCircuiting)};
 
-    baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(tlop.to_string(), newMonitor));
+    baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
     newMonitor->registerParent(parentId);
     return newMonitor;
 }
 
-std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitQuoteQuantifier(QuoteQuantifier &tlop, size_t parentId, bool connectedEval) {
+std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitQuoteQuantifier(QuoteQuantifier &top, size_t parentId, bool connectedEval) {
     size_t idx{maxId++};
 
     std::map<std::string, std::string> variables;
-    for (const auto &var : tlop.getVariables())
+    for (const auto &var : top.getVariables())
         variables[var.getName()] = var.getDomain();
 
-    auto newMonitor{std::make_shared<QuoteMonitor>(Formula(std::make_shared<QuoteQuantifier>(tlop)),
-                                                      tlop.getLeft()->accept(*this, idx, connectedEval), idx,
-                                                      variables, domains, tlop.getQuoteInterval().getMin(), tlop.getQuoteInterval().getMax(), connectedEval, shortCircuiting)};
+    auto newMonitor{std::make_shared<QuoteMonitor>(Formula(std::make_shared<QuoteQuantifier>(top)),
+                                                   top.getLeft()->accept(*this, idx, connectedEval), idx,
+                                                      variables, domains, top.getQuoteInterval().getMin(),
+                                                   top.getQuoteInterval().getMax(), connectedEval, shortCircuiting)};
 
-    baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(tlop.to_string(), newMonitor));
+    baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
     newMonitor->registerParent(parentId);
     return newMonitor;
 }
 
-std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitCountingQuantifier(CountingQuantifier &tlop, size_t parentId,
+std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitCountingQuantifier(CountingQuantifier &top, size_t parentId,
                                                                             bool connectedEval) {
     size_t idx{maxId++};
 
     std::map<std::string, std::string> variables;
-    for (const auto &var : tlop.getVariables())
+    for (const auto &var : top.getVariables())
         variables[var.getName()] = var.getDomain();
 
-    auto newMonitor{std::make_shared<CountingMonitor>(Formula(std::make_shared<CountingQuantifier>(tlop)),
-                                                   tlop.getLeft()->accept(*this, idx, connectedEval), idx,
-                                                   variables, domains, tlop.getOperator(), tlop.getNum(), connectedEval, shortCircuiting)};
+    auto newMonitor{std::make_shared<CountingMonitor>(Formula(std::make_shared<CountingQuantifier>(top)), top.getLeft()->accept(*this, idx, connectedEval), idx,
+                                                   variables, domains, top.getOperator(), top.getNum(), connectedEval, shortCircuiting)};
 
-    baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(tlop.to_string(), newMonitor));
+    baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
     newMonitor->registerParent(parentId);
     return newMonitor;
 }
 
-std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitEqualityOperator(EqualityOperator &tlop, size_t parentId, bool connectedEval) {
+std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitEqualityOperator(EqualityOperator &top, size_t parentId, bool connectedEval) {
     size_t idx{maxId++};
 
-    auto newMonitor{std::make_shared<EqualityOperatorMonitor>(Formula(std::make_shared<EqualityOperator>(tlop)), idx, connectedEval)};
-    baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(tlop.to_string(), newMonitor));
+    auto newMonitor{std::make_shared<EqualityOperatorMonitor>(Formula(std::make_shared<EqualityOperator>(top)), idx, connectedEval)};
+    baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
     newMonitor->registerParent(parentId);
     return newMonitor;
 }
 
-HydraCreationVisitor2::HydraCreationVisitor2(std::map<std::string, std::array<double, 2>> predicateCosts,
-                                           DomainCollection &domains,
-                                           FunctionCollection &functions,
-                                           bool reordering, bool shortCircuiting)
-    : reordering(reordering), shortCircuiting(shortCircuiting), predicateCosts(std::move(predicateCosts)),
-      domains(domains), functions(functions) {
+HydraCreationVisitor2::HydraCreationVisitor2(std::map<std::string, std::array<double, 2>> predicateCosts, DomainCollection &domains, FunctionCollection &functions,
+                                             bool reordering, bool shortCircuiting)
+    : reordering(reordering), shortCircuiting(shortCircuiting), predicateCosts(std::move(predicateCosts)), domains(domains), functions(functions) {
     for (const auto &pred : this->predicateCosts)
-        assert(pred.second[0] >= 0 and pred.second[0] <= 100 and pred.second[1] >= 0 and pred.second[1] <= 1);
+        assert((pred.second[0] >= 0 and pred.second[0] <= 100 and pred.second[1] >= 0 and pred.second[1] <= 1) &&
+               "Invalid predicate costs/probabilities Hydra2 Creation Visitor.");
 }
 
-void HydraCreationVisitor2::resort(std::vector<std::shared_ptr<Hydra2Monitor>> &monitors, bool increasing) {
+void HydraCreationVisitor2::reorder(std::vector<std::shared_ptr<Hydra2Monitor>> &monitors, bool increasing) {
     std::vector<double> cost;
     std::vector<size_t> tmp(monitors.size());
     cost.reserve(monitors.size());

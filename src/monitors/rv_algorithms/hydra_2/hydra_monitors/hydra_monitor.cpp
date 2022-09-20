@@ -10,7 +10,7 @@
 #include <utility>
 
 Hydra2Monitor::Hydra2Monitor(Formula formula, size_t monitorId, bool connectedEval, double evalCost,
-                           double satisfactionProbability)
+                             double satisfactionProbability)
     : formula(std::move(formula)), monitorId((monitorId)), connectedEval(connectedEval), evalCost(evalCost),
       satisfactionProbability(satisfactionProbability) {
     assert(evalCost >= 0 or evalCost <= 100 or satisfactionProbability >= 0 or satisfactionProbability <= 1);
@@ -36,10 +36,8 @@ size_t Hydra2Monitor::getMaxTraceIdx() {
             ->second;
 }
 
-size_t Hydra2Monitor::getTraceIdxByParentId(size_t parentId) const { return traceIdx.at(parentId); }
-
 Verdict Hydra2Monitor::step(size_t parentId, size_t stepNumber, bool singleStep) {
-    auto verdict{Verdict(0, false)};
+    Verdict verdict{Verdict(false)};
     if (!connectedEval)
         if (stepNumber >= traceIdx[parentId]) { // required step equals stored step, perform next step directly
             verdict = simulateVerdict(parentId, stepNumber);

@@ -10,14 +10,14 @@
 /**
  * Representation of Hydra2 monitor head position consisting of time step and trace position.
  */
-struct HeadPos {
+struct HeadPosHydra2 {
     size_t timeStep;   //**< Time step of monitor head position. */
     int traceIdx = -1; //**< Trace index of monitor head position. Initial invalid index. */
 
     /**
      * Default constructor.
      */
-    HeadPos() = default;
+    HeadPosHydra2() = default;
 
     /**
      * Constructor of head position.
@@ -25,7 +25,7 @@ struct HeadPos {
      * @param timeStep Time step of monitor head position.
      * @param traceIdx Trace index of monitor head position.
      */
-    HeadPos(size_t timeStep, int traceIdx) : timeStep(timeStep), traceIdx(traceIdx){};
+    HeadPosHydra2(size_t timeStep, int traceIdx) : timeStep(timeStep), traceIdx(traceIdx){};
 
     /**
      * Sets new time step and increments index by one.
@@ -78,7 +78,7 @@ class Hydra2Monitor {
      * @param satisfactionProbability Satisfaction probability of monitor.
      */
     Hydra2Monitor(Formula formula, size_t monitorId, bool connectedEval = true, double evalCost = 0,
-                 double satisfactionProbability = 1.0);
+                  double satisfactionProbability = 1.0);
 
     /**
      * General step function of hydra monitor.
@@ -167,14 +167,6 @@ class Hydra2Monitor {
      * @return String representing monitor.
      */
     virtual std::string to_string() = 0;
-
-    /**
-     * Extracts trace index based on parent ID (relevant for connected evaluation where several trace indices exist)
-     *
-     * @param parentId Id of parent monitor.
-     * @return Trace index.
-     */
-    size_t getTraceIdxByParentId(size_t parentId) const;
 
   protected:
     Formula formula;                     //**< Monitored formula. */

@@ -1,10 +1,12 @@
 # RV-Monitors
-A `C++17` Implementation of five runtime verification monitor synthesis algorithms [[1]](#1) for LTLf and PLTLf formulas on finite traces:
+A `C++17` Implementation of seven temporal logic runtime verification algorithms [[1]](#1), [[2]](#2) for LTLf, PLTLf, and MTL formulas on finite traces:
 - Dynamic Programming
 - Event Consuming
 - MTL Event Consuming
 - Multi-transition Finite State Machine (MT-FSM*)
 - Binary Transition Finite State Machine (BTT-FSM*)
+- Multi-Head Monitoring (Hydra)
+- Extended Multi-Head Monitoring
 
 ## Build and Compile
 
@@ -32,23 +34,11 @@ For building the documentation, you'll need to install `doxygen` and `graphviz`.
 
 For test coverage, you'll need to install `gcovr`.
 
-#### Bundled Dependencies:
-- [ANTLR4](https://www.antlr.org/) is used for parsing formulas. For this, the following files from [here](https://www.antlr.org/download/index.html) are used:
-    - `antlr4-cpp-runtime-4.8-source.zip`
-    - `antlr-4.7-complete.jar`
-
-- [gtest](https://github.com/google/googletest) version 1.10.0 is used for tests.
-
 ## Build
 1. Make a build folder and change into it:
 ```bash
 mkdir build-debug && cd build-debug
 ```
-**NB:** You can in theory use `build` as a name
-for the build folder, however keep in mind that Python's setuptools will always use the `build` folder for
-their build process.
-This normally shouldn't cause any issues since the file names
-used by setuptools don't clash with any names CMake uses currently, but you should still consider using separate folders just in case.
 
 Generate the build files with `cmake`.
 Consider specifying an installation prefix where you want to install the RV-Monitors using `-DCMAKE_INSTALL_PREFIX`.

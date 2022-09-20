@@ -11,4 +11,4 @@
 #include "monitors/utils/utils.h"
 #include <gtest/gtest.h>
 
-class TestHydra : public testing::Test {};
+class TestHydra2 : public testing::Test {};

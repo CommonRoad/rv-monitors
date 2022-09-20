@@ -7,13 +7,6 @@
 
 std::map<std::string, std::vector<Verdict>> Hydra2::evaluate(Trace &trace) {
     std::map<std::string, std::vector<Verdict>> result;
-    // Empty trace
-    if (trace.getTrace().empty()) {
-        spdlog::info("Hydra2::evaluate | Trace is empty");
-        for (const auto &mon : monitors)
-            result[mon->getFormulaId()] = {};
-        return result;
-    }
 
     resetMonitors();
     setTraceMonitors(trace);
@@ -46,10 +39,8 @@ void Hydra2::setTraceMonitors(const Trace &tra) {
 
 void Hydra2::createMonitor(const std::vector<Formula> &formulas, DomainCollection &domainCollection, FunctionCollection &functionCollection,
                           bool connectedEval, bool reordering, bool shortCircuiting, const std::map<std::string, std::array<double, 2>> &predicateCosts) {
-    for (const auto &pred : predicateCosts)
-        assert(pred.second[0] < 0 or pred.second[0] > 1 or pred.second[1] < 0 or pred.second[1] > 1);
-    HydraCreationVisitor2 hcv{
-        HydraCreationVisitor2(predicateCosts, domainCollection, functionCollection, reordering, shortCircuiting)};
+    HydraCreationVisitor2 hcv{HydraCreationVisitor2(predicateCosts, domainCollection, functionCollection, reordering, shortCircuiting)};
+
     for (const auto &form : formulas) {
         if (form.getId().empty())
             throw std::logic_error("Formula has no valid unique ID.");
@@ -66,8 +57,6 @@ void Hydra2::createMonitor(const std::vector<Formula> &formulas, DomainCollectio
 
 Hydra2::Hydra2(const std::vector<Formula> &formulas, DomainCollection domainCollection, FunctionCollection functionCollection,
              bool connectedEval, bool reordering, bool shortCircuiting, const std::map<std::string, std::array<double, 2>> &predicateCosts)
-    : MonitorInterface(formulas, AlgorithmType::hydra_mtl) {
-    for (const auto &pred : predicateCosts)
-        assert(pred.second[0] < 0 or pred.second[0] > 1 or pred.second[1] < 0 or pred.second[1] > 1);
+    : MonitorInterface(formulas, AlgorithmType::hydra_2_mtl) {
     createMonitor(formulas, domainCollection, functionCollection, connectedEval, reordering, shortCircuiting, predicateCosts);
 }

@@ -98,11 +98,11 @@ class UntilMonitor : public Hydra2Monitor {
                                                    // of until monitor head. Represented by Constant-True-Monitor. */
     size_t from;                                   //**< Start of time interval. */
     size_t to;                                     //**< End of time interval. */
-    HeadPos headPositionMonitorLeft;               //**< Head position of left monitor. */
-    HeadPos headPositionMonitorRight;              //**< Head position of right monitor. *
-    HeadPos headPositionMonitorBaseTimeStep;       //**< Head position of base time monitor. *
-    std::optional<HeadPos> lastSatisfaction;       //**< Last time right side of until was satisfied. */
-    std::optional<HeadPos> lastViolation;          //**< Last time left side of until was violated. */
+    HeadPosHydra2 headPositionMonitorLeft;         //**< Head position of left monitor. */
+    HeadPosHydra2 headPositionMonitorRight;        //**< Head position of right monitor. *
+    HeadPosHydra2 headPositionMonitorBaseTimeStep; //**< Head position of base time monitor. *
+    std::optional<HeadPosHydra2> lastSatisfaction; //**< Last time right side of until was satisfied. */
+    std::optional<HeadPosHydra2> lastViolation;    //**< Last time left side of until was violated. */
     bool endReached{false};                        //**< Boolean indicating whether end of trace was reached. */
     size_t stepNumberUntil{0}; //**< Stores real step number because until operator can be before parent step number. */
 };

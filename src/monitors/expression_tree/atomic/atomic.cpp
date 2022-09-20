@@ -11,3 +11,5 @@ std::shared_ptr<Expression> Atomic::accept(ExpressionVisitor &visitor, Trace &tr
 std::shared_ptr<Hydra2Monitor> Atomic::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval) {
     return visitor.visitAtomic(*this, parentId, connectedEval);
 }
+
+std::shared_ptr<HydraMonitor> Atomic::accept(HydraCreationVisitor &visitor) { return visitor.visitAtomic(*this); }

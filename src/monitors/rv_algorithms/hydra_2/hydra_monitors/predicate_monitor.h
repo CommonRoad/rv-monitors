@@ -13,10 +13,19 @@
  */
 class PredicateMonitor : public Hydra2Monitor {
   public:
-    PredicateMonitor(Formula formula, size_t id, FunctionCollection &functions,
-                     bool connectedEval, size_t evalCost = 0, double satisfactionProbability = 100.0)
-        : Hydra2Monitor(std::move(formula), id, connectedEval, evalCost, satisfactionProbability),
-          functions(functions) {};
+    /**
+     * Constructor.
+     *
+     * @param formula Formula to be monitored.
+     * @param monitorId ID of monitor.
+     * @param functions Collection of functions.
+     * @param connectedEval Boolean indicating whether connected evaluation should be used.
+     * @param evalCost Evaluation cost assigned to monitor.
+     * @param satisfactionProbability Satisfaction probability of monitor.
+     */
+    PredicateMonitor(Formula formula, size_t monitorId, FunctionCollection &functions, bool connectedEval, double evalCost = 0.0,
+                     double satisfactionProbability = 1.0)
+        : Hydra2Monitor(std::move(formula), monitorId, connectedEval, evalCost, satisfactionProbability), functions(functions) {};
 
     /**
      * Performs concrete step of predicate monitor. It evaluates the trace element of the concrete step. Returns false

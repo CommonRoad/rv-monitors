@@ -1,7 +1,6 @@
 #include <cassert>
 #include <fstream>
 #include <iostream>
-#include <sstream>
 #include <vector>
 
 #include <monitors/formula/formula.h>
@@ -9,19 +8,19 @@
 #include <monitors/rv_algorithms/hydra_2/hydra.h>
 
 static void print_solution(const std::vector<Verdict> &solution) {
-    int i = -1;
+    int idx = -1;
     int last_ts = -1;
     std::cout << std::boolalpha;
     for (const auto &verdict : solution) {
         assert(verdict.timeStamp.has_value());
-        auto ts = verdict.timeStamp.value();
-        if (ts == last_ts) {
-            i++;
+        auto timeStamp = verdict.timeStamp.value();
+        if (timeStamp == last_ts) {
+            idx++;
         } else {
-            i = 0;
+            idx = 0;
         }
-        std::cout << ts << ":" << i << " " << verdict.value << std::endl;
-        last_ts = ts;
+        std::cout << timeStamp << ":" << idx << " " << verdict.value << std::endl;
+        last_ts = timeStamp;
     }
 }
 

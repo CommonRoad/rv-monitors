@@ -11,7 +11,7 @@ Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     if (subVerdictLeft->timeStamp.has_value())
         headPositionMonitorLeft.update(subVerdictLeft->timeStamp.value());
     if (!subVerdictLeft->value)
-        lastViolation = HeadPos(headPositionMonitorLeft.timeStep, headPositionMonitorLeft.traceIdx);
+        lastViolation = HeadPosHydra2(headPositionMonitorLeft.timeStep, headPositionMonitorLeft.traceIdx);
 
     if (stepNumber == 0) {
         subVerdictRight = subMonitorRight->step(monitorId, stepNumberRight);
@@ -25,7 +25,7 @@ Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     while (!endReached && headPositionMonitorRight.traceIdx <= headPositionMonitorLeft.traceIdx &&
            headPositionMonitorLeft.timeStep - headPositionMonitorRight.timeStep >= from) {
         if (subVerdictRight->value)
-            lastSatisfaction = HeadPos(headPositionMonitorRight.timeStep, headPositionMonitorRight.traceIdx);
+            lastSatisfaction = HeadPosHydra2(headPositionMonitorRight.timeStep, headPositionMonitorRight.traceIdx);
         subVerdictRight = subMonitorRight->step(monitorId, stepNumberRight);
         stepNumberRight++;
         if (subVerdictRight->timeStamp.has_value())
@@ -65,6 +65,7 @@ void SinceMonitor::reset(std::optional<size_t> stepNumber) {
     headPositionMonitorRight.reset();
     headPositionMonitorLeft.reset();
     stepNumberRight = 0;
+    endReached = false;
 }
 
 std::shared_ptr<Hydra2Monitor> SinceMonitor::clone() {

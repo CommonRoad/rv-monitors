@@ -7,7 +7,7 @@
 #include "atomic_monitor.h"
 
 Verdict AtomicMonitor::concreteStep(size_t parentId, size_t stepNumber) {
-    if (traceIdx[parentId] < trace.getLength()) {
+    if (stepNumber < trace.getLength()) {
         const Atomic &atomic = *std::dynamic_pointer_cast<Atomic>(formula.getExpr());
         auto event{trace.getEvent(traceIdx[parentId])};
 

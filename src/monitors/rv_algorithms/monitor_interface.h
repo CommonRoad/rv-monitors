@@ -8,7 +8,15 @@
 
 #include "../utils/utils.h"
 
-enum AlgorithmType { dynamic_programming_ltl, event_consuming_ltl, mt_fsm, btt_fsm, hydra_mtl, event_consuming_mtl };
+enum AlgorithmType {
+    dynamic_programming_ltl,
+    event_consuming_ltl,
+    mt_fsm,
+    btt_fsm,
+    hydra_mtl,
+    hydra_2_mtl,
+    event_consuming_mtl
+};
 
 /**
  * Interface for runtime verification algorithms/monitors.

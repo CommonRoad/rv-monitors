@@ -33,11 +33,11 @@ TEST_F(TestRVMonitors, EventConsumingLTL) {
 TEST_F(TestRVMonitors, HydraMTL) {
     testing::internal::CaptureStdout();
     std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, false}};
-    auto solution{executeRVMonitor(AlgorithmType::hydra_mtl)};
+    auto solution{executeRVMonitor(AlgorithmType::hydra_2_mtl)};
     for (size_t i{0}; i < expSolution.size(); ++i)
         EXPECT_TRUE(expSolution[i] == solution[i]) << "Mismatch at time step: " << i;
     auto consoleOutputAlgorithmType{testing::internal::GetCapturedStdout()};
-    EXPECT_EQ(consoleOutputAlgorithmType, "Hydra2-MTL");
+    EXPECT_EQ(consoleOutputAlgorithmType, "Hydra_2-MTL");
 }
 
 TEST_F(TestRVMonitors, BTT_FSM_LTL) {
@@ -64,6 +64,7 @@ TEST_F(TestRVMonitors, DynamicProgrammingLTL) {
 TEST_F(TestRVMonitors, StringToAlgorithm) {
     EXPECT_EQ(stringToAlgorithm("dynamic-programming-ltl"), AlgorithmType::dynamic_programming_ltl);
     EXPECT_EQ(stringToAlgorithm("event-consuming-ltl"), AlgorithmType::event_consuming_ltl);
+    EXPECT_EQ(stringToAlgorithm("hydra_2-mtl"), AlgorithmType::hydra_2_mtl);
     EXPECT_EQ(stringToAlgorithm("hydra-mtl"), AlgorithmType::hydra_mtl);
     EXPECT_EQ(stringToAlgorithm("btt-fsm*"), AlgorithmType::btt_fsm);
     EXPECT_EQ(stringToAlgorithm("mt-fsm*"), AlgorithmType::mt_fsm);
@@ -74,8 +75,7 @@ TEST_F(TestRVMonitors, StringToAlgorithm) {
 TEST_F(TestRVMonitors, PerformanceMeasurement) {
     Trace tra{*trace};
     Formula form{*formula};
-    auto monitor{RVMonitor({form, MonitorConfiguration(AlgorithmType::hydra_mtl, true)})};
-
+    auto monitor{RVMonitor({form, MonitorConfiguration(AlgorithmType::hydra_2_mtl, true)})};
     monitor.verify(tra);
 
     EXPECT_EQ(monitor.getExecutionStatistic().getTotalTraceLength(), 3);
@@ -85,13 +85,24 @@ TEST_F(TestRVMonitors, PerformanceMeasurement) {
     EXPECT_GT(monitor.getExecutionStatistic().getTotalTime(), 0.0);
 }
 
-TEST_F(TestRVMonitors, CopyAndAssignmentConstructor) {
-    Trace tra{*trace};
+void copyMonitor(Trace &tra, AlgorithmType alg) {
     Formula form{Formula(Parser::parse("G(!(a | b) & !c)"))};
     form.setId("R_U1");
-    auto monitor{RVMonitor({form})};
-    auto mon2{monitor};
+    auto conf1{MonitorConfiguration(alg, false)};
+    auto mon1{RVMonitor({form, conf1})};
+    auto mon2{mon1};
     mon2.verify(tra);
-    RVMonitor mon3 = monitor;
-    mon3.verify(tra);
+    RVMonitor monitor = mon1;
+    monitor.verify(tra);
+}
+
+TEST_F(TestRVMonitors, CopyAndAssignmentConstructor) {
+    Trace tra{*trace};
+    copyMonitor(tra, AlgorithmType::hydra_2_mtl);
+    copyMonitor(tra, AlgorithmType::hydra_mtl);
+    copyMonitor(tra, AlgorithmType::event_consuming_ltl);
+    copyMonitor(tra, AlgorithmType::event_consuming_mtl);
+    copyMonitor(tra, AlgorithmType::dynamic_programming_ltl);
+    copyMonitor(tra, AlgorithmType::btt_fsm);
+    copyMonitor(tra, AlgorithmType::mt_fsm);
 }

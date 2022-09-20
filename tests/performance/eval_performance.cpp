@@ -8,6 +8,7 @@
 #include "monitors/parser/parser.h"
 #include "monitors/rv_algorithms/btt_fsm/btt_fsm.h"
 #include "monitors/rv_algorithms/dynamic_programming/dynamic.h"
+#include "monitors/rv_algorithms/hydra/hydra.h"
 #include "monitors/rv_algorithms/hydra_2/hydra.h"
 #include "monitors/rv_algorithms/ltl_event_consuming/event_consuming.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
@@ -240,7 +241,7 @@ void executeEvaluate2(const std::vector<Formula> &formulas1, size_t numExecution
 }
 
 double evaluateSingleHydra(const Formula &formula, Trace &trace) {
-    auto monitor{Hydra2({formula})};
+    auto monitor{Hydra({formula})};
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     monitor.evaluate(trace);
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
@@ -254,7 +255,7 @@ double executeEvaluateHydra(const Formula &formulas, size_t numExecutions, Trace
         avgCompTime.push_back(evaluateSingleHydra(formulas, trace));
     }
     double result = std::accumulate(avgCompTime.begin(), avgCompTime.end(), 0) / numExecutions;
-    out << "[Hydra2] Results: " << result << '\n';
+    out << "[Hydra] Results: " << result << '\n';
     for (const auto &val : avgCompTime)
         out << val << "\t";
     out << '\n';
@@ -453,7 +454,7 @@ void testFormulasOnTraces(std::vector<Formula> &formulas, std::vector<Trace> &tr
                 out << "[LTL]";
                 break;
             case 4:
-                out << "[Hydra2]";
+                out << "[Hydra]";
                 break;
             case 5:
                 out << "[BTTFsm]";

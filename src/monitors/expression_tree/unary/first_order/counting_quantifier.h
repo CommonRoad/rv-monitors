@@ -53,6 +53,8 @@ class CountingQuantifier : public Unary, public FirstOrderOperator {
 
     [[nodiscard]] std::shared_ptr<Hydra2Monitor> accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval) override;
 
+    [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override;
+
     /**
      * Returns operator type.
      *
