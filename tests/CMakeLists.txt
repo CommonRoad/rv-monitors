@@ -45,6 +45,7 @@ set(RV_MONITOR_TEST_SRC_FILES
         rv_algorithms/hydra_2/hydra_monitors/test_universal_monitor.cpp
         rv_algorithms/hydra_2/hydra_monitors/test_existential_monitor.cpp
         rv_algorithms/hydra_2/hydra_monitors/test_quote_monitor.cpp
+        rv_algorithms/hydra_2/hydra_monitors/test_counting_monitor.cpp
         rv_algorithms/hydra_2/hydra_monitors/test_equality_operator_monitor.cpp
         rv_algorithms/hydra/hydra_test_utils.cpp
         rv_algorithms/hydra/test_hydra.cpp

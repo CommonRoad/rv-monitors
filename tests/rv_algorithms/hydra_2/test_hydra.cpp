@@ -35,7 +35,6 @@ TEST(TestHydra2, formulaTest) {
         if (std::any_of(excludedTestCases.begin(), excludedTestCases.end(),
                         [testCase](const std::string &name) { return name == testCase.formula->getId(); }))
             continue;
-        std::cout << testCase.testName << std::endl;
         failures += hydraTestUtils::executeHydraEval(testCase.trace, {*testCase.formula}, {testCase.expectedResult}, testCase.domainCollection, testCase.functionCollection);
     }
     std::cout << "Hydra Formula Test: " << std::to_string(failures) << " failing formulas.";

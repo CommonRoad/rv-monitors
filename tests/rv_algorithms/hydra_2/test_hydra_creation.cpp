@@ -391,6 +391,26 @@ TEST(TestHydraCreation, testQuoteSimple) {
     executeTest(formula, expectedFormula, predicateCosts, collection);
 }
 
+TEST(TesthydraCreation, testCountingSimple) {
+    Formula formula = Parser::parse("C<=3 x in D. p(x)");
+    formula.setId("R1");
+    std::map<std::string, std::array<double, 2>> predicateCosts{};
+    std::string expectedFormula{"C<=3 x in D. p(x)"};
+    std::vector<Domain> domains{{"D", {"a", "b", "c"}}};
+    DomainCollection collection{domains};
+    executeTest(formula, expectedFormula, predicateCosts, collection);
+}
+
+TEST(TestHydraCreation, testCountingNested) {
+    Formula formula = Parser::parse("C=2 x in D0. C>=4 y in D1. x & y");
+    formula.setId("R1");
+    std::map<std::string, std::array<double, 2>> predicateCosts{};
+    std::string expectedFormula{"C=2 x in D0. C>=4 y in D1. (x & y)"};
+    std::vector<Domain> domains{{"D0", {"a"}}, {"D1", {"b"}}};
+    DomainCollection collection{domains};
+    executeTest(formula, expectedFormula, predicateCosts, collection);
+}
+
 TEST(TestHydraCreation, testInvalidPredicateCost) {
     Formula formula = Parser::parse("G(P[0, 1](c))", "R1");
     std::map<std::string, std::array<double, 2>> predicateCosts{{"test", {1, 2}}};
