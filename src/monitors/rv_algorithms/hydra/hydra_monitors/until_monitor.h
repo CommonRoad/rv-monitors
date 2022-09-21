@@ -6,11 +6,11 @@
 //
 #pragma once
 
-#include <utility>
-
 #include "../../../expression_tree/atomic/constant.h"
+#include "../../../utils/interval.h"
 #include "constant_monitor.h"
 #include "hydra_monitor.h"
+#include <utility>
 
 /**
  * Hydra monitor for representing until operator.
@@ -22,14 +22,13 @@ class UntilMonitorHydra : public HydraMonitor {
      * @param formula Formula to be monitored.
      * @param subMonitorF Monitor from left side of until operator.
      * @param subMonitorG Monitor from right side of until operator.
-     * @param intervalFrom Start of time interval.
-     * @param intervalTo End of time interval.
+     * @param interval  Interval of operator.
      */
     UntilMonitorHydra(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitorF,
-                      std::shared_ptr<HydraMonitor> subMonitorG, size_t intervalFrom, size_t intervalTo)
+                      std::shared_ptr<HydraMonitor> subMonitorG, IntervalTemporalOperator interval)
         : HydraMonitor(formula), subMonitorF(std::move(subMonitorF)), subMonitorG(std::move(subMonitorG)),
           subMonitorH(std::make_shared<ConstantMonitorHydra>(Formula(std::make_shared<Constant>(true)))),
-          from(intervalFrom), to(intervalTo){};
+          interval(interval){};
 
     /**
      * Performs concrete step of until-monitor.
@@ -77,8 +76,7 @@ class UntilMonitorHydra : public HydraMonitor {
     std::optional<Verdict> subVerdictG;              //**< Verdict for monitor on right side of until. */
     std::optional<Verdict> subVerdictH;              //**< Monitor to extract time step and index from trace at position
                                                      // of until monitor head. Represented by Constant-True-Monitor. */
-    size_t from;                                     //**< Start of time interval. */
-    size_t to;                                       //**< End of time interval. */
+    IntervalTemporalOperator interval;               //**< Interval of operator. */
     HeadPosHydra positionMonitorF;                   //**< Head position of left monitor. */
     HeadPosHydra positionMonitorG;                   //**< Head position of right monitor. *
     HeadPosHydra positionMonitorH;                   //**< Head position of base time monitor. *

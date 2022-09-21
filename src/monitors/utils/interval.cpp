@@ -13,11 +13,24 @@ IntervalTemporalOperator::IntervalTemporalOperator(size_t start, size_t end, boo
 IntervalTemporalOperator::IntervalTemporalOperator(size_t start, size_t end)
     : start(start), end(end), finite(true), empty(false) {}
 
-IntervalTemporalOperator::IntervalTemporalOperator() : start(0), end(10000), finite(false), empty(true) {}
+IntervalTemporalOperator::IntervalTemporalOperator(size_t start) : start(start), finite(false), empty(false) {}
+
+IntervalTemporalOperator::IntervalTemporalOperator() : start(0), finite(false), empty(true) {}
+
+IntervalTemporalOperator::IntervalTemporalOperator(const std::shared_ptr<Interval> &interval) {
+    start = static_cast<size_t>(interval->getStart());
+    finite = interval->isFinite();
+    empty = interval->isEmpty();
+    if (interval->isFinite())
+        end = interval->getEnd();
+}
 
 size_t IntervalTemporalOperator::getStart() const { return start; }
 
-size_t IntervalTemporalOperator::getEnd() const { return end; }
+size_t IntervalTemporalOperator::getEnd() const {
+    assert((finite) && "Invalid interval access: Interval is infinite.");
+    return end.value();
+}
 
 bool IntervalTemporalOperator::isFinite() const { return finite; }
 

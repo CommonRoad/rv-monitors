@@ -20,7 +20,7 @@ Verdict SinceMonitorHydra::concreteStep() {
     }
 
     while (!positionMonitorG.eof && positionMonitorG.tp <= positionMonitorF.tp &&
-           positionMonitorF.ts - positionMonitorG.ts >= from) {
+           positionMonitorF.ts - positionMonitorG.ts >= interval.getStart()) {
         if (subVerdictG->value)
             last_sat = std::make_pair(positionMonitorG.ts, positionMonitorG.tp);
 
@@ -33,14 +33,17 @@ Verdict SinceMonitorHydra::concreteStep() {
         }
     }
 
-    int verd = static_cast<int>(last_sat && positionMonitorF.ts - last_sat->first <= to &&
+    int verd = static_cast<int>(last_sat &&
+                                (!interval.isFinite() or positionMonitorF.ts - last_sat->first <= interval.getEnd()) &&
                                 (!last_viol || last_sat->second >= last_viol->second));
     return {positionMonitorF.ts, verd != 0};
 }
+
 void SinceMonitorHydra::setTrace(const Trace &tra) {
     subMonitorF->setTrace(tra);
     subMonitorG->setTrace(tra);
 }
+
 void SinceMonitorHydra::reset() {
     subMonitorG->reset();
     subMonitorF->reset();
@@ -53,8 +56,14 @@ void SinceMonitorHydra::reset() {
 }
 
 std::string SinceMonitorHydra::to_string() {
-    std::string interval{" "};
-    if (from != 0 or to != 10000)
-        interval = "[" + std::to_string(from) + ", " + std::to_string(to) + "] ";
-    return "(" + subMonitorF->to_string() + " S" + interval + subMonitorG->to_string() + ")";
+    std::string itv{" "};
+    std::string end{};
+    if (!interval.isEmpty()) {
+        if (!interval.isFinite())
+            end = "inf";
+        else
+            end = std::to_string(interval.getEnd());
+        itv = "[" + std::to_string(interval.getStart()) + ", " + end + "] ";
+    }
+    return "(" + subMonitorF->to_string() + " S" + itv + subMonitorG->to_string() + ")";
 }

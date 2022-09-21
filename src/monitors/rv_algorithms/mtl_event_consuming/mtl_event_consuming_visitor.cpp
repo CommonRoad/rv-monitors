@@ -211,14 +211,21 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
     }
     // Until
     else if (auto until = std::dynamic_pointer_cast<Until>(op.getLeft())) {
-        if (until->getInterval()->getEnd() != 0 and !trace.getEvent(index).isTerminal()) {
+        if ((!until->getInterval()->isFinite() or until->getInterval()->getEnd() != 0) and
+            !trace.getEvent(index).isTerminal()) {
             if (until->getInterval()->getStart() > 0) {
                 And::SetType_T andSet;
                 auto exprLeft = std::make_shared<EventOperator>(until->getLeft(), trace, index);
                 andSet.emplace(exprLeft);
-                auto newUntil = std::make_shared<Until>(until->getLeft(), until->getRight(),
-                                                        std::make_shared<Interval>(until->getInterval()->getStart() - 1,
-                                                                                   until->getInterval()->getEnd() - 1));
+                std::shared_ptr<Until> newUntil;
+                if (until->getInterval()->isFinite())
+                    newUntil = std::make_shared<Until>(until->getLeft(), until->getRight(),
+                                                       std::make_shared<Interval>(until->getInterval()->getStart() - 1,
+                                                                                  until->getInterval()->getEnd() - 1));
+                else
+                    newUntil =
+                        std::make_shared<Until>(until->getLeft(), until->getRight(),
+                                                std::make_shared<Interval>(until->getInterval()->getStart() - 1));
                 auto newUntilExpr = std::make_shared<EventOperator>(newUntil, trace, index + 1);
                 auto newUntilExpr_resolved = newUntilExpr->accept(*this, trace, index + 1);
                 andSet.emplace(newUntilExpr_resolved);
@@ -231,9 +238,15 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
                 And::SetType_T andSet;
                 auto exprLeft = std::make_shared<EventOperator>(until->getLeft(), trace, index);
                 andSet.emplace(exprLeft);
-                auto newUntil = std::make_shared<Until>(until->getLeft(), until->getRight(),
-                                                        std::make_shared<Interval>(until->getInterval()->getStart() - 1,
-                                                                                   until->getInterval()->getEnd() - 1));
+                std::shared_ptr<Until> newUntil;
+                if (until->getInterval()->isFinite())
+                    newUntil = std::make_shared<Until>(until->getLeft(), until->getRight(),
+                                                       std::make_shared<Interval>(until->getInterval()->getStart() - 1,
+                                                                                  until->getInterval()->getEnd() - 1));
+                else
+                    newUntil =
+                        std::make_shared<Until>(until->getLeft(), until->getRight(),
+                                                std::make_shared<Interval>(until->getInterval()->getStart() - 1));
                 auto newUntilExpr = std::make_shared<EventOperator>(newUntil, trace, index + 1);
                 auto newUntilExpr_resolved = newUntilExpr->accept(*this, trace, index + 1);
                 andSet.emplace(newUntilExpr_resolved);
@@ -241,7 +254,8 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
                 ret = std::make_shared<Or>(orSet);
             }
         } else {
-            if (until->getInterval()->getEnd() < 0 || until->getInterval()->getStart() > 0)
+            if ((until->getInterval()->isFinite() and until->getInterval()->getEnd() < 0) or
+                until->getInterval()->getStart() > 0)
                 ret = std::make_shared<Constant>(false);
             else
                 ret = std::make_shared<EventOperator>(until->getRight(), trace, index);
@@ -249,14 +263,20 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
     }
     // Since
     else if (auto since = std::dynamic_pointer_cast<Since>(op.getLeft())) {
-        if (since->getInterval()->getEnd() != 0 and index > 0) {
+        if ((!since->getInterval()->isFinite() or since->getInterval()->getEnd() != 0) and index > 0) {
             if (since->getInterval()->getStart() > 0) {
                 And::SetType_T andSet;
                 auto exprLeft = std::make_shared<EventOperator>(since->getLeft(), trace, index);
                 andSet.emplace(exprLeft);
-                auto newSince = std::make_shared<Since>(since->getLeft(), since->getRight(),
-                                                        std::make_shared<Interval>(since->getInterval()->getStart() - 1,
-                                                                                   since->getInterval()->getEnd() - 1));
+                std::shared_ptr<Since> newSince;
+                if (since->getInterval()->isFinite())
+                    newSince = std::make_shared<Since>(since->getLeft(), since->getRight(),
+                                                       std::make_shared<Interval>(since->getInterval()->getStart() - 1,
+                                                                                  since->getInterval()->getEnd() - 1));
+                else
+                    newSince =
+                        std::make_shared<Since>(since->getLeft(), since->getRight(),
+                                                std::make_shared<Interval>(since->getInterval()->getStart() - 1));
                 auto newSinceExpr = std::make_shared<EventOperator>(newSince, trace, index - 1);
                 auto newSinceExpr_resolved = newSinceExpr->accept(*this, trace, index - 1);
                 andSet.emplace(newSinceExpr_resolved);
@@ -269,9 +289,15 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
                 And::SetType_T andSet;
                 auto exprLeft = std::make_shared<EventOperator>(since->getLeft(), trace, index);
                 andSet.emplace(exprLeft);
-                auto newSince = std::make_shared<Since>(since->getLeft(), since->getRight(),
-                                                        std::make_shared<Interval>(since->getInterval()->getStart() - 1,
-                                                                                   since->getInterval()->getEnd() - 1));
+                std::shared_ptr<Since> newSince;
+                if (since->getInterval()->isFinite())
+                    newSince = std::make_shared<Since>(since->getLeft(), since->getRight(),
+                                                       std::make_shared<Interval>(since->getInterval()->getStart() - 1,
+                                                                                  since->getInterval()->getEnd() - 1));
+                else
+                    newSince =
+                        std::make_shared<Since>(since->getLeft(), since->getRight(),
+                                                std::make_shared<Interval>(since->getInterval()->getStart() - 1));
                 auto newSinceExpr = std::make_shared<EventOperator>(newSince, trace, index - 1);
                 auto newSinceExpr_resolved = newSinceExpr->accept(*this, trace, index - 1);
                 andSet.emplace(newSinceExpr_resolved);
@@ -279,7 +305,7 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
                 ret = std::make_shared<Or>(orSet);
             }
         } else {
-            if (since->getInterval()->getEnd() < 0)
+            if (since->getInterval()->isFinite() and since->getInterval()->getEnd() < 0)
                 ret = std::make_shared<Constant>(false);
             else
                 ret = std::make_shared<EventOperator>(since->getRight(), trace, index);

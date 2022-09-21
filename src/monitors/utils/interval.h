@@ -1,5 +1,6 @@
 #pragma once
 
+#include "monitors/expression_tree/interval.h"
 #include <cstddef>
 
 /**
@@ -26,9 +27,23 @@ struct IntervalTemporalOperator {
     IntervalTemporalOperator(size_t start, size_t end);
 
     /**
+     * Constructor defining only start. End is infinite.
+     *
+     * @param start Start of interval.
+     */
+    IntervalTemporalOperator(size_t start);
+
+    /**
      * Constructor defining nothing. Therefore, interval is defautl interval [0, inf].
      */
     IntervalTemporalOperator();
+
+    /**
+     * Constructor using interval expression.
+     *
+     * @param interval Pointer to interval expression.
+     */
+    IntervalTemporalOperator(const std::shared_ptr<Interval> &interval);
 
     /**
      * Getter for start of interval.
@@ -59,8 +74,8 @@ struct IntervalTemporalOperator {
     bool isEmpty() const;
 
   private:
-    size_t start; //**< Start of interval.  */
-    size_t end;   //**< End of interval.   */
-    bool finite;  //**< Boolean indicating whether interval is finite.  */
-    bool empty;   //**< Boolean indicating whether interval is empty, i.e. infinite interval.  */
+    size_t start;              //**< Start of interval.  */
+    std::optional<size_t> end; //**< End of interval.   */
+    bool finite;               //**< Boolean indicating whether interval is finite.  */
+    bool empty;                //**< Boolean indicating whether interval is empty, i.e. infinite interval.  */
 };

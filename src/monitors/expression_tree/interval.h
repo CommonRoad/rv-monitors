@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <memory>
+#include <optional>
 #include <string>
 
 /**
@@ -10,14 +11,24 @@
 class Interval {
   public:
     /**
-     * Constructor.
+     * Constructor specifying only start of interval. End is infinity.
+     *
+     * @param start Start of interval.
+     */
+    Interval(int start);
+
+    /**
+     * Constructor specifying start and end.
      *
      * @param start Start of interval.
      * @param end End of interval.
-     * @param finite Boolean indicating whether interval is finite.
-     * @param empty Boolean indicating whether interval is not specified.
      */
-    explicit Interval(int start = 0, int end = 10000, bool finite = false, bool empty = true);
+    Interval(int start, int end);
+
+    /**
+     * Constructor specifying nothing. Using default interval: [0, inf].
+     */
+    Interval();
 
     /**
      * Converts interval expression to string.
@@ -69,8 +80,8 @@ class Interval {
     bool isEmpty() const;
 
   private:
-    int start;   //**< Start of time interval. */
-    int end;     //**< End of time interval. */
-    bool finite; //**< Boolean indicating whether interval is finite. */
-    bool empty;  //**< Boolean indicating whether interval is specified for an operator. */
+    int start;              //**< Start of time interval. */
+    std::optional<int> end; //**< End of time interval. */
+    bool finite;            //**< Boolean indicating whether interval is finite. */
+    bool empty;             //**< Boolean indicating whether interval is specified for an operator. */
 };

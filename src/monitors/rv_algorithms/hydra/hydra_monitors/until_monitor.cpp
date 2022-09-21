@@ -47,7 +47,8 @@ Verdict UntilMonitorHydra::concreteStep() {
     if (positionMonitorF.tp == -1)
         readFG();
 
-    while (!positionMonitorF.eof && !last_viol && positionMonitorF.ts - positionMonitorH.ts <= to) {
+    while (!positionMonitorF.eof && !last_viol &&
+           (!interval.isFinite() or positionMonitorF.ts - positionMonitorH.ts <= interval.getEnd())) {
         if (subVerdictG->value) {
             last_sat = std::make_pair(positionMonitorF.ts, positionMonitorF.tp);
         }
@@ -57,7 +58,7 @@ Verdict UntilMonitorHydra::concreteStep() {
         readFG();
     }
 
-    int verd = static_cast<int>(last_sat && last_sat->first - positionMonitorH.ts >= from);
+    int verd = static_cast<int>(last_sat && last_sat->first - positionMonitorH.ts >= interval.getStart());
     return {positionMonitorH.ts, verd != 0};
 }
 void UntilMonitorHydra::setTrace(const Trace &tra) {
@@ -79,8 +80,14 @@ void UntilMonitorHydra::reset() {
 }
 
 std::string UntilMonitorHydra::to_string() {
-    std::string interval{" "};
-    if (from != 0 or to != 10000)
-        interval = "[" + std::to_string(from) + ", " + std::to_string(to) + "] ";
-    return "(" + subMonitorF->to_string() + " U" + interval + subMonitorG->to_string() + ")";
+    std::string itv{" "};
+    std::string end{};
+    if (!interval.isEmpty()) {
+        if (!interval.isFinite())
+            end = "inf";
+        else
+            end = std::to_string(interval.getEnd());
+        itv = "[" + std::to_string(interval.getStart()) + ", " + end + "] ";
+    }
+    return "(" + subMonitorF->to_string() + " U" + itv + subMonitorG->to_string() + ")";
 }

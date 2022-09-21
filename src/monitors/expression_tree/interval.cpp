@@ -3,9 +3,13 @@
 //
 
 #include "interval.h"
+#include "cassert"
 
-Interval::Interval(int start, int end, bool finite, bool empty)
-    : start(start), end(end), finite(finite), empty(empty) {}
+Interval::Interval(int start, int end) : start(start), end(end), finite(true), empty(false) {}
+
+Interval::Interval() : start(0), finite(false), empty(true) {}
+
+Interval::Interval(int start) : start(start), finite(false), empty(false) {}
 
 std::string Interval::to_string() const {
     std::string endStr{};
@@ -13,17 +17,23 @@ std::string Interval::to_string() const {
         if (!finite)
             endStr = "inf";
         else
-            endStr = std::to_string(end);
+            endStr = std::to_string(end.value());
     }
     return "[" + std::to_string(this->start) + ", " + endStr + "]";
 }
 
 int Interval::getStart() const { return start; }
 
-int Interval::getEnd() const { return end; }
+int Interval::getEnd() const {
+    assert((finite) && "Invalid interval access: Interval is infinite.");
+    return end.value();
+}
 
 bool Interval::isFinite() const { return finite; }
 
-int Interval::getLength() const { return end - start; }
+int Interval::getLength() const {
+    assert((finite) && "Invalid length computation: Interval is infinite.");
+    return end.value() - start;
+}
 
 bool Interval::isEmpty() const { return empty; }

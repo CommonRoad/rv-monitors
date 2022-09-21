@@ -94,10 +94,7 @@ std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitPreviously(Previously
         size_t idx{maxId++};
         auto newMonitor{std::make_shared<PreviousMonitor>(
             Formula(std::make_shared<Previously>(top)), top.getLeft()->accept(*this, idx, connectedEval),
-            IntervalTemporalOperator(static_cast<size_t>(top.getInterval()->getStart()),
-                                     static_cast<size_t>(top.getInterval()->getEnd()), top.getInterval()->isFinite(),
-                                     top.getInterval()->isEmpty()),
-            idx, connectedEval)};
+            IntervalTemporalOperator(top.getInterval()), idx, connectedEval)};
         baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
@@ -110,12 +107,9 @@ std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitNext(NextStrong &top,
         return baseline.at(top.to_string());
     } else {
         size_t idx{maxId++};
-        auto newMonitor{std::make_shared<NextMonitor>(
-            Formula(std::make_shared<NextStrong>(top)), top.getLeft()->accept(*this, idx, connectedEval),
-            IntervalTemporalOperator(static_cast<size_t>(top.getInterval()->getStart()),
-                                     static_cast<size_t>(top.getInterval()->getEnd()), top.getInterval()->isFinite(),
-                                     top.getInterval()->isEmpty()),
-            idx, connectedEval)};
+        auto newMonitor{std::make_shared<NextMonitor>(Formula(std::make_shared<NextStrong>(top)),
+                                                      top.getLeft()->accept(*this, idx, connectedEval),
+                                                      IntervalTemporalOperator(top.getInterval()), idx, connectedEval)};
         baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
@@ -130,11 +124,8 @@ std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitSince(Since &top, siz
         size_t idx{maxId++};
         auto newMonitor{std::make_shared<SinceMonitor>(
             Formula(std::make_shared<Since>(top)), top.getLeft()->accept(*this, idx, connectedEval),
-            top.getRight()->accept(*this, idx, connectedEval),
-            IntervalTemporalOperator(static_cast<size_t>(top.getInterval()->getStart()),
-                                     static_cast<size_t>(top.getInterval()->getEnd()), top.getInterval()->isFinite(),
-                                     top.getInterval()->isEmpty()),
-            idx, connectedEval)};
+            top.getRight()->accept(*this, idx, connectedEval), IntervalTemporalOperator(top.getInterval()), idx,
+            connectedEval)};
         baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
@@ -149,11 +140,8 @@ std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitUntil(Until &top, siz
         size_t idx{maxId++};
         auto newMonitor{std::make_shared<UntilMonitor>(
             Formula(std::make_shared<Until>(top)), top.getLeft()->accept(*this, idx, connectedEval),
-            top.getRight()->accept(*this, idx, connectedEval),
-            IntervalTemporalOperator(static_cast<size_t>(top.getInterval()->getStart()),
-                                     static_cast<size_t>(top.getInterval()->getEnd()), top.getInterval()->isFinite(),
-                                     top.getInterval()->isEmpty()),
-            idx, connectedEval)};
+            top.getRight()->accept(*this, idx, connectedEval), IntervalTemporalOperator(top.getInterval()), idx,
+            connectedEval)};
         baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
         newMonitor->registerParent(parentId);
         return newMonitor;
