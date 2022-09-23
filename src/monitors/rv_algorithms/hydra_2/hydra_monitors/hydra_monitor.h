@@ -206,6 +206,6 @@ class Hydra2Monitor {
     std::map<size_t, OperatorType> parentType;                                //**< Type of parent monitor */
     std::map<size_t, std::optional<IntervalTemporalOperator>> parentInterval; //**< Interval of parent monitor */
     std::array<size_t, 2> minStepNumber; //**< Storage for minimum step number for any parent monitor with ID of
-                                         //corresponding parent monitor. */
+                                         // corresponding parent monitor. */
     size_t verdictHistoryPopCounter{0}; //**< Counter storing how often pop operation was applied on verdict history. */
 };
