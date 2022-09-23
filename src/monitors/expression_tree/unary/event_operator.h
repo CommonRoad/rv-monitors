@@ -33,7 +33,8 @@ class EventOperator : public Unary {
     [[nodiscard]] std::string to_string() const override;
 
     [[nodiscard]] std::shared_ptr<Hydra2Monitor> accept(HydraCreationVisitor2 &visitor, size_t parentId,
-                                                        bool connectedEval) override;
+                                                        bool connectedEval, OperatorType opType,
+                                                        std::optional<IntervalTemporalOperator> intv) override;
 
     [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override;
 };

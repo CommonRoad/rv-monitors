@@ -5,6 +5,7 @@
 // Credits: BMW Car@TUM
 //
 #pragma once
+#include "deque"
 #include "monitors/utils/utils.h"
 
 /**
@@ -59,6 +60,28 @@ class Hydra2Monitor {
     size_t getMaxTraceIdx();
 
     /**
+     * Extracts minimum trace idx of monitor given all parent monitors (required for connected evaluation).
+     *
+     * @return Trace index.
+     */
+    size_t getMinTraceIdx();
+
+    /**
+     * Evaluates whether another parent monitor has the same trace index.
+     *
+     * @param idx Trace index which should be used for comparison.
+     * @return Boolean indicating whether another parent monitor is at the same trace index.
+     */
+    bool traceIdxUnique(size_t idx);
+
+    /**
+     * Decrements trace indices for all parent monitors except for the provided ID.
+     *
+     * @param parentID Parent monitor ID where index should not be decremented.
+     */
+    void decrementTraceIdx(size_t parentID);
+
+    /**
      * Executes monitor until desired step number is reached.
      *
      * @param parentId Id of parent monitor.
@@ -66,6 +89,25 @@ class Hydra2Monitor {
      * @return Verdict of desired step number.
      */
     Verdict simulateVerdict(size_t parentId, size_t stepNumber);
+
+    /**
+     * Stores computed verdict of executed step.
+     *
+     * @param parentId Id of parent monitor.
+     * @param stepNumber Number of step which should be performed.
+     * @param verdict Verdict which should be stored.
+     * @return Boolean verdict.
+     */
+    Verdict storeVerdict(size_t parentId, size_t stepNumber, Verdict verdict);
+
+    /**
+     * Loads already computed verdict for step.
+     *
+     * @param parentId Id of parent monitor.
+     * @param stepNumber Number of step which should be performed.
+     * @return Boolean verdict.
+     */
+    Verdict loadVerdict(size_t parentId, size_t stepNumber);
 
   public:
     /**
@@ -116,7 +158,7 @@ class Hydra2Monitor {
      *
      * @param parentId ID of parent monitor.
      */
-    void registerParent(size_t parentId);
+    void registerParent(size_t parentId, OperatorType parentOperatorType, std::optional<IntervalTemporalOperator> intv);
 
     /**
      * Getter for ID of formula which is monitored.
@@ -156,9 +198,14 @@ class Hydra2Monitor {
     Formula formula;                     //**< Monitored formula. */
     std::string formulaId;               //**< Id of formula */
     size_t monitorId;                    //**< Id of monitor */
-    std::vector<Verdict> verdictHistory; //**< History of verdicts belonging to monitor */
+    std::deque<Verdict> verdictHistory;  //**< History of verdicts belonging to monitor */
     std::map<size_t, size_t> traceIdx;   //**< Index of current trace element (even) */
     bool connectedEval;                  //**< Boolean indicating whether connected evaluation should be performed */
     double evalCost{0.0};                //**< Evaluation cost of monitor */
     double satisfactionProbability{1.0}; //**< Satisfaction probability of monitor */
+    std::map<size_t, OperatorType> parentType;                                //**< Type of parent monitor */
+    std::map<size_t, std::optional<IntervalTemporalOperator>> parentInterval; //**< Interval of parent monitor */
+    std::array<size_t, 2> minStepNumber; //**< Storage for minimum step number for any parent monitor with ID of
+                                         //corresponding parent monitor. */
+    size_t verdictHistoryPopCounter{0}; //**< Counter storing how often pop operation was applied on verdict history. */
 };

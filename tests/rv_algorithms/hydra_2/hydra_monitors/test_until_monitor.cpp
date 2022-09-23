@@ -19,12 +19,13 @@ TEST(TestUntilMonitor, testUntilMonitorEvaluation) {
     Formula formulaA = Parser::parse("a");
     Formula formulaB = Parser::parse("b");
     formula.setId("R1");
+    auto operatorInterval{IntervalTemporalOperator(0, 4)};
     auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2, false)};
-    mon1->registerParent(1);
+    mon1->registerParent(1, OperatorType::UNTIL_LEFT, operatorInterval);
     auto mon2{std::make_shared<AtomicMonitor>(formulaB, 3, false)};
-    mon2->registerParent(1);
-    auto mon{UntilMonitor(formula, mon1, mon2, IntervalTemporalOperator(0, 4), 1, false)};
-    mon.registerParent(0);
+    mon2->registerParent(1, OperatorType::UNTIL_RIGHT, operatorInterval);
+    auto mon{UntilMonitor(formula, mon1, mon2, operatorInterval, 1, false)};
+    mon.registerParent(0, OperatorType::BASE, {});
     mon.setTrace(trace);
     EXPECT_EQ(mon.step(0, 0).value, true);
     EXPECT_EQ(mon.step(0, 1).value, true);
@@ -42,33 +43,36 @@ TEST(TestUntilMonitor, testToString) {
     Formula formulaA = Parser::parse("a");
     Formula formulaB = Parser::parse("b");
     formula.setId("R1");
+    auto operatorInterval{IntervalTemporalOperator(0, 4)};
     auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2, false)};
-    mon1->registerParent(1);
+    mon1->registerParent(1, OperatorType::UNTIL_LEFT, operatorInterval);
     auto mon2{std::make_shared<AtomicMonitor>(formulaB, 3, false)};
-    mon2->registerParent(1);
-    auto mon{UntilMonitor(formula, mon1, mon2, IntervalTemporalOperator(0, 4), 1, false)};
+    mon2->registerParent(1, OperatorType::UNTIL_RIGHT, operatorInterval);
+    auto mon{UntilMonitor(formula, mon1, mon2, operatorInterval, 1, false)};
     EXPECT_EQ(mon.to_string(), "(a U[0, 4] b)");
 
     formula = Parser::parse("a U[0, inf]  b");
     formulaA = Parser::parse("a");
     formulaB = Parser::parse("b");
     formula.setId("R1");
+    operatorInterval = IntervalTemporalOperator(0);
     mon1 = std::make_shared<AtomicMonitor>(formulaA, 2, false);
-    mon1->registerParent(1);
+    mon1->registerParent(1, OperatorType::UNTIL_LEFT, operatorInterval);
     mon2 = std::make_shared<AtomicMonitor>(formulaB, 3, false);
-    mon2->registerParent(1);
-    mon = UntilMonitor(formula, mon1, mon2, IntervalTemporalOperator(0, 10000, false, false), 1, false);
+    mon2->registerParent(1, OperatorType::UNTIL_RIGHT, operatorInterval);
+    mon = UntilMonitor(formula, mon1, mon2, operatorInterval, 1, false);
     EXPECT_EQ(mon.to_string(), "(a U[0, inf] b)");
 
     formula = Parser::parse("a U b");
     formulaA = Parser::parse("a");
     formulaB = Parser::parse("b");
     formula.setId("R1");
+    operatorInterval = IntervalTemporalOperator();
     mon1 = std::make_shared<AtomicMonitor>(formulaA, 2, false);
-    mon1->registerParent(1);
+    mon1->registerParent(1, OperatorType::UNTIL_LEFT, operatorInterval);
     mon2 = std::make_shared<AtomicMonitor>(formulaB, 3, false);
-    mon2->registerParent(1);
-    mon = UntilMonitor(formula, mon1, mon2, IntervalTemporalOperator(), 1, false);
+    mon2->registerParent(1, OperatorType::UNTIL_RIGHT, operatorInterval);
+    mon = UntilMonitor(formula, mon1, mon2, operatorInterval, 1, false);
     EXPECT_EQ(mon.to_string(), "(a U b)");
 }
 
@@ -77,10 +81,11 @@ TEST(TestUntilMonitor, testReset) {
     Formula formulaA = Parser::parse("a");
     Formula formulaB = Parser::parse("b");
     formula.setId("R1");
+    auto operatorInterval{IntervalTemporalOperator(0, 4)};
     auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2, false)};
-    mon1->registerParent(1);
+    mon1->registerParent(1, OperatorType::UNTIL_LEFT, operatorInterval);
     auto mon2{std::make_shared<AtomicMonitor>(formulaB, 3, false)};
-    mon2->registerParent(1);
-    auto mon{UntilMonitor(formula, mon1, mon2, IntervalTemporalOperator(0, 4), 1, false)};
+    mon2->registerParent(1, OperatorType::UNTIL_RIGHT, operatorInterval);
+    auto mon{UntilMonitor(formula, mon1, mon2, operatorInterval, 1, false)};
     EXPECT_NO_THROW(mon.reset());
 }

@@ -46,7 +46,7 @@ TEST(TestPredicateMonitor, testPredicateEvaluation) {
     Formula formula = Parser::parse("a(dummy)");
     formula.setId("R1");
     auto mon{PredicateMonitor(formula, 1, false)};
-    mon.registerParent(0);
+    mon.registerParent(0, OperatorType::BASE, {});
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, true);
     EXPECT_EQ(mon.step(0, 0).value, true);

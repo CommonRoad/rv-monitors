@@ -21,7 +21,8 @@ class Equivalence : public Binary {
     [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override;
 
     [[nodiscard]] std::shared_ptr<Hydra2Monitor> accept(HydraCreationVisitor2 &visitor, size_t parentId,
-                                                        bool connectedEval) override;
+                                                        bool connectedEval, OperatorType opType,
+                                                        std::optional<IntervalTemporalOperator> intv) override;
 
     [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override;
 };

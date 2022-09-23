@@ -19,8 +19,9 @@ std::shared_ptr<Expression> Predicate::accept(ExpressionVisitor &visitor, Trace 
     return visitor.visitPredicate(*this, trace, index);
 }
 
-std::shared_ptr<Hydra2Monitor> Predicate::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval) {
-    return visitor.visitPredicate(*this, parentId, connectedEval);
+std::shared_ptr<Hydra2Monitor> Predicate::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval,
+                                                 OperatorType opType, std::optional<IntervalTemporalOperator> intv) {
+    return visitor.visitPredicate(*this, parentId, connectedEval, opType, intv);
 }
 
 std::shared_ptr<HydraMonitor> Predicate::accept(HydraCreationVisitor &visitor) { return visitor.visitPredicate(*this); }

@@ -16,10 +16,11 @@ TEST(TestPreviousMonitor, testPreviousMonitorEvaluationStandard) {
     Formula formula = Parser::parse("P[0, 4](a)");
     Formula formulaA = Parser::parse("a");
     formula.setId("R1");
+    auto operatorInterval{IntervalTemporalOperator(0, 4)};
     auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2, true)};
-    mon1->registerParent(1);
-    auto mon{PreviousMonitor(formula, mon1, IntervalTemporalOperator(0, 4), 1, true)};
-    mon.registerParent(0);
+    mon1->registerParent(1, OperatorType::PREVIOUS, operatorInterval);
+    auto mon{PreviousMonitor(formula, mon1, operatorInterval, 1, true)};
+    mon.registerParent(0, OperatorType::BASE, {});
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, false);
     EXPECT_EQ(mon.concreteStep(0, 1).value, true);
@@ -33,10 +34,11 @@ TEST(TestPreviousMonitor, testPreviousMonitorEvaluationInterval) {
     Formula formula = Parser::parse("P[0, 4](a)");
     Formula formulaA = Parser::parse("a");
     formula.setId("R1");
+    auto operatorInterval{IntervalTemporalOperator(0, 4)};
     auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2, false)};
-    mon1->registerParent(1);
-    auto mon{PreviousMonitor(formula, mon1, IntervalTemporalOperator(0, 4), 1, false)};
-    mon.registerParent(0);
+    mon1->registerParent(1, OperatorType::PREVIOUS, operatorInterval);
+    auto mon{PreviousMonitor(formula, mon1, operatorInterval, 1, false)};
+    mon.registerParent(0, OperatorType::BASE, {});
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, false);
     EXPECT_EQ(mon.concreteStep(0, 1).value, true);
@@ -49,25 +51,28 @@ TEST(TestPreviousMonitor, testToString) {
     Formula formula = Parser::parse("P[0, 4](a)");
     Formula formulaA = Parser::parse("a");
     formula.setId("R1");
+    auto operatorInterval{IntervalTemporalOperator(0, 4)};
     auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2, false)};
-    mon1->registerParent(1);
-    auto mon{PreviousMonitor(formula, mon1, IntervalTemporalOperator(0, 4), 1, false)};
+    mon1->registerParent(1, OperatorType::PREVIOUS, operatorInterval);
+    auto mon{PreviousMonitor(formula, mon1, operatorInterval, 1, false)};
     EXPECT_EQ(mon.to_string(), "P[0, 4](a)");
 
     formula = Parser::parse("P[0, inf](a)");
     formulaA = Parser::parse("a");
     formula.setId("R1");
+    operatorInterval = IntervalTemporalOperator(0);
     mon1 = std::make_shared<AtomicMonitor>(formulaA, 2, false);
-    mon1->registerParent(1);
-    mon = PreviousMonitor(formula, mon1, IntervalTemporalOperator(0, 10000, false, false), 1, false);
+    mon1->registerParent(1, OperatorType::PREVIOUS, operatorInterval);
+    mon = PreviousMonitor(formula, mon1, operatorInterval, 1, false);
     EXPECT_EQ(mon.to_string(), "P[0, inf](a)");
 
     formula = Parser::parse("P(a)");
     formulaA = Parser::parse("a");
     formula.setId("R1");
+    operatorInterval = IntervalTemporalOperator();
     mon1 = std::make_shared<AtomicMonitor>(formulaA, 2, false);
-    mon1->registerParent(1);
-    mon = PreviousMonitor(formula, mon1, IntervalTemporalOperator(), 1, false);
+    mon1->registerParent(1, OperatorType::PREVIOUS, operatorInterval);
+    mon = PreviousMonitor(formula, mon1, operatorInterval, 1, false);
     EXPECT_EQ(mon.to_string(), "P(a)");
 }
 
@@ -75,8 +80,9 @@ TEST(TestPreviousMonitor, testReset) {
     Formula formula = Parser::parse("P[0, 4](a)");
     Formula formulaA = Parser::parse("a");
     formula.setId("R1");
+    auto operatorInterval{IntervalTemporalOperator(0, 4)};
     auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2, false)};
-    mon1->registerParent(1);
+    mon1->registerParent(1, OperatorType::PREVIOUS, operatorInterval);
     auto mon{PreviousMonitor(formula, mon1, IntervalTemporalOperator(0, 4), 1, false)};
     EXPECT_NO_THROW(mon.reset());
 }

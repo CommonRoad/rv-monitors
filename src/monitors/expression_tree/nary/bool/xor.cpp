@@ -6,7 +6,8 @@ std::shared_ptr<Expression> Xor::accept(ExpressionVisitor &visitor, Trace &trace
 
 std::shared_ptr<Expression> Xor::clone() { return std::make_shared<Xor>(*this); }
 
-std::shared_ptr<Hydra2Monitor> Xor::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval) {
+std::shared_ptr<Hydra2Monitor> Xor::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval,
+                                           OperatorType opType, std::optional<IntervalTemporalOperator> intv) {
     return nullptr;
 }
 

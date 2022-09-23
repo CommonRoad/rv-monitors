@@ -22,42 +22,49 @@ class Expression {
   public:
     /**
      * Constructor.
+     *
      * @param symbol Symbol of the expression.
      */
     explicit Expression(std::string symbol) : symbol(std::move(symbol)) {}
 
     /**
      * Default constructor.
+     *
      * @param expression Expression.
      */
     Expression(const Expression &expression) = default;
 
     /**
      * Setter for symbol.
+     *
      * @param symb Symbol.
      */
     void setSymbol(const std::string &symb);
 
     /**
      * Getter for symbol.
+     *
      * @return Symbol.
      */
     [[nodiscard]] const std::string &getSymbol() const;
 
     /**
      * to_string() for an expression.
+     *
      * @return String representation of an expression.
      */
     [[nodiscard]] virtual std::string to_string() const;
 
     /**
      * Clones this expression.
+     *
      * @return New shared_ptr of this expression.
      */
     virtual std::shared_ptr<Expression> clone() = 0;
 
     /**
-     * Accept function for visitor pattern.
+     * Accept function for visitor pattern for expression tree.
+     *
      * @param visitor Visitor.
      * @param event Event.
      * @return Result of visit function of respective expression.
@@ -65,15 +72,28 @@ class Expression {
     virtual std::shared_ptr<Expression> accept(ExpressionVisitor &, Trace &, size_t index) = 0;
 
     /**
-     * Accept function for visitor pattern.
+     *
+     *
      * @param visitor Visitor.
-     * @return Result of visit function of respective expression.
+     * @return
      */
-    virtual std::shared_ptr<Hydra2Monitor> accept(HydraCreationVisitor2 &visitor, size_t parentId,
-                                                  bool connectedEval) = 0;
 
     /**
-     * Accept function for visitor pattern.
+     * Accept function for visitor pattern for Hydra2 monitor.
+     *
+     * @param visitor
+     * @param parentId
+     * @param connectedEval
+     * @param opType
+     * @return Result of visit function of respective expression.
+     */
+    virtual std::shared_ptr<Hydra2Monitor> accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval,
+                                                  OperatorType opType,
+                                                  std::optional<IntervalTemporalOperator> intv) = 0;
+
+    /**
+     * Accept function for visitor pattern for original Hydra monitor.
+     *
      * @param visitor Visitor.
      * @return Result of visit function of respective expression.
      */
@@ -81,6 +101,7 @@ class Expression {
 
     /**
      * Checks if expression is a specific Constant.
+     *
      * @param constant True or false.
      * @return True if value matches, false otherwise.
      */
@@ -88,12 +109,14 @@ class Expression {
 
     /**
      * Checks if expression is a Constant with value true.
+     *
      * @return True if value is true, false otherwise.
      */
     [[nodiscard]] bool isConstTrue() const;
 
     /**
      * Checks if expression is a Constant with value false.
+     *
      * @return True if value is false, false otherwise.
      */
     [[nodiscard]] bool isConstFalse() const;

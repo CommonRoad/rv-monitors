@@ -1,9 +1,4 @@
-//
-// Created by Sebastian Maierhofer on 14.01.21.
-//
-
-#ifndef RV_MONITORS_RESOLVING_OPERATOR_H
-#define RV_MONITORS_RESOLVING_OPERATOR_H
+#pragma once
 
 #include <utility>
 
@@ -38,11 +33,10 @@ class ResolvingOperator : public Unary {
     [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override;
 
     [[nodiscard]] std::shared_ptr<Hydra2Monitor> accept(HydraCreationVisitor2 &visitor, size_t parentId,
-                                                        bool connectedEval) override;
+                                                        bool connectedEval, OperatorType opType,
+                                                        std::optional<IntervalTemporalOperator> intv) override;
 
     [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override;
 
     [[nodiscard]] std::string to_string() const override;
 };
-
-#endif // RV_MONITORS_RESOLVING_OPERATOR_H

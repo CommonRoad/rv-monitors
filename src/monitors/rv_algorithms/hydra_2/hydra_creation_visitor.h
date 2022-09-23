@@ -6,9 +6,13 @@
 //
 #pragma once
 
+#include "monitors/utils/interval.h"
 #include <map>
 #include <memory>
+#include <optional>
 #include <vector>
+
+enum OperatorType { UNTIL_LEFT, UNTIL_RIGHT, SINCE_LEFT, SINCE_RIGHT, AND, NEXT, PREVIOUS, OR, NOT, BASE };
 
 class Hydra2Monitor;
 
@@ -102,7 +106,9 @@ class HydraCreationVisitor2 {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @return Created monitor.
      */
-    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitAtomic(Atomic &top, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitAtomic(Atomic &top, size_t parentId, bool connectedEval,
+                                                             OperatorType opType,
+                                                             std::optional<IntervalTemporalOperator> intv);
 
     /**
      * Visitor for creating Hydra2 Constant Monitor.
@@ -112,7 +118,9 @@ class HydraCreationVisitor2 {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @return Created monitor.
      */
-    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitConstant(Constant &top, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitConstant(Constant &top, size_t parentId, bool connectedEval,
+                                                               OperatorType opType,
+                                                               std::optional<IntervalTemporalOperator> intv);
 
     /**
      * Visitor for creating Hydra2 Previous Monitor.
@@ -122,7 +130,9 @@ class HydraCreationVisitor2 {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @return Created monitor.
      */
-    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitPreviously(Previously &top, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitPreviously(Previously &top, size_t parentId, bool connectedEval,
+                                                                 OperatorType opType,
+                                                                 std::optional<IntervalTemporalOperator> intv);
 
     /**
      * Visitor for creating Hydra2 Predicate Monitor.
@@ -132,7 +142,9 @@ class HydraCreationVisitor2 {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @return Created monitor.
      */
-    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitPredicate(Predicate &top, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitPredicate(Predicate &top, size_t parentId, bool connectedEval,
+                                                                OperatorType opType,
+                                                                std::optional<IntervalTemporalOperator> intv);
 
     /**
      * Visitor for creating Hydra2 Next Monitor.
@@ -142,7 +154,9 @@ class HydraCreationVisitor2 {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @return Created monitor.
      */
-    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitNext(NextStrong &top, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitNext(NextStrong &top, size_t parentId, bool connectedEval,
+                                                           OperatorType opType,
+                                                           std::optional<IntervalTemporalOperator> intv);
 
     /**
      * Visitor for creating Hydra2 Since Monitor.
@@ -152,7 +166,9 @@ class HydraCreationVisitor2 {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @return Created monitor.
      */
-    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitSince(Since &top, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitSince(Since &top, size_t parentId, bool connectedEval,
+                                                            OperatorType opType,
+                                                            std::optional<IntervalTemporalOperator> intv);
 
     /**
      * Visitor for creating Hydra2 Until Monitor.
@@ -162,7 +178,9 @@ class HydraCreationVisitor2 {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @return Created monitor.
      */
-    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitUntil(Until &top, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitUntil(Until &top, size_t parentId, bool connectedEval,
+                                                            OperatorType opType,
+                                                            std::optional<IntervalTemporalOperator> intv);
 
     /**
      * Visitor for creating Hydra2 Or Monitor.
@@ -172,7 +190,9 @@ class HydraCreationVisitor2 {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @return Created monitor.
      */
-    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitOr(Or &top, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitOr(Or &top, size_t parentId, bool connectedEval,
+                                                         OperatorType opType,
+                                                         std::optional<IntervalTemporalOperator> intv);
 
     /**
      * Visitor for creating Hydra2 And Monitor.
@@ -182,7 +202,9 @@ class HydraCreationVisitor2 {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @return Created monitor.
      */
-    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitAnd(And &top, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitAnd(And &top, size_t parentId, bool connectedEval,
+                                                          OperatorType opType,
+                                                          std::optional<IntervalTemporalOperator> intv);
 
     /**
      * Visitor for creating Hydra2 Not Monitor.
@@ -192,7 +214,9 @@ class HydraCreationVisitor2 {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @return Created monitor.
      */
-    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitNot(Not &top, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitNot(Not &top, size_t parentId, bool connectedEval,
+                                                          OperatorType opType,
+                                                          std::optional<IntervalTemporalOperator> intv);
 
   private:
     size_t maxId{0}; //**< Maximum ID which is currently assigned to sub-monitor. */
