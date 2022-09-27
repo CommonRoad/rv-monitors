@@ -6,8 +6,7 @@ std::shared_ptr<Expression> NextWeak::accept(ExpressionVisitor &visitor, Trace &
     return visitor.visitNextWeak(*this, trace, index);
 }
 
-std::shared_ptr<Hydra2Monitor> NextWeak::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval,
-                                                OperatorType opType, std::optional<IntervalTemporalOperator> intv) {
+std::shared_ptr<Hydra2Monitor> NextWeak::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval) {
     return nullptr;
 }
 

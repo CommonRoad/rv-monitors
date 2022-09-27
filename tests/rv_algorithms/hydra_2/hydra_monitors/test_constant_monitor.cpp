@@ -15,7 +15,7 @@ TEST(TestConstantMonitor, testSingleConstant) {
     Formula formula = Parser::parse("true");
     formula.setId("R1");
     auto mon{ConstantMonitor(formula, 1, false)};
-    mon.registerParent(0, OperatorType::BASE, {});
+    mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, true);
     EXPECT_EQ(mon.step(0, 0).value, true);

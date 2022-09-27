@@ -87,9 +87,8 @@ class Expression {
      * @param opType
      * @return Result of visit function of respective expression.
      */
-    virtual std::shared_ptr<Hydra2Monitor> accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval,
-                                                  OperatorType opType,
-                                                  std::optional<IntervalTemporalOperator> intv) = 0;
+    virtual std::shared_ptr<Hydra2Monitor> accept(HydraCreationVisitor2 &visitor, size_t parentId,
+                                                  bool connectedEval) = 0;
 
     /**
      * Accept function for visitor pattern for original Hydra monitor.

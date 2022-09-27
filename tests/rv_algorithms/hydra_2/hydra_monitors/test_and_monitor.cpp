@@ -19,11 +19,11 @@ TEST(TestAndMonitor, testSingleAndMonitorFalseEvaluation) {
     Formula formulaTrue = Parser::parse("true");
     formula.setId("R1");
     auto mon1{std::make_shared<ConstantMonitor>(formulaFalse, 2, false)};
-    mon1->registerParent(1, OperatorType::AND, {});
+    mon1->registerParent(1);
     auto mon2{std::make_shared<ConstantMonitor>(formulaTrue, 3, false)};
-    mon2->registerParent(1, OperatorType::AND, {});
+    mon2->registerParent(1);
     auto mon{AndMonitor(formula, {mon1, mon2}, 1, false, false)};
-    mon.registerParent(0, OperatorType::BASE, {});
+    mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, false);
     EXPECT_EQ(mon.step(0, 0).value, false);
@@ -36,11 +36,11 @@ TEST(TestAndMonitor, testSingleAndMonitorTrueEvaluation) {
     Formula formulaTrue = Parser::parse("true");
     formula.setId("R1");
     auto mon1{std::make_shared<ConstantMonitor>(formulaTrue, 2, false)};
-    mon1->registerParent(1, OperatorType::AND, {});
+    mon1->registerParent(1);
     auto mon2{std::make_shared<ConstantMonitor>(formulaTrue, 3, false)};
-    mon2->registerParent(1, OperatorType::AND, {});
+    mon2->registerParent(1);
     auto mon{AndMonitor(formula, {mon1, mon2}, 1, false, false)};
-    mon.registerParent(0, OperatorType::BASE, {});
+    mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, true);
     EXPECT_EQ(mon.step(0, 0).value, true);
@@ -53,11 +53,11 @@ TEST(TestAndMonitor, testSingleAndMonitorFalseEvaluationShortCircuiting) {
     Formula formulaTrue = Parser::parse("true");
     formula.setId("R1");
     auto mon1{std::make_shared<ConstantMonitor>(formulaFalse, 2, false)};
-    mon1->registerParent(1, OperatorType::AND, {});
+    mon1->registerParent(1);
     auto mon2{std::make_shared<ConstantMonitor>(formulaTrue, 3, false)};
-    mon2->registerParent(1, OperatorType::AND, {});
+    mon2->registerParent(1);
     auto mon{AndMonitor(formula, {mon1, mon2}, 1, false, true)};
-    mon.registerParent(0, OperatorType::BASE, {});
+    mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, false);
     EXPECT_EQ(mon.step(0, 0).value, false);
@@ -70,11 +70,11 @@ TEST(TestAndMonitor, testSingleAndMonitorTrueEvaluationShortCircuiting) {
     Formula formulaTrue = Parser::parse("true");
     formula.setId("R1");
     auto mon1{std::make_shared<ConstantMonitor>(formulaTrue, 2, false)};
-    mon1->registerParent(1, OperatorType::AND, {});
+    mon1->registerParent(1);
     auto mon2{std::make_shared<ConstantMonitor>(formulaTrue, 3, false)};
-    mon2->registerParent(1, OperatorType::AND, {});
+    mon2->registerParent(1);
     auto mon{AndMonitor(formula, {mon1, mon2}, 1, false, true)};
-    mon.registerParent(0, OperatorType::BASE, {});
+    mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, true);
     EXPECT_EQ(mon.step(0, 0).value, true);
@@ -88,11 +88,11 @@ TEST(TestAndMonitor, testSingleAndMonitorShortCircuitingForLoop) {
     formula.setId("R1");
     auto mon1{std::make_shared<NegationMonitor>(formulaNegation,
                                                 std::make_shared<ConstantMonitor>(formulaFalse, 4, false), 2, false)};
-    mon1->registerParent(1, OperatorType::AND, {});
+    mon1->registerParent(1);
     auto mon2{std::make_shared<ConstantMonitor>(formulaFalse, 3, false)};
-    mon2->registerParent(1, OperatorType::AND, {});
+    mon2->registerParent(1);
     auto mon{AndMonitor(formula, {mon1, mon2}, 1, false, true)};
-    mon.registerParent(0, OperatorType::BASE, {});
+    mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, false);
     EXPECT_EQ(mon.step(0, 0).value, false);
@@ -107,9 +107,9 @@ TEST(TestAndMonitor, testToString) {
     Formula formulaTrue = Parser::parse("true");
     formula.setId("R1");
     auto mon1{std::make_shared<ConstantMonitor>(formulaFalse, 2, false)};
-    mon1->registerParent(1, OperatorType::AND, {});
+    mon1->registerParent(1);
     auto mon2{std::make_shared<ConstantMonitor>(formulaTrue, 3, false)};
-    mon2->registerParent(1, OperatorType::AND, {});
+    mon2->registerParent(1);
     auto mon{AndMonitor(formula, {mon1, mon2}, 1, false, false)};
     EXPECT_EQ(mon.to_string(), "(false & true)");
 }
@@ -121,9 +121,9 @@ TEST(TestAndMonitor, testReset) {
     Formula formulaTrue = Parser::parse("true");
     formula.setId("R1");
     auto mon1{std::make_shared<ConstantMonitor>(formulaFalse, 2, false)};
-    mon1->registerParent(1, OperatorType::AND, {});
+    mon1->registerParent(1);
     auto mon2{std::make_shared<ConstantMonitor>(formulaTrue, 3, false)};
-    mon2->registerParent(1, OperatorType::AND, {});
+    mon2->registerParent(1);
     auto mon{AndMonitor(formula, {mon1, mon2}, 1, false, false)};
     EXPECT_NO_THROW(mon.reset());
 }

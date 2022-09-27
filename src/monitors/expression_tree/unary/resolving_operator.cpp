@@ -17,8 +17,7 @@ std::string ResolvingOperator::to_string() const {
 }
 
 std::shared_ptr<Hydra2Monitor> ResolvingOperator::accept(HydraCreationVisitor2 &visitor, size_t parentId,
-                                                         bool connectedEval, OperatorType opType,
-                                                         std::optional<IntervalTemporalOperator> intv) {
+                                                         bool connectedEval) {
     return nullptr;
 }
 

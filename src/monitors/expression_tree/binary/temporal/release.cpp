@@ -6,8 +6,7 @@ std::shared_ptr<Expression> Release::accept(ExpressionVisitor &visitor, Trace &t
     return visitor.visitRelease(*this, trace, index);
 }
 
-std::shared_ptr<Hydra2Monitor> Release::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval,
-                                               OperatorType opType, std::optional<IntervalTemporalOperator> intv) {
+std::shared_ptr<Hydra2Monitor> Release::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval) {
     return nullptr;
 }
 

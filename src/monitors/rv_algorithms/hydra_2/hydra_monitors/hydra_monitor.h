@@ -90,25 +90,6 @@ class Hydra2Monitor {
      */
     Verdict simulateVerdict(size_t parentId, size_t stepNumber);
 
-    /**
-     * Stores computed verdict of executed step.
-     *
-     * @param parentId Id of parent monitor.
-     * @param stepNumber Number of step which should be performed.
-     * @param verdict Verdict which should be stored.
-     * @return Boolean verdict.
-     */
-    Verdict storeVerdict(size_t parentId, size_t stepNumber, Verdict verdict);
-
-    /**
-     * Loads already computed verdict for step.
-     *
-     * @param parentId Id of parent monitor.
-     * @param stepNumber Number of step which should be performed.
-     * @return Boolean verdict.
-     */
-    Verdict loadVerdict(size_t parentId, size_t stepNumber);
-
   public:
     /**
      * Base constructor for hydra monitor.
@@ -158,7 +139,7 @@ class Hydra2Monitor {
      *
      * @param parentId ID of parent monitor.
      */
-    void registerParent(size_t parentId, OperatorType parentOperatorType, std::optional<IntervalTemporalOperator> intv);
+    void registerParent(size_t parentId);
 
     /**
      * Getter for ID of formula which is monitored.
@@ -203,9 +184,5 @@ class Hydra2Monitor {
     bool connectedEval;                  //**< Boolean indicating whether connected evaluation should be performed */
     double evalCost{0.0};                //**< Evaluation cost of monitor */
     double satisfactionProbability{1.0}; //**< Satisfaction probability of monitor */
-    std::map<size_t, OperatorType> parentType;                                //**< Type of parent monitor */
-    std::map<size_t, std::optional<IntervalTemporalOperator>> parentInterval; //**< Interval of parent monitor */
-    std::array<size_t, 2> minStepNumber; //**< Storage for minimum step number for any parent monitor with ID of
-                                         // corresponding parent monitor. */
     size_t verdictHistoryPopCounter{0}; //**< Counter storing how often pop operation was applied on verdict history. */
 };

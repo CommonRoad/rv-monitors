@@ -20,18 +20,11 @@ Hydra2Monitor::Hydra2Monitor(Formula formula, size_t monitorId, bool connectedEv
 void Hydra2Monitor::reset() {
     verdictHistory = {};
     verdictHistoryPopCounter = 0;
-    minStepNumber[0] = 0;
-    minStepNumber[1] = 0;
     for (auto &[_, id] : traceIdx)
         id = 0;
 }
 
-void Hydra2Monitor::registerParent(size_t parentId, OperatorType parentOperatorType,
-                                   std::optional<IntervalTemporalOperator> intv) {
-    traceIdx[parentId] = 0;
-    parentType[parentId] = parentOperatorType;
-    parentInterval[parentId] = intv;
-}
+void Hydra2Monitor::registerParent(size_t parentId) { traceIdx[parentId] = 0; }
 
 size_t Hydra2Monitor::getMaxTraceIdx() {
     if (traceIdx.empty())
@@ -124,6 +117,7 @@ Verdict Hydra2Monitor::simulateVerdict(size_t parentId, size_t stepNumber) {
     }
     return verdict;
 }
+
 const std::string &Hydra2Monitor::getFormulaId() const { return formulaId; }
 
 void Hydra2Monitor::setFormulaId(const std::string &formula_id) { formulaId = formula_id; }
@@ -131,56 +125,3 @@ void Hydra2Monitor::setFormulaId(const std::string &formula_id) { formulaId = fo
 double Hydra2Monitor::getEvalCost() const { return evalCost; }
 
 double Hydra2Monitor::getSatisfactionProbability() const { return satisfactionProbability; }
-
-Verdict Hydra2Monitor::storeVerdict(size_t parentId, size_t stepNumber, Verdict verdict) {
-    //   std::array<size_t, 2> minStepNumber
-    //    auto opertorType{parentType[parentId]};
-    //    switch (opertorType) {
-    //    case UNTIL_LEFT:
-    //        break;
-    //    case UNTIL_RIGHT:
-    //        break;
-    //    case SINCE_LEFT:
-    //        break;
-    //    case SINCE_RIGHT:
-    //        break;
-    //    case AND:
-    //        break;
-    //    case NEXT:
-    //        break;
-    //    case PREVIOUS:
-    //        break;
-    //    case OR:
-    //        break;
-    //    case NOT:
-    //        break;
-    //    case BASE:
-    //        break;
-    //    }
-}
-
-Verdict Hydra2Monitor::loadVerdict(size_t parentId, size_t stepNumber) {
-    //    auto opertorType{parentType[parentId]};
-    //    switch (opertorType) {
-    //    case UNTIL_LEFT:
-    //        break;
-    //    case UNTIL_RIGHT:
-    //        break;
-    //    case SINCE_LEFT:
-    //        break;
-    //    case SINCE_RIGHT:
-    //        break;
-    //    case AND:
-    //        break;
-    //    case NEXT:
-    //        break;
-    //    case PREVIOUS:
-    //        break;
-    //    case OR:
-    //        break;
-    //    case NOT:
-    //        break;
-    //    case BASE:
-    //        break;
-    //    }
-}

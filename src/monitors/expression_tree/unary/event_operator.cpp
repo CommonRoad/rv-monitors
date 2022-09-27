@@ -12,8 +12,7 @@ std::string EventOperator::to_string() const {
     return "E(" + getLeft()->to_string() + trace.getTrace().at(index).to_string() + ")";
 }
 std::shared_ptr<Hydra2Monitor> EventOperator::accept(HydraCreationVisitor2 &visitor, size_t parentId,
-                                                     bool connectedEval, OperatorType opType,
-                                                     std::optional<IntervalTemporalOperator> intv) {
+                                                     bool connectedEval) {
     return nullptr;
 }
 

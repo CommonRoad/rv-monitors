@@ -6,8 +6,7 @@ std::shared_ptr<Expression> Once::accept(ExpressionVisitor &visitor, Trace &trac
     return visitor.visitOnce(*this, trace, index);
 }
 
-std::shared_ptr<Hydra2Monitor> Once::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval,
-                                            OperatorType opType, std::optional<IntervalTemporalOperator> intv) {
+std::shared_ptr<Hydra2Monitor> Once::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval) {
     return nullptr;
 }
 

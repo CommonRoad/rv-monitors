@@ -8,9 +8,8 @@ std::shared_ptr<Expression> Atomic::accept(ExpressionVisitor &visitor, Trace &tr
     return visitor.visitAtomic(*this, trace, index);
 }
 
-std::shared_ptr<Hydra2Monitor> Atomic::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval,
-                                              OperatorType opType, std::optional<IntervalTemporalOperator> intv) {
-    return visitor.visitAtomic(*this, parentId, connectedEval, opType, intv);
+std::shared_ptr<Hydra2Monitor> Atomic::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval) {
+    return visitor.visitAtomic(*this, parentId, connectedEval);
 }
 
 std::shared_ptr<HydraMonitor> Atomic::accept(HydraCreationVisitor &visitor) { return visitor.visitAtomic(*this); }

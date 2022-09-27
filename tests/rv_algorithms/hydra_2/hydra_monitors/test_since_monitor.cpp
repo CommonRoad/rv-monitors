@@ -20,11 +20,11 @@ TEST(TestSinceMonitor, testSinceMonitorEvaluation) {
     formula.setId("R1");
     auto operatorInterval{IntervalTemporalOperator(0, 4)};
     auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2, false)};
-    mon1->registerParent(1, OperatorType::SINCE_LEFT, operatorInterval);
+    mon1->registerParent(1);
     auto mon2{std::make_shared<AtomicMonitor>(formulaB, 3, false)};
-    mon2->registerParent(1, OperatorType::SINCE_RIGHT, operatorInterval);
+    mon2->registerParent(1);
     auto mon{SinceMonitor(formula, mon1, mon2, operatorInterval, 1, false)};
-    mon.registerParent(0, OperatorType::BASE, {});
+    mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.step(0, 0).value, false);
     EXPECT_EQ(mon.step(0, 1).value, false);
@@ -44,9 +44,9 @@ TEST(TestSinceMonitor, testToString) {
     formula.setId("R1");
     auto operatorInterval{IntervalTemporalOperator(0, 4)};
     auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2, false)};
-    mon1->registerParent(1, OperatorType::SINCE_LEFT, operatorInterval);
+    mon1->registerParent(1);
     auto mon2{std::make_shared<AtomicMonitor>(formulaB, 3, false)};
-    mon2->registerParent(1, OperatorType::SINCE_RIGHT, operatorInterval);
+    mon2->registerParent(1);
     auto mon{SinceMonitor(formula, mon1, mon2, operatorInterval, 1, false)};
     EXPECT_EQ(mon.to_string(), "(a S[0, 4] b)");
 
@@ -56,9 +56,9 @@ TEST(TestSinceMonitor, testToString) {
     formula.setId("R1");
     operatorInterval = IntervalTemporalOperator(0);
     mon1 = std::make_shared<AtomicMonitor>(formulaA, 2, false);
-    mon1->registerParent(1, OperatorType::SINCE_LEFT, operatorInterval);
+    mon1->registerParent(1);
     mon2 = std::make_shared<AtomicMonitor>(formulaB, 3, false);
-    mon2->registerParent(1, OperatorType::SINCE_RIGHT, operatorInterval);
+    mon2->registerParent(1);
     mon = SinceMonitor(formula, mon1, mon2, operatorInterval, 1, false);
     EXPECT_EQ(mon.to_string(), "(a S[0, inf] b)");
 
@@ -68,9 +68,9 @@ TEST(TestSinceMonitor, testToString) {
     formula.setId("R1");
     operatorInterval = IntervalTemporalOperator();
     mon1 = std::make_shared<AtomicMonitor>(formulaA, 2, false);
-    mon1->registerParent(1, OperatorType::SINCE_LEFT, operatorInterval);
+    mon1->registerParent(1);
     mon2 = std::make_shared<AtomicMonitor>(formulaB, 3, false);
-    mon2->registerParent(1, OperatorType::SINCE_RIGHT, operatorInterval);
+    mon2->registerParent(1);
     mon = SinceMonitor(formula, mon1, mon2, operatorInterval, 1, false);
     EXPECT_EQ(mon.to_string(), "(a S b)");
 }
@@ -82,9 +82,9 @@ TEST(TestSinceMonitor, testReset) {
     formula.setId("R1");
     auto operatorInterval{IntervalTemporalOperator(0, 4)};
     auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2, false)};
-    mon1->registerParent(1, OperatorType::SINCE_LEFT, operatorInterval);
+    mon1->registerParent(1);
     auto mon2{std::make_shared<AtomicMonitor>(formulaB, 3, false)};
-    mon2->registerParent(1, OperatorType::SINCE_RIGHT, operatorInterval);
+    mon2->registerParent(1);
     auto mon{SinceMonitor(formula, mon1, mon2, operatorInterval, 1, false)};
     EXPECT_NO_THROW(mon.reset());
 }

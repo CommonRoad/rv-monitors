@@ -6,9 +6,8 @@ std::shared_ptr<Expression> Or::accept(ExpressionVisitor &visitor, Trace &trace,
     return visitor.visitOr(*this, trace, index);
 }
 
-std::shared_ptr<Hydra2Monitor> Or::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval,
-                                          OperatorType opType, std::optional<IntervalTemporalOperator> intv) {
-    return visitor.visitOr(*this, parentId, connectedEval, opType, intv);
+std::shared_ptr<Hydra2Monitor> Or::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval) {
+    return visitor.visitOr(*this, parentId, connectedEval);
 }
 
 std::shared_ptr<HydraMonitor> Or::accept(HydraCreationVisitor &visitor) { return visitor.visitOr(*this); }

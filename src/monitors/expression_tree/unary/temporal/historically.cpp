@@ -10,8 +10,8 @@ std::shared_ptr<Expression> Historically::accept(ExpressionVisitor &visitor, Tra
     return visitor.visitHistorically(*this, trace, index);
 }
 
-std::shared_ptr<Hydra2Monitor> Historically::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval,
-                                                    OperatorType opType, std::optional<IntervalTemporalOperator> intv) {
+std::shared_ptr<Hydra2Monitor> Historically::accept(HydraCreationVisitor2 &visitor, size_t parentId,
+                                                    bool connectedEval) {
     return nullptr;
 }
 

@@ -17,9 +17,9 @@ TEST(TestNegationMonitor, testNegationMonitorFalseEvaluation) {
     Formula formulaTrue = Parser::parse("true");
     formula.setId("R1");
     auto mon1{std::make_shared<ConstantMonitor>(formulaTrue, 2, false)};
-    mon1->registerParent(1, OperatorType::NOT, {});
+    mon1->registerParent(1);
     auto mon{NegationMonitor(formula, mon1, 1, false)};
-    mon.registerParent(0, OperatorType::BASE, {});
+    mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, false);
     EXPECT_EQ(mon.step(0, 0).value, false);
@@ -32,9 +32,9 @@ TEST(TestNegationMonitor, testNegationMonitorTrueEvaluation) {
     Formula formulaFalse = Parser::parse("false");
     formula.setId("R1");
     auto mon1{std::make_shared<ConstantMonitor>(formulaFalse, 2, false)};
-    mon1->registerParent(1, OperatorType::NOT, {});
+    mon1->registerParent(1);
     auto mon{NegationMonitor(formula, mon1, 1, false)};
-    mon.registerParent(0, OperatorType::BASE, {});
+    mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, true);
     EXPECT_EQ(mon.step(0, 0).value, true);
@@ -47,7 +47,7 @@ TEST(TestNegationMonitor, testToString) {
     Formula formulaFalse = Parser::parse("false");
     formula.setId("R1");
     auto mon1{std::make_shared<ConstantMonitor>(formulaFalse, 2, false)};
-    mon1->registerParent(1, OperatorType::NOT, {});
+    mon1->registerParent(1);
     auto mon{NegationMonitor(formula, mon1, 1, false)};
     EXPECT_EQ(mon.to_string(), "!(false)");
 }
@@ -58,7 +58,7 @@ TEST(TestNegationMonitor, testReset) {
     Formula formulaFalse = Parser::parse("false");
     formula.setId("R1");
     auto mon1{std::make_shared<ConstantMonitor>(formulaFalse, 2, false)};
-    mon1->registerParent(1, OperatorType::NOT, {});
+    mon1->registerParent(1);
     auto mon{NegationMonitor(formula, mon1, 1, false)};
     EXPECT_NO_THROW(mon.reset());
 }
