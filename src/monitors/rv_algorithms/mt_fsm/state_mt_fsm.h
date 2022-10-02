@@ -83,7 +83,7 @@ class StateMT_FSM {
      * @param event
      * @return Next state.
      */
-    [[nodiscard]] size_t nextState(Event &event);
+    [[nodiscard]] size_t nextState(Event<bool> &event);
 
     /**
      * To_string.

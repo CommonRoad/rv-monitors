@@ -25,10 +25,10 @@ class PreviousMonitor : public Hydra2Monitor {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      */
     PreviousMonitor(const Formula &formula, std::shared_ptr<Hydra2Monitor> subMonitor,
-                    IntervalTemporalOperator interval, size_t monitorId, bool connectedEval)
+                    Hydra2IntervalTemporalOperator interval, size_t monitorId, bool connectedEval)
         : Hydra2Monitor(formula, monitorId, connectedEval, subMonitor->getEvalCost(),
                         subMonitor->getSatisfactionProbability()),
-          subMonitor(std::move(subMonitor)), interval(interval){};
+          subMonitor(std::move(subMonitor)), interval(std::move(interval)){};
 
     /**
      * Performs concrete step of previous operator monitor.
@@ -58,8 +58,10 @@ class PreviousMonitor : public Hydra2Monitor {
      */
     std::string to_string() override;
 
+    void updateDynamicInterval(size_t stepNumber) override;
+
   private:
     std::shared_ptr<Hydra2Monitor> subMonitor; //**< Child monitor. */
     std::optional<Verdict> currentVerdict;     //**< Stores previous verdict. */
-    IntervalTemporalOperator interval;         //**< Interval of operator. */
+    Hydra2IntervalTemporalOperator interval;   //**< Interval of operator. */
 };

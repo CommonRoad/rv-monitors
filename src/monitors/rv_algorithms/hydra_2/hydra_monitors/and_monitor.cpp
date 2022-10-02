@@ -63,3 +63,8 @@ double AndMonitor::computeSatisfactionProbability(const std::vector<std::shared_
         prob *= monitors.at(idx)->getSatisfactionProbability();
     return prob;
 }
+
+void AndMonitor::updateDynamicInterval(size_t stepNumber) {
+    for (const auto &mon : subMonitors)
+        mon->updateDynamicInterval(stepNumber);
+}

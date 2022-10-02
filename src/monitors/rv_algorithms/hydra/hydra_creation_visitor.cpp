@@ -15,6 +15,8 @@
 #include "hydra_monitors/previous_monitor.h"
 #include "hydra_monitors/since_monitor.h"
 #include "hydra_monitors/until_monitor.h"
+#include "monitors/expression_tree/atomic/atomic.h"
+#include "monitors/expression_tree/atomic/predicate.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/binary/temporal/since.h"
 #include "monitors/expression_tree/binary/temporal/until.h"

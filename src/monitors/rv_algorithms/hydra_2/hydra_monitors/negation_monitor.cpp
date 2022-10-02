@@ -18,3 +18,5 @@ void NegationMonitor::reset() {
 }
 
 std::string NegationMonitor::to_string() { return "!(" + subMonitor->to_string() + ")"; }
+
+void NegationMonitor::updateDynamicInterval(size_t stepNumber) { subMonitor->updateDynamicInterval(stepNumber); }

@@ -22,7 +22,7 @@ const std::shared_ptr<node> &StateBttFsm::getTerminal() const { return terminal;
 
 void StateBttFsm::setTerminal(const std::shared_ptr<node> &term) { StateBttFsm::terminal = term; }
 
-size_t StateBttFsm::nextState(Event &event) {
+size_t StateBttFsm::nextState(Event<bool> &event) {
     std::shared_ptr<Decision> decision;
     // Terminal
     if (event.isTerminal()) {
@@ -36,7 +36,7 @@ size_t StateBttFsm::nextState(Event &event) {
     return nextState(event, decision);
 }
 
-size_t StateBttFsm::nextState(Event &event, const std::shared_ptr<Decision> &decision) {
+size_t StateBttFsm::nextState(Event<bool> &event, const std::shared_ptr<Decision> &decision) {
     std::shared_ptr<node> next;
     // Predicate is true
     if (Utils::evaluateBooleanExpression(decision->getPredicate(), event.getEventMapRef())) {

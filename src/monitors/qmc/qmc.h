@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "monitors/expression_tree/expression.h"
+#include "monitors/expression_tree/atomic/atomic.h"
 #include "monitors/expression_tree/nary/nary_interface.h"
 #include "monitors/formula/formula.h"
 
@@ -72,7 +73,7 @@ template <class OriginalType, class DistributiveType>
         return expr;
     }
 
-    // As long as there are expressions to combine combine them
+    // As long as there are expressions to combine them
     while (originalExpr->getExpressions().size() > 1) {
         // Get two expressions to combine
         auto andExprItr = originalExpr->begin();

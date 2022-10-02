@@ -13,27 +13,27 @@ size_t hydraTestUtils::executeHydraEval(Trace trace, const std::vector<Formula> 
     numFailures[0] = evalHydra(formulas, expSolution, monitor1, trace, "fff");
     evalHydra(formulas, expSolution, monitor1, trace,
               "fff"); // execute trace on monitor again to check whether resetting of variables works
-    auto monitor2{Hydra2(formulas, false, false, true)};
-    numFailures[1] = evalHydra(formulas, expSolution, monitor2, trace, "fft");
-    evalHydra(formulas, expSolution, monitor2, trace, "fft");
-    auto monitor3{Hydra2(formulas, false, true, false)};
-    numFailures[2] = evalHydra(formulas, expSolution, monitor3, trace, "ftf");
-    evalHydra(formulas, expSolution, monitor3, trace, "ftf");
-    auto monitor4{Hydra2(formulas, false, true, true)};
-    numFailures[3] = evalHydra(formulas, expSolution, monitor4, trace, "ftt");
-    evalHydra(formulas, expSolution, monitor4, trace, "ftt");
-    auto monitor5{Hydra2(formulas, true, false, false)};
-    numFailures[4] = evalHydra(formulas, expSolution, monitor5, trace, "tff");
-    evalHydra(formulas, expSolution, monitor5, trace, "tff");
-    auto monitor6{Hydra2(formulas, true, false, true)};
-    numFailures[5] = evalHydra(formulas, expSolution, monitor6, trace, "tft");
-    evalHydra(formulas, expSolution, monitor6, trace, "tft");
-    auto monitor7{Hydra2(formulas, true, true, false)};
-    numFailures[6] = evalHydra(formulas, expSolution, monitor7, trace, "ttf");
-    evalHydra(formulas, expSolution, monitor7, trace, "ttf");
-    auto monitor9{Hydra2(formulas, true, true, true)};
-    numFailures[7] = evalHydra(formulas, expSolution, monitor9, trace, "ttt");
-    evalHydra(formulas, expSolution, monitor9, trace, "ttt");
+//    auto monitor2{Hydra2(formulas, false, false, true)};
+//    numFailures[1] = evalHydra(formulas, expSolution, monitor2, trace, "fft");
+//    evalHydra(formulas, expSolution, monitor2, trace, "fft");
+//    auto monitor3{Hydra2(formulas, false, true, false)};
+//    numFailures[2] = evalHydra(formulas, expSolution, monitor3, trace, "ftf");
+//    evalHydra(formulas, expSolution, monitor3, trace, "ftf");
+//    auto monitor4{Hydra2(formulas, false, true, true)};
+//    numFailures[3] = evalHydra(formulas, expSolution, monitor4, trace, "ftt");
+//    evalHydra(formulas, expSolution, monitor4, trace, "ftt");
+//    auto monitor5{Hydra2(formulas, true, false, false)};
+//    numFailures[4] = evalHydra(formulas, expSolution, monitor5, trace, "tff");
+//    evalHydra(formulas, expSolution, monitor5, trace, "tff");
+//    auto monitor6{Hydra2(formulas, true, false, true)};
+//    numFailures[5] = evalHydra(formulas, expSolution, monitor6, trace, "tft");
+//    evalHydra(formulas, expSolution, monitor6, trace, "tft");
+//    auto monitor7{Hydra2(formulas, true, true, false)};
+//    numFailures[6] = evalHydra(formulas, expSolution, monitor7, trace, "ttf");
+//    evalHydra(formulas, expSolution, monitor7, trace, "ttf");
+//    auto monitor9{Hydra2(formulas, true, true, true)};
+//    numFailures[7] = evalHydra(formulas, expSolution, monitor9, trace, "ttt");
+//    evalHydra(formulas, expSolution, monitor9, trace, "ttt");
     return *std::max_element(numFailures.begin(), numFailures.end());
 }
 

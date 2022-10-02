@@ -13,7 +13,7 @@ EventConsumingLTL::EventConsumingLTL(const std::vector<Formula> &formulas, bool 
 
 Formula EventConsumingLTL::eventConsumingFuture(Trace &trace) {
     // Empty trace
-    if (trace.getTrace().empty()) {
+    if (trace.getBooleanTrace().empty()) {
         std::cout << "Trace is empty" << std::endl;
         return Formula(std::make_shared<Constant>(false));
     }
@@ -39,7 +39,7 @@ Formula EventConsumingLTL::eventConsumingFuture(Trace &trace) {
 
 Formula EventConsumingLTL::eventConsumingPast(Trace &trace) {
     // Empty trace
-    if (trace.getTrace().empty()) {
+    if (trace.getBooleanTrace().empty()) {
         return Formula(std::make_shared<Constant>(false));
     }
     // Copy formula before working on it

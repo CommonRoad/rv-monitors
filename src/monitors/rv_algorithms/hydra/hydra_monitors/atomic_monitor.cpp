@@ -5,10 +5,11 @@
 // Credits: BMW Car@TUM
 //
 #include "atomic_monitor.h"
+#include "monitors/expression_tree/atomic/atomic.h"
 
 Verdict AtomicMonitorHydra::concreteStep() {
     if (traceIdx < trace.value().getLength()) {
-        auto event{trace.value().getEvent(traceIdx)};
+        auto event{trace.value().getBooleanEvent(traceIdx)};
         auto verdict{
             Verdict(event.getTimeStep(), event.getValue(*std::dynamic_pointer_cast<Atomic>(formula.getExpr())))};
         ++traceIdx;

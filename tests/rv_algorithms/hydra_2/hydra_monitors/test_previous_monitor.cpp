@@ -16,7 +16,7 @@ TEST(TestPreviousMonitor, testPreviousMonitorEvaluationStandard) {
     Formula formula = Parser::parse("P[0, 4](a)");
     Formula formulaA = Parser::parse("a");
     formula.setId("R1");
-    auto operatorInterval{IntervalTemporalOperator(0, 4)};
+    auto operatorInterval{Hydra2IntervalTemporalOperator(0, 4)};
     auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2, true)};
     mon1->registerParent(1);
     auto mon{PreviousMonitor(formula, mon1, operatorInterval, 1, true)};
@@ -34,7 +34,7 @@ TEST(TestPreviousMonitor, testPreviousMonitorEvaluationInterval) {
     Formula formula = Parser::parse("P[0, 4](a)");
     Formula formulaA = Parser::parse("a");
     formula.setId("R1");
-    auto operatorInterval{IntervalTemporalOperator(0, 4)};
+    auto operatorInterval{Hydra2IntervalTemporalOperator(0, 4)};
     auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2, false)};
     mon1->registerParent(1);
     auto mon{PreviousMonitor(formula, mon1, operatorInterval, 1, false)};
@@ -51,7 +51,7 @@ TEST(TestPreviousMonitor, testToString) {
     Formula formula = Parser::parse("P[0, 4](a)");
     Formula formulaA = Parser::parse("a");
     formula.setId("R1");
-    auto operatorInterval{IntervalTemporalOperator(0, 4)};
+    auto operatorInterval{Hydra2IntervalTemporalOperator(0, 4)};
     auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2, false)};
     mon1->registerParent(1);
     auto mon{PreviousMonitor(formula, mon1, operatorInterval, 1, false)};
@@ -60,7 +60,7 @@ TEST(TestPreviousMonitor, testToString) {
     formula = Parser::parse("P[0, inf](a)");
     formulaA = Parser::parse("a");
     formula.setId("R1");
-    operatorInterval = IntervalTemporalOperator(0);
+    operatorInterval = Hydra2IntervalTemporalOperator(0);
     mon1 = std::make_shared<AtomicMonitor>(formulaA, 2, false);
     mon1->registerParent(1);
     mon = PreviousMonitor(formula, mon1, operatorInterval, 1, false);
@@ -69,7 +69,7 @@ TEST(TestPreviousMonitor, testToString) {
     formula = Parser::parse("P(a)");
     formulaA = Parser::parse("a");
     formula.setId("R1");
-    operatorInterval = IntervalTemporalOperator();
+    operatorInterval = Hydra2IntervalTemporalOperator();
     mon1 = std::make_shared<AtomicMonitor>(formulaA, 2, false);
     mon1->registerParent(1);
     mon = PreviousMonitor(formula, mon1, operatorInterval, 1, false);
@@ -80,9 +80,9 @@ TEST(TestPreviousMonitor, testReset) {
     Formula formula = Parser::parse("P[0, 4](a)");
     Formula formulaA = Parser::parse("a");
     formula.setId("R1");
-    auto operatorInterval{IntervalTemporalOperator(0, 4)};
+    auto operatorInterval{Hydra2IntervalTemporalOperator(0, 4)};
     auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2, false)};
     mon1->registerParent(1);
-    auto mon{PreviousMonitor(formula, mon1, IntervalTemporalOperator(0, 4), 1, false)};
+    auto mon{PreviousMonitor(formula, mon1, Hydra2IntervalTemporalOperator(0, 4), 1, false)};
     EXPECT_NO_THROW(mon.reset());
 }

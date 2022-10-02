@@ -29,10 +29,10 @@
 #include <iostream>
 
 void HydraRewriteVisitor::rewrite(Formula &formula) {
-    event_map_t map;
+    event_map_t<bool> map;
     // Dummy eventMap
     Event event(map, 0, false);
-    auto trace = Trace(std::vector<Event>{event});
+    auto trace = Trace(std::vector<Event<bool>>{event});
 
     auto before = Formula::deepCopy(formula.getExpr());
     formula.setExpr(formula.getExpr()->accept(*this, trace, 0));

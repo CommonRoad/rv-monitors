@@ -5,7 +5,9 @@
 #include "temporal_operator.h"
 
 TemporalOperator::TemporalOperator(const TemporalOperator &old) {
-    if (old.interval->isFinite())
+    if(old.interval->isDynamic())
+        interval = std::make_shared<Interval>(old.interval->getDynamicInterval());
+    else if (old.interval->isFinite())
         interval = std::make_shared<Interval>(old.interval->getStart(), old.interval->getEnd());
     else if (old.interval->isEmpty())
         interval = std::make_shared<Interval>();

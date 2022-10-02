@@ -87,3 +87,24 @@ TEST(TestHydra2, testInvalidPredicateCost) {
     Formula formula = Parser::parse("G(P[0, 1](c))", "R1");
     EXPECT_DEATH(Hydra2({formula}, false, false, false, {{"test", {1, 2}}}), "Invalid predicate costs/probabilities");
 }
+
+bool condition(size_t stepNumber) {
+    return stepNumber == 1;
+}
+
+std::array<size_t ,2> interval(size_t stepNumber) {
+    if(stepNumber == 1)
+        return {0, 20};
+    return {};
+}
+
+TEST(TestHydra2, testDynamicInterval) {
+    Formula formula = Parser::parse("G(G[condition(stepNumber), interval(stepNumber)](c))", "R1");
+    Trace trace = Utils::createTrace({"c"}, {{"c"}, {}, {}, {}, {}, {"c"}},
+                                     std::vector<size_t>{0, 0, 2, 4, 5, 10},
+                                     {{"condition(stepNumber)", condition}}, {{"interval(stepNumber)", interval}});
+    std::vector<std::vector<Verdict>> expSolutions{
+        {Verdict{0, true}, Verdict{0, true}, Verdict{2, false}, Verdict{4, false}, Verdict{5, false},
+         Verdict{10, false}}};
+    hydraTestUtils::executeHydraEval(trace, {formula}, expSolutions);
+}

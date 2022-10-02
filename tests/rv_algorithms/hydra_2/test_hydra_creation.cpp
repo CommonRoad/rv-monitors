@@ -13,19 +13,19 @@
 void executeTest(Formula inputFormula, const std::string &expectedFormulaStringReordered,
                  const std::map<std::string, std::array<double, 2>> &predicateCosts) {
     HydraCreationVisitor2 hcv{HydraCreationVisitor2(predicateCosts, false)};
-    std::shared_ptr<Hydra2Monitor> mon = hcv.createMonitor(inputFormula, 0, false);
+    std::shared_ptr<Hydra2Monitor> mon = hcv.createMonitor(inputFormula, 0, false, {});
     EXPECT_EQ(mon->to_string(), inputFormula.to_string());
 
     hcv = HydraCreationVisitor2(predicateCosts, false);
-    mon = hcv.createMonitor(inputFormula, 0, true);
+    mon = hcv.createMonitor(inputFormula, 0, true, {});
     EXPECT_EQ(mon->to_string(), inputFormula.to_string());
 
     hcv = HydraCreationVisitor2(predicateCosts, true);
-    mon = hcv.createMonitor(inputFormula, 0, false);
+    mon = hcv.createMonitor(inputFormula, 0, false, {});
     EXPECT_EQ(mon->to_string(), expectedFormulaStringReordered);
 
     hcv = HydraCreationVisitor2(predicateCosts, true);
-    mon = hcv.createMonitor(inputFormula, 0, true);
+    mon = hcv.createMonitor(inputFormula, 0, true, {});
     EXPECT_EQ(mon->to_string(), expectedFormulaStringReordered);
 }
 

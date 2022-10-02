@@ -27,18 +27,18 @@ bool a(size_t dummy) {
 }
 
 Trace createTrace() {
-    std::vector<Event> eventList;
+    std::vector<Event<bool>> eventList;
     const std::map<std::string, std::function<bool(size_t)>> atomicsAndFunctions{{"a(dummy)", a}};
     for (size_t timeStepIdx{0}; timeStepIdx < 4; ++timeStepIdx) {
-        event_map_t event;
+        event_map_t<bool> event;
         for (auto const &[atomic, valueFetcher] : atomicsAndFunctions) {
             auto valueFetcherBound = std::bind(valueFetcher, timeStepIdx);
-            event[atomic] = lazy_bool(valueFetcherBound);
+            event[atomic] = LazyFunction<bool>(valueFetcherBound);
         }
         eventList.emplace_back(event, timeStepIdx, timeStepIdx == 4 - 1);
         event.clear();
     }
-    return Trace(eventList);
+    return {eventList};
 }
 
 TEST(TestPredicateMonitor, testPredicateEvaluation) {

@@ -54,8 +54,6 @@ class Since;
 
 class Historically;
 
-class Trace;
-
 class EventOperator;
 
 class ResolvingOperator;

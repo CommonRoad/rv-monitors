@@ -175,6 +175,9 @@ class Hydra2Monitor {
      */
     virtual std::string to_string() = 0;
 
+    virtual void updateDynamicInterval(size_t stepNumber);
+
+
   protected:
     Formula formula;                     //**< Monitored formula. */
     std::string formulaId;               //**< Id of formula */

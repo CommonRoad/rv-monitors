@@ -3,6 +3,7 @@
 #include "monitors/expression_tree/nary/bool/xor.h"
 #include "monitors/utils/utils.h"
 #include "nff.h"
+#include "monitors/expression_tree/atomic/atomic.h"
 
 void Formula::toNnf() {
     auto before = deepCopy(expr);

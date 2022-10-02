@@ -5,11 +5,12 @@
 // Credits: BMW Car@TUM
 //
 #include "predicate_monitor.h"
+#include "monitors/expression_tree/atomic/predicate.h"
 #include <iostream>
 
 Verdict PredicateMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     if (stepNumber < trace.getLength()) {
-        auto event{trace.getEvent(stepNumber)};
+        auto event{trace.getBooleanEvent(stepNumber)};
         auto verdict{
             Verdict(event.getTimeStep(), event.getValue(*std::dynamic_pointer_cast<Predicate>(formula.getExpr())))};
         return verdict;

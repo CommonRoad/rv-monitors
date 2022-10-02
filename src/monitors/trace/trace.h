@@ -1,6 +1,7 @@
 #pragma once
 
 #include "event.h"
+#include <utility>
 #include <vector>
 
 /**
@@ -8,18 +9,25 @@
  */
 class Trace {
   private:
-    std::vector<Event> trace;
+    std::vector<Event<bool>> booleanElements;
+    std::vector<Event<std::array<size_t, 2>>> intervalElements;
 
   public:
     /**
      * Constructor.
-     * @param trace
+     * @param Trace
      */
-    explicit Trace(std::vector<Event> trace) : trace(std::move(trace)) {}
+    Trace(std::vector<Event<bool>> trace) : booleanElements(std::move(trace)) {}
 
     /**
      * Constructor.
-     * @param trace
+     * @param Trace
+     */
+    Trace(std::vector<Event<bool>> booleanElements, std::vector<Event<std::array<size_t, 2>>> intervalElements) : booleanElements(std::move(booleanElements)), intervalElements(std::move(intervalElements)) {}
+
+    /**
+     * Constructor.
+     * @param Trace
      */
     Trace() = default;
 
@@ -28,59 +36,56 @@ class Trace {
      * @param index
      * @return Event at index.
      */
-    [[nodiscard]] Event &getEvent(size_t index) { return trace.at(index); }
+    [[nodiscard]] Event<bool> &getBooleanEvent(size_t index);
+
+    /**
+     * Getter for an event.
+     * @param index
+     * @return Event at index.
+     */
+    [[nodiscard]] Event<std::array<size_t, 2>> &getIntervalEvent(size_t index);
 
     /**
      * Getter for trace length.
      * @return Length of the trace.
      */
-    [[nodiscard]] size_t getLength() { return trace.size(); }
+    [[nodiscard]] size_t getLength();
 
     /**
-     * Getter for the trace.
+     * Getter for the boolean trace.
      * @return trace.
      */
-    [[nodiscard]] const std::vector<Event> &getTrace() const { return trace; }
+    [[nodiscard]] const std::vector<Event<bool>> &getBooleanTrace() const;
+
+    /**
+     * Getter for the interval function trace.
+     *
+     * @return trace.
+     */
+    [[nodiscard]] const std::vector<Event<std::array<size_t, 2>>> &getIntervalTrace() const;
 
     /**
      * Getter for trace reference.
      * @return Reference to trace.
      */
-    [[nodiscard]] std::vector<Event> &getTraceRef() { return trace; }
+    [[nodiscard]] std::vector<Event<bool>> &getTraceRef();
 
     /**
      * To_string().
      * @return String representation of the trace.
      */
-    [[nodiscard]] std::string to_string() const {
-        std::stringstream ret;
-        for (const Event &event : trace) {
-            ret << event.to_string() << std::endl;
-        }
-        return ret.str();
-    }
+    [[nodiscard]] std::string to_string() const;
 
     /**
      * Sets the terminal flag according to last.
      * @param last If last is true then the last event is terminal.
      */
-    void setTerminalEvent(bool last) {
-        if (last) {
-            trace.front().setTerminal(false);
-            trace.back().setTerminal(true);
-        } else {
-            trace.front().setTerminal(true);
-            trace.back().setTerminal(false);
-        }
-    }
+    void setTerminalEvent(bool last);
 
-    bool isEquidistant() {
-        size_t expTimeStamp{0};
-        for (const Event &event : trace) {
-            if (event.getTimeStep() != expTimeStamp)
-                return false;
-            expTimeStamp++;
-        }
-        return true;
-    }
+    /**
+     * Checks whether all time steps are equidistant in trace.
+     *
+     * @return Boolean indicating whether time steps are equidistant.
+     */
+    bool isEquidistant();
 };

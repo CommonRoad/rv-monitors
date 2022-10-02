@@ -11,7 +11,7 @@ class Atomic : public Expression {
      * Constructor.
      * @param symbol Symbol of the Atomic.
      */
-    explicit Atomic(std::string symbol) : Expression(std::move(symbol)) {}
+    explicit Atomic(const std::string &symbol) : Expression(std::move(symbol)) {}
 
     [[nodiscard]] std::string to_string() const override;
 

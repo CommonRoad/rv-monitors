@@ -77,6 +77,8 @@ set(RV_MONITOR_SRC_FILES
         monitors/rv_algorithms/hydra_2/hydra_monitors/or_monitor.cpp
         monitors/rv_algorithms/hydra_2/hydra_monitors/and_monitor.cpp
         monitors/rv_algorithms/hydra_2/hydra_monitors/negation_monitor.cpp
+        monitors/rv_algorithms/hydra_2/interval/interval.cpp
+        monitors/rv_algorithms/hydra_2/interval/interval_function.cpp
         monitors/rv_algorithms/hydra/hydra.cpp
         monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.cpp
         monitors/rv_algorithms/hydra/hydra_monitors/previous_monitor.cpp
@@ -91,8 +93,9 @@ set(RV_MONITOR_SRC_FILES
         monitors/rv_algorithms/hydra/hydra_monitors/and_monitor.cpp
         monitors/rv_algorithms/hydra/hydra_monitors/negation_monitor.cpp
         monitors/trace/event.cpp
+        monitors/trace/trace.cpp
         monitors/trace/event_generator.cpp
-        monitors/utils/lazy_bool.cpp
+        monitors/trace/lazy_function.cpp
         monitors/utils/execution_statistic.cpp
         monitors/utils/utils.cpp
         monitors/utils/generators/formula_generator/formula_generator.cpp

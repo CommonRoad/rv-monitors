@@ -8,6 +8,8 @@
 
 #include <utility>
 
+#include "monitors/expression_tree/atomic/predicate.h"
+#include "monitors/expression_tree/atomic/atomic.h"
 #include "monitors/trace/trace.h"
 /**
  * Class to pseudo-randomly generate a trace

@@ -18,7 +18,7 @@ TEST(TestSinceMonitor, testSinceMonitorEvaluation) {
     Formula formulaA = Parser::parse("a");
     Formula formulaB = Parser::parse("b");
     formula.setId("R1");
-    auto operatorInterval{IntervalTemporalOperator(0, 4)};
+    auto operatorInterval{Hydra2IntervalTemporalOperator(0, 4)};
     auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2, false)};
     mon1->registerParent(1);
     auto mon2{std::make_shared<AtomicMonitor>(formulaB, 3, false)};
@@ -42,7 +42,7 @@ TEST(TestSinceMonitor, testToString) {
     Formula formulaA = Parser::parse("a");
     Formula formulaB = Parser::parse("b");
     formula.setId("R1");
-    auto operatorInterval{IntervalTemporalOperator(0, 4)};
+    auto operatorInterval{Hydra2IntervalTemporalOperator(0, 4)};
     auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2, false)};
     mon1->registerParent(1);
     auto mon2{std::make_shared<AtomicMonitor>(formulaB, 3, false)};
@@ -54,7 +54,7 @@ TEST(TestSinceMonitor, testToString) {
     formulaA = Parser::parse("a");
     formulaB = Parser::parse("b");
     formula.setId("R1");
-    operatorInterval = IntervalTemporalOperator(0);
+    operatorInterval = Hydra2IntervalTemporalOperator(0);
     mon1 = std::make_shared<AtomicMonitor>(formulaA, 2, false);
     mon1->registerParent(1);
     mon2 = std::make_shared<AtomicMonitor>(formulaB, 3, false);
@@ -66,7 +66,7 @@ TEST(TestSinceMonitor, testToString) {
     formulaA = Parser::parse("a");
     formulaB = Parser::parse("b");
     formula.setId("R1");
-    operatorInterval = IntervalTemporalOperator();
+    operatorInterval = Hydra2IntervalTemporalOperator();
     mon1 = std::make_shared<AtomicMonitor>(formulaA, 2, false);
     mon1->registerParent(1);
     mon2 = std::make_shared<AtomicMonitor>(formulaB, 3, false);
@@ -80,7 +80,7 @@ TEST(TestSinceMonitor, testReset) {
     Formula formulaA = Parser::parse("a");
     Formula formulaB = Parser::parse("b");
     formula.setId("R1");
-    auto operatorInterval{IntervalTemporalOperator(0, 4)};
+    auto operatorInterval{Hydra2IntervalTemporalOperator(0, 4)};
     auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2, false)};
     mon1->registerParent(1);
     auto mon2{std::make_shared<AtomicMonitor>(formulaB, 3, false)};

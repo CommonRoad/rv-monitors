@@ -48,6 +48,7 @@ Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 void SinceMonitor::setTrace(const Trace &tra) {
     subMonitorLeft->setTrace(tra);
     subMonitorRight->setTrace(tra);
+    interval.setTrace(tra);
 }
 void SinceMonitor::reset() {
     Hydra2Monitor::reset();
@@ -62,15 +63,13 @@ void SinceMonitor::reset() {
     stepNumberRight = 0;
     endReached = false;
 }
+
 std::string SinceMonitor::to_string() {
-    std::string itv{" "};
-    std::string end{};
-    if (!interval.isEmpty()) {
-        if (!interval.isFinite())
-            end = "inf";
-        else
-            end = std::to_string(interval.getEnd());
-        itv = "[" + std::to_string(interval.getStart()) + ", " + end + "] ";
-    }
-    return "(" + subMonitorLeft->to_string() + " S" + itv + subMonitorRight->to_string() + ")";
+    return "(" + subMonitorLeft->to_string() + " S" + interval.to_string() + " " + subMonitorRight->to_string() + ")";
+}
+
+void SinceMonitor::updateDynamicInterval(size_t stepNumber) {
+    subMonitorRight->updateDynamicInterval(stepNumber);
+    subMonitorLeft->updateDynamicInterval(stepNumber);
+    interval.updateDynamicInterval(stepNumber);
 }

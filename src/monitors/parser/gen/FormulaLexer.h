@@ -34,8 +34,9 @@ class FormulaLexer : public antlr4::Lexer {
         EQ = 24,
         ATOMIC = 25,
         PREDICATE = 26,
-        WS = 27,
-        DIGIT = 28
+        INTERVAL_FUNCTION = 27,
+        WS = 28,
+        DIGIT = 29
     };
 
     explicit FormulaLexer(antlr4::CharStream *input);

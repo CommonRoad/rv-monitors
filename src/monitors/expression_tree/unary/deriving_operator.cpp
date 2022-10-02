@@ -6,15 +6,15 @@
 
 std::shared_ptr<Expression> DerivingOperator::clone() { return std::make_shared<DerivingOperator>(*this); }
 
-std::shared_ptr<Expression> DerivingOperator::accept(ExpressionVisitor &visitor, Trace &tr, size_t idx) {
-    return visitor.visitDerivingOperator(*this, tr, idx);
+std::shared_ptr<Expression> DerivingOperator::accept(ExpressionVisitor &visitor, Trace &tra, size_t idx) {
+    return visitor.visitDerivingOperator(*this, tra, idx);
 }
 
-Event DerivingOperator::getEvent() { return trace.getEvent(index); }
+Event<bool> DerivingOperator::getEvent() { return trace.getBooleanEvent(index); }
 
 std::string DerivingOperator::to_string() const {
     return "D(" + getLeft()->to_string() + ")";
-    // return "D(" + getLeft()->to_string()+ trace.getTrace().at(index).to_string() + ")";
+    // return "D(" + getLeft()->to_string()+ trace.getBooleanTrace().at(index).to_string() + ")";
 }
 
 std::shared_ptr<Hydra2Monitor> DerivingOperator::accept(HydraCreationVisitor2 &visitor, size_t parentId,

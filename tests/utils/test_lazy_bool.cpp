@@ -1,20 +1,20 @@
 #include "test_lazy_bool.h"
-#include "monitors/utils/lazy_bool.h"
+#include "monitors/trace/lazy_function.h"
 
 TEST(TestLazyBool, testFixedValue) {
-    lazy_bool t(true);
-    EXPECT_TRUE(static_cast<bool>(t));
-    lazy_bool f(false);
-    EXPECT_FALSE(static_cast<bool>(f));
-    lazy_bool d;
-    EXPECT_FALSE(static_cast<bool>(d));
+    LazyFunction<bool> varT(true);
+    EXPECT_TRUE(static_cast<bool>(varT));
+    LazyFunction<bool> varF(false);
+    EXPECT_FALSE(static_cast<bool>(varF));
+    LazyFunction<bool> varD;
+    EXPECT_FALSE(static_cast<bool>(varD));
 }
 
 TEST(TestLazyBool, testLazyEvaluation) {
-    std::function<bool()> t = []() { return true; };
-    std::function<bool()> f = []() { return false; };
-    lazy_bool lazyBoolTrue(t);
+    std::function<bool()> varT = []() { return true; };
+    std::function<bool()> varF = []() { return false; };
+    LazyFunction<bool> lazyBoolTrue(varT);
     EXPECT_TRUE(static_cast<bool>(lazyBoolTrue));
-    lazy_bool lazyBoolFalse(f);
+    LazyFunction<bool> lazyBoolFalse(varF);
     EXPECT_FALSE(static_cast<bool>(lazyBoolFalse));
 }

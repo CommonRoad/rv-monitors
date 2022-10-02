@@ -36,6 +36,12 @@ TEST(TestParser, interval) {
     formula = Parser::parse("(a S[0, inf] b)");
     EXPECT_EQ(formula.to_string(), "(a S[0, inf] b)");
 
+    formula = Parser::parse("(a S[ab(d), cd(r)] b)");
+    EXPECT_EQ(formula.to_string(), "(a S[ab(d), cd(r)] b)");
+
+    formula = Parser::parse("(a(c, d) S[0, inf] b(x, y))");
+    EXPECT_EQ(formula.to_string(), "(a(c, d) S[0, inf] b(x, y))");
+
     formula = Parser::parse("P[0, 3](a)");
     EXPECT_EQ(formula.to_string(), "P[0, 3](a)");
 
@@ -62,6 +68,9 @@ TEST(TestParser, interval) {
 
     formula = Parser::parse("X(a)");
     EXPECT_EQ(formula.to_string(), "X(a)");
+
+    formula = Parser::parse("X[abc(t), xzy(k)](a)");
+    EXPECT_EQ(formula.to_string(), "X[abc(t), xzy(k)](a)");
 }
 
 TEST(TestParser, constant_formula) {

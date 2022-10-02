@@ -20,13 +20,13 @@ class DerivingOperator : public Unary {
      * @param event Event.
      */
     explicit DerivingOperator(const std::shared_ptr<Expression> &left, Trace trace, size_t idx)
-        : Unary(trace.getEvent(idx).to_string(), left), trace(std::move(trace)), index(idx) {}
+        : Unary(trace.getBooleanEvent(idx).to_string(), left), trace(std::move(trace)), index(idx) {}
 
     /**
      * Getter for event.
      * @return The operator's event.
      */
-    [[nodiscard]] Event getEvent();
+    [[nodiscard]] Event<bool> getEvent();
 
     [[nodiscard]] std::shared_ptr<Expression> clone() override;
 

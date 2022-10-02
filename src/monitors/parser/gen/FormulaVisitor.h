@@ -83,6 +83,8 @@ class FormulaVisitor : public antlr4::tree::AbstractParseTreeVisitor {
 
     virtual antlrcpp::Any visitInfiniteInterval(FormulaParser::InfiniteIntervalContext *context) = 0;
 
+    virtual antlrcpp::Any visitDynamicInterval(FormulaParser::DynamicIntervalContext *context) = 0;
+
     virtual antlrcpp::Any visitBoolean(FormulaParser::BooleanContext *context) = 0;
 
     virtual antlrcpp::Any visitAtomic(FormulaParser::AtomicContext *context) = 0;
@@ -90,6 +92,10 @@ class FormulaVisitor : public antlr4::tree::AbstractParseTreeVisitor {
     virtual antlrcpp::Any visitBrackets(FormulaParser::BracketsContext *context) = 0;
 
     virtual antlrcpp::Any visitDigit(FormulaParser::DigitContext *context) = 0;
+
+    virtual antlrcpp::Any visitPredicateTrigger(FormulaParser::PredicateTriggerContext *context) = 0;
+
+    virtual antlrcpp::Any visitFunctionTrigger(FormulaParser::FunctionTriggerContext *context) = 0;
 
     virtual antlrcpp::Any visitTrueBoolean(FormulaParser::TrueBooleanContext *context) = 0;
 

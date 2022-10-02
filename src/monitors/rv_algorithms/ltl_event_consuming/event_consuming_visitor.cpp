@@ -143,14 +143,14 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitEventOperator(EventOpera
 
     // Apply eventMap to atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(op.getLeft())) {
-        ret = std::make_shared<Constant>(trace.getEvent(index).getValue(*atomic));
+        ret = std::make_shared<Constant>(trace.getBooleanEvent(index).getValue(*atomic));
         // Constant
     } else if (auto constant = std::dynamic_pointer_cast<Constant>(op.getLeft())) {
         ret = std::make_shared<Constant>(constant->getValue());
     }
     // predicate
     else if (auto predicate = std::dynamic_pointer_cast<Predicate>(op.getLeft())) {
-        ret = std::make_shared<Constant>(trace.getEvent(index).getValue(*predicate));
+        ret = std::make_shared<Constant>(trace.getBooleanEvent(index).getValue(*predicate));
     }
     // And
     else if (auto andExpr = std::dynamic_pointer_cast<And>(op.getLeft())) {
@@ -181,7 +181,7 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitEventOperator(EventOpera
     }
     // Globally
     else if (auto globally = std::dynamic_pointer_cast<Globally>(op.getLeft())) {
-        if (!trace.getEvent(index).isTerminal()) {
+        if (!trace.getBooleanEvent(index).isTerminal()) {
             And::SetType_T newSet;
             // Propagating down the expression tree
             auto eventOperatorExpr = std::make_shared<EventOperator>(globally->getLeft(), trace, index);
@@ -194,7 +194,7 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitEventOperator(EventOpera
     }
     // Weak Next
     else if (auto nextWeak = std::dynamic_pointer_cast<NextWeak>(op.getLeft())) {
-        if (!trace.getEvent(index).isTerminal()) {
+        if (!trace.getBooleanEvent(index).isTerminal()) {
             ret = nextWeak->getLeft();
         } else {
             ret = std::make_shared<Constant>(true);
@@ -202,7 +202,7 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitEventOperator(EventOpera
     }
     // Strong Next
     else if (auto nextStrong = std::dynamic_pointer_cast<NextStrong>(op.getLeft())) {
-        if (!trace.getEvent(index).isTerminal()) {
+        if (!trace.getBooleanEvent(index).isTerminal()) {
             ret = nextStrong->getLeft();
         } else {
             ret = std::make_shared<Constant>(false);
@@ -210,7 +210,7 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitEventOperator(EventOpera
     }
     // Future
     else if (auto future = std::dynamic_pointer_cast<Future>(op.getLeft())) {
-        if (!trace.getEvent(index).isTerminal()) {
+        if (!trace.getBooleanEvent(index).isTerminal()) {
             Or::SetType_T newSet;
             auto eventOperatorExpr = std::make_shared<EventOperator>(future->getLeft(), trace, index);
             newSet.emplace(eventOperatorExpr);
@@ -222,7 +222,7 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitEventOperator(EventOpera
     }
     // Until
     else if (auto until = std::dynamic_pointer_cast<Until>(op.getLeft())) {
-        if (!trace.getEvent(index).isTerminal()) {
+        if (!trace.getBooleanEvent(index).isTerminal()) {
             Or::SetType_T newSetOr;
             And::SetType_T newSetAnd;
             auto orElement = std::make_shared<EventOperator>(until->getRight(), trace, index);
@@ -239,7 +239,7 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitEventOperator(EventOpera
     }
     // Previously
     else if (auto previously = std::dynamic_pointer_cast<Previously>(op.getLeft())) {
-        if (!trace.getEvent(index).isTerminal()) {
+        if (!trace.getBooleanEvent(index).isTerminal()) {
             ret = previously->getLeft();
         } else {
             ret = std::make_shared<Constant>(true);
@@ -247,7 +247,7 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitEventOperator(EventOpera
     }
     // Once
     else if (auto once = std::dynamic_pointer_cast<Once>(op.getLeft())) {
-        if (!trace.getEvent(index).isTerminal()) {
+        if (!trace.getBooleanEvent(index).isTerminal()) {
             Or::SetType_T newSet;
             auto eventOperatorExpr = std::make_shared<EventOperator>(once->getLeft(), trace, index);
             newSet.emplace(eventOperatorExpr);

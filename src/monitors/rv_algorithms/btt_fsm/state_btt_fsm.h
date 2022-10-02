@@ -73,14 +73,14 @@ class StateBttFsm : public node {
      * @param event Current event to be evaluated.
      * @return Id of state after event has been evaluated.
      */
-    [[nodiscard]] size_t nextState(Event &event);
+    [[nodiscard]] size_t nextState(Event<bool> &event);
 
     /**
-     * Helper function for nextState(Event& event).
+     * Helper function for nextState(Event<bool>& event).
      * @param event Current event to be evaluated.
      * @return Id of state after event has been evaluated.
      */
-    [[nodiscard]] size_t nextState(Event &event, const std::shared_ptr<Decision> &decision);
+    [[nodiscard]] size_t nextState(Event<bool> &event, const std::shared_ptr<Decision> &decision);
 
     /**
      * to_string() for StateBttFsm.

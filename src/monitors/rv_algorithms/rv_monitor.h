@@ -51,9 +51,9 @@ struct MonitorConfiguration {
     const bool performanceMeasurement{
         false}; /**< Indicates whether evaluation with time measurement should be performed */
     const bool hydraConnectedEvaluation{
-        true};                             /**< Indicates whether HYDRA monitor should perform connected evaluation */
-    const bool hydraReordering{true};      /**< Indicates whether HYDRA monitor should perform reordering */
-    const bool hydraShortCircuiting{true}; /**< Indicates whether HYDRA monitor should perform short circuiting */
+        true};                             /**< Indicates whether Hydra2 monitor should perform connected evaluation */
+    const bool hydraReordering{true};      /**< Indicates whether Hydra2 monitor should perform reordering */
+    const bool hydraShortCircuiting{true}; /**< Indicates whether Hydra2 monitor should perform short circuiting */
 };
 
 class RVMonitor {

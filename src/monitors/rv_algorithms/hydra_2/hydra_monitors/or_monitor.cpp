@@ -64,3 +64,7 @@ double OrMonitor::computeSatisfactionProbability(const std::vector<std::shared_p
     }
     return *probs.rbegin();
 }
+void OrMonitor::updateDynamicInterval(size_t stepNumber) {
+    for (const auto &mon : subMonitors)
+        mon->updateDynamicInterval(stepNumber);
+}

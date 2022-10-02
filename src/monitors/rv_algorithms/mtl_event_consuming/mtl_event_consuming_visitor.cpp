@@ -149,7 +149,7 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
     std::shared_ptr<Expression> ret;
     // Apply eventMap to Atomic
     if (auto atomic = std::dynamic_pointer_cast<Atomic>(opr.getLeft())) {
-        ret = std::make_shared<Constant>(trace.getEvent(index).getValue(*atomic));
+        ret = std::make_shared<Constant>(trace.getBooleanEvent(index).getValue(*atomic));
     }
     // Constant
     else if (auto constant = std::dynamic_pointer_cast<Constant>(opr.getLeft())) {
@@ -157,7 +157,7 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
     }
     // Predicate
     else if (auto predicate = std::dynamic_pointer_cast<Predicate>(opr.getLeft())) {
-        ret = std::make_shared<Constant>(trace.getEvent(index).getValue(*predicate));
+        ret = std::make_shared<Constant>(trace.getBooleanEvent(index).getValue(*predicate));
     }
     // Deriving
     else if (auto deriving = std::dynamic_pointer_cast<DerivingOperator>(opr.getLeft())) {
@@ -193,7 +193,7 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
     }
     // Weak Next
     else if (auto nextWeak = std::dynamic_pointer_cast<NextWeak>(opr.getLeft())) {
-        if (!trace.getEvent(index).isTerminal()) {
+        if (!trace.getBooleanEvent(index).isTerminal()) {
             auto nextWeakExpr = std::make_shared<EventOperator>(nextWeak->getLeft(), trace, index);
             ret = nextWeak->accept(*this, trace, index + 1);
         } else {
@@ -202,7 +202,7 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
     }
     // Strong Next
     else if (auto nextStrong = std::dynamic_pointer_cast<NextStrong>(opr.getLeft())) {
-        if (!trace.getEvent(index).isTerminal()) {
+        if (!trace.getBooleanEvent(index).isTerminal()) {
             auto nextStrongExpr = std::make_shared<EventOperator>(nextStrong->getLeft(), trace, index);
             ret = nextStrong->accept(*this, trace, index + 1);
         } else {
@@ -212,7 +212,7 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
     // Until
     else if (auto until = std::dynamic_pointer_cast<Until>(opr.getLeft())) {
         if ((!until->getInterval()->isFinite() or until->getInterval()->getEnd() != 0) and
-            !trace.getEvent(index).isTerminal()) {
+            !trace.getBooleanEvent(index).isTerminal()) {
             if (until->getInterval()->getStart() > 0) {
                 And::SetType_T andSet;
                 auto exprLeft = std::make_shared<EventOperator>(until->getLeft(), trace, index);

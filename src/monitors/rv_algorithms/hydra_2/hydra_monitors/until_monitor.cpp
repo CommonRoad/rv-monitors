@@ -67,7 +67,10 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     // and whether left side of from is greater/equal zero (required since unsigned, and we have an overflow
     if (lastSatisfaction &&
         lastSatisfaction->timeStep - headPositionMonitorBaseTimeStep.timeStep >= interval.getStart() &&
-        lastSatisfaction->timeStep >= headPositionMonitorBaseTimeStep.timeStep)
+        lastSatisfaction->timeStep >= headPositionMonitorBaseTimeStep.timeStep and (!interval.isFinite() or
+                                                                                    lastSatisfaction->timeStep - headPositionMonitorBaseTimeStep.timeStep <= interval.getEnd() or
+                                                                                    lastSatisfaction->timeStep <
+                                                                                        headPositionMonitorBaseTimeStep.timeStep))
         return {headPositionMonitorBaseTimeStep.timeStep, true};
     else
         return {headPositionMonitorBaseTimeStep.timeStep, false};
@@ -77,7 +80,9 @@ void UntilMonitor::setTrace(const Trace &tra) {
     subMonitorLeft->setTrace(tra);
     subMonitorRight->setTrace(tra);
     subMonitorBaseTimeStep->setTrace(tra);
+    interval.setTrace(tra);
 }
+
 void UntilMonitor::reset() {
     Hydra2Monitor::reset();
     subMonitorRight->reset();
@@ -93,15 +98,12 @@ void UntilMonitor::reset() {
     stepNumberUntil = 0;
     endReached = false;
 }
+
 std::string UntilMonitor::to_string() {
-    std::string itv{" "};
-    std::string end{};
-    if (!interval.isEmpty()) {
-        if (!interval.isFinite())
-            end = "inf";
-        else
-            end = std::to_string(interval.getEnd());
-        itv = "[" + std::to_string(interval.getStart()) + ", " + end + "] ";
-    }
-    return "(" + subMonitorLeft->to_string() + " U" + itv + subMonitorRight->to_string() + ")";
+    return "(" + subMonitorLeft->to_string() + " U" + interval.to_string() + " " + subMonitorRight->to_string() + ")";
+}
+void UntilMonitor::updateDynamicInterval(size_t stepNumber) {
+    subMonitorLeft->updateDynamicInterval(stepNumber);
+    subMonitorRight->updateDynamicInterval(stepNumber);
+    interval.updateDynamicInterval(stepNumber);
 }

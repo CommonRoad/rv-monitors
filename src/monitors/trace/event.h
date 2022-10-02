@@ -1,19 +1,22 @@
 #pragma once
 
-#include "monitors/expression_tree/atomic/atomic.h"
-#include "monitors/expression_tree/atomic/predicate.h"
-#include "monitors/utils/lazy_bool.h"
+#include "lazy_function.h"
 #include <sstream>
 #include <unordered_map>
 
-using event_map_t = std::unordered_map<std::string, lazy_bool>;
+class Atomic;
+class Predicate;
+
+template <typename  T>
+using event_map_t = std::unordered_map<std::string, LazyFunction<T>>;
 
 /**
- * Event of a trace.
+ * Event of a Trace.
  */
+template <class T>
 class Event {
   private:
-    event_map_t eventMap;
+    event_map_t<T> eventMap;
     size_t timeStep;
     bool terminal;
 
@@ -23,32 +26,34 @@ class Event {
      * @param event Map from predicates to LazyBool.
      * @param terminal True if event is terminal, false other wise.
      */
-    explicit Event(event_map_t event, size_t time, bool terminal) noexcept
+    explicit Event(event_map_t<T> event, size_t time, bool terminal) noexcept
         : eventMap(std::move(event)), timeStep(time), terminal(terminal) {}
 
     Event(const Event &) = default;
     Event &operator=(const Event &) = default;
-    Event(Event &&) = default;
-    Event &operator=(Event &&) = default;
+    Event(Event &&) noexcept = default;
+    Event &operator=(Event &&) noexcept = default;
 
     /**
-     * Getter for the truth value of an atomic.
-     * @param atomic
-     * @return Truth value of the atomic.
+     * Getter for the value of an event given a string.
+     *
+     * @param name Name of event
+     * @return Value of the event.
      */
-    [[nodiscard]] bool getValue(const std::string &atomic) const;
+    [[nodiscard]]
+    T getValue(const std::string &name) const;
 
     /**
      * Getter for event map.
      * @return eventMap.
      */
-    [[nodiscard]] event_map_t getEventMap() const;
+    [[nodiscard]] event_map_t<T> getEventMap() const;
 
     /**
      * Getter for event map as reference.
      * @return Reference to event map.
      */
-    [[nodiscard]] event_map_t &getEventMapRef();
+    [[nodiscard]] event_map_t<T> &getEventMapRef();
 
     /**
      * Getter for the truth value of an atomic.
@@ -71,17 +76,16 @@ class Event {
     [[nodiscard]] bool isTerminal() const;
 
     /**
-     * Setter for eventMap.
-     * @param eventMap
-     */
-    void setEventMap(const event_map_t &eventMap);
-
-    /**
      * Setter for terminal attribute.
      * @param terminal
      */
     void setTerminal(bool terminal);
 
+    /**
+     * Create string of event.
+     *
+     * @return String representation.
+     */
     [[nodiscard]] std::string to_string() const;
 
     /**
@@ -89,10 +93,4 @@ class Event {
      * @return Time step of event.
      */
     [[nodiscard]] size_t getTimeStep() const;
-
-    /**
-     * Setter for time step.
-     * @param timeStep time step to be set
-     */
-    void setTimeStep(size_t timeStep);
 };

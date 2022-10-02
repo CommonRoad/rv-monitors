@@ -6,7 +6,7 @@
 //
 #pragma once
 
-#include "monitors/utils/interval.h"
+#include "monitors/rv_algorithms/hydra_2/interval/interval.h"
 #include <map>
 #include <memory>
 #include <optional>
@@ -58,8 +58,6 @@ class Since;
 
 class Historically;
 
-class Trace;
-
 class EventOperator;
 
 class ResolvingOperator;
@@ -94,7 +92,8 @@ class HydraCreationVisitor2 {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @return Created monitor.
      */
-    std::shared_ptr<Hydra2Monitor> createMonitor(Formula &formula, size_t parentId, bool connectedEval);
+    std::shared_ptr<Hydra2Monitor> createMonitor(Formula &formula, size_t parentId, bool connectedEval,
+                                                 std::vector<HydraIntervalTriggers> intervalTriggers);
 
     /**
      * Visitor for creating Hydra2 Atomic Monitor.

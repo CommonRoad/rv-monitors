@@ -110,6 +110,10 @@ class FormulaBaseVisitor : public FormulaVisitor {
         return visitChildren(ctx);
     }
 
+    virtual antlrcpp::Any visitDynamicInterval(FormulaParser::DynamicIntervalContext *ctx) override {
+        return visitChildren(ctx);
+    }
+
     virtual antlrcpp::Any visitBoolean(FormulaParser::BooleanContext *ctx) override { return visitChildren(ctx); }
 
     virtual antlrcpp::Any visitAtomic(FormulaParser::AtomicContext *ctx) override { return visitChildren(ctx); }
@@ -117,6 +121,14 @@ class FormulaBaseVisitor : public FormulaVisitor {
     virtual antlrcpp::Any visitBrackets(FormulaParser::BracketsContext *ctx) override { return visitChildren(ctx); }
 
     virtual antlrcpp::Any visitDigit(FormulaParser::DigitContext *ctx) override { return visitChildren(ctx); }
+
+    virtual antlrcpp::Any visitPredicateTrigger(FormulaParser::PredicateTriggerContext *ctx) override {
+        return visitChildren(ctx);
+    }
+
+    virtual antlrcpp::Any visitFunctionTrigger(FormulaParser::FunctionTriggerContext *ctx) override {
+        return visitChildren(ctx);
+    }
 
     virtual antlrcpp::Any visitTrueBoolean(FormulaParser::TrueBooleanContext *ctx) override {
         return visitChildren(ctx);

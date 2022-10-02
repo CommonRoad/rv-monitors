@@ -30,7 +30,7 @@ std::map<std::string, std::vector<Verdict>> BttFsm::evaluate(Trace &trace) {
     for (size_t i = 0; i < trace.getLength(); ++i) {
         // If past then access in inverted order
         size_t eventIndex = pastEvaluation ? trace.getLength() - 1 - i : i;
-        size_t nextState = currentState.nextState(trace.getEvent(eventIndex));
+        size_t nextState = currentState.nextState(trace.getBooleanEvent(eventIndex));
         if (nextState == 0u) {
             result[formulas.at(0).getId()] = {Verdict{false}};
             return result;

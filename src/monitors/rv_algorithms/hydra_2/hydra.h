@@ -27,7 +27,8 @@ class Hydra2 : public MonitorInterface {
      * satisfaction probability in interval [0, 1].
      */
     Hydra2(const std::vector<Formula> &formulas, bool connectedEval = true, bool reordering = true,
-           bool shortCircuiting = true, const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
+           bool shortCircuiting = true, const std::map<std::string, std::array<double, 2>> &predicateCosts = {},
+           const std::vector<HydraIntervalTriggers>& intervalTriggers = {});
 
     /**
      * Evaluation function for monitor algorithms.
@@ -57,7 +58,8 @@ class Hydra2 : public MonitorInterface {
      * satisfaction probability in interval [0, 1].
      */
     void createMonitor(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting,
-                       const std::map<std::string, std::array<double, 2>> &predicateCosts);
+                       const std::map<std::string, std::array<double, 2>> &predicateCosts,
+                       const std::vector<HydraIntervalTriggers>& intervalTriggers);
 
     /**
      * Resets monitor variables to default values.

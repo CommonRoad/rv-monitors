@@ -82,24 +82,24 @@ bool f(size_t dummy) {
 }
 
 Trace createRandomTrace(const std::set<std::string> &atomics, size_t length) {
-    std::vector<Event> eventList;
+    std::vector<Event<bool>> eventList;
     size_t timeStepIdx{0};
     rng.seed(seed_val);
 
     for (; timeStepIdx < length; ++timeStepIdx) {
-        event_map_t event;
+        event_map_t<bool> event;
         for (const auto &atom : atomics) {
             bool atomicValue{uint_dist2(rng) == 1};
-            event[atom] = lazy_bool(atomicValue);
+            event[atom] = LazyFunction(atomicValue);
         }
         eventList.emplace_back(event, timeStepIdx, timeStepIdx == length - 1);
         event.clear();
     }
-    return Trace(eventList);
+    return {eventList};
 }
 
 Trace createRandomLazyTrace(size_t length) {
-    std::vector<Event> eventList;
+    std::vector<Event<bool>> eventList;
     size_t timeStepIdx{0};
     const std::map<std::string, std::function<bool(size_t)>> atomicsAndFunctions{
         {"atest", a}, {"btest", b}, {"ctest", c}, {"dtest", d}, {"etest", e}, {"ftest", f},
@@ -107,19 +107,19 @@ Trace createRandomLazyTrace(size_t length) {
     rng.seed(seed_val);
 
     for (; timeStepIdx < length; ++timeStepIdx) {
-        event_map_t event;
+        event_map_t<bool> event;
         for (auto const &[atomic, valueFetcher] : atomicsAndFunctions) {
             auto valueFetcherBound = std::bind(valueFetcher, 0);
-            event[atomic] = lazy_bool(valueFetcherBound);
+            event[atomic] = LazyFunction<bool>(valueFetcherBound);
         }
         eventList.emplace_back(event, timeStepIdx, timeStepIdx == length - 1);
         event.clear();
     }
-    return Trace(eventList);
+    return {eventList};
 }
 
 double evalHydraCombined(Trace &trace, const std::vector<Formula> &formulas) {
-    auto monitor{Hydra(formulas)};
+    auto monitor{Hydra2(formulas)};
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     monitor.evaluate(trace);
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
@@ -128,10 +128,10 @@ double evalHydraCombined(Trace &trace, const std::vector<Formula> &formulas) {
 }
 
 double evalHydraSingleConnected(Trace &trace, const std::vector<Formula> &formulas) {
-    std::vector<Hydra> monitors;
+    std::vector<Hydra2> monitors;
     monitors.reserve(formulas.size());
     for (const auto &form : formulas)
-        monitors.push_back(Hydra({form}));
+        monitors.push_back(Hydra2({form}));
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
     for (size_t i{0}; i < monitors.size(); ++i)
@@ -142,10 +142,10 @@ double evalHydraSingleConnected(Trace &trace, const std::vector<Formula> &formul
 }
 
 double evalHydraSingle(Trace &trace, const std::vector<Formula> &formulas) {
-    std::vector<Hydra> monitors;
+    std::vector<Hydra2> monitors;
     monitors.reserve(formulas.size());
     for (const auto &form : formulas)
-        monitors.push_back(Hydra({form}, false));
+        monitors.push_back(Hydra2({form}, false));
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
     for (size_t i{0}; i < monitors.size(); ++i)
@@ -239,7 +239,7 @@ void executeEvaluate2(const std::vector<Formula> &formulas1, size_t numExecution
 }
 
 double evaluateSingleHydra(const Formula &formula, Trace &trace) {
-    auto monitor{Hydra({formula})};
+    auto monitor{Hydra2({formula})};
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     monitor.evaluate(trace);
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();

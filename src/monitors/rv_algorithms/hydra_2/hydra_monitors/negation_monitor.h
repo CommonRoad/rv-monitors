@@ -54,6 +54,9 @@ class NegationMonitor : public Hydra2Monitor {
      */
     std::string to_string() override;
 
+    void updateDynamicInterval(size_t stepNumber) override;
+
+
   private:
     std::shared_ptr<Hydra2Monitor> subMonitor; //**< Child monitor. */
 };

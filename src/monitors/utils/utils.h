@@ -108,7 +108,17 @@ template <typename T> bool isInInterval(const T &value, const T &low, const T &h
  * @param eventMap Event.
  * @return True if @param expr is true in @param eventMap, false otherwise.
  */
-[[nodiscard]] bool evaluateBooleanExpression(const std::shared_ptr<Expression> &expr, event_map_t &eventMap);
+[[nodiscard]] bool evaluateBooleanExpression(const std::shared_ptr<Expression> &expr, event_map_t<bool> &eventMap);
+
+/**
+ * Creates a Trace.
+ *
+ * @param trueAtomics Vector of vectors containing predicates that are true in each event.
+ * @return Trace.
+ */
+[[nodiscard]] Trace createTrace(const std::vector<std::vector<std::string>> &trueAtomics,
+                                const std::vector<size_t> &timeSteps = {},
+                                const std::shared_ptr<Formula> &formula = {});
 
 /**
  * Creates a Trace.
@@ -119,17 +129,10 @@ template <typename T> bool isInInterval(const T &value, const T &low, const T &h
  */
 [[nodiscard]] Trace createTrace(const std::set<std::string> &atomics,
                                 const std::vector<std::vector<std::string>> &trueAtomics,
-                                const std::vector<size_t> &timeSteps = std::vector<size_t>{});
+                                const std::vector<size_t> &timeSteps = {},
+                                const std::map<std::string, std::function<bool(size_t)>> &atomicsAndFunctions = {},
+                                const std::map<std::string, std::function<std::array<size_t , 2>(size_t)>> &dynamicInterval = {});
 
-/**
- * Creates a Trace.
- *
- * @param trueAtomics Vector of vectors containing predicates that are true in each event.
- * @return Trace.
- */
-[[nodiscard]] Trace createTrace(const std::vector<std::vector<std::string>> &trueAtomics,
-                                const std::vector<size_t> &timeSteps = std::vector<size_t>{},
-                                const std::shared_ptr<Formula> &formula = {});
 
 /**
  * Creates a Trace with lazy evaluation of the predicates.
@@ -274,7 +277,7 @@ std::map<std::string, std::tuple<std::string, std::vector<std::string>>> getPred
  * @param terminal Whether or not the event resulting should be marked as terminal.
  * @return Event containing passed event mapping.
  */
-[[nodiscard]] Event boolVectorToEvent(const std::set<std::string> &atomics, const std::vector<bool> &vector,
+[[nodiscard]] Event<bool> boolVectorToEvent(const std::set<std::string> &atomics, const std::vector<bool> &vector,
                                       bool terminal);
 
 /**
@@ -283,7 +286,7 @@ std::map<std::string, std::tuple<std::string, std::vector<std::string>>> getPred
  * @param event Event.
  * @return Formula with conjunction of predicates.
  */
-[[nodiscard]] Formula eventToFormula(Event &event);
+[[nodiscard]] Formula eventToFormula(Event<bool> &event);
 
 /**
  * Creates a vector with all subformulas in @param formula including the formula itself with a BFS.

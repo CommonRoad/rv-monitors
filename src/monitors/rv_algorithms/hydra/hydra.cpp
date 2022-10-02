@@ -7,7 +7,7 @@
 std::map<std::string, std::vector<Verdict>> Hydra::evaluate(Trace &trace) {
     std::map<std::string, std::vector<Verdict>> result;
     // Empty trace
-    if (trace.getTrace().empty()) {
+    if (trace.getBooleanTrace().empty()) {
         std::cout << "Trace is empty" << std::endl;
         result[formulas.at(0).getId()] = {};
         return result;

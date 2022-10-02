@@ -1,31 +1,43 @@
 #include "event.h"
+#include "monitors/expression_tree/atomic/atomic.h"
+#include "monitors/expression_tree/atomic/predicate.h"
 
-bool Event::getValue(const std::string &atomic) const { return eventMap.at(atomic).get(); }
 
-event_map_t Event::getEventMap() const { return this->eventMap; }
 
-event_map_t &Event::getEventMapRef() { return this->eventMap; }
+template <class T>
+event_map_t<T> Event<T>::getEventMap() const { return this->eventMap; }
 
-bool Event::getValue(const Atomic &atomic) const { return getValue(atomic.to_string()); }
+template<>
+event_map_t<bool> &Event<bool>::getEventMapRef() { return this->eventMap; }
 
-bool Event::getValue(const Predicate &predicate) const { return getValue(predicate.to_string()); }
+template <class T>
+T Event<T>::getValue(const std::string &name) const { return eventMap.at(name).get(); }
 
-bool Event::isTerminal() const { return terminal; }
+template<> bool Event<bool>::getValue(const Atomic &atomic) const { return getValue(atomic.to_string()); }
 
-void Event::setEventMap(const event_map_t &newEventMap) { Event::eventMap = newEventMap; }
+template <>
+bool Event<bool>::getValue(const Predicate &predicate) const { return getValue(predicate.to_string()); }
 
-void Event::setTerminal(bool isTerminal) { Event::terminal = isTerminal; }
+template <class T>
+bool Event<T>::isTerminal() const { return terminal; }
 
-std::string Event::to_string() const {
+template <class T>
+void Event<T>::setTerminal(bool isTerminal) { Event::terminal = isTerminal; }
+
+template <>
+std::string Event<bool>::to_string() const {
     std::stringstream res;
     res << "{";
     for (const auto &[key, value] : eventMap) {
-        res << key << ": " << value << "; ";
+        res << key << ": " << value.to_string() << "; ";
     }
     res << timeStep << "}";
     return res.str();
 }
 
-size_t Event::getTimeStep() const { return timeStep; }
+template <class T>
+size_t Event<T>::getTimeStep() const { return timeStep; }
 
-void Event::setTimeStep(size_t newTimeStep) { Event::timeStep = newTimeStep; }
+template class Event<bool>; //required otherwise compiler won't instantiate template
+template class Event<std::array<size_t, 2>>; //required otherwise compiler won't instantiate template
+

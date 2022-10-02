@@ -125,3 +125,5 @@ void Hydra2Monitor::setFormulaId(const std::string &formula_id) { formulaId = fo
 double Hydra2Monitor::getEvalCost() const { return evalCost; }
 
 double Hydra2Monitor::getSatisfactionProbability() const { return satisfactionProbability; }
+
+void Hydra2Monitor::updateDynamicInterval(size_t stepNumber) { ; }

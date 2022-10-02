@@ -31,7 +31,7 @@ std::string StateMT_FSM::to_string() const {
     return ret.str();
 }
 
-size_t StateMT_FSM::nextState(Event &event) {
+size_t StateMT_FSM::nextState(Event<bool> &event) {
     std::map<Formula, size_t> transitions;
     // Terminal
     if (event.isTerminal()) {

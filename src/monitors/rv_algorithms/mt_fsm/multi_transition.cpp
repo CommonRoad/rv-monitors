@@ -1,5 +1,6 @@
 #include "multi_transition.h"
 #include "monitors/utils/utils.h"
+#include "monitors/expression_tree/atomic/atomic.h"
 
 MultiTransition::MultiTransition(std::map<Formula, size_t> transitions) : transitions(std::move(transitions)) {}
 
@@ -16,7 +17,7 @@ std::string MultiTransition::to_string() const {
     return ret.str();
 }
 
-size_t MultiTransition::evaluate(event_map_t &eventMap) const {
+size_t MultiTransition::evaluate(event_map_t<bool> &eventMap) const {
     for (const auto &[formula, state] : transitions) {
         if (Utils::evaluateBooleanExpression(formula.getExpr(), eventMap)) {
             return state;

@@ -9,65 +9,65 @@
 #include "monitors/expression_tree/atomic/predicate.h"
 #include "monitors/utils/generators/trace_generator/trace_generator.h"
 
-TEST(TestTraceGenerator, testGeneral) {
-    TraceGenerator tg;
+TEST(TestTraceGenerator, testrageneral) {
+    TraceGenerator trag;
     TraceGenerator::rSeed();
 
-    auto a1 = std::make_shared<Atomic>("a1");
-    auto a2 = std::make_shared<Atomic>("a2");
-    auto a3 = std::make_shared<Atomic>("a3");
-    auto p1 = std::make_shared<Predicate>("p1", "p1", std::vector<std::string>{"params1", "params2"});
-    auto p2 = std::make_shared<Predicate>("p2", "p2", std::vector<std::string>{"params1", "params2", "params3"});
+    auto atom1 = std::make_shared<Atomic>("a1");
+    auto atom2 = std::make_shared<Atomic>("a2");
+    auto atom3 = std::make_shared<Atomic>("a3");
+    auto pred1 = std::make_shared<Predicate>("p1", "p1", std::vector<std::string>{"params1", "params2"});
+    auto pred2 = std::make_shared<Predicate>("p2", "p2", std::vector<std::string>{"params1", "params2", "params3"});
 
-    tg.addAtomic(a1, 1.0);
-    tg.addAtomic(a2, 1.0);
-    tg.addAtomic(a3, 3.0);
-    tg.addPredicate(p1, 3.0);
-    tg.addPredicate(p2, 2.0);
+    trag.addAtomic(atom1, 1.0);
+    trag.addAtomic(atom2, 1.0);
+    trag.addAtomic(atom3, 3.0);
+    trag.addPredicate(pred1, 3.0);
+    trag.addPredicate(pred2, 2.0);
 
-    auto t = tg.generateTrace(10);
+    auto tra = trag.generateTrace(10);
 
     EXPECT_TRUE(true);
 }
 
 TEST(TestTraceGenerator, testZeroLength) {
-    TraceGenerator tg;
+    TraceGenerator trag;
     TraceGenerator::rSeed();
 
-    auto a1 = std::make_shared<Atomic>("a1");
-    auto a2 = std::make_shared<Atomic>("a2");
-    auto a3 = std::make_shared<Atomic>("a3");
-    auto p1 = std::make_shared<Predicate>("p1", "p1", std::vector<std::string>{"params1", "params2"});
-    auto p2 = std::make_shared<Predicate>("p2", "p2", std::vector<std::string>{"params1", "params2", "params3"});
+    auto atom1 = std::make_shared<Atomic>("a1");
+    auto atom2 = std::make_shared<Atomic>("a2");
+    auto atom3 = std::make_shared<Atomic>("a3");
+    auto pred1 = std::make_shared<Predicate>("p1", "p1", std::vector<std::string>{"params1", "params2"});
+    auto pred2 = std::make_shared<Predicate>("p2", "p2", std::vector<std::string>{"params1", "params2", "params3"});
 
-    tg.addAtomic(a1, 1.0);
-    tg.addAtomic(a2, 1.0);
-    tg.addAtomic(a3, 3.0);
-    tg.addPredicate(p1, 3.0);
-    tg.addPredicate(p2, 2.0);
+    trag.addAtomic(atom1, 1.0);
+    trag.addAtomic(atom2, 1.0);
+    trag.addAtomic(atom3, 3.0);
+    trag.addPredicate(pred1, 3.0);
+    trag.addPredicate(pred2, 2.0);
 
-    auto t = tg.generateTrace(0);
+    auto tra = trag.generateTrace(0);
 
     EXPECT_TRUE(true);
 }
 
 TEST(TestTraceGenerator, testLengthOne) {
-    TraceGenerator tg;
+    TraceGenerator trag;
     TraceGenerator::rSeed();
 
-    auto a1 = std::make_shared<Atomic>("a1");
-    auto a2 = std::make_shared<Atomic>("a2");
-    auto a3 = std::make_shared<Atomic>("a3");
-    auto p1 = std::make_shared<Predicate>("p1", "p1", std::vector<std::string>{"params1", "params2"});
-    auto p2 = std::make_shared<Predicate>("p2", "p2", std::vector<std::string>{"params1", "params2", "params3"});
+    auto atom1 = std::make_shared<Atomic>("a1");
+    auto atom2 = std::make_shared<Atomic>("a2");
+    auto atom3 = std::make_shared<Atomic>("a3");
+    auto pred1 = std::make_shared<Predicate>("p1", "p1", std::vector<std::string>{"params1", "params2"});
+    auto pred2 = std::make_shared<Predicate>("p2", "p2", std::vector<std::string>{"params1", "params2", "params3"});
 
-    tg.addAtomic(a1, 1.0);
-    tg.addAtomic(a2, 1.0);
-    tg.addAtomic(a3, 3.0);
-    tg.addPredicate(p1, 3.0);
-    tg.addPredicate(p2, 2.0);
+    trag.addAtomic(atom1, 1.0);
+    trag.addAtomic(atom2, 1.0);
+    trag.addAtomic(atom3, 3.0);
+    trag.addPredicate(pred1, 3.0);
+    trag.addPredicate(pred2, 2.0);
 
-    auto t = tg.generateTrace(1);
+    auto tra = trag.generateTrace(1);
 
     EXPECT_TRUE(true);
 }

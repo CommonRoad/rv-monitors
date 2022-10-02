@@ -29,6 +29,7 @@ class Visitor : public FormulaBaseVisitor {
   public:
     /**
      * Returns type of an expression.
+     *
      * @param expr Parsed expression.
      * @return The expression's type.
      */
@@ -114,6 +115,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Visits a formula's expression.
+     *
      * @param ctx Context.
      * @return Formula object with expression built by visitor.
      */
@@ -124,6 +126,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visit the children and build equivalence with them.
+     *
      * @param ctx Context.
      * @return Equivalence.
      */
@@ -135,6 +138,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the children and builds an Implication with them.
+     *
      * @param ctx Context.
      * @return Implication.
      */
@@ -146,6 +150,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Visit the expression encoded by xorExpr.
+     *
      * @param ctx Context.
      * @return Result of visiting expression behind xorExpr.
      */
@@ -154,6 +159,7 @@ class Visitor : public FormulaBaseVisitor {
     /**
      * Builds an Xor by recursively visiting its children or goes deeper into the expression tree if expression is not
      * an Xor.
+     *
      * @param ctx Context.
      * @return Xor if actual xorExpr visited, result of visitChildren() otherwise.
      */
@@ -177,6 +183,7 @@ class Visitor : public FormulaBaseVisitor {
     /**
      * Builds an Or by recursively visiting its children or goes deeper into the expression tree if expression is not an
      * Or.
+     *
      * @param ctx Context.
      * @return Or if actual orExpr visited, result of visitChildren() otherwise.
      */
@@ -198,6 +205,7 @@ class Visitor : public FormulaBaseVisitor {
     /**
      * Builds an And by recursively visiting its children or goes deeper into the expression tree if expression is not
      * an And.
+     *
      * @param ctx Context.
      * @return And if actual orExpr visited, result of visitChildren() otherwise.
      */
@@ -218,6 +226,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the children and builds a Release with them.
+     *
      * @param ctx Context.
      * @return Release.
      */
@@ -229,6 +238,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the children and builds an Until with them.
+     *
      * @param ctx Context.
      * @return Until.
      */
@@ -240,6 +250,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the children and builds an interval-based Release with them.
+     *
      * @param ctx Context.
      * @return Release.
      */
@@ -252,6 +263,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the children and builds an interval-based Until with them.
+     *
      * @param ctx Context.
      * @return Until.
      */
@@ -264,6 +276,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the children and builds a Since with them.
+     *
      * @param ctx Context.
      * @return Until.
      */
@@ -275,6 +288,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the children and builds an interval-based Since with them.
+     *
      * @param ctx Context.
      * @return Until.
      */
@@ -287,6 +301,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Visits a unary expression.
+     *
      * @param ctx Context
      * @return Result of visiting unary.
      */
@@ -294,6 +309,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the child and builds a Globally with it.
+     *
      * @param ctx Context.
      * @return Globally.
      */
@@ -304,6 +320,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the child and builds a Historically with it.
+     *
      * @param ctx Context.
      * @return Historically.
      */
@@ -314,6 +331,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the child and builds a Future with it.
+     *
      * @param ctx Context.
      * @return Future.
      */
@@ -324,6 +342,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the child and builds a Once with it.
+     *
      * @param ctx Context.
      * @return Once.
      */
@@ -334,6 +353,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the child and builds a Previously with it.
+     *
      * @param ctx Context.
      * @return Previously.
      */
@@ -344,6 +364,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the child and builds a NextWeak with it.
+     *
      * @param ctx Context.
      * @return NextWeak.
      */
@@ -354,6 +375,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the child and builds a NextStrong with it.
+     *
      * @param ctx Context.
      * @return NextStrong.
      */
@@ -364,6 +386,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the child and builds an interval-based Globally with it.
+     *
      * @param ctx Context.
      * @return Globally.
      */
@@ -375,6 +398,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the child and builds an interval-based Historically with it.
+     *
      * @param ctx Context.
      * @return Historically.
      */
@@ -386,6 +410,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the child and builds an interval-based Future with it.
+     *
      * @param ctx Context.
      * @return Future.
      */
@@ -397,6 +422,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the child and builds an interval-based Once with it.
+     *
      * @param ctx Context.
      * @return Once.
      */
@@ -408,6 +434,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the child and builds an interval-based Previously with it.
+     *
      * @param ctx Context.
      * @return Previously.
      */
@@ -419,6 +446,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the child and builds an interval-based NextWeak with it.
+     *
      * @param ctx Context.
      * @return NextWeak.
      */
@@ -430,6 +458,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the child and builds an interval-based NextStrong with it.
+     *
      * @param ctx Context.
      * @return NextStrong.
      */
@@ -441,6 +470,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the child and builds a Not with it.
+     *
      * @param ctx Context.
      * @return Not.
      */
@@ -451,6 +481,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Recursively visits the child and builds a Not with it.
+     *
      * @param ctx Context.
      * @return Not.
      */
@@ -461,6 +492,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Visits the atom in atomExpr.
+     *
      * @param ctx Context.
      * @return Result if visiting the atom in atomExpr.
      */
@@ -468,6 +500,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Visits a constant and builds a Constant with it.
+     *
      * @param ctx Content.
      * @return Constant according to given value.
      */
@@ -475,6 +508,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Visits a true constant and builds a Constant with it.
+     *
      * @param ctx Content.
      * @return True constant.
      */
@@ -484,6 +518,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Visits a false constant and builds a Constant with it.
+     *
      * @param ctx Content.
      * @return False constant.
      */
@@ -493,6 +528,7 @@ class Visitor : public FormulaBaseVisitor {
 
     /**
      * Ignores the brackets and visits the content inside them.
+     *
      * @param ctx Context.
      * @return Result of visiting content inside the bracktes.
      */
@@ -508,9 +544,10 @@ class Visitor : public FormulaBaseVisitor {
     }
 
     /**
-     * Builds an Atomic from a string.
+     * Builds a finite interval from a string.
+     *
      * @param ctx Context.
-     * @return Atomic.
+     * @return finite interval.
      */
     antlrcpp::Any visitFiniteInterval(FormulaParser::FiniteIntervalContext *ctx) override {
         bool finite{false};
@@ -525,9 +562,10 @@ class Visitor : public FormulaBaseVisitor {
     }
 
     /**
-     * Builds an Atomic from a string.
+     * Builds an infinite interval from a string.
+     *
      * @param ctx Context.
-     * @return Atomic.
+     * @return infinite interval.
      */
     antlrcpp::Any visitInfiniteInterval(FormulaParser::InfiniteIntervalContext *ctx) override {
         auto lower = visit(ctx->l).as<int>();
@@ -535,13 +573,72 @@ class Visitor : public FormulaBaseVisitor {
     }
 
     /**
-     * Builds an Atomic from a string.
+     * Builds a dynamic interval from a string.
+     *
      * @param ctx Context.
-     * @return Atomic.
+     * @return Dynamic interval.
+     */
+    antlrcpp::Any visitDynamicInterval(FormulaParser::DynamicIntervalContext *ctx) override {
+        auto upper = visit(ctx->u).as<std::shared_ptr<Predicate>>();
+        auto lower = visit(ctx->l).as<std::shared_ptr<Predicate>>();
+        std::array<std::shared_ptr<Predicate>, 2> intervalTriggers{lower, upper};
+
+        return std::make_shared<Interval>(Interval(intervalTriggers));
+    }
+
+    /**
+     * Builds a digit from a string.
+     *
+     * @param ctx Context.
+     * @return Digit.
      */
     antlrcpp::Any visitDigit(FormulaParser::DigitContext *ctx) override { return std::stoi(ctx->getText()); }
 
+    /**
+     * Builds a predicate from a string.
+     *
+     * @param ctx Context.
+     * @return Predicate.
+     */
     antlrcpp::Any visitPredicate(FormulaParser::PredicateContext *ctx) override {
+        auto predInfo{generateParameters(ctx)};
+        return std::make_shared<Predicate>(
+            Predicate(std::get<0>(predInfo), std::get<1>(predInfo), std::get<2>(predInfo)));
+    }
+
+    /**
+     * Builds a interval predicate trigger from a string.
+     *
+     * @param ctx Context.
+     * @return Interval predicate trigger.
+     */
+    antlrcpp::Any visitPredicateTrigger(FormulaParser::PredicateTriggerContext *ctx) override {
+        auto predInfo{generateParameters(ctx)};
+        return std::make_shared<Predicate>(
+            Predicate(std::get<0>(predInfo), std::get<1>(predInfo), std::get<2>(predInfo)));
+    }
+
+    /**
+     * Builds a interval function trigger from a string.
+     *
+     * @param ctx Context.
+     * @return Interval function trigger.
+     */
+    antlrcpp::Any visitFunctionTrigger(FormulaParser::FunctionTriggerContext *ctx) override {
+        auto predInfo{generateParameters(ctx)};
+        return std::make_shared<Predicate>(
+            Predicate(std::get<0>(predInfo), std::get<1>(predInfo), std::get<2>(predInfo)));
+    }
+
+    /**
+     * Generates values for predicates and functions.
+     *
+     * @tparam T Template representing function or predicate context.
+     * @param ctx Function or predicate context.
+     * @return Function or predicate values.
+     */
+    template <typename T>
+    std::tuple<std::string, std::string, std::vector<std::string>> generateParameters(T *ctx) const {
         const std::vector<std::string> invalidLiterals{"(", ")", ","};
         std::vector<std::string> params;
         for (size_t idx{1}; idx < ctx->children.size(); ++idx) {
@@ -556,6 +653,6 @@ class Visitor : public FormulaBaseVisitor {
         for (const auto &par : params)
             symbol += par + "_";
         symbol = symbol.substr(0, symbol.size() - 1);
-        return std::make_shared<Predicate>(Predicate(symbol, name, params));
+        return {symbol, name, params};
     }
 };

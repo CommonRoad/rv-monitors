@@ -25,12 +25,12 @@ class SinceMonitor : public Hydra2Monitor {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      */
     SinceMonitor(const Formula &formula, std::shared_ptr<Hydra2Monitor> subMonitorF,
-                 std::shared_ptr<Hydra2Monitor> subMonitorG, IntervalTemporalOperator interval, size_t monitorId,
+                 std::shared_ptr<Hydra2Monitor> subMonitorG, Hydra2IntervalTemporalOperator interval, size_t monitorId,
                  bool connectedEval)
         : Hydra2Monitor(formula, monitorId, connectedEval,
                         (subMonitorG->getEvalCost() + subMonitorF->getEvalCost()) / 2,
                         (subMonitorG->getSatisfactionProbability() + subMonitorG->getSatisfactionProbability()) / 2),
-          subMonitorLeft(std::move(subMonitorF)), subMonitorRight(std::move(subMonitorG)), interval(interval){};
+          subMonitorLeft(std::move(subMonitorF)), subMonitorRight(std::move(subMonitorG)), interval(std::move(interval)){};
 
     /**
      * Performs concrete step of since-monitor.
@@ -60,12 +60,14 @@ class SinceMonitor : public Hydra2Monitor {
      */
     std::string to_string() override;
 
+    void updateDynamicInterval(size_t stepNumber) override;
+
   private:
     std::shared_ptr<Hydra2Monitor> subMonitorLeft;  //**< Monitor for specification on left side of since. */
     std::shared_ptr<Hydra2Monitor> subMonitorRight; //**< Monitor for specification on right side of since. */
     std::optional<Verdict> subVerdictLeft;          //**< Verdict for monitor on left side of since. */
     std::optional<Verdict> subVerdictRight;         //**< Verdict for monitor on right side of since. */
-    IntervalTemporalOperator interval;              //**< Interval of operator. */
+    Hydra2IntervalTemporalOperator interval;        //**< Interval of operator. */
     HeadPosHydra2 headPositionMonitorLeft;          //**< Head position of left monitor. */
     HeadPosHydra2 headPositionMonitorRight;         //**< Head position of right monitor. *
     std::optional<HeadPosHydra2> lastSatisfaction;  //**< Last time right side of until was satisfied. */

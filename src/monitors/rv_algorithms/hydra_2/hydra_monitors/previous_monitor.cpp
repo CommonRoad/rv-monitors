@@ -27,7 +27,10 @@ Verdict PreviousMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     } else // behind trace (no more trace element exist)
         return {false};
 }
-void PreviousMonitor::setTrace(const Trace &tra) { subMonitor->setTrace(tra); }
+void PreviousMonitor::setTrace(const Trace &tra) {
+    subMonitor->setTrace(tra);
+    interval.setTrace(tra);
+}
 
 void PreviousMonitor::reset() {
     Hydra2Monitor::reset();
@@ -35,14 +38,10 @@ void PreviousMonitor::reset() {
     currentVerdict = {};
 }
 std::string PreviousMonitor::to_string() {
-    std::string itv{};
-    std::string end{};
-    if (!interval.isEmpty()) {
-        if (!interval.isFinite())
-            end = "inf";
-        else
-            end = std::to_string(interval.getEnd());
-        itv = "[" + std::to_string(interval.getStart()) + ", " + end + "]";
-    }
-    return std::string{"P"} + itv + "(" + subMonitor->to_string() + ")";
+    return std::string{"P"} + interval.to_string() + "(" + subMonitor->to_string() + ")";
+}
+
+void PreviousMonitor::updateDynamicInterval(size_t stepNumber) {
+    subMonitor->updateDynamicInterval(stepNumber);
+    interval.updateDynamicInterval(stepNumber);
 }

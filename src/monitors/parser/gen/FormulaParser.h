@@ -34,8 +34,9 @@ class FormulaParser : public antlr4::Parser {
         EQ = 24,
         ATOMIC = 25,
         PREDICATE = 26,
-        WS = 27,
-        DIGIT = 28
+        INTERVAL_FUNCTION = 27,
+        WS = 28,
+        DIGIT = 29
     };
 
     enum {
@@ -49,7 +50,9 @@ class FormulaParser : public antlr4::Parser {
         RuleInterval = 7,
         RuleAtom = 8,
         RuleNumber = 9,
-        RuleBool_ = 10
+        RuleInterval_trigger_bool = 10,
+        RuleInterval_trigger_function = 11,
+        RuleBool_ = 12
     };
 
     explicit FormulaParser(antlr4::TokenStream *input);
@@ -73,6 +76,8 @@ class FormulaParser : public antlr4::Parser {
     class IntervalContext;
     class AtomContext;
     class NumberContext;
+    class Interval_trigger_boolContext;
+    class Interval_trigger_functionContext;
     class Bool_Context;
 
     class FormulaContext : public antlr4::ParserRuleContext {
@@ -602,6 +607,18 @@ class FormulaParser : public antlr4::Parser {
         virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
     };
 
+    class DynamicIntervalContext : public IntervalContext {
+      public:
+        DynamicIntervalContext(IntervalContext *ctx);
+
+        FormulaParser::Interval_trigger_boolContext *l = nullptr;
+        FormulaParser::Interval_trigger_boolContext *u = nullptr;
+        std::vector<Interval_trigger_boolContext *> interval_trigger_bool();
+        Interval_trigger_boolContext *interval_trigger_bool(size_t i);
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
     IntervalContext *interval();
 
     class AtomContext : public antlr4::ParserRuleContext {
@@ -667,6 +684,58 @@ class FormulaParser : public antlr4::Parser {
     };
 
     NumberContext *number();
+
+    class Interval_trigger_boolContext : public antlr4::ParserRuleContext {
+      public:
+        Interval_trigger_boolContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+
+        Interval_trigger_boolContext() = default;
+        void copyFrom(Interval_trigger_boolContext *context);
+        using antlr4::ParserRuleContext::copyFrom;
+
+        virtual size_t getRuleIndex() const override;
+    };
+
+    class PredicateTriggerContext : public Interval_trigger_boolContext {
+      public:
+        PredicateTriggerContext(Interval_trigger_boolContext *ctx);
+
+        antlr4::Token *op = nullptr;
+        antlr4::Token *right = nullptr;
+        antlr4::tree::TerminalNode *PREDICATE();
+        std::vector<antlr4::tree::TerminalNode *> ATOMIC();
+        antlr4::tree::TerminalNode *ATOMIC(size_t i);
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    Interval_trigger_boolContext *interval_trigger_bool();
+
+    class Interval_trigger_functionContext : public antlr4::ParserRuleContext {
+      public:
+        Interval_trigger_functionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+
+        Interval_trigger_functionContext() = default;
+        void copyFrom(Interval_trigger_functionContext *context);
+        using antlr4::ParserRuleContext::copyFrom;
+
+        virtual size_t getRuleIndex() const override;
+    };
+
+    class FunctionTriggerContext : public Interval_trigger_functionContext {
+      public:
+        FunctionTriggerContext(Interval_trigger_functionContext *ctx);
+
+        antlr4::Token *op = nullptr;
+        antlr4::Token *right = nullptr;
+        antlr4::tree::TerminalNode *INTERVAL_FUNCTION();
+        std::vector<antlr4::tree::TerminalNode *> ATOMIC();
+        antlr4::tree::TerminalNode *ATOMIC(size_t i);
+
+        virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+    };
+
+    Interval_trigger_functionContext *interval_trigger_function();
 
     class Bool_Context : public antlr4::ParserRuleContext {
       public:

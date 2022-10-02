@@ -28,15 +28,15 @@ class UntilMonitor : public Hydra2Monitor {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      */
     UntilMonitor(const Formula &formula, std::shared_ptr<Hydra2Monitor> subMonitorLeft,
-                 std::shared_ptr<Hydra2Monitor> subMonitorRight, IntervalTemporalOperator interval, size_t monitorId,
-                 bool connectedEval)
+                 std::shared_ptr<Hydra2Monitor> subMonitorRight, Hydra2IntervalTemporalOperator interval,
+                 size_t monitorId, bool connectedEval)
         : Hydra2Monitor(
               formula, monitorId, connectedEval, (subMonitorRight->getEvalCost() + subMonitorLeft->getEvalCost()) / 2,
               (subMonitorRight->getSatisfactionProbability() + subMonitorRight->getSatisfactionProbability()) / 2),
           subMonitorLeft(std::move(subMonitorLeft)), subMonitorRight(std::move(subMonitorRight)),
           subMonitorBaseTimeStep(
               std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(true)), 0, connectedEval)),
-          interval(interval){};
+          interval(std::move(interval)){};
 
     /**
      * Performs concrete step of until-monitor.
@@ -66,6 +66,8 @@ class UntilMonitor : public Hydra2Monitor {
      */
     std::string to_string() override;
 
+    void updateDynamicInterval(size_t stepNumber) override;
+
   private:
     /**
      * Executes left and right monitors of until.
@@ -81,7 +83,7 @@ class UntilMonitor : public Hydra2Monitor {
     std::optional<Verdict> subVerdictRight;        //**< Verdict for monitor on right side of until. */
     std::optional<Verdict> subVerdictBaseTimeStep; //**< Monitor to extract time step and index from trace at position
                                                    // of until monitor head. Represented by Constant-True-Monitor. */
-    IntervalTemporalOperator interval;             //**< Interval of operator. */
+    Hydra2IntervalTemporalOperator interval;             //**< Interval of operator. */
     HeadPosHydra2 headPositionMonitorLeft;         //**< Head position of left monitor. */
     HeadPosHydra2 headPositionMonitorRight;        //**< Head position of right monitor. *
     HeadPosHydra2 headPositionMonitorBaseTimeStep; //**< Head position of base time monitor. *

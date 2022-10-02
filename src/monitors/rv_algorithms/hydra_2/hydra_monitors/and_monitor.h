@@ -55,6 +55,8 @@ class AndMonitor : public Hydra2Monitor {
      */
     std::string to_string() override;
 
+    void updateDynamicInterval(size_t stepNumber) override;
+
   private:
     std::vector<std::shared_ptr<Hydra2Monitor>> subMonitors; //**< Child monitors. */
     bool shortCircuiting; //**< Boolean indicating whether short-circuiting should be used. */

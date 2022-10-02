@@ -35,7 +35,7 @@ class DynamicProgrammingLTL : public MonitorInterface {
      * @param eventMap Map of events with truth values of all predicates.
      * @param subformulas Vector of all subformulas of the formula to be verified.
      */
-    void initialize(size_t idx, std::vector<bool> &initVector, event_map_t &eventMap,
+    void initialize(size_t idx, std::vector<bool> &initVector, event_map_t<bool> &eventMap,
                     const std::vector<std::shared_ptr<Expression>> &subformulas);
 
     /**
@@ -46,7 +46,7 @@ class DynamicProgrammingLTL : public MonitorInterface {
      * @param eventMap Map of events with truth values of all predicates.
      * @param subformulas Vector of all subformulas of the formula to be verified.
      */
-    void update(size_t idx, std::vector<bool> &updateVector, std::vector<bool> oldVector, event_map_t &eventMap,
+    void update(size_t idx, std::vector<bool> &updateVector, std::vector<bool> oldVector, event_map_t<bool> &eventMap,
                 const std::vector<std::shared_ptr<Expression>> &subformulas);
 
     /**
@@ -95,7 +95,7 @@ class DynamicProgrammingLTL : public MonitorInterface {
      * @param subformulas Vector of all subformulas of the formula to be verified.
      * @return Vector pre initialized.
      */
-    [[nodiscard]] std::vector<bool> initializePre(Event &event,
+    [[nodiscard]] std::vector<bool> initializePre(Event<bool> &event,
                                                   const std::vector<std::shared_ptr<Expression>> &subformulas);
 
     /**
@@ -105,7 +105,7 @@ class DynamicProgrammingLTL : public MonitorInterface {
      * @param pre Vector from previous event.
      * @return Updated vector now.
      */
-    [[nodiscard]] std::vector<bool> updateNowPast(Event &event,
+    [[nodiscard]] std::vector<bool> updateNowPast(Event<bool> &event,
                                                   const std::vector<std::shared_ptr<Expression>> &subformulas,
                                                   const std::vector<bool> &pre);
 
@@ -123,7 +123,7 @@ class DynamicProgrammingLTL : public MonitorInterface {
      * @param subformulas Vector of all subformulas of the formula to be verified.
      * @return Vector next initialized.
      */
-    [[nodiscard]] std::vector<bool> initializeNext(Event &event,
+    [[nodiscard]] std::vector<bool> initializeNext(Event<bool> &event,
                                                    const std::vector<std::shared_ptr<Expression>> &subformulas);
 
     /**
@@ -133,7 +133,7 @@ class DynamicProgrammingLTL : public MonitorInterface {
      * @param next Vector from previous event.
      * @return Updated vector now.
      */
-    [[nodiscard]] std::vector<bool> updateNowFuture(Event &event,
+    [[nodiscard]] std::vector<bool> updateNowFuture(Event<bool> &event,
                                                     const std::vector<std::shared_ptr<Expression>> &subformulas,
                                                     const std::vector<bool> &next);
 

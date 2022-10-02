@@ -35,3 +35,16 @@ size_t IntervalTemporalOperator::getEnd() const {
 bool IntervalTemporalOperator::isFinite() const { return finite; }
 
 bool IntervalTemporalOperator::isEmpty() const { return empty; }
+
+std::string IntervalTemporalOperator::to_string() {
+    std::string itv{};
+    std::string endStr{};
+    if (!empty) {
+        if (!finite)
+            endStr = "inf";
+        else
+            endStr = std::to_string(end.value());
+        itv = "[" + std::to_string(start) + ", " + endStr + "]";
+    }
+    return itv;
+}

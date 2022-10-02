@@ -9,7 +9,7 @@
 
 Verdict ConstantMonitorHydra::concreteStep() {
     if (traceIdx < trace.value().getLength()) {
-        auto event{trace.value().getEvent(traceIdx)};
+        auto event{trace.value().getBooleanEvent(traceIdx)};
         auto verdict{
             Verdict(event.getTimeStep(), (*std::dynamic_pointer_cast<Constant>(formula.getExpr())).getValue())};
         ++traceIdx;

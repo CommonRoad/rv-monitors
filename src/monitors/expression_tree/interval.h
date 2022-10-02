@@ -1,9 +1,12 @@
 #pragma once
 
+#include <functional>
 #include <iostream>
 #include <memory>
 #include <optional>
 #include <string>
+
+class Predicate;
 
 /**
  * Class representing expression interval.
@@ -29,6 +32,13 @@ class Interval {
      * Constructor specifying nothing. Using default interval: [0, inf].
      */
     Interval();
+
+    /**
+     * Constructor specifying dynamic interval.
+     *
+     * @param dynamicInterval
+     */
+    Interval(std::array<std::shared_ptr<Predicate>, 2> dynamicInterval);
 
     /**
      * Converts interval expression to string.
@@ -59,6 +69,13 @@ class Interval {
     [[nodiscard]] bool isFinite() const;
 
     /**
+     * Getter for dynamic.
+     *
+     * @return  Boolean indicating whether interval is dynamic.
+     */
+    [[nodiscard]] bool isDynamic() const;
+
+    /**
      * Computes length of interval.
      *
      * @return Length of interval.
@@ -79,9 +96,20 @@ class Interval {
      */
     bool isEmpty() const;
 
+    /**
+     * Getter for dynamic interval function and predicate.
+     *
+     * @return Array containing dynamic interval function and predicate stored as predicate.
+     */
+    const std::array<std::shared_ptr<Predicate>, 2> &getDynamicInterval() const;
+
   private:
     int start;              //**< Start of time interval. */
     std::optional<int> end; //**< End of time interval. */
     bool finite;            //**< Boolean indicating whether interval is finite. */
     bool empty;             //**< Boolean indicating whether interval is specified for an operator. */
+    std::array<std::shared_ptr<Predicate>, 2>
+        dynamicInterval; //**< Predicate and function trigger for dynamic interval (both are represented as predicate
+                         //since there is no difference for the expression tree). */
+    bool dynamic;        //**< Boolean indicating whether interval is dynamic. */
 };

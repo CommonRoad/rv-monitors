@@ -12,6 +12,7 @@
 #include "monitors/rv_algorithms/mtl_event_consuming/mtl_event_consuming.h"
 #include "monitors/utils/utils.h"
 #include <cassert>
+#include <utility>
 
 std::map<std::string, std::vector<Verdict>> RVMonitor::verify(Trace trace) {
     std::chrono::high_resolution_clock::time_point startTime;

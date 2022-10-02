@@ -2,14 +2,14 @@
 
 std::shared_ptr<Expression> EventOperator::clone() { return std::make_shared<EventOperator>(*this); }
 
-std::shared_ptr<Expression> EventOperator::accept(ExpressionVisitor &visitor, Trace &tr, size_t idx) {
-    return visitor.visitEventOperator(*this, tr, idx);
+std::shared_ptr<Expression> EventOperator::accept(ExpressionVisitor &visitor, Trace &tra, size_t idx) {
+    return visitor.visitEventOperator(*this, tra, idx);
 }
 
-Event EventOperator::getEvent() { return trace.getEvent(index); }
+Event<bool> EventOperator::getEvent() { return trace.getBooleanEvent(index); }
 
 std::string EventOperator::to_string() const {
-    return "E(" + getLeft()->to_string() + trace.getTrace().at(index).to_string() + ")";
+    return "E(" + getLeft()->to_string() + trace.getBooleanTrace().at(index).to_string() + ")";
 }
 std::shared_ptr<Hydra2Monitor> EventOperator::accept(HydraCreationVisitor2 &visitor, size_t parentId,
                                                      bool connectedEval) {

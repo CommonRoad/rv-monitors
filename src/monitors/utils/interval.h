@@ -2,6 +2,7 @@
 
 #include "monitors/expression_tree/interval.h"
 #include <cstddef>
+#include <tuple>
 
 /**
  * Representation of interval for temporal operators.
@@ -50,14 +51,14 @@ struct IntervalTemporalOperator {
      *
      * @return Start of interval.
      */
-    size_t getStart() const;
+    virtual size_t getStart() const;
 
     /**
      * Getter for end of interval.
      *
      * @return End of interval.
      */
-    size_t getEnd() const;
+    virtual size_t getEnd() const;
 
     /**
      * Getter for finite indication.
@@ -73,7 +74,15 @@ struct IntervalTemporalOperator {
      */
     bool isEmpty() const;
 
-  private:
+    virtual /**
+             * Creates string representation of interval.
+             *
+             * @return String representation.
+             */
+        std::string
+        to_string();
+
+  protected:
     size_t start;              //**< Start of interval.  */
     std::optional<size_t> end; //**< End of interval.   */
     bool finite;               //**< Boolean indicating whether interval is finite.  */

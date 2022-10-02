@@ -3,12 +3,13 @@
 #include "hydra_creation_visitor.h"
 #include "monitors/expression_tree/unary/temporal/globally.h"
 #include <iostream>
+#include <utility>
 #include <spdlog/spdlog.h>
 
 std::map<std::string, std::vector<Verdict>> Hydra2::evaluate(Trace &trace) {
     std::map<std::string, std::vector<Verdict>> result;
     // Empty trace
-    if (trace.getTrace().empty()) {
+    if (trace.getBooleanTrace().empty()) {
         spdlog::info("Hydra2::evaluate | Trace is empty");
         for (const auto &mon : monitors)
             result[mon->getFormulaId()] = {};
@@ -21,9 +22,10 @@ std::map<std::string, std::vector<Verdict>> Hydra2::evaluate(Trace &trace) {
         result[mon->getFormulaId()].reserve(trace.getLength());
 
     for (size_t i{0}; i < trace.getLength(); ++i)
-        for (const auto &mon : monitors)
+        for (const auto &mon : monitors) {
+            mon->updateDynamicInterval(i);
             result[mon->getFormulaId()].emplace_back(mon->step(0, i));
-
+        }
     return result;
 }
 
@@ -45,7 +47,8 @@ void Hydra2::setTraceMonitors(const Trace &tra) {
 }
 
 void Hydra2::createMonitor(const std::vector<Formula> &formulas, bool connectedEval, bool reordering,
-                           bool shortCircuiting, const std::map<std::string, std::array<double, 2>> &predicateCosts) {
+                           bool shortCircuiting, const std::map<std::string, std::array<double, 2>> &predicateCosts,
+                           const std::vector<HydraIntervalTriggers>& intervalTriggers) {
     HydraCreationVisitor2 hcv{HydraCreationVisitor2(predicateCosts, reordering, shortCircuiting)};
     for (const auto &form : formulas) {
         if (form.getId().empty())
@@ -57,12 +60,12 @@ void Hydra2::createMonitor(const std::vector<Formula> &formulas, bool connectedE
         rwv.rewrite(formulaCopy);
         formulaCopy.setId(form.getId());
 
-        monitors.push_back(hcv.createMonitor(formulaCopy, 0, connectedEval));
+        monitors.push_back(hcv.createMonitor(formulaCopy, 0, connectedEval, intervalTriggers));
     }
 }
 
 Hydra2::Hydra2(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting,
-               const std::map<std::string, std::array<double, 2>> &predicateCosts)
+               const std::map<std::string, std::array<double, 2>> &predicateCosts, const std::vector<HydraIntervalTriggers>& intervalTriggers)
     : MonitorInterface(formulas, AlgorithmType::hydra_2_mtl) {
-    createMonitor(formulas, connectedEval, reordering, shortCircuiting, predicateCosts);
+    createMonitor(formulas, connectedEval, reordering, shortCircuiting, predicateCosts, intervalTriggers);
 }

@@ -53,8 +53,9 @@ unary
  ;
 
 interval
-: '[' l=number ',' u=number   ']'      #FiniteInterval
-| '[' l=number ',' u=INFINITY ']'       #InfiniteInterval
+: '[' l=number ',' u=number   ']'                #FiniteInterval
+| '[' l=number ',' u=INFINITY ']'                #InfiniteInterval
+| '[' l=interval_trigger_bool ',' u=interval_trigger_bool ']'    #DynamicInterval
 ;
 
 atom
@@ -66,6 +67,14 @@ atom
 number
  : DIGIT                 #Digit
  ;
+
+ interval_trigger_bool
+  : op=PREDICATE right=ATOMIC (',' ATOMIC)*')'                 #PredicateTrigger
+  ;
+
+ interval_trigger_function
+    : op=INTERVAL_FUNCTION right=ATOMIC (',' ATOMIC)*')'      #FunctionTrigger
+    ;
 
 bool_
   : TRUE                 # TrueBoolean
@@ -106,6 +115,7 @@ bool_
 
  ATOMIC		                : LOWER_ALPHA_UNDERSCORE;
  PREDICATE                  : LOWER_ALPHA_UNDERSCORE'(';
+ INTERVAL_FUNCTION          : LOWER_ALPHA_UNDERSCORE'(';
 
  WS                         : [ \t\n]+ -> skip;       //Skip whitespaces
 

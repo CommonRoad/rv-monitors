@@ -7,6 +7,9 @@
 #include "next_monitor.h"
 #include <iostream>
 
+#include "monitors/rv_algorithms/hydra_2/interval/interval_function.h"
+#include "predicate_monitor.h"
+
 Verdict NextMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 
     if (!currentTime) // first event in trace (next time step specifies verdict
@@ -27,7 +30,10 @@ Verdict NextMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         return {*currentTime, false};
 }
 
-void NextMonitor::setTrace(const Trace &tra) { subMonitor->setTrace(tra); }
+void NextMonitor::setTrace(const Trace &tra) {
+    subMonitor->setTrace(tra);
+    interval.setTrace(tra);
+}
 
 void NextMonitor::reset() {
     Hydra2Monitor::reset();
@@ -35,14 +41,9 @@ void NextMonitor::reset() {
     subMonitor->reset();
 }
 std::string NextMonitor::to_string() {
-    std::string itv{};
-    std::string end{};
-    if (!interval.isEmpty()) {
-        if (!interval.isFinite())
-            end = "inf";
-        else
-            end = std::to_string(interval.getEnd());
-        itv = "[" + std::to_string(interval.getStart()) + ", " + end + "]";
-    }
-    return std::string{"X"} + itv + "(" + subMonitor->to_string() + ")";
+    return std::string{"X"} + interval.to_string() + "(" + subMonitor->to_string() + ")";
+}
+void NextMonitor::updateDynamicInterval(size_t stepNumber) {
+    subMonitor->updateDynamicInterval(stepNumber);
+    interval.updateDynamicInterval(stepNumber);
 }
