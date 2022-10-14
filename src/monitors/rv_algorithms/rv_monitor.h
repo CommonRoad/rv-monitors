@@ -67,6 +67,7 @@ class RVMonitor {
      * satisfaction probability in interval [0, 1].
      */
     RVMonitor(const Formula &formula, MonitorConfiguration configuration = {},
+              const DomainCollection &domains = {}, const FunctionCollection &functions = {},
               const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
 
     /**
@@ -91,6 +92,7 @@ class RVMonitor {
      * satisfaction probability in interval [0, 1].
      */
     RVMonitor(const std::vector<Formula> &formula, MonitorConfiguration configuration,
+              const DomainCollection &domains = {}, const FunctionCollection &functions = {},
               const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
 
     /**
