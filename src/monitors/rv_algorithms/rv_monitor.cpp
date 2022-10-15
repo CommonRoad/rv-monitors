@@ -167,7 +167,7 @@ RVMonitor::RVMonitor(const RVMonitor &obj) : configuration(obj.configuration) {
             formulas.push_back(formulaCopy);
         }
 
-        monitor = std::make_unique<Hydra2>(formulas, domains, functions, configuration.hydraConnectedEvaluation,
+        monitor = std::make_unique<Hydra2>(formulas, obj.domains, obj.functions, configuration.hydraConnectedEvaluation,
                                           configuration.hydraReordering, configuration.hydraShortCircuiting);
     }
     executionStatistic = obj.executionStatistic;
