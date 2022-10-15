@@ -113,7 +113,7 @@ RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration 
 RVMonitor::RVMonitor(const Formula &formula, MonitorConfiguration configuration,
                      const DomainCollection &domains, const FunctionCollection &functions,
                      const std::map<std::string, std::array<double, 2>> &predicateCosts)
-    : configuration(configuration) {
+    : configuration(configuration), domains(domains), functions(functions) {
 
     for (const auto &pred : predicateCosts)
         assert(pred.second[0] >= 0 and pred.second[0] <= 100 and pred.second[1] >= 0 and pred.second[1] <= 1);
@@ -167,8 +167,6 @@ RVMonitor::RVMonitor(const RVMonitor &obj) : configuration(obj.configuration) {
             formulas.push_back(formulaCopy);
         }
 
-        DomainCollection domains; // TODO: Transfer domain and function collection
-        FunctionCollection functions;
         monitor = std::make_unique<Hydra2>(formulas, domains, functions, configuration.hydraConnectedEvaluation,
                                           configuration.hydraReordering, configuration.hydraShortCircuiting);
     }

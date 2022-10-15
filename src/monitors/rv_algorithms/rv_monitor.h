@@ -121,6 +121,8 @@ class RVMonitor {
     std::unique_ptr<MonitorInterface> monitor; //**< Pointer to monitoring algorithm */
     ExecutionStatistic executionStatistic;     //**< Execution statistic object */
     MonitorConfiguration configuration; //**< Boolean indicating whether performance evaluation should be performed. */
+    DomainCollection domains; //**< Domains. */
+    FunctionCollection functions; //** Functions. */
 };
 
 /**
