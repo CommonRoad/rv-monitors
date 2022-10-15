@@ -171,6 +171,8 @@ RVMonitor::RVMonitor(const RVMonitor &obj) : configuration(obj.configuration) {
                                           configuration.hydraReordering, configuration.hydraShortCircuiting);
     }
     executionStatistic = obj.executionStatistic;
+    domains = obj.domains;
+    functions = obj.functions;
 }
 
 RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
