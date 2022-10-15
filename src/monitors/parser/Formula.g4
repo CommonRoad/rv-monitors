@@ -132,7 +132,7 @@ bool_
  ATOMIC		                : LOWER_ALPHA_UNDERSCORE;
  PREDICATE                  : LOWER_ALPHA_UNDERSCORE'(';
  DOMAIN                     : [A-Z]+[A-Z]*[0-9]*;
- CONST_VALUE                : '\'' [a-zA-Z0-9]+ '\'';
+ CONST_VALUE                : '\'' [a-zA-Z0-9]([_]?[a-zA-Z0-9]+)* '\'';
 
  WS                         : [ \t\n]+ -> skip;       //Skip whitespaces
 
