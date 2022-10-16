@@ -105,8 +105,8 @@ class Event {
 
     /**
      * Checks predicate is included by event map.
-     * @param predicate Predicate
+     * @param proposition Predicate proposition
      * @return Has predicate or not
      */
-    [[nodiscard]] bool hasPredicate(const Predicate &predicate) const;
+    [[nodiscard]] bool hasPredicate(const std::string &proposition) const;
 };

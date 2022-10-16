@@ -34,6 +34,6 @@ bool Event::hasAtomic(const Atomic &atomic) const {
     return eventMap.find(atomic.to_string()) != eventMap.end();
 }
 
-bool Event::hasPredicate(const Predicate &predicate) const {
-    return eventMap.find(predicate.to_string()) != eventMap.end();
+bool Event::hasPredicate(const std::string &proposition) const {
+    return eventMap.find(proposition) != eventMap.end();
 }

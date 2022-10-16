@@ -882,19 +882,12 @@ TestDataBase::TestDataBase() {
         },
         {
             "F77_1",
-            "G(A x in D. lower_than_time_step(x))",
+            "G(A x in D. p(x))",
             createExpectedResult({true, true, false, false}),
-            {"lower_than_time_step(x)"},
-            {{"lower_than_time_step(x)"}, {"lower_than_time_step(x)"}, {}, {}},
+            {"p(a)", "p(b)", "p(c)"},
+            {{"p(a)", "p(b)", "p(c)"}, {"p(a)", "p(b)", "p(c)"}, {"p(b)"}, {"p(a)", "p(b)"}},
             {0, 1, 2, 3},
-            {Domain{"D", {"-1", "0", "1"}}},
-            {{"lower_than_time_step", 1,
-              [](int argc, char *args[]) -> bool {
-                  int timeStep = strtol(args[0], nullptr, 10);
-                  int val = strtol(args[1], nullptr, 10);
-                  return val < timeStep;
-              }, true
-            }}
+            {Domain{"D", {"a", "b", "c"}}}
         },
         {
             "F78_1",

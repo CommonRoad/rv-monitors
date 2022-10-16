@@ -85,4 +85,12 @@ class PredicateMonitor : public Hydra2Monitor {
      */
     Verdict evalPredicateWithQuantifiedVars(size_t parentId, const Predicate &predicate, const Event &event);
 
+    /**
+     * Creates a predicate proposition as string.
+     *
+     * @param predicate Predicate.
+     * @return Predicate proposition.
+     */
+    std::string createPredicateProposition(const Predicate &predicate);
+
 };

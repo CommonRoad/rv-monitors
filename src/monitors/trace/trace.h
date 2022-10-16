@@ -76,14 +76,14 @@ class Trace {
 
     /**
      * Checks whether predicate is included by trace.
-     * @param predicate Predicate.
+     * @param proposition Predicate proposition.
      * @param index Index of trace.
      * @return Boolean indicating whether the predicate is included by trace.
      */
-    bool predicateIncludedByTrace(const Predicate &predicate, size_t index) {
+    bool predicateIncludedByTrace(const std::string &proposition, size_t index) {
         if (index < trace.size()) {
             Event &event = trace[index];
-            return event.hasPredicate(predicate);
+            return event.hasPredicate(proposition);
         } else {
             return false;
         }

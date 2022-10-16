@@ -11,8 +11,9 @@ Verdict PredicateMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     if (stepNumber < trace.getLength()) {
         const Predicate &predicate = *std::dynamic_pointer_cast<Predicate>(formula.getExpr());
         auto event{trace.getEvent(traceIdx[parentId])};
-        if (trace.predicateIncludedByTrace(predicate, traceIdx[parentId])) {
-            return {event.getTimeStep(), event.getValue(predicate)};
+        std::string predProposition{createPredicateProposition(predicate)};
+        if (trace.predicateIncludedByTrace(predProposition, traceIdx[parentId])) {
+            return {event.getTimeStep(), event.getValue(predProposition)};
         } else {
             return evalPredicateWithQuantifiedVars(parentId, predicate, event);
         }
@@ -70,4 +71,30 @@ Verdict PredicateMonitor::evalPredicateWithQuantifiedVars(size_t parentId, const
     for (auto &arg : args)
         arg_ptrs.push_back(arg.data());
     return {event.getTimeStep(), function.getFunction()(argc, arg_ptrs.data())};
+}
+
+std::string PredicateMonitor::createPredicateProposition(const Predicate &predicate) {
+    std::string predProposition{predicate.getName() + "("};
+    const auto &predicateArgs = predicate.getArguments();
+    for (size_t i = 0; i < predicateArgs.size(); i++) {
+        const auto &[argName, argType] = predicateArgs[i];
+        if (i != 0)
+            predProposition += ", ";
+        switch (argType) {
+        case Predicate::VARIABLE: {
+            auto iterVar{variableValues.find(argName)};
+            if (iterVar != variableValues.end())
+                predProposition += iterVar->second.getVal();
+            else
+                predProposition += argName;
+            break;
+        }
+        case Predicate::CONSTANT: {
+            predProposition += argName;
+            break;
+        }
+        }
+    }
+
+    return predProposition + ")";
 }
