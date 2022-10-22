@@ -21,6 +21,7 @@ Verdict UniversalMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     if (!checkNonEmptiness()) // if there is an empty domain, then a true verdict will be returned by definition
         return verdict;
 
+    evalMonitors.reserve(numberCombinations);
     for (size_t count{0}; count != numberCombinations; count++) { // loop over all possible combinations
         std::shared_ptr<Hydra2Monitor> evalMonitor = nextEvalMonitor(parentId, count); // request monitor for current combination
 

@@ -26,6 +26,7 @@ Verdict QuoteMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     float totalQuote;
 
     size_t trueVerdicts{0};
+    evalMonitors.reserve(numberCombinations);
     for (size_t count{0}; count != numberCombinations; count++) { // loop over all possible combinations
         std::shared_ptr<Hydra2Monitor> evalMonitor = nextEvalMonitor(parentId, count); // request monitor for the current combination
 

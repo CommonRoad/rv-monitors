@@ -1084,6 +1084,25 @@ TestDataBase::TestDataBase() {
             "G((b & X(!(b)) & d & !(a)) -> (O(G[0,30](b & c))))",
             createExpectedResult({true, true, true, true, true, false, true, true, true, true, true, true, true}),
             {{"d"}, {"d"}, {"d"}, {"d"}, {"d"}, {"b", "d"}, {"d"}, {"d"}, {"d"}, {}, {}, {}, {}},
+        },
+        {
+            "F96_1",
+            "G(E x0 in D0, x1 in D1. p0(x0, x1) & p1(x0, x1))",
+            createExpectedResult({true, false, false, true}),
+            {"p0(a, c)", "p0(a, d)", "p0(b, c)", "p0(b, d)", "p1(a, c)", "p1(a, d)", "p1(b, c)", "p1(b, d)"},
+            {{"p0(a, c)", "p0(a, d)", "p1(a, c)"}, {"p0(a, d)", "p1(a, c)", "p1(b, c)"}, {}, {"p0(b, d)", "p1(b, d)"}},
+            {0, 1, 2, 3},
+            std::vector<Domain>({Domain{"D0", {Value("a"), Value("b")}}, Domain{"D1", {Value("c"), Value("d")}}})
+        },
+        {
+            "F97_1",
+            "G(C>=3 x0 in D0, x1 in D1, x2 in D2. p(x0, x1, x2))",
+            createExpectedResult({true, false, true, false}),
+            {"p(a, c, e)", "p(b, c, e)", "p(a, d, e)", "p(b, d, e)", "p(a, c, f)", "p(b, c, f)", "p(a, d, f)", "p(b, d, f)"},
+            {{"p(a, c, e)", "p(a, c, f)", "p(b, c, f)"}, {"p(b, c, f)", "p(a, d, f)"}, {"p(a, c, e)", "p(b, c, e)", "p(a, d, e)", "p(b, d, e)", "p(a, c, f)"}, {}},
+            {0, 1, 2, 3},
+            std::vector<Domain>({Domain{"D0", {Value("a"), Value("b")}}, Domain{"D1", {Value("c"), Value("d")}},
+            Domain{"D2", {Value("e"), Value("f")}}})
         }
     };
 }

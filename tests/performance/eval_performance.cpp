@@ -46,6 +46,7 @@ void evalFormula2(const std::vector<Formula> &formulas, size_t numExecutions, st
 void evalFormula1Atomic(const std::vector<Formula> &formulas, size_t numExecutions, std::vector<size_t> &traceLength);
 void evalFormula2Atomic(const std::vector<Formula> &formulas, size_t numExecutions, std::vector<size_t> &traceLength);
 void evalUniversalOperator(size_t maxArgs, size_t maxDomain, size_t traceLength);
+void evalRewriting(size_t maxDomain, size_t traceLength);
 
 bool a(size_t dummy) {
     rng.seed(seed_val);
@@ -550,7 +551,7 @@ int main() {
         std::cout << "Unkown Test!";
     }
     outStream.close();*/
-    evalUniversalOperator(4, 50, 1);
+    evalUniversalOperator(3, 20, 1);
 }
 /*
 void test_0() {
@@ -1149,7 +1150,7 @@ void evalFormula2Atomic(const std::vector<Formula> &formulas, size_t numExecutio
 
 void evalUniversalOperator(size_t maxArgs, size_t maxDomain, size_t traceLength) {
     for (size_t numArgs = 1; numArgs <= maxArgs; numArgs++) {
-        for (size_t sizeDomain = 1; sizeDomain <= maxDomain; sizeDomain += 10) {
+        for (size_t sizeDomain = 1; sizeDomain <= maxDomain; sizeDomain += 3) {
             std::vector<Value> values;
             for (size_t i = 0; i < sizeDomain; i++)
                 values.emplace_back(std::to_string(i));
@@ -1174,20 +1175,68 @@ void evalUniversalOperator(size_t maxArgs, size_t maxDomain, size_t traceLength)
             formula.setId("R1");
             if (sizeDomain == 1)
                 std::cout << "Evaluation of formula: " << formula.to_string() << std::endl;
-            Hydra2 hydra{std::vector<Formula>{formula}, domainCollection, {}, false, false, true};
             std::set<std::string> atomics;
             for (Value &val : values)
                 atomics.insert(val.getVal());
-            std::vector<std::vector<std::string>> trueVerdicts;
-            for (size_t i = 0; i < traceLength; i++)
-                trueVerdicts.emplace_back(std::vector<std::string>());
-            Trace trace = Utils::createTrace(atomics, trueVerdicts);
-            auto start{std::chrono::system_clock::now()};
-            hydra.evaluate(trace);
-            auto end{std::chrono::system_clock::now()};
-            auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-            std::cout << "Num. Args: " << numArgs << " Size Domain: " << sizeDomain << " Trace Length: " << traceLength << " Eval. Time: " << elapsed.count() << std::endl;
+            std::vector<double> times;
+            for (size_t i = 0; i < 1000; i++) {
+                std::vector<std::vector<std::string>> trueVerdicts;
+                for (size_t j = 0; j < traceLength; j++) {
+                    std::vector<std::string> propositions;
+                    for (auto &value : values) {
+                        std::random_device randomDevice;
+                        std::mt19937 twister(randomDevice());
+                        std::uniform_int_distribution<int> dist(1, 101);
+
+                        if (dist(twister) != 0)
+                            propositions.push_back(value.getVal());
+                    }
+                    trueVerdicts.emplace_back(propositions);
+                }
+                Trace trace = Utils::createTrace(atomics, trueVerdicts);
+                Hydra2 hydra{std::vector<Formula>{formula}, domainCollection, {}, false, false, false};
+                auto start{std::chrono::system_clock::now()};
+                hydra.evaluate(trace);
+                auto end{std::chrono::system_clock::now()};
+                auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+                times.push_back(elapsed.count());
+            }
+            double time{0.};
+            for (double t : times)
+                time += t;
+            time = time / times.size();
+            std::cout << "Num. Args: " << numArgs << " Size Domain: " << sizeDomain << " Trace Length: " << traceLength << " Eval. Time: " << time << std::endl;
         }
         std::cout << std::endl;
     }
+}
+
+void evalRewriting(size_t maxDomain, size_t traceLength) {
+    for (size_t sizeDomain = 1; sizeDomain <= maxDomain; sizeDomain += 3) {
+        std::vector<Value> values;
+        for (size_t i = 0; i < sizeDomain; i++)
+            values.emplace_back(std::to_string(i));
+        DomainCollection domainCollection{Domain{"D", values}};
+        std::map<std::string, std::string> variables;
+        for (size_t i = 0; i < 2; i++)
+            variables.insert(std::make_pair("x" + std::to_string(i), "D"));
+        Formula formula = Parser::parse("X(X(X(X(X(X(X(X(X(X(A x1, x2 in D. x1 & x2))))))))))");
+        formula.setId("R1");
+        if (sizeDomain == 1)
+            std::cout << "Evaluation of formula: " << formula.to_string() << std::endl;
+        Hydra2 hydra{std::vector<Formula>{formula}, domainCollection, {}, false, false, false};
+        std::set<std::string> atomics;
+        for (Value &val : values)
+            atomics.insert(val.getVal());
+        std::vector<std::vector<std::string>> trueVerdicts;
+        for (size_t i = 0; i < traceLength; i++)
+            trueVerdicts.emplace_back(std::vector<std::string>());
+        Trace trace = Utils::createTrace(atomics, trueVerdicts);
+        auto start{std::chrono::system_clock::now()};
+        hydra.evaluate(trace);
+        auto end{std::chrono::system_clock::now()};
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+        std::cout << "Num. Args: " << 2 << " Size Domain: " << sizeDomain << " Trace Length: " << traceLength << " Eval. Time: " << elapsed.count() << std::endl;
+    }
+    std::cout << std::endl;
 }
