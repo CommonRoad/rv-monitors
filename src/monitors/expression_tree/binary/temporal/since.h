@@ -1,9 +1,4 @@
-//
-// Created by Sebastian Maierhofer on 14.01.21.
-//
-
-#ifndef RV_MONITORS_SINCE_H
-#define RV_MONITORS_SINCE_H
+#pragma once
 
 #include "monitors/expression_tree/binary/binary.h"
 #include "monitors/expression_tree/temporal_operator.h"
@@ -34,5 +29,3 @@ class Since : public Binary, public TemporalOperator {
 
     [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override;
 };
-
-#endif // RV_MONITORS_SINCE_H

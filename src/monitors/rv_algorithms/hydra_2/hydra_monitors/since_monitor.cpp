@@ -23,7 +23,7 @@ Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     // loop until end is reached, right monitor time points equals (is greater) than left monitor's time point, or lower
     // time bound is violated
     while (!endReached && headPositionMonitorRight.traceIdx <= headPositionMonitorLeft.traceIdx &&
-           headPositionMonitorLeft.timeStep - headPositionMonitorRight.timeStep >= from) {
+           headPositionMonitorLeft.timeStep - headPositionMonitorRight.timeStep >= interval.getStart()) {
         if (subVerdictRight->value)
             lastSatisfaction = HeadPosHydra2(headPositionMonitorRight.timeStep, headPositionMonitorRight.traceIdx);
         subVerdictRight = subMonitorRight->step(monitorId, stepNumberRight);
@@ -37,7 +37,8 @@ Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     }
 
     // check whether right side of until was satisfied and whether satisfaction is before end of allowed time interval
-    if (lastSatisfaction && headPositionMonitorLeft.timeStep - lastSatisfaction->timeStep <= to &&
+    if (lastSatisfaction &&
+        (!interval.isFinite() or headPositionMonitorLeft.timeStep - lastSatisfaction->timeStep <= interval.getEnd()) &&
         (!lastViolation || lastSatisfaction->traceIdx >= lastViolation->traceIdx))
         return {headPositionMonitorLeft.timeStep, true};
     else
@@ -62,8 +63,14 @@ void SinceMonitor::reset() {
     endReached = false;
 }
 std::string SinceMonitor::to_string() {
-    std::string interval{" "};
-    if (from != 0 or to != 10000)
-        interval = "[" + std::to_string(from) + ", " + std::to_string(to) + "] ";
-    return "(" + subMonitorLeft->to_string() + " S" + interval + subMonitorRight->to_string() + ")";
+    std::string itv{" "};
+    std::string end{};
+    if (!interval.isEmpty()) {
+        if (!interval.isFinite())
+            end = "inf";
+        else
+            end = std::to_string(interval.getEnd());
+        itv = "[" + std::to_string(interval.getStart()) + ", " + end + "] ";
+    }
+    return "(" + subMonitorLeft->to_string() + " S" + itv + subMonitorRight->to_string() + ")";
 }

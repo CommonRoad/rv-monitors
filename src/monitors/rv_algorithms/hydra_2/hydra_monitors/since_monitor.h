@@ -6,9 +6,9 @@
 //
 #pragma once
 
-#include <utility>
-
+#include "../../../utils/interval.h"
 #include "hydra_monitor.h"
+#include <utility>
 
 /**
  * Hydra2 monitor for representing since operator.
@@ -20,19 +20,17 @@ class SinceMonitor : public Hydra2Monitor {
      * @param formula Formula to be monitored.
      * @param subMonitorLeft Monitor from left side of until operator.
      * @param subMonitorRight Monitor from right side of until operator.
-     * @param intervalFrom Start of time interval.
-     * @param intervalTo End of time interval.
+     * @param interval  Interval of operator.
      * @param monitorId ID of monitor.
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      */
     SinceMonitor(const Formula &formula, std::shared_ptr<Hydra2Monitor> subMonitorF,
-                 std::shared_ptr<Hydra2Monitor> subMonitorG, size_t intervalFrom, size_t intervalTo, size_t monitorId,
+                 std::shared_ptr<Hydra2Monitor> subMonitorG, IntervalTemporalOperator interval, size_t monitorId,
                  bool connectedEval)
         : Hydra2Monitor(formula, monitorId, connectedEval,
                         (subMonitorG->getEvalCost() + subMonitorF->getEvalCost()) / 2,
                         (subMonitorG->getSatisfactionProbability() + subMonitorG->getSatisfactionProbability()) / 2),
-          subMonitorLeft(std::move(subMonitorF)), subMonitorRight(std::move(subMonitorG)), from(intervalFrom),
-          to(intervalTo){};
+          subMonitorLeft(std::move(subMonitorF)), subMonitorRight(std::move(subMonitorG)), interval(interval){};
 
     /**
      * Performs concrete step of since-monitor.
@@ -67,8 +65,7 @@ class SinceMonitor : public Hydra2Monitor {
     std::shared_ptr<Hydra2Monitor> subMonitorRight; //**< Monitor for specification on right side of since. */
     std::optional<Verdict> subVerdictLeft;          //**< Verdict for monitor on left side of since. */
     std::optional<Verdict> subVerdictRight;         //**< Verdict for monitor on right side of since. */
-    size_t from;                                    //**< Start of time interval. */
-    size_t to;                                      //**< End of time interval. */
+    IntervalTemporalOperator interval;              //**< Interval of operator. */
     HeadPosHydra2 headPositionMonitorLeft;          //**< Head position of left monitor. */
     HeadPosHydra2 headPositionMonitorRight;         //**< Head position of right monitor. *
     std::optional<HeadPosHydra2> lastSatisfaction;  //**< Last time right side of until was satisfied. */
