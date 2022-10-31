@@ -6,9 +6,9 @@
 //
 #pragma once
 
-#include <utility>
-
+#include "../../../utils/interval.h"
 #include "monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.h"
+#include <utility>
 
 /**
  * Hydra monitor for representing since operator.
@@ -20,13 +20,12 @@ class SinceMonitorHydra : public HydraMonitor {
      * @param formula Formula to be monitored.
      * @param subMonitorF Monitor from left side of until operator.
      * @param subMonitorG Monitor from right side of until operator.
-     * @param intervalFrom Start of time interval.
-     * @param intervalTo End of time interval.
+     * @param interval  Interval of operator.
      */
     SinceMonitorHydra(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitorF,
-                      std::shared_ptr<HydraMonitor> subMonitorG, size_t intervalFrom, size_t intervalTo)
+                      std::shared_ptr<HydraMonitor> subMonitorG, IntervalTemporalOperator interval)
         : HydraMonitor(formula), subMonitorF(std::move(subMonitorF)), subMonitorG(std::move(subMonitorG)),
-          from(intervalFrom), to(intervalTo){};
+          interval(interval){};
 
     /**
      * Performs concrete step of since-monitor.
@@ -59,8 +58,7 @@ class SinceMonitorHydra : public HydraMonitor {
     std::shared_ptr<HydraMonitor> subMonitorG;       //**< Monitor for specification on right side of since. */
     std::optional<Verdict> subVerdictF;              //**< Verdict for monitor on left side of since. */
     std::optional<Verdict> subVerdictG;              //**< Verdict for monitor on right side of since. */
-    size_t from;                                     //**< Start of time interval. */
-    size_t to;                                       //**< End of time interval. */
+    IntervalTemporalOperator interval;               //**< Interval of operator. */
     HeadPosHydra positionMonitorF;                   //**< Head position of left monitor. */
     HeadPosHydra positionMonitorG;                   //**< Head position of right monitor. *
     std::optional<std::pair<size_t, int>> last_sat;  //**< Last time right side of until was satisfied. */

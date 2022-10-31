@@ -3,39 +3,37 @@
 //
 
 #include "interval.h"
+#include "cassert"
 
-Interval::Interval(int start, int end, bool finite) : start(start), end(end), finite(finite) {}
+Interval::Interval(int start, int end) : start(start), end(end), finite(true), empty(false) {}
+
+Interval::Interval() : start(0), finite(false), empty(true) {}
+
+Interval::Interval(int start) : start(start), finite(false), empty(false) {}
 
 std::string Interval::to_string() const {
-    return "[" + std::to_string(this->start) + ", " + std::to_string(this->end) + "]";
-}
-
-void Interval::reduceInterval() {
-    if (!finite)
-        start--;
-    else {
-        end--;
-        start--;
+    std::string endStr{};
+    if (!empty) {
+        if (!finite)
+            endStr = "inf";
+        else
+            endStr = std::to_string(end.value());
     }
+    return "[" + std::to_string(this->start) + ", " + endStr + "]";
 }
 
 int Interval::getStart() const { return start; }
 
-void Interval::setStart(int st) { start = st; }
-
-int Interval::getEnd() const { return end; }
-
-void Interval::setEnd(int en) { end = en; }
+int Interval::getEnd() const {
+    assert((finite) && "Invalid interval access: Interval is infinite.");
+    return end.value();
+}
 
 bool Interval::isFinite() const { return finite; }
 
-void Interval::setFinite(bool fin) { finite = fin; }
-
-bool Interval::containsZero() const {
-    //    if (start == 0 or end == 0)
-    //        return true;
-    //    else
-    //        return false;
-    return (start <= 0 and 0 <= end);
+int Interval::getLength() const {
+    assert((finite) && "Invalid length computation: Interval is infinite.");
+    return end.value() - start;
 }
-int Interval::getLength() const { return end - start; }
+
+bool Interval::isEmpty() const { return empty; }

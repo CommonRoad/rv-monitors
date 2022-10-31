@@ -6,9 +6,9 @@
 //
 #pragma once
 
-#include <utility>
-
+#include "../../../utils/interval.h"
 #include "monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.h"
+#include <utility>
 
 /**
  * Hydra monitor representing (strong) previous operator.
@@ -20,12 +20,11 @@ class PreviousMonitorHydra : public HydraMonitor {
      *
      * @param formula Formula to be monitored.
      * @param subMonitor Child monitor.
-     * @param intervalFrom Start of time interval.
-     * @param intervalTo End of time interval.
+     * @param interval  Interval of operator.
      */
-    PreviousMonitorHydra(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitor, size_t intervalFrom,
-                         size_t intervalTo)
-        : HydraMonitor(formula), subMonitor(std::move(subMonitor)), from(intervalFrom), to(intervalTo){};
+    PreviousMonitorHydra(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitor,
+                         IntervalTemporalOperator interval)
+        : HydraMonitor(formula), subMonitor(std::move(subMonitor)), interval(interval){};
 
     /**
      * Performs concrete step of previous operator monitor.
@@ -56,6 +55,5 @@ class PreviousMonitorHydra : public HydraMonitor {
   private:
     std::shared_ptr<HydraMonitor> subMonitor; //**< Child monitor. */
     std::optional<Verdict> currentVerdict;    //**< Stores previous verdict. */
-    size_t from;                              //**< Start of time interval. */
-    size_t to;                                //**< End of time interval. */
+    IntervalTemporalOperator interval;        //**< Interval of operator. */
 };
