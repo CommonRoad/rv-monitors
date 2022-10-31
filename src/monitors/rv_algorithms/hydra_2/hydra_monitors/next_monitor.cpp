@@ -16,7 +16,10 @@ Verdict NextMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     if (subVerdict.timeStamp.has_value() and currentTime) {
         size_t lastTime = *currentTime;
         currentTime = subVerdict.timeStamp;
-        if (Utils::isInInterval(subVerdict.timeStamp.value() - lastTime, from, to))
+        if (!interval.isFinite() and interval.getStart() <= lastTime)
+            return {lastTime, subVerdict.value};
+        else if (interval.isFinite() and
+                 Utils::isInInterval(subVerdict.timeStamp.value() - lastTime, interval.getStart(), interval.getEnd()))
             return {lastTime, subVerdict.value};
         else
             return {lastTime, false};
@@ -32,8 +35,14 @@ void NextMonitor::reset() {
     subMonitor->reset();
 }
 std::string NextMonitor::to_string() {
-    std::string interval;
-    if (from != 0 or to != 10000)
-        interval = "[" + std::to_string(from) + ", " + std::to_string(to) + "]";
-    return std::string{"X"} + interval + "(" + subMonitor->to_string() + ")";
+    std::string itv{};
+    std::string end{};
+    if (!interval.isEmpty()) {
+        if (!interval.isFinite())
+            end = "inf";
+        else
+            end = std::to_string(interval.getEnd());
+        itv = "[" + std::to_string(interval.getStart()) + ", " + end + "]";
+    }
+    return std::string{"X"} + itv + "(" + subMonitor->to_string() + ")";
 }

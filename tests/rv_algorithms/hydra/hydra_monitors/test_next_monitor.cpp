@@ -17,7 +17,7 @@ TEST(TestNextMonitorHydra, testNextMonitorEvaluationStandard) {
     Formula formulaA = Parser::parse("a");
     formula.setId("R1");
     auto mon1{std::make_shared<AtomicMonitorHydra>(formulaA)};
-    auto mon{NextMonitorHydra(formula, mon1, 0, 4)};
+    auto mon{NextMonitorHydra(formula, mon1, IntervalTemporalOperator(0, 4))};
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep().value, false);
     EXPECT_EQ(mon.concreteStep().value, true);
@@ -32,7 +32,7 @@ TEST(TestNextMonitorHydra, testNextMonitorEvaluationInterval) {
     Formula formulaA = Parser::parse("a");
     formula.setId("R1");
     auto mon1{std::make_shared<AtomicMonitorHydra>(formulaA)};
-    auto mon{NextMonitorHydra(formula, mon1, 0, 4)};
+    auto mon{NextMonitorHydra(formula, mon1, IntervalTemporalOperator(0, 4))};
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep().value, false);
     EXPECT_EQ(mon.concreteStep().value, true);
@@ -46,7 +46,7 @@ TEST(TestNextMonitorHydra, testToString) {
     Formula formulaA = Parser::parse("a");
     formula.setId("R1");
     auto mon1{std::make_shared<AtomicMonitorHydra>(formulaA)};
-    auto mon{NextMonitorHydra(formula, mon1, 0, 4)};
+    auto mon{NextMonitorHydra(formula, mon1, IntervalTemporalOperator(0, 4))};
     EXPECT_EQ(mon.to_string(), "X[0, 4](a)");
 }
 
@@ -55,6 +55,6 @@ TEST(TestNextMonitorHydra, testReset) {
     Formula formulaA = Parser::parse("a");
     formula.setId("R1");
     auto mon1{std::make_shared<AtomicMonitorHydra>(formulaA)};
-    auto mon{NextMonitorHydra(formula, mon1, 0, 4)};
+    auto mon{NextMonitorHydra(formula, mon1, IntervalTemporalOperator(0, 4))};
     EXPECT_NO_THROW(mon.reset());
 }

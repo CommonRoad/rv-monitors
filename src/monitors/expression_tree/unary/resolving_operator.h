@@ -1,9 +1,4 @@
-//
-// Created by Sebastian Maierhofer on 14.01.21.
-//
-
-#ifndef RV_MONITORS_RESOLVING_OPERATOR_H
-#define RV_MONITORS_RESOLVING_OPERATOR_H
+#pragma once
 
 #include <utility>
 
@@ -44,5 +39,3 @@ class ResolvingOperator : public Unary {
 
     [[nodiscard]] std::string to_string() const override;
 };
-
-#endif // RV_MONITORS_RESOLVING_OPERATOR_H

@@ -6,8 +6,10 @@
 //
 #pragma once
 
+#include "monitors/utils/interval.h"
 #include <map>
 #include <memory>
+#include <optional>
 #include <vector>
 
 class Hydra2Monitor;

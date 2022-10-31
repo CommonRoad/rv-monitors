@@ -20,7 +20,7 @@ TEST(TestSinceMonitorHydra, testSinceMonitorEvaluation) {
     formula.setId("R1");
     auto mon1{std::make_shared<AtomicMonitorHydra>(formulaA)};
     auto mon2{std::make_shared<AtomicMonitorHydra>(formulaB)};
-    auto mon{SinceMonitorHydra(formula, mon1, mon2, 0, 4)};
+    auto mon{SinceMonitorHydra(formula, mon1, mon2, IntervalTemporalOperator(0, 4))};
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep().value, false);
     EXPECT_EQ(mon.concreteStep().value, false);
@@ -40,7 +40,7 @@ TEST(TestSinceMonitorHydra, testToString) {
     formula.setId("R1");
     auto mon1{std::make_shared<AtomicMonitorHydra>(formulaA)};
     auto mon2{std::make_shared<AtomicMonitorHydra>(formulaB)};
-    auto mon{SinceMonitorHydra(formula, mon1, mon2, 0, 4)};
+    auto mon{SinceMonitorHydra(formula, mon1, mon2, IntervalTemporalOperator(0, 4))};
     EXPECT_EQ(mon.to_string(), "(a S[0, 4] b)");
 }
 
@@ -51,6 +51,6 @@ TEST(TestSinceMonitorHydra, testReset) {
     formula.setId("R1");
     auto mon1{std::make_shared<AtomicMonitorHydra>(formulaA)};
     auto mon2{std::make_shared<AtomicMonitorHydra>(formulaB)};
-    auto mon{SinceMonitorHydra(formula, mon1, mon2, 0, 4)};
+    auto mon{SinceMonitorHydra(formula, mon1, mon2, IntervalTemporalOperator(0, 4))};
     EXPECT_NO_THROW(mon.reset());
 }

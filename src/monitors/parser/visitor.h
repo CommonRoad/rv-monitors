@@ -518,7 +518,10 @@ class Visitor : public FormulaBaseVisitor {
             finite = true;
         auto lower = visit(ctx->l).as<int>();
         auto upper = visit(ctx->u).as<int>();
-        return std::make_shared<Interval>(lower, upper, finite);
+        if (finite)
+            return std::make_shared<Interval>(lower, upper);
+        else
+            return std::make_shared<Interval>(lower);
     }
 
     /**
@@ -528,7 +531,7 @@ class Visitor : public FormulaBaseVisitor {
      */
     antlrcpp::Any visitInfiniteInterval(FormulaParser::InfiniteIntervalContext *ctx) override {
         auto lower = visit(ctx->l).as<int>();
-        return std::make_shared<Interval>(lower, -1, false);
+        return std::make_shared<Interval>(lower);
     }
 
     /**
