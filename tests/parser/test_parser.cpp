@@ -9,9 +9,59 @@
 #include "monitors/rv_algorithms/hydra_2/hydra.h"
 
 TEST(TestParser, interval) {
-    //    Formula formula = Parser::parse("G(a -> F[0, 3](b))");
-    //    std::cout << formula.to_string();
-    //    EXPECT_EQ(formula.to_string(), "G(a -> F[0, 3](b))");
+    Formula formula = Parser::parse("F[0, 3](b)");
+    EXPECT_EQ(formula.to_string(), "F[0, 3](b)");
+
+    formula = Parser::parse("F(b)");
+    EXPECT_EQ(formula.to_string(), "F(b)");
+
+    formula = Parser::parse("F[0, inf](b)");
+    EXPECT_EQ(formula.to_string(), "F[0, inf](b)");
+
+    formula = Parser::parse("(a U[0, 3] b)");
+    EXPECT_EQ(formula.to_string(), "(a U[0, 3] b)");
+
+    formula = Parser::parse("(a U b)");
+    EXPECT_EQ(formula.to_string(), "(a U b)");
+
+    formula = Parser::parse("(a U[0, inf] b)");
+    EXPECT_EQ(formula.to_string(), "(a U[0, inf] b)");
+
+    formula = Parser::parse("(a S[0, 3] b)");
+    EXPECT_EQ(formula.to_string(), "(a S[0, 3] b)");
+
+    formula = Parser::parse("(a S b)");
+    EXPECT_EQ(formula.to_string(), "(a S b)");
+
+    formula = Parser::parse("(a S[0, inf] b)");
+    EXPECT_EQ(formula.to_string(), "(a S[0, inf] b)");
+
+    formula = Parser::parse("P[0, 3](a)");
+    EXPECT_EQ(formula.to_string(), "P[0, 3](a)");
+
+    formula = Parser::parse("P[0, inf](a)");
+    EXPECT_EQ(formula.to_string(), "P[0, inf](a)");
+
+    formula = Parser::parse("P(a)");
+    EXPECT_EQ(formula.to_string(), "P(a)");
+
+    formula = Parser::parse("O[0, 3](a)");
+    EXPECT_EQ(formula.to_string(), "O[0, 3](a)");
+
+    formula = Parser::parse("O[0, inf](a)");
+    EXPECT_EQ(formula.to_string(), "O[0, inf](a)");
+
+    formula = Parser::parse("O(a)");
+    EXPECT_EQ(formula.to_string(), "O(a)");
+
+    formula = Parser::parse("X[0, 3](a)");
+    EXPECT_EQ(formula.to_string(), "X[0, 3](a)");
+
+    formula = Parser::parse("X[0, inf](a)");
+    EXPECT_EQ(formula.to_string(), "X[0, inf](a)");
+
+    formula = Parser::parse("X(a)");
+    EXPECT_EQ(formula.to_string(), "X(a)");
 }
 
 TEST(TestParser, constant_formula) {
