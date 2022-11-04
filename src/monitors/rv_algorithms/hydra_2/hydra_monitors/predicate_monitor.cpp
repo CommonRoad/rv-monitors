@@ -68,7 +68,7 @@ Verdict PredicateMonitor::evalPredicateWithQuantifiedVars(size_t parentId, const
 }
 
 std::string PredicateMonitor::createPredicateProposition(const Predicate &predicate) {
-    std::string predProposition{predicate.getName() + "("};
+    std::string predProposition{extractUnquantifiedPredicateName(predicate) + "("};
     const auto &predicateArgs = predicate.getArguments();
     for (size_t i = 0; i < predicateArgs.size(); i++) {
         const auto &[argName, argType] = predicateArgs[i];
@@ -97,7 +97,7 @@ std::string PredicateMonitor::extractUnquantifiedPredicateName(const Predicate &
     std::string predName;
     auto iter{variableValues.find(predicate.getName())};
     if (iter != variableValues.end()) // get predicate name either by the current value if it is a dynamic predicate (A x in D. x(a))
-                                          // or as fixed one
+                                      // or as fixed one
         predName = iter->second.getVal();
     else
         predName = predicate.getName();
