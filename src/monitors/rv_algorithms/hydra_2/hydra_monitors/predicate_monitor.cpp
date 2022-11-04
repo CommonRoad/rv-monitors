@@ -35,13 +35,7 @@ std::shared_ptr<Hydra2Monitor> PredicateMonitor::clone() { return std::make_shar
 std::string PredicateMonitor::to_string() { return formula.to_string(); }
 
 Verdict PredicateMonitor::evalPredicateWithQuantifiedVars(size_t parentId, const Predicate &predicate, const Event &event) {
-    std::string predName;
-    auto iterFunc{variableValues.find(predicate.getName())};
-    if (iterFunc != variableValues.end()) // get predicate name either by the current value if it is a dynamic predicate (A x in D. x(a))
-                                          // or as fixed one
-        predName = iterFunc->second.getVal();
-    else
-        predName = predicate.getName();
+    std::string predName = extractUnquantifiedPredicateName(predicate);
 
     Function function = functions.getFunction(predName); // extract function to evaluate predicate
     int argc = static_cast<int>(predicate.getArguments().size());
@@ -97,4 +91,16 @@ std::string PredicateMonitor::createPredicateProposition(const Predicate &predic
     }
 
     return predProposition + ")";
+}
+
+std::string PredicateMonitor::extractUnquantifiedPredicateName(const Predicate &predicate) {
+    std::string predName;
+    auto iter{variableValues.find(predicate.getName())};
+    if (iter != variableValues.end()) // get predicate name either by the current value if it is a dynamic predicate (A x in D. x(a))
+                                          // or as fixed one
+        predName = iter->second.getVal();
+    else
+        predName = predicate.getName();
+
+    return predName;
 }

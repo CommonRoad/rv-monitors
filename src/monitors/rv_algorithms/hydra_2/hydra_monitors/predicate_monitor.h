@@ -93,4 +93,12 @@ class PredicateMonitor : public Hydra2Monitor {
      */
     std::string createPredicateProposition(const Predicate &predicate);
 
+    /**
+     * Extracts name of predicate. If a dynamic predicate is used, the name is obtained by the variable values.
+     *
+     * @param predicate Predicate.
+     * @return Unquantified predicate name.
+     */
+    std::string extractUnquantifiedPredicateName(const Predicate &predicate);
+
 };
