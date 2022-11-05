@@ -13,7 +13,7 @@ enum FormulaType {
     futureOnly,    //**< Formula can only have future operators. */
     pastOnly,      //**< Formula can only have past operators. */
     safetyGeneral, //**< Formula must start with globally operator. Rest of formula can consist of arbitrary temporal
-                   //operators. */
+                   // operators. */
     futureSafety,  //**< Formula must start with globally operator. Rest of formula must only contain future operators.
                    //*/
     pastSafety,    //**< Formula must start with globally operator. Rest of formula must only contain past operators. */
