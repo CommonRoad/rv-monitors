@@ -9,7 +9,6 @@
  */
 class Domain {
   public:
-
     /**
      * First constructor.
      *
@@ -98,7 +97,6 @@ class Domain {
     [[nodiscard]] std::string getName() const;
 
   private:
-    std::string name; //**< Name of domain. */
+    std::string name;          //**< Name of domain. */
     std::vector<Value> values; //**< Values of domain. */
-
 };

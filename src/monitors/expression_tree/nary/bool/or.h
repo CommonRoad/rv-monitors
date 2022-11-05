@@ -21,5 +21,4 @@ class Or : public Nary<std::set<std::shared_ptr<Expression>, NaryInterface::Shar
                                                         bool connectedEval) override;
 
     [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override;
-
 };

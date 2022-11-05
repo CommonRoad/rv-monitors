@@ -7,6 +7,8 @@ std::shared_ptr<Expression> Implication::accept(ExpressionVisitor &visitor, Trac
 }
 
 std::shared_ptr<Hydra2Monitor> Implication::accept(HydraCreationVisitor2 &visitor, size_t parentId,
-                                                   bool connectedEval) { return nullptr; }
+                                                   bool connectedEval) {
+    return nullptr;
+}
 
 std::shared_ptr<HydraMonitor> Implication::accept(HydraCreationVisitor &visitor) { return nullptr; }

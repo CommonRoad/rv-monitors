@@ -66,8 +66,8 @@ class RVMonitor {
      * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
      * satisfaction probability in interval [0, 1].
      */
-    RVMonitor(const Formula &formula, MonitorConfiguration configuration = {},
-              const DomainCollection &domains = {}, const FunctionCollection &functions = {},
+    RVMonitor(const Formula &formula, MonitorConfiguration configuration = {}, const DomainCollection &domains = {},
+              const FunctionCollection &functions = {},
               const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
 
     /**
@@ -121,8 +121,8 @@ class RVMonitor {
     std::unique_ptr<MonitorInterface> monitor; //**< Pointer to monitoring algorithm */
     ExecutionStatistic executionStatistic;     //**< Execution statistic object */
     MonitorConfiguration configuration; //**< Boolean indicating whether performance evaluation should be performed. */
-    DomainCollection domains; //**< Domains. */
-    FunctionCollection functions; //** Functions. */
+    DomainCollection domains;           //**< Domains. */
+    FunctionCollection functions;       //** Functions. */
 };
 
 /**

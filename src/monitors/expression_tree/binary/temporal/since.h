@@ -33,7 +33,6 @@ class Since : public Binary, public TemporalOperator {
                                                         bool connectedEval) override;
 
     [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override;
-
 };
 
 #endif // RV_MONITORS_SINCE_H

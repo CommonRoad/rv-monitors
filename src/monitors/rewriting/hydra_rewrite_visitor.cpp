@@ -15,11 +15,11 @@
 #include "monitors/expression_tree/unary/bool/not.h"
 #include "monitors/expression_tree/unary/deriving_operator.h"
 #include "monitors/expression_tree/unary/event_operator.h"
+#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
 #include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
 #include "monitors/expression_tree/unary/first_order/function/equality_operator.h"
 #include "monitors/expression_tree/unary/first_order/quote_quantifier.h"
 #include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
-#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
 #include "monitors/expression_tree/unary/resolving_operator.h"
 #include "monitors/expression_tree/unary/temporal/future.h"
 #include "monitors/expression_tree/unary/temporal/globally.h"
@@ -563,8 +563,7 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitExistentialQuantifier(Exis
     return newExpr;
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitQuoteQuantifier(QuoteQuantifier &op, Trace &trace,
-                                                                         size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitQuoteQuantifier(QuoteQuantifier &op, Trace &trace, size_t index) {
     // Q[0., 0.5] x in D. X(x) <-> X(Q[0., 0.5] x in D. x)
     if (auto rewExpr = swapQuantifierAndTempUnary(std::make_shared<QuoteQuantifier>(op), trace, index))
         return rewExpr;
@@ -633,11 +632,14 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitCountingQuantifier(Countin
     return newExpr;
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitEqualityOperator(EqualityOperator &op, Trace &trace, size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitEqualityOperator(EqualityOperator &op, Trace &trace,
+                                                                       size_t index) {
     return std::make_shared<EqualityOperator>(op);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::swapQuantifierAndTempUnary(const std::shared_ptr<FirstOrderOperator> &oper, Trace &trace, size_t index) {
+std::shared_ptr<Expression>
+HydraRewriteVisitor::swapQuantifierAndTempUnary(const std::shared_ptr<FirstOrderOperator> &oper, Trace &trace,
+                                                size_t index) {
     if (auto firstOrder = std::dynamic_pointer_cast<Unary>(oper)) {
         if (!std::dynamic_pointer_cast<FirstOrderOperator>(firstOrder->getLeft()))
             if (auto tempUnary = std::dynamic_pointer_cast<Unary>(firstOrder->getLeft())) {
@@ -649,7 +651,8 @@ std::shared_ptr<Expression> HydraRewriteVisitor::swapQuantifierAndTempUnary(cons
     return nullptr;
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::removeUnusedVariables(const std::shared_ptr<FirstOrderOperator> &oper) {
+std::shared_ptr<Expression>
+HydraRewriteVisitor::removeUnusedVariables(const std::shared_ptr<FirstOrderOperator> &oper) {
     if (auto unary = std::dynamic_pointer_cast<Unary>(oper)) {
         for (const auto &var : std::vector<Variable>{oper->getVariables()}) {
             std::string varName = var.getName();
@@ -669,8 +672,9 @@ bool HydraRewriteVisitor::hasUsedQuantifiedVariable(Expression &expr, std::strin
     } else if (auto *predicate = dynamic_cast<Predicate *>(&expr)) {
         if (varName == predicate->getName())
             return true;
-        return std::any_of(predicate->getArguments().begin(), predicate->getArguments().end(),
-                           [varName](const std::pair<std::string, Predicate::Argument> &arg) { return varName == arg.first; });
+        return std::any_of(
+            predicate->getArguments().begin(), predicate->getArguments().end(),
+            [varName](const std::pair<std::string, Predicate::Argument> &arg) { return varName == arg.first; });
     } else if (auto *unary = dynamic_cast<Unary *>(&expr)) {
         if (auto *firstOrder = dynamic_cast<FirstOrderOperator *>(unary))
             for (const auto &var : firstOrder->getVariables())

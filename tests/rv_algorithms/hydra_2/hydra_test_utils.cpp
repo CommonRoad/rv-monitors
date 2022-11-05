@@ -13,7 +13,8 @@ size_t hydraTestUtils::executeHydraEval(Trace trace, const std::vector<Formula> 
     numFailures.fill(0);
     auto monitor1{Hydra2(formulas, domainCollection, functionCollection, false, false, false)};
     numFailures[0] = evalHydra(formulas, expSolution, monitor1, trace, "fff");
-    evalHydra(formulas, expSolution, monitor1, trace, "fff"); // execute trace on monitor again to check whether resetting of variables works
+    evalHydra(formulas, expSolution, monitor1, trace,
+              "fff"); // execute trace on monitor again to check whether resetting of variables works
     auto monitor2{Hydra2(formulas, domainCollection, functionCollection, false, false, true)};
     numFailures[1] = evalHydra(formulas, expSolution, monitor2, trace, "fft");
     evalHydra(formulas, expSolution, monitor2, trace, "fft");

@@ -256,7 +256,8 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed UniversalQuantifier as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitUniversalQuantifier(UniversalQuantifier &expr, Trace &trace, size_t index) = 0;
+    virtual std::shared_ptr<Expression> visitUniversalQuantifier(UniversalQuantifier &expr, Trace &trace,
+                                                                 size_t index) = 0;
 
     /**
      * Visits an ExistentialQuantifier.
@@ -264,7 +265,8 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed ExistentialQuantifier as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitExistentialQuantifier(ExistentialQuantifier &expr, Trace &trace, size_t index) = 0;
+    virtual std::shared_ptr<Expression> visitExistentialQuantifier(ExistentialQuantifier &expr, Trace &trace,
+                                                                   size_t index) = 0;
 
     /**
      * Visits a QuoteQuantifier.
@@ -280,7 +282,8 @@ class ExpressionVisitor {
      * @param trace Trace.
      * @return Transformed CountingQuantifier as a shared_ptr.
      */
-    virtual std::shared_ptr<Expression> visitCountingQuantifier(CountingQuantifier &expr, Trace &trace, size_t index) = 0;
+    virtual std::shared_ptr<Expression> visitCountingQuantifier(CountingQuantifier &expr, Trace &trace,
+                                                                size_t index) = 0;
 
     /**
      * Visits a EqualityOperator.
@@ -289,5 +292,4 @@ class ExpressionVisitor {
      * @return Transformed EqualityOperator as a shared_ptr.
      */
     virtual std::shared_ptr<Expression> visitEqualityOperator(EqualityOperator &expr, Trace &trace, size_t index) = 0;
-
 };

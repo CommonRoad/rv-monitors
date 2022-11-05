@@ -67,7 +67,6 @@ class AtomicMonitor : public Hydra2Monitor {
     std::string to_string() override;
 
   private:
-    Trace trace; //**< Trace which should be monitored. */
+    Trace trace;                                 //**< Trace which should be monitored. */
     std::map<std::string, Value> variableValues; //**< Current values of quantified variables. */
-
 };

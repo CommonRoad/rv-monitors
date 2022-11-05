@@ -13,11 +13,11 @@
 #include "monitors/expression_tree/nary/bool/or.h"
 #include "monitors/expression_tree/nary/bool/xor.h"
 #include "monitors/expression_tree/unary/bool/not.h"
+#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
 #include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
 #include "monitors/expression_tree/unary/first_order/function/equality_operator.h"
 #include "monitors/expression_tree/unary/first_order/quote_quantifier.h"
 #include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
-#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
 #include "monitors/expression_tree/unary/temporal/future.h"
 #include "monitors/expression_tree/unary/temporal/globally.h"
 #include "monitors/expression_tree/unary/temporal/historically.h"
@@ -664,8 +664,5 @@ class Visitor : public FormulaBaseVisitor {
         return variables;
     }
 
-    antlrcpp::Any visitQuoteDigit(FormulaParser::QuoteDigitContext *ctx) override {
-        return std::stof(ctx->getText());
-    }
-
+    antlrcpp::Any visitQuoteDigit(FormulaParser::QuoteDigitContext *ctx) override { return std::stof(ctx->getText()); }
 };

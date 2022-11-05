@@ -15,15 +15,16 @@ TestSample::TestSample(const std::string &testName, const std::string &formulaSt
                        DomainCollection domainCollection, FunctionCollection functionCollection)
     : testName(testName), formula(std::make_shared<Formula>(Parser::parse(formulaStr, testName))),
       trace(Utils::createTrace(trueAtomics, timeSteps, std::make_shared<Formula>(Parser::parse(formulaStr, testName)))),
-      expectedResult(std::move(expectedResult)), domainCollection(std::move(domainCollection)), functionCollection(std::move(functionCollection)) {}
+      expectedResult(std::move(expectedResult)), domainCollection(std::move(domainCollection)),
+      functionCollection(std::move(functionCollection)) {}
 
 TestSample::TestSample(const std::string &testName, const std::string &formulaStr, std::vector<Verdict> expectedResult,
                        const std::set<std::string> &atomics, const std::vector<std::vector<std::string>> &trueAtomics,
                        const std::vector<size_t> &timeSteps, DomainCollection domainCollection,
                        FunctionCollection functionCollection)
     : testName(testName), formula(std::make_shared<Formula>(Parser::parse(formulaStr, testName))),
-      trace(Utils::createTrace(atomics, trueAtomics, timeSteps)),
-      expectedResult(std::move(expectedResult)), domainCollection(std::move(domainCollection)), functionCollection(std::move(functionCollection)) {}
+      trace(Utils::createTrace(atomics, trueAtomics, timeSteps)), expectedResult(std::move(expectedResult)),
+      domainCollection(std::move(domainCollection)), functionCollection(std::move(functionCollection)) {}
 
 TestDataBase::TestDataBase() {
     testCases = {

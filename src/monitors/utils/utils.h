@@ -197,7 +197,8 @@ template <typename T> bool isInInterval(const T &value, const T &low, const T &h
  * @param variables Set of all variables that is built recursively.
  * @return string set of all atomics in @param expr.
  */
-[[nodiscard]] std::set<std::string> getAtomics(const std::shared_ptr<Expression> &expr, std::set<std::string> atomics, std::set<std::string> variables);
+[[nodiscard]] std::set<std::string> getAtomics(const std::shared_ptr<Expression> &expr, std::set<std::string> atomics,
+                                               std::set<std::string> variables);
 
 /**
  * Creates a string set of all predicates in an expression.
@@ -219,7 +220,8 @@ template <typename T> bool isInInterval(const T &value, const T &low, const T &h
  * @return string set of all atomics and predicates in @param expr.
  */
 [[nodiscard]] std::set<std::string> getAtomicsAndPredicates(const std::shared_ptr<Expression> &expr,
-                                                            const std::set<std::string> &atomics, const std::set<std::string> &variables);
+                                                            const std::set<std::string> &atomics,
+                                                            const std::set<std::string> &variables);
 
 /**
  * Creates a string set of all atomics and predicates in an expression.
@@ -238,9 +240,11 @@ template <typename T> bool isInInterval(const T &value, const T &low, const T &h
 [[nodiscard]] std::map<std::string, std::tuple<std::string, std::vector<std::pair<std::string, Predicate::Argument>>>>
 getPredicatesAndParameters(const Formula &formula);
 
-std::map<std::string, std::tuple<std::string, std::vector<std::pair<std::string, Predicate::Argument>>>> getPredicatesAndParameters(
+std::map<std::string, std::tuple<std::string, std::vector<std::pair<std::string, Predicate::Argument>>>>
+getPredicatesAndParameters(
     const std::shared_ptr<Expression> &expr,
-    std::map<std::string, std::tuple<std::string, std::vector<std::pair<std::string, Predicate::Argument>>>> predicatesWithParameters);
+    std::map<std::string, std::tuple<std::string, std::vector<std::pair<std::string, Predicate::Argument>>>>
+        predicatesWithParameters);
 
 /**
  * Computes the number of predicates in @param expr.

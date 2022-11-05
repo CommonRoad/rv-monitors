@@ -59,15 +59,20 @@ class HydraRewriteVisitor : public ExpressionVisitor {
 
     [[nodiscard]] std::shared_ptr<Expression> visitPredicate(Predicate &op, Trace &trace, size_t index) override;
 
-    [[nodiscard]] std::shared_ptr<Expression> visitUniversalQuantifier(UniversalQuantifier &op, Trace &trace, size_t index) override;
+    [[nodiscard]] std::shared_ptr<Expression> visitUniversalQuantifier(UniversalQuantifier &op, Trace &trace,
+                                                                       size_t index) override;
 
-    [[nodiscard]] std::shared_ptr<Expression> visitExistentialQuantifier(ExistentialQuantifier &op, Trace &trace, size_t index) override;
+    [[nodiscard]] std::shared_ptr<Expression> visitExistentialQuantifier(ExistentialQuantifier &op, Trace &trace,
+                                                                         size_t index) override;
 
-    [[nodiscard]] std::shared_ptr<Expression> visitQuoteQuantifier(QuoteQuantifier &op, Trace &trace, size_t index) override;
+    [[nodiscard]] std::shared_ptr<Expression> visitQuoteQuantifier(QuoteQuantifier &op, Trace &trace,
+                                                                   size_t index) override;
 
-    [[nodiscard]] std::shared_ptr<Expression> visitCountingQuantifier(CountingQuantifier &op, Trace &trace, size_t index) override;
+    [[nodiscard]] std::shared_ptr<Expression> visitCountingQuantifier(CountingQuantifier &op, Trace &trace,
+                                                                      size_t index) override;
 
-    [[nodiscard]] std::shared_ptr<Expression> visitEqualityOperator(EqualityOperator &op, Trace &trace, size_t index) override;
+    [[nodiscard]] std::shared_ptr<Expression> visitEqualityOperator(EqualityOperator &op, Trace &trace,
+                                                                    size_t index) override;
 
   private:
     /**
@@ -79,7 +84,8 @@ class HydraRewriteVisitor : public ExpressionVisitor {
      * @param index Index.
      * @return Expression with swapped quantifier and unary operator.
      */
-    std::shared_ptr<Expression> swapQuantifierAndTempUnary(const std::shared_ptr<FirstOrderOperator> &oper, Trace &trace, size_t index);
+    std::shared_ptr<Expression> swapQuantifierAndTempUnary(const std::shared_ptr<FirstOrderOperator> &oper,
+                                                           Trace &trace, size_t index);
 
     /**
      * Removes quantified variables which are unused. If a quantifier has no variable anymore, the complete quantifier
@@ -99,5 +105,4 @@ class HydraRewriteVisitor : public ExpressionVisitor {
      * @return Boolean indicating whether a quantified variable is used.
      */
     static bool hasUsedQuantifiedVariable(Expression &expr, std::string &varName);
-
 };

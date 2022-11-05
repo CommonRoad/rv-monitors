@@ -6,7 +6,6 @@
 
 class FunctionCollection {
   public:
-
     /**
      * First constructor.
      */
@@ -57,5 +56,4 @@ class FunctionCollection {
 
   private:
     std::map<std::string, Function> functions; //**< Functions. */
-
 };

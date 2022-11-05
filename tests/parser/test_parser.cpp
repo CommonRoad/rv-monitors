@@ -82,7 +82,6 @@ TEST(TestParser, equality_operator) {
 
     std::string ex_parsed_2 = "x == '10'";
     EXPECT_EQ(formula_2.to_string(), ex_parsed_2);
-
 }
 
 TEST(TestParser, predicate) {

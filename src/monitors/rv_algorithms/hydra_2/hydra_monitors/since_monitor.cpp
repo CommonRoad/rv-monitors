@@ -69,7 +69,7 @@ void SinceMonitor::reset() {
 }
 
 std::shared_ptr<Hydra2Monitor> SinceMonitor::clone() {
-    auto clonedMonitor =  std::make_shared<SinceMonitor>(*this);
+    auto clonedMonitor = std::make_shared<SinceMonitor>(*this);
     clonedMonitor->subMonitorRight = subMonitorRight->clone();
     clonedMonitor->subMonitorLeft = subMonitorLeft->clone();
     return clonedMonitor;

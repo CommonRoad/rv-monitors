@@ -42,11 +42,11 @@ struct TestSample {
                const std::vector<size_t> &timeSteps = {}, DomainCollection domainCollection = {},
                FunctionCollection functionCollection = {});
 
-    std::string testName;                //**< Trace which should be monitored. */
-    std::shared_ptr<Formula> formula;    //**< Pointer to formula object. */
-    Trace trace;                         //**< Trace which should be monitored. */
-    std::vector<Verdict> expectedResult; //**< Expected result per trace element. */
-    DomainCollection domainCollection; //**< Collection of domains. */
+    std::string testName;                  //**< Trace which should be monitored. */
+    std::shared_ptr<Formula> formula;      //**< Pointer to formula object. */
+    Trace trace;                           //**< Trace which should be monitored. */
+    std::vector<Verdict> expectedResult;   //**< Expected result per trace element. */
+    DomainCollection domainCollection;     //**< Collection of domains. */
     FunctionCollection functionCollection; //**< Collection of functions. */
 };
 

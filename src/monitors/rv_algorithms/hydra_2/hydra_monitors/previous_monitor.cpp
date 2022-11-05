@@ -24,9 +24,7 @@ Verdict PreviousMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 }
 void PreviousMonitor::setTrace(const Trace &tra) { subMonitor->setTrace(tra); }
 
-void PreviousMonitor::setVariableValues(std::map<std::string, Value> values) {
-    subMonitor->setVariableValues(values);
-}
+void PreviousMonitor::setVariableValues(std::map<std::string, Value> values) { subMonitor->setVariableValues(values); }
 
 void PreviousMonitor::reset() {
     Hydra2Monitor::reset();

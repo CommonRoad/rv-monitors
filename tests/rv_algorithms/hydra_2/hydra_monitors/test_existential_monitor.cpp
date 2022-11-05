@@ -1,6 +1,6 @@
 #include "monitors/parser/parser.h"
-#include "monitors/rv_algorithms/hydra_2/hydra_monitors/predicate_monitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/existential_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/predicate_monitor.h"
 #include "monitors/trace/trace.h"
 #include "test_or_monitor.h"
 
@@ -17,8 +17,8 @@ TEST(TestExistentialMonitor, testExistentialMonitorStandard) {
                                         size_t timeStep = strtol(args[0], nullptr, 10);
                                         size_t val = strtol(args[1], nullptr, 10);
                                         return val == timeStep;
-                                    }, true
-    });
+                                    },
+                                    true});
     auto mon1{std::make_shared<PredicateMonitor>(formulaPredicate, 2, functionCollection, false)};
     mon1->registerParent(1);
     std::map<std::string, std::string> variables{std::make_pair("x", "D")};

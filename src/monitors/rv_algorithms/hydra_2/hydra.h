@@ -28,8 +28,9 @@ class Hydra2 : public MonitorInterface {
      * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
      * satisfaction probability in interval [0, 1].
      */
-    Hydra2(const std::vector<Formula> &formulas, DomainCollection domains = {}, FunctionCollection functions = {}, bool connectedEval = true, bool reordering = true,
-           bool shortCircuiting = true, const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
+    Hydra2(const std::vector<Formula> &formulas, DomainCollection domains = {}, FunctionCollection functions = {},
+           bool connectedEval = true, bool reordering = true, bool shortCircuiting = true,
+           const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
 
     /**
      * Evaluation function for monitor algorithms.
@@ -60,8 +61,9 @@ class Hydra2 : public MonitorInterface {
      * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
      * satisfaction probability in interval [0, 1].
      */
-    void createMonitor(const std::vector<Formula> &formulas, DomainCollection &domainCollection, FunctionCollection &functionCollection,
-                       bool connectedEval, bool reordering, bool shortCircuiting, const std::map<std::string, std::array<double, 2>> &predicateCosts);
+    void createMonitor(const std::vector<Formula> &formulas, DomainCollection &domainCollection,
+                       FunctionCollection &functionCollection, bool connectedEval, bool reordering,
+                       bool shortCircuiting, const std::map<std::string, std::array<double, 2>> &predicateCosts);
 
     /**
      * Resets monitor variables to default values.

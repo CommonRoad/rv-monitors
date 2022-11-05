@@ -3,22 +3,18 @@
 
 #pragma once
 
-
-#include "antlr4-runtime.h"
 #include "LogParser.h"
-
-
+#include "antlr4-runtime.h"
 
 /**
  * This class defines an abstract visitor for a parse tree
  * produced by LogParser.
  */
-class  LogVisitor : public antlr4::tree::AbstractParseTreeVisitor {
-public:
-
-  /**
-   * Visit parse trees produced by LogParser.
-   */
+class LogVisitor : public antlr4::tree::AbstractParseTreeVisitor {
+  public:
+    /**
+     * Visit parse trees produced by LogParser.
+     */
     virtual antlrcpp::Any visitLog(LogParser::LogContext *context) = 0;
 
     virtual antlrcpp::Any visitEntry(LogParser::EntryContext *context) = 0;
@@ -26,7 +22,4 @@ public:
     virtual antlrcpp::Any visitIdentifier(LogParser::IdentifierContext *context) = 0;
 
     virtual antlrcpp::Any visitTime(LogParser::TimeContext *context) = 0;
-
-
 };
-

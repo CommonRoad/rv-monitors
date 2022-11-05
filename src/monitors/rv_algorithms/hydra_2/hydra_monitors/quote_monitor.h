@@ -1,8 +1,8 @@
 #pragma once
 
-#include "quantifier_monitor.h"
-#include "monitors/utils/utils.h"
 #include "monitors/collections/value.h"
+#include "monitors/utils/utils.h"
+#include "quantifier_monitor.h"
 
 /**
  * Hydra2 monitor representing quote monitor.
@@ -23,8 +23,8 @@ class QuoteMonitor : public QuantifierMonitor {
      * @param shortCircuiting Boolean indicating whether short circuiting should be used.
      */
     QuoteMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
-                 std::map<std::string, std::string> variables, DomainCollection &domains,
-                 float minQuote, float maxQuote, bool connectedEval, bool shortCircuiting);
+                 std::map<std::string, std::string> variables, DomainCollection &domains, float minQuote,
+                 float maxQuote, bool connectedEval, bool shortCircuiting);
 
     /**
      * Computes the ratio of true subverdicts and number of combinations.
@@ -60,5 +60,4 @@ class QuoteMonitor : public QuantifierMonitor {
   private:
     float minQuote; //**< Minimum quote. */
     float maxQuote; //**< Maximum quote. */
-
 };

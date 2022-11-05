@@ -37,9 +37,11 @@ void Hydra2::setTraceMonitors(const Trace &tra) {
         mon->setTrace(tra);
 }
 
-void Hydra2::createMonitor(const std::vector<Formula> &formulas, DomainCollection &domainCollection, FunctionCollection &functionCollection,
-                          bool connectedEval, bool reordering, bool shortCircuiting, const std::map<std::string, std::array<double, 2>> &predicateCosts) {
-    HydraCreationVisitor2 hcv{HydraCreationVisitor2(predicateCosts, domainCollection, functionCollection, reordering, shortCircuiting)};
+void Hydra2::createMonitor(const std::vector<Formula> &formulas, DomainCollection &domainCollection,
+                           FunctionCollection &functionCollection, bool connectedEval, bool reordering,
+                           bool shortCircuiting, const std::map<std::string, std::array<double, 2>> &predicateCosts) {
+    HydraCreationVisitor2 hcv{
+        HydraCreationVisitor2(predicateCosts, domainCollection, functionCollection, reordering, shortCircuiting)};
 
     for (const auto &form : formulas) {
         if (form.getId().empty())
@@ -55,8 +57,10 @@ void Hydra2::createMonitor(const std::vector<Formula> &formulas, DomainCollectio
     }
 }
 
-Hydra2::Hydra2(const std::vector<Formula> &formulas, DomainCollection domainCollection, FunctionCollection functionCollection,
-             bool connectedEval, bool reordering, bool shortCircuiting, const std::map<std::string, std::array<double, 2>> &predicateCosts)
+Hydra2::Hydra2(const std::vector<Formula> &formulas, DomainCollection domainCollection,
+               FunctionCollection functionCollection, bool connectedEval, bool reordering, bool shortCircuiting,
+               const std::map<std::string, std::array<double, 2>> &predicateCosts)
     : MonitorInterface(formulas, AlgorithmType::hydra_2_mtl) {
-    createMonitor(formulas, domainCollection, functionCollection, connectedEval, reordering, shortCircuiting, predicateCosts);
+    createMonitor(formulas, domainCollection, functionCollection, connectedEval, reordering, shortCircuiting,
+                  predicateCosts);
 }

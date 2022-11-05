@@ -1205,7 +1205,8 @@ void evalUniversalOperator(size_t maxArgs, size_t maxDomain, size_t traceLength)
             for (double t : times)
                 time += t;
             time = time / times.size();
-            std::cout << "Num. Args: " << numArgs << " Size Domain: " << sizeDomain << " Trace Length: " << traceLength << " Eval. Time: " << time << std::endl;
+            std::cout << "Num. Args: " << numArgs << " Size Domain: " << sizeDomain << " Trace Length: " << traceLength
+                      << " Eval. Time: " << time << std::endl;
         }
         std::cout << std::endl;
     }
@@ -1236,7 +1237,8 @@ void evalRewriting(size_t maxDomain, size_t traceLength) {
         hydra.evaluate(trace);
         auto end{std::chrono::system_clock::now()};
         auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-        std::cout << "Num. Args: " << 2 << " Size Domain: " << sizeDomain << " Trace Length: " << traceLength << " Eval. Time: " << elapsed.count() << std::endl;
+        std::cout << "Num. Args: " << 2 << " Size Domain: " << sizeDomain << " Trace Length: " << traceLength
+                  << " Eval. Time: " << elapsed.count() << std::endl;
     }
     std::cout << std::endl;
 }

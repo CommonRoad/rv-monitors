@@ -20,15 +20,14 @@ std::string ExistentialQuantifier::to_string() const {
     return str;
 }
 
-std::shared_ptr<Expression> ExistentialQuantifier::clone() {
-    return std::make_shared<ExistentialQuantifier>(*this);
-}
+std::shared_ptr<Expression> ExistentialQuantifier::clone() { return std::make_shared<ExistentialQuantifier>(*this); }
 
 std::shared_ptr<Expression> ExistentialQuantifier::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
     return visitor.visitExistentialQuantifier(*this, trace, index);
 }
 
-std::shared_ptr<Hydra2Monitor> ExistentialQuantifier::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval) {
+std::shared_ptr<Hydra2Monitor> ExistentialQuantifier::accept(HydraCreationVisitor2 &visitor, size_t parentId,
+                                                             bool connectedEval) {
     return visitor.visitExistentialQuantifier(*this, parentId, connectedEval);
 }
 

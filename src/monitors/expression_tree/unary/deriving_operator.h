@@ -43,7 +43,6 @@ class DerivingOperator : public Unary {
                                                         bool connectedEval) override;
 
     [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override;
-
 };
 
 #endif // RV_MONITORS_DERIVING_OPERATOR_H

@@ -80,7 +80,6 @@ RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration 
                      const std::map<std::string, std::array<double, 2>> &predicateCosts)
     : configuration(configuration) {
 
-
     for (const auto &pred : predicateCosts)
         assert(pred.second[0] >= 0 and pred.second[0] <= 100 and pred.second[1] >= 0 and pred.second[1] <= 1);
     switch (configuration.algorithm) {
@@ -110,8 +109,8 @@ RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration 
     }
 }
 
-RVMonitor::RVMonitor(const Formula &formula, MonitorConfiguration configuration,
-                     const DomainCollection &domains, const FunctionCollection &functions,
+RVMonitor::RVMonitor(const Formula &formula, MonitorConfiguration configuration, const DomainCollection &domains,
+                     const FunctionCollection &functions,
                      const std::map<std::string, std::array<double, 2>> &predicateCosts)
     : configuration(configuration), domains(domains), functions(functions) {
 
@@ -134,9 +133,9 @@ RVMonitor::RVMonitor(const Formula &formula, MonitorConfiguration configuration,
         monitor = std::make_unique<Hydra>(std::vector<Formula>{formula});
         break;
     case hydra_2_mtl:
-        monitor =
-            std::make_unique<Hydra2>(std::vector<Formula>{formula}, domains, functions, configuration.hydraConnectedEvaluation,
-                                     configuration.hydraReordering, configuration.hydraShortCircuiting, predicateCosts);
+        monitor = std::make_unique<Hydra2>(std::vector<Formula>{formula}, domains, functions,
+                                           configuration.hydraConnectedEvaluation, configuration.hydraReordering,
+                                           configuration.hydraShortCircuiting, predicateCosts);
         break;
     case event_consuming_mtl:
         monitor = std::make_unique<MTLEventConsuming>(std::vector<Formula>{formula});
@@ -168,7 +167,7 @@ RVMonitor::RVMonitor(const RVMonitor &obj) : configuration(obj.configuration) {
         }
 
         monitor = std::make_unique<Hydra2>(formulas, obj.domains, obj.functions, configuration.hydraConnectedEvaluation,
-                                          configuration.hydraReordering, configuration.hydraShortCircuiting);
+                                           configuration.hydraReordering, configuration.hydraShortCircuiting);
     }
     executionStatistic = obj.executionStatistic;
     domains = obj.domains;
@@ -189,8 +188,9 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
 
             DomainCollection domainCollection; // TODO: Transfer domain and function collection
             FunctionCollection functionCollection;
-            monitor = std::make_unique<Hydra2>(formulas, domainCollection, functionCollection, configuration.hydraConnectedEvaluation,
-                                              configuration.hydraReordering, configuration.hydraShortCircuiting);
+            monitor = std::make_unique<Hydra2>(formulas, domainCollection, functionCollection,
+                                               configuration.hydraConnectedEvaluation, configuration.hydraReordering,
+                                               configuration.hydraShortCircuiting);
         }
         // TODO other algorithms
         executionStatistic = other.executionStatistic;

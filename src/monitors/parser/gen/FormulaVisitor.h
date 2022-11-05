@@ -3,22 +3,18 @@
 
 #pragma once
 
-
-#include "antlr4-runtime.h"
 #include "FormulaParser.h"
-
-
+#include "antlr4-runtime.h"
 
 /**
  * This class defines an abstract visitor for a parse tree
  * produced by FormulaParser.
  */
-class  FormulaVisitor : public antlr4::tree::AbstractParseTreeVisitor {
-public:
-
-  /**
-   * Visit parse trees produced by FormulaParser.
-   */
+class FormulaVisitor : public antlr4::tree::AbstractParseTreeVisitor {
+  public:
+    /**
+     * Visit parse trees produced by FormulaParser.
+     */
     virtual antlrcpp::Any visitFormula(FormulaParser::FormulaContext *context) = 0;
 
     virtual antlrcpp::Any visitEquivalence(FormulaParser::EquivalenceContext *context) = 0;
@@ -114,7 +110,4 @@ public:
     virtual antlrcpp::Any visitTrueBoolean(FormulaParser::TrueBooleanContext *context) = 0;
 
     virtual antlrcpp::Any visitFalseBoolean(FormulaParser::FalseBooleanContext *context) = 0;
-
-
 };
-

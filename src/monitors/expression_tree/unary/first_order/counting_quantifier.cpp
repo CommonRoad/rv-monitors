@@ -25,16 +25,14 @@ std::string CountingQuantifier::to_string() const {
     return str;
 }
 
-std::shared_ptr<Expression> CountingQuantifier::clone() {
-    return std::make_shared<CountingQuantifier>(*this);
-}
+std::shared_ptr<Expression> CountingQuantifier::clone() { return std::make_shared<CountingQuantifier>(*this); }
 
 std::shared_ptr<Expression> CountingQuantifier::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
     return visitor.visitCountingQuantifier(*this, trace, index);
 }
 
 std::shared_ptr<Hydra2Monitor> CountingQuantifier::accept(HydraCreationVisitor2 &visitor, size_t parentId,
-                                                         bool connectedEval) {
+                                                          bool connectedEval) {
     return visitor.visitCountingQuantifier(*this, parentId, connectedEval);
 }
 

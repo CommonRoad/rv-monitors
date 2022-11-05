@@ -15,11 +15,11 @@
 #include "monitors/expression_tree/unary/bool/not.h"
 #include "monitors/expression_tree/unary/deriving_operator.h"
 #include "monitors/expression_tree/unary/event_operator.h"
+#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
 #include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
 #include "monitors/expression_tree/unary/first_order/function/equality_operator.h"
 #include "monitors/expression_tree/unary/first_order/quote_quantifier.h"
 #include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
-#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
 #include "monitors/expression_tree/unary/resolving_operator.h"
 #include "monitors/expression_tree/unary/temporal/future.h"
 #include "monitors/expression_tree/unary/temporal/globally.h"
@@ -475,8 +475,7 @@ std::shared_ptr<Expression> RewriteVisitor::visitExistentialQuantifier(Existenti
     return std::make_shared<ExistentialQuantifier>(op);
 }
 
-std::shared_ptr<Expression> RewriteVisitor::visitQuoteQuantifier(QuoteQuantifier &op, Trace &trace,
-                                                                    size_t index) {
+std::shared_ptr<Expression> RewriteVisitor::visitQuoteQuantifier(QuoteQuantifier &op, Trace &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<QuoteQuantifier>(op);
 }

@@ -17,8 +17,8 @@ TEST(TestCountingMonitor, testCountingMonitorStandard) {
     mon1->registerParent(1);
     std::map<std::string, std::string> variables{std::make_pair("x", "D")};
     CountingQuantifier *quantifier = dynamic_cast<CountingQuantifier *>(formula.getExpr().get());
-    auto mon{CountingMonitor(formula, mon1, 1, variables, domainCollection,
-                             quantifier->getOperator(), quantifier->getNum(), false, false)};
+    auto mon{CountingMonitor(formula, mon1, 1, variables, domainCollection, quantifier->getOperator(),
+                             quantifier->getNum(), false, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.step(0, 0).value, true);
@@ -37,7 +37,7 @@ TEST(TestCountingMonitor, testCountingMonitorToString) {
     auto mon1{std::make_shared<PredicateMonitor>(formula, 1, functionCollection, false)};
     DomainCollection domainCollection;
     CountingQuantifier *quantifier = dynamic_cast<CountingQuantifier *>(formula.getExpr().get());
-    auto mon{CountingMonitor(formula, mon1, 0, {}, domainCollection,
-                             quantifier->getOperator(), quantifier->getNum(), false, false)};
+    auto mon{CountingMonitor(formula, mon1, 0, {}, domainCollection, quantifier->getOperator(), quantifier->getNum(),
+                             false, false)};
     EXPECT_EQ(mon.to_string(), "C=4 x in D, y in D, z in D. p(x, y, z)");
 }

@@ -97,10 +97,8 @@ class HydraCreationVisitor2 {
      * @param reordering Boolean indicating whether the formula should be reordered based on the predicate costs.
      * @param shortCircuiting Boolean indicating whether short-circuiting should be used.
      */
-    HydraCreationVisitor2(std::map<std::string, std::array<double, 2>> predicate_costs,
-                         DomainCollection &domains,
-                         FunctionCollection &functions,
-                         bool reordering = true, bool shortCircuiting = true);
+    HydraCreationVisitor2(std::map<std::string, std::array<double, 2>> predicate_costs, DomainCollection &domains,
+                          FunctionCollection &functions, bool reordering = true, bool shortCircuiting = true);
 
     /**
      * Base function for creating Hydra2 monitor.
@@ -220,7 +218,8 @@ class HydraCreationVisitor2 {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @return Created monitor.
      */
-    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitUniversalQuantifier(UniversalQuantifier &top, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitUniversalQuantifier(UniversalQuantifier &top, size_t parentId,
+                                                                          bool connectedEval);
 
     /**
      * Visitor for creating Hydra2 Existential Monitor.
@@ -230,7 +229,8 @@ class HydraCreationVisitor2 {
      * @param connectedEval Boolean indicating whether connection evaluation should be used.
      * @return Created monitor.
      */
-    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitExistentialQuantifier(ExistentialQuantifier &top, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitExistentialQuantifier(ExistentialQuantifier &top, size_t parentId,
+                                                                            bool connectedEval);
 
     /**
      * Visitor for creating Hydra2 Quote Monitor.
@@ -240,7 +240,8 @@ class HydraCreationVisitor2 {
      * @param connectedEval Boolean indicating whether connection evaluation should be used.
      * @return Created monitor.
      */
-    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitQuoteQuantifier(QuoteQuantifier &top, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitQuoteQuantifier(QuoteQuantifier &top, size_t parentId,
+                                                                      bool connectedEval);
 
     /**
      * Visitor for creating Hydra2 Counting Monitor.
@@ -250,7 +251,8 @@ class HydraCreationVisitor2 {
      * @param connectedEval Boolean indicating whether connection evaluation should be used.
      * @return Created monitor.
      */
-    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitCountingQuantifier(CountingQuantifier &top, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitCountingQuantifier(CountingQuantifier &top, size_t parentId,
+                                                                         bool connectedEval);
 
     /**
      * Visitor for creating Hydra2 Equality Operator Monitor.
@@ -260,7 +262,8 @@ class HydraCreationVisitor2 {
      * @param connectedEval Boolean indicating whether connection evaluation should be used.
      * @return Created monitor.
      */
-    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitEqualityOperator(EqualityOperator &top, size_t parentId, bool connectedEval);
+    [[nodiscard]] std::shared_ptr<Hydra2Monitor> visitEqualityOperator(EqualityOperator &top, size_t parentId,
+                                                                       bool connectedEval);
 
   private:
     size_t maxId{0}; //**< Maximum ID which is currently assigned to sub-monitor. */
@@ -271,8 +274,8 @@ class HydraCreationVisitor2 {
         baseline; //**< Stores unique formula sub-sets which can be shared within monitor. Only relevant for connected
                   // evaluation */
     mutable std::map<std::string, std::array<double, 2>>
-        predicateCosts; //**< Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
-                        // satisfaction probability in interval [0, 1]. */
+        predicateCosts;       //**< Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
+                              // satisfaction probability in interval [0, 1]. */
     DomainCollection domains; //**< Domains of quantified variables. */
     FunctionCollection functions; //**< Functions used for the evaluation of predicates. */
 

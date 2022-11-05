@@ -1,8 +1,8 @@
 #pragma once
 
-#include "quantifier_monitor.h"
-#include "monitors/utils/utils.h"
 #include "monitors/collections/value.h"
+#include "monitors/utils/utils.h"
+#include "quantifier_monitor.h"
 
 /**
  * Hydra2 monitor representing existential monitor.
@@ -21,8 +21,8 @@ class ExistentialMonitor : public QuantifierMonitor {
      * @param shortCircuiting Boolean indicating whether short circuiting should be used.
      */
     ExistentialMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
-                       std::map<std::string, std::string> variables, DomainCollection &domains,
-                       bool connectedEval, bool shortCircuiting);
+                       std::map<std::string, std::string> variables, DomainCollection &domains, bool connectedEval,
+                       bool shortCircuiting);
 
     /**
      * Performs concrete step of existential monitor. One of the subverdicts has to be true
@@ -46,5 +46,4 @@ class ExistentialMonitor : public QuantifierMonitor {
      * @return String representing monitor.
      */
     std::string to_string() override;
-
 };

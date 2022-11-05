@@ -26,5 +26,4 @@ class NextWeak : public Unary, public TemporalOperator {
                                                         bool connectedEval) override;
 
     [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override;
-
 };

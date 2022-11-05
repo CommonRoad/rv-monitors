@@ -42,6 +42,8 @@ void EqualityOperatorMonitor::reset() {
     variableValues.clear();
 }
 
-std::shared_ptr<Hydra2Monitor> EqualityOperatorMonitor::clone() { return std::make_shared<EqualityOperatorMonitor>(*this); }
+std::shared_ptr<Hydra2Monitor> EqualityOperatorMonitor::clone() {
+    return std::make_shared<EqualityOperatorMonitor>(*this);
+}
 
 std::string EqualityOperatorMonitor::to_string() { return formula.to_string(); }

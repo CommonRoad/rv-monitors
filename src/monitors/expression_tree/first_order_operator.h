@@ -1,9 +1,9 @@
 #pragma once
 
-#include <string>
-#include <set>
-#include <memory>
 #include "expression.h"
+#include <memory>
+#include <set>
+#include <string>
 
 /**
  * Class representing a variable used by a first-order operator.
@@ -33,9 +33,8 @@ class Variable {
     [[nodiscard]] std::string getDomain() const;
 
   private:
-    std::string name; //**< Name of variable. */
+    std::string name;   //**< Name of variable. */
     std::string domain; //**< Domain of variable. */
-
 };
 
 /**
@@ -74,7 +73,7 @@ class FirstOrderOperator {
      *
      * @param variable Variable.
      */
-     void removeVariable(std::string variable);
+    void removeVariable(std::string variable);
 
     /**
      * Returns all variables bounded by operator.
@@ -92,5 +91,4 @@ class FirstOrderOperator {
 
   private:
     std::vector<Variable> variables; //**< Variables used by first oder operator. */
-
 };

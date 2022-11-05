@@ -1,19 +1,25 @@
 #include "first_order_operator.h"
 
 #include <utility>
-Variable::Variable(std::string &name, std::string &domain) : name(name), domain(domain)
+Variable::Variable(std::string &name, std::string &domain)
+    : name(name), domain(domain)
 // Constructor
 {}
 
 std::string Variable::getName() const
 // Returns name of variable
-{ return name; }
+{
+    return name;
+}
 
 std::string Variable::getDomain() const
 // Returns name of collections
-{ return domain; }
+{
+    return domain;
+}
 
-FirstOrderOperator::FirstOrderOperator(std::vector<Variable> &variables) : variables(variables)
+FirstOrderOperator::FirstOrderOperator(std::vector<Variable> &variables)
+    : variables(variables)
 // First constructor
 {}
 
@@ -25,7 +31,9 @@ FirstOrderOperator::FirstOrderOperator(Variable &variable)
 
 void FirstOrderOperator::addVariable(std::string variable, std::string domain)
 // Adds variable
-{ variables.emplace_back(variable, domain); }
+{
+    variables.emplace_back(variable, domain);
+}
 
 void FirstOrderOperator::removeVariable(std::string variable)
 // Removes variable
@@ -36,7 +44,9 @@ void FirstOrderOperator::removeVariable(std::string variable)
 
 const std::vector<Variable> &FirstOrderOperator::getVariables() const
 // Returns all variables bounded by operator
-{ return variables; }
+{
+    return variables;
+}
 
 std::string FirstOrderOperator::to_string() const {
     std::string str;

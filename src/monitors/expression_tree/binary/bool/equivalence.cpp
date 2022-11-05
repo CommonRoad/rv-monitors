@@ -6,8 +6,9 @@ std::shared_ptr<Expression> Equivalence::accept(ExpressionVisitor &visitor, Trac
     return visitor.visitEquivalence(*this, trace, index);
 }
 
-
 std::shared_ptr<Hydra2Monitor> Equivalence::accept(HydraCreationVisitor2 &visitor, size_t parentId,
-                                                   bool connectedEval) { return nullptr; }
+                                                   bool connectedEval) {
+    return nullptr;
+}
 
 std::shared_ptr<HydraMonitor> Equivalence::accept(HydraCreationVisitor &visitor) { return nullptr; }

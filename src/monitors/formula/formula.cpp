@@ -47,15 +47,18 @@ bool Formula::checkCompatibility(MonitoringProperties formulaType) const {
     auto formulaString = getExpr()->to_string();
     if (!formulaType.interval and formulaString.find('[') != std::string::npos)
         return false;
-    bool nonFirstOrder = !std::any_of(firstOrderOperators.begin(), firstOrderOperators.end(),
-                                      [formulaString](char oper) { return formulaString.find(oper) != std::string::npos; });
+    bool nonFirstOrder =
+        !std::any_of(firstOrderOperators.begin(), firstOrderOperators.end(),
+                     [formulaString](char oper) { return formulaString.find(oper) != std::string::npos; });
     switch (formulaType.formulaType) {
     case futureOnly:
-        return nonFirstOrder and !std::any_of(pastOperators.begin(), pastOperators.end(),
-                                              [formulaString](char oper) { return formulaString.find(oper) != std::string::npos; });
+        return nonFirstOrder and !std::any_of(pastOperators.begin(), pastOperators.end(), [formulaString](char oper) {
+                   return formulaString.find(oper) != std::string::npos;
+               });
     case pastOnly:
-        return nonFirstOrder and !std::any_of(futureOperators.begin(), futureOperators.end(),
-                                              [formulaString](char oper) { return formulaString.find(oper) != std::string::npos; });
+        return nonFirstOrder and
+               !std::any_of(futureOperators.begin(), futureOperators.end(),
+                            [formulaString](char oper) { return formulaString.find(oper) != std::string::npos; });
     case safetyGeneral:
         return nonFirstOrder and this->expr->getSymbol().find(globallySymbol) != std::string::npos;
     case futureSafety:

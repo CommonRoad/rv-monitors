@@ -35,7 +35,8 @@ TEST(TestHydra2, formulaTest) {
         if (std::any_of(excludedTestCases.begin(), excludedTestCases.end(),
                         [testCase](const std::string &name) { return name == testCase.formula->getId(); }))
             continue;
-        failures += hydraTestUtils::executeHydraEval(testCase.trace, {*testCase.formula}, {testCase.expectedResult}, testCase.domainCollection, testCase.functionCollection);
+        failures += hydraTestUtils::executeHydraEval(testCase.trace, {*testCase.formula}, {testCase.expectedResult},
+                                                     testCase.domainCollection, testCase.functionCollection);
     }
     std::cout << "Hydra Formula Test: " << std::to_string(failures) << " failing formulas.";
 }
@@ -85,12 +86,14 @@ TEST(TestHydra2, testExistentialStepLooping) {
     Formula formula = Parser::parse("G(C<=2 x in D. x)");
     formula.setId("R1");
     std::vector<Formula> formulas = {formula};
-    std::vector<std::vector<Verdict>> expSolutions{{Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true}}};
+    std::vector<std::vector<Verdict>> expSolutions{
+        {Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true}}};
     DomainCollection domainCollection = {Domain{"D", {"a", "b", "c"}}};
     hydraTestUtils::executeHydraEval(trace, formulas, expSolutions, domainCollection);
 }
 
 TEST(TestHydra2, testInvalidPredicateCost) {
     Formula formula = Parser::parse("G(P[0, 1](c))", "R1");
-    EXPECT_DEATH(Hydra2({formula}, {}, {}, false, false, false, {{"test", {1, 2}}}), "Invalid predicate costs/probabilities");
+    EXPECT_DEATH(Hydra2({formula}, {}, {}, false, false, false, {{"test", {1, 2}}}),
+                 "Invalid predicate costs/probabilities");
 }

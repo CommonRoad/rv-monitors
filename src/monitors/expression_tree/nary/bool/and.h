@@ -21,5 +21,4 @@ class And : public Nary<std::set<std::shared_ptr<Expression>, NaryInterface::Sha
                                                         bool connectedEval) override;
 
     [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override;
-
 };

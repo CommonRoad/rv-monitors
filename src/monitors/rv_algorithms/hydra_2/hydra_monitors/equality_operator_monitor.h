@@ -16,7 +16,8 @@ class EqualityOperatorMonitor : public Hydra2Monitor {
      * @param evalCost Evaluation costs.
      * @param satisfactionProbability Satisfaction probability.
      */
-    EqualityOperatorMonitor(Formula formula, size_t monitorId, bool connectedEval, double evalCost = 0, double satisfactionProbability = 100.0)
+    EqualityOperatorMonitor(Formula formula, size_t monitorId, bool connectedEval, double evalCost = 0,
+                            double satisfactionProbability = 100.0)
         : Hydra2Monitor(std::move(formula), monitorId, connectedEval, evalCost, satisfactionProbability) {}
 
     /**
@@ -62,7 +63,6 @@ class EqualityOperatorMonitor : public Hydra2Monitor {
     std::string to_string() override;
 
   private:
-    Trace trace; //**< Trace. */
-    std::map<std::string, Value> variableValues;  //**< Variable values from higher quantifier scopes. */
-
+    Trace trace;                                 //**< Trace. */
+    std::map<std::string, Value> variableValues; //**< Variable values from higher quantifier scopes. */
 };

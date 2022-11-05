@@ -2,11 +2,10 @@
 
 CountingMonitor::CountingMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
                                  std::map<std::string, std::string> variables, DomainCollection &domains,
-                                 CountingQuantifier::Operator op, size_t num, bool connectedEval,
-                                 bool shortCircuiting)
-    : QuantifierMonitor(std::move(formula), subMonitor, monitorId, std::move(variables), domains,
-                        connectedEval, shortCircuiting, 0.0, 0.0),
-    op(op), num(num) {
+                                 CountingQuantifier::Operator op, size_t num, bool connectedEval, bool shortCircuiting)
+    : QuantifierMonitor(std::move(formula), subMonitor, monitorId, std::move(variables), domains, connectedEval,
+                        shortCircuiting, 0.0, 0.0),
+      op(op), num(num) {
     evalCost = computeCost(subMonitor, numberCombinations);
     satisfactionProbability = computeSatisfactionProbability(subMonitor, numberCombinations);
 }
@@ -24,7 +23,8 @@ Verdict CountingMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     size_t trueVerdicts{0};
     evalMonitors.reserve(numberCombinations);
     for (size_t count{0}; count != numberCombinations; count++) { // loop over all possible combinations
-        std::shared_ptr<Hydra2Monitor> evalMonitor = nextEvalMonitor(parentId, count); // request monitor for the current combination
+        std::shared_ptr<Hydra2Monitor> evalMonitor =
+            nextEvalMonitor(parentId, count); // request monitor for the current combination
 
         Verdict subVerdict = evalMonitor->step(monitorId, stepNumber);
         if (subVerdict.value) // count number of true verdicts

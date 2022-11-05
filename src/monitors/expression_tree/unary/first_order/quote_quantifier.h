@@ -1,7 +1,7 @@
 #pragma once
 
-#include "monitors/expression_tree/unary/unary.h"
 #include "monitors/expression_tree/first_order_operator.h"
+#include "monitors/expression_tree/unary/unary.h"
 
 /**
  * Class representing a quote interval used by quote quantifier.
@@ -33,7 +33,6 @@ class QuoteInterval {
   private:
     float min; //**< Minimum probability. */
     float max; //**< Maximum probability. */
-
 };
 
 /**
@@ -76,7 +75,8 @@ class QuoteQuantifier : public Unary, public FirstOrderOperator {
 
     [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override;
 
-    [[nodiscard]] std::shared_ptr<Hydra2Monitor> accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval) override;
+    [[nodiscard]] std::shared_ptr<Hydra2Monitor> accept(HydraCreationVisitor2 &visitor, size_t parentId,
+                                                        bool connectedEval) override;
 
     [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override;
 
@@ -89,5 +89,4 @@ class QuoteQuantifier : public Unary, public FirstOrderOperator {
 
   private:
     QuoteInterval quoteInterval; //**< Quote interval. */
-
 };

@@ -23,9 +23,10 @@ class PredicateMonitor : public Hydra2Monitor {
      * @param evalCost Evaluation cost assigned to monitor.
      * @param satisfactionProbability Satisfaction probability of monitor.
      */
-    PredicateMonitor(Formula formula, size_t monitorId, FunctionCollection &functions, bool connectedEval, double evalCost = 0.0,
-                     double satisfactionProbability = 1.0)
-        : Hydra2Monitor(std::move(formula), monitorId, connectedEval, evalCost, satisfactionProbability), functions(functions) {};
+    PredicateMonitor(Formula formula, size_t monitorId, FunctionCollection &functions, bool connectedEval,
+                     double evalCost = 0.0, double satisfactionProbability = 1.0)
+        : Hydra2Monitor(std::move(formula), monitorId, connectedEval, evalCost, satisfactionProbability),
+          functions(functions){};
 
     /**
      * Performs concrete step of predicate monitor. It evaluates the trace element of the concrete step. Returns false
@@ -71,9 +72,9 @@ class PredicateMonitor : public Hydra2Monitor {
     std::string to_string() override;
 
   private:
-    Trace trace; //**< Trace. */
+    Trace trace;                                 //**< Trace. */
     std::map<std::string, Value> variableValues; //**< Current values of quantified variables. */
-    FunctionCollection functions; //**< Functions used for evaluation of predicates. */
+    FunctionCollection functions;                //**< Functions used for evaluation of predicates. */
 
     /**
      * Evaluates a predicate with quantified variables.
@@ -100,5 +101,4 @@ class PredicateMonitor : public Hydra2Monitor {
      * @return Unquantified predicate name.
      */
     std::string extractUnquantifiedPredicateName(const Predicate &predicate);
-
 };

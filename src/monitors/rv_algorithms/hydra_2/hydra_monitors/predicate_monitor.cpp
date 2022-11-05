@@ -34,17 +34,20 @@ std::shared_ptr<Hydra2Monitor> PredicateMonitor::clone() { return std::make_shar
 
 std::string PredicateMonitor::to_string() { return formula.to_string(); }
 
-Verdict PredicateMonitor::evalPredicateWithQuantifiedVars(size_t parentId, const Predicate &predicate, const Event &event) {
+Verdict PredicateMonitor::evalPredicateWithQuantifiedVars(size_t parentId, const Predicate &predicate,
+                                                          const Event &event) {
     std::string predName = extractUnquantifiedPredicateName(predicate);
 
     Function function = functions.getFunction(predName); // extract function to evaluate predicate
     int argc = static_cast<int>(predicate.getArguments().size());
-    std::vector<std::string> args; // arguments of predicate
+    std::vector<std::string> args;            // arguments of predicate
     if (function.getWithTimeStepArgument()) { // insert current time step if the predicate is time dependent
         argc++;
         args.push_back(std::to_string(traceIdx[parentId]));
     }
-    for (const auto &[argName, argType] : predicate.getArguments()) { // insert all predicate arguments which can be constants and current values of variables
+    for (const auto &[argName, argType] :
+         predicate
+             .getArguments()) { // insert all predicate arguments which can be constants and current values of variables
         switch (argType) {
         case Predicate::VARIABLE: {
             auto iterVar{variableValues.find(argName)};
@@ -96,8 +99,8 @@ std::string PredicateMonitor::createPredicateProposition(const Predicate &predic
 std::string PredicateMonitor::extractUnquantifiedPredicateName(const Predicate &predicate) {
     std::string predName;
     auto iter{variableValues.find(predicate.getName())};
-    if (iter != variableValues.end()) // get predicate name either by the current value if it is a dynamic predicate (A x in D. x(a))
-                                      // or as fixed one
+    if (iter != variableValues.end()) // get predicate name either by the current value if it is a dynamic predicate
+                                      // (A x in D. x(a)) or as fixed one
         predName = iter->second.getVal();
     else
         predName = predicate.getName();

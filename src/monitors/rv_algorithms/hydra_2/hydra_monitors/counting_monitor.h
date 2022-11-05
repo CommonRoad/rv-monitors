@@ -1,9 +1,9 @@
 #pragma once
 
-#include "quantifier_monitor.h"
-#include "monitors/utils/utils.h"
 #include "monitors/collections/value.h"
 #include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
+#include "monitors/utils/utils.h"
+#include "quantifier_monitor.h"
 
 /**
  * Hydra2 monitor representing counting monitor.
@@ -51,6 +51,5 @@ class CountingMonitor : public QuantifierMonitor {
 
   private:
     CountingQuantifier::Operator op; //**< Operator type. */
-    size_t num; //**< Number of operator. */
-
+    size_t num;                      //**< Number of operator. */
 };

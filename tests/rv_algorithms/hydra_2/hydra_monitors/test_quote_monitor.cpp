@@ -18,14 +18,14 @@ TEST(TestQuoteMonitor, testQuoteMonitorStandard) {
                                         size_t timeStep = strtol(args[0], nullptr, 10);
                                         size_t val = strtol(args[1], nullptr, 10);
                                         return val > timeStep;
-                                    }, true
-    });
+                                    },
+                                    true});
     auto mon1{std::make_shared<PredicateMonitor>(formulaPredicate, 2, functionCollection, false)};
     mon1->registerParent(1);
     std::map<std::string, std::string> variables{std::make_pair("x", "D")};
     QuoteQuantifier *quantifier = dynamic_cast<QuoteQuantifier *>(formula.getExpr().get());
     auto mon{QuoteMonitor(formula, mon1, 1, variables, domainCollection, quantifier->getQuoteInterval().getMin(),
-                                quantifier->getQuoteInterval().getMax(), false, false)};
+                          quantifier->getQuoteInterval().getMax(), false, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.step(0, 0).value, false);
@@ -44,17 +44,14 @@ TEST(TestQuoteMonitor, testWrongIntervalOrder) {
     DomainCollection domainCollection;
     domainCollection.addDomain({"D", {"2", "4", "8"}});
     FunctionCollection functionCollection;
-    functionCollection.addFunction({"higher_than_zero", 1,
-                                    [](int argc, char *args[]) -> bool {
-                                        return strtol(args[0], nullptr, 10) > 0;
-                                    }
-    });
+    functionCollection.addFunction(
+        {"higher_than_zero", 1, [](int argc, char *args[]) -> bool { return strtol(args[0], nullptr, 10) > 0; }});
     auto mon1{std::make_shared<PredicateMonitor>(formulaPredicate, 2, functionCollection, false)};
     mon1->registerParent(1);
     std::map<std::string, std::string> variables{std::make_pair("x", "D")};
     QuoteQuantifier *quantifier = dynamic_cast<QuoteQuantifier *>(formula.getExpr().get());
     auto mon{QuoteMonitor(formula, mon1, 1, variables, domainCollection, quantifier->getQuoteInterval().getMin(),
-                                quantifier->getQuoteInterval().getMax(), false, false)};
+                          quantifier->getQuoteInterval().getMax(), false, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
     for (size_t i = 0; i < 5; i++)
@@ -70,6 +67,6 @@ TEST(TestQuoteMonitor, testQuoteMonitorToString) {
     DomainCollection domainCollection;
     QuoteQuantifier *quantifier = dynamic_cast<QuoteQuantifier *>(formula.getExpr().get());
     auto mon{QuoteMonitor(formula, mon1, 0, {}, domainCollection, quantifier->getQuoteInterval().getMin(),
-                                quantifier->getQuoteInterval().getMax(), false, false)};
+                          quantifier->getQuoteInterval().getMax(), false, false)};
     EXPECT_EQ(mon.to_string(), "Q[0.220000, 0.650000] x in D, y in D. p(x, '20', y)");
 }

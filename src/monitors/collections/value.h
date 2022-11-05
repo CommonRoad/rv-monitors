@@ -37,6 +37,6 @@ class Value {
     [[nodiscard]] float getWeight() const;
 
   private:
-    std::string  val; //**< Value. */
-    float weight; //**< Weight. */
+    std::string val; //**< Value. */
+    float weight;    //**< Weight. */
 };

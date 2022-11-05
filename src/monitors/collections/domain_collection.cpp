@@ -1,8 +1,6 @@
 #include "domain_collection.h"
 
-DomainCollection::DomainCollection(const Domain &domain) {
-    domains.insert(std::make_pair(domain.getName(), domain));
-}
+DomainCollection::DomainCollection(const Domain &domain) { domains.insert(std::make_pair(domain.getName(), domain)); }
 
 DomainCollection::DomainCollection(const std::vector<Domain> &domains) {
     for (const Domain &domain : domains)
@@ -11,9 +9,7 @@ DomainCollection::DomainCollection(const std::vector<Domain> &domains) {
 
 size_t DomainCollection::size() const { return domains.size(); }
 
-void DomainCollection::addDomain(const Domain &domain) {
-    domains.insert(std::make_pair(domain.getName(), domain));
-}
+void DomainCollection::addDomain(const Domain &domain) { domains.insert(std::make_pair(domain.getName(), domain)); }
 
 void DomainCollection::removeDomain(const std::string &name) { domains.erase(name); }
 

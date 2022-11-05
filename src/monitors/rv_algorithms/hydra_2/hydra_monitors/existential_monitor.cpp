@@ -3,8 +3,8 @@
 ExistentialMonitor::ExistentialMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
                                        std::map<std::string, std::string> variables, DomainCollection &domains,
                                        bool connectedEval, bool shortCircuiting)
-    : QuantifierMonitor(std::move(formula), subMonitor, monitorId, std::move(variables), domains,
-                        connectedEval, shortCircuiting, 0.0, 0.0) {
+    : QuantifierMonitor(std::move(formula), subMonitor, monitorId, std::move(variables), domains, connectedEval,
+                        shortCircuiting, 0.0, 0.0) {
     evalCost = computeCost(subMonitor, numberCombinations);
     satisfactionProbability = computeSatisfactionProbability(subMonitor, numberCombinations);
 }
@@ -21,7 +21,8 @@ Verdict ExistentialMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 
     evalMonitors.reserve(numberCombinations);
     for (size_t count{0}; count != numberCombinations; count++) { // loop over all possible combinations
-        std::shared_ptr<Hydra2Monitor> evalMonitor = nextEvalMonitor(parentId, count); // request monitor for the current combination
+        std::shared_ptr<Hydra2Monitor> evalMonitor =
+            nextEvalMonitor(parentId, count); // request monitor for the current combination
 
         verdict = evalMonitor->step(monitorId, stepNumber);
 

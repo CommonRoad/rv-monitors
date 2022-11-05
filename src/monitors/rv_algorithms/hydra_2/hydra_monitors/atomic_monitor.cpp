@@ -12,7 +12,9 @@ Verdict AtomicMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         auto event{trace.getEvent(traceIdx[parentId])};
 
         auto iter{variableValues.find(atomic.to_string())};
-        if (iter != variableValues.end()) // handled as atomic proposition or variable representing a bundle of atomic propositions
+        if (iter !=
+            variableValues
+                .end()) // handled as atomic proposition or variable representing a bundle of atomic propositions
             return {event.getTimeStep(), event.getValue(iter->second.getVal())};
         else
             return {event.getTimeStep(), event.getValue(atomic)};

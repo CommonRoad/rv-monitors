@@ -2,15 +2,14 @@
 
 #include "domain.h"
 #include <map>
-#include <string>
 #include <stdexcept>
+#include <string>
 
 /**
  * Storage for a set of domains.
  */
 class DomainCollection {
   public:
-
     /**
      * First constructor.
      */
@@ -61,5 +60,4 @@ class DomainCollection {
 
   private:
     std::map<std::string, Domain> domains; //**< Domains. */
-
 };

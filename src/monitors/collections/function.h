@@ -17,7 +17,8 @@ class Function {
      * @param withTimeStepArgument Boolean indicating whether the first argument is occupied by time step.
      * @param costs Costs for evaluation.
      */
-    Function(std::string name, size_t argc, std::function<bool(int, char *[])> function, bool withTimeStepArgument = false, float costs = 0.);
+    Function(std::string name, size_t argc, std::function<bool(int, char *[])> function,
+             bool withTimeStepArgument = false, float costs = 0.);
 
     /**
      * Returns name of function.
@@ -55,10 +56,9 @@ class Function {
     [[nodiscard]] float getCosts() const;
 
   private:
-    std::string name; //**< Name of function. */
-    size_t argc; //**< Number of arguments. */
+    std::string name;                            //**< Name of function. */
+    size_t argc;                                 //**< Number of arguments. */
     std::function<bool(int, char *[])> function; //**< Function. */
     bool withTimeStepArgument; //**< Boolean indicating whether the first argument is occupied by time step. */
-    float costs; //**< Costs for evaluation. */
-
+    float costs;               //**< Costs for evaluation. */
 };

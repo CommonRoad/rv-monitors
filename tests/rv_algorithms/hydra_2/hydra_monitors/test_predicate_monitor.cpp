@@ -66,20 +66,17 @@ TEST(TestPredicateMonitor, testPredicateEvalConstValue) {
     Formula formula = Parser::parse("equal('100', '100')");
     formula.setId("R1");
     FunctionCollection functions;
-    functions.addFunction({"equal", 2,
-                           [](int argc, char *args[]) -> bool {
+    functions.addFunction({"equal", 2, [](int argc, char *args[]) -> bool {
                                int val0 = strtol(args[0], nullptr, 10);
                                int val1 = strtol(args[1], nullptr, 10);
                                return val0 == val1;
-                           }
-    });
+                           }});
     auto mon{PredicateMonitor(formula, 1, functions, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
     for (size_t i = 0; i < 4; i++)
         EXPECT_EQ(mon.step(0, i).value, true);
     EXPECT_EQ(mon.step(0, 4).value, false);
-
 }
 
 TEST(TestPredicateMonitor, testPredicateMonitorToString) {

@@ -30,10 +30,6 @@ size_t Event::getTimeStep() const { return timeStep; }
 
 void Event::setTimeStep(size_t newTimeStep) { Event::timeStep = newTimeStep; }
 
-bool Event::hasAtomic(const Atomic &atomic) const {
-    return eventMap.find(atomic.to_string()) != eventMap.end();
-}
+bool Event::hasAtomic(const Atomic &atomic) const { return eventMap.find(atomic.to_string()) != eventMap.end(); }
 
-bool Event::hasPredicate(const std::string &proposition) const {
-    return eventMap.find(proposition) != eventMap.end();
-}
+bool Event::hasPredicate(const std::string &proposition) const { return eventMap.find(proposition) != eventMap.end(); }

@@ -22,5 +22,4 @@ class Xor : public Nary<std::multiset<std::shared_ptr<Expression>, NaryInterface
                                                         bool connectedEval) override;
 
     [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override;
-
 };

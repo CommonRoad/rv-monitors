@@ -21,8 +21,8 @@ class QuantifierMonitor : public Hydra2Monitor {
      * @param satisfactionProbability Satisfaction probability of monitor.
      */
     QuantifierMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
-                      std::map<std::string, std::string> variables, DomainCollection &domains,
-                      bool connectedEval, bool shortCircuiting, double cost, double satisfactionProbability);
+                      std::map<std::string, std::string> variables, DomainCollection &domains, bool connectedEval,
+                      bool shortCircuiting, double cost, double satisfactionProbability);
 
     /**
      * Performs concrete step of quantifier monitor. If the current step is not covered by the trace or
@@ -111,13 +111,12 @@ class QuantifierMonitor : public Hydra2Monitor {
     static double computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &monitor, size_t numEval);
 
   protected:
-    std::shared_ptr<Hydra2Monitor> subMonitor; //**< Child monitor. */
+    std::shared_ptr<Hydra2Monitor> subMonitor;                //**< Child monitor. */
     std::vector<std::shared_ptr<Hydra2Monitor>> evalMonitors; //**< Monitors for evaluation. */
-    bool shortCircuiting; //**< Boolean indicating whether short circuiting should be used. */
+    bool shortCircuiting;                        //**< Boolean indicating whether short circuiting should be used. */
     std::map<std::string, Value> variableValues; //**< Variables values from higher quantifier scopes. */
-    Trace trace; //**< Trace. */
+    Trace trace;                                 //**< Trace. */
     std::vector<std::pair<std::string, Domain>> varDomains; //**< Domains of variables. */
-    std::vector<std::vector<Value>::iterator> iters; //**< Iterators forming the current combination. */
-    size_t numberCombinations; //**< Number of combinations. */
-
+    std::vector<std::vector<Value>::iterator> iters;        //**< Iterators forming the current combination. */
+    size_t numberCombinations;                              //**< Number of combinations. */
 };

@@ -2,7 +2,8 @@
 
 QuantifierMonitor::QuantifierMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
                                      std::map<std::string, std::string> variables, DomainCollection &domains,
-                                     bool connectedEval, bool shortCircuiting, double cost, double satisfactionProbability)
+                                     bool connectedEval, bool shortCircuiting, double cost,
+                                     double satisfactionProbability)
     : Hydra2Monitor(std::move(formula), monitorId, connectedEval, cost, satisfactionProbability),
       subMonitor(std::move(subMonitor)), shortCircuiting(shortCircuiting) {
 
@@ -17,8 +18,8 @@ QuantifierMonitor::QuantifierMonitor(Formula formula, std::shared_ptr<Hydra2Moni
 
 std::shared_ptr<Hydra2Monitor> QuantifierMonitor::nextEvalMonitor(size_t parentId, size_t count) {
     std::shared_ptr<Hydra2Monitor> evalMonitor;
-    if (traceIdx[parentId] == 0 or count > evalMonitors.size() - 1) { // if there is no monitor for the current combination,
-                                                                      // then a new monitor will be cloned
+    if (traceIdx[parentId] == 0 or count > evalMonitors.size() - 1) { // if there is no monitor for the current
+                                                                      // combination, then a new monitor will be cloned
         nextCombination();
         evalMonitor = subMonitor->clone();
         evalMonitors.push_back(evalMonitor);
@@ -38,10 +39,12 @@ void QuantifierMonitor::nextCombination() {
             variableValues.insert(std::make_pair(varDomains[i].first, *iters[i]));
     }
 
-    subMonitor->setVariableValues(variableValues); // the values of the new combination are inserted into the child monitor
+    subMonitor->setVariableValues(
+        variableValues); // the values of the new combination are inserted into the child monitor
 
     ++iters[numVars - 1];
-    for (size_t i = numVars - 1; i > 0 and iters[i] == varDomains[i].second.end(); i--) { // iterators are shifted to form a new combination
+    for (size_t i = numVars - 1; i > 0 and iters[i] == varDomains[i].second.end();
+         i--) { // iterators are shifted to form a new combination
         iters[i] = varDomains[i].second.begin();
         ++iters[i - 1];
     }
@@ -87,7 +90,8 @@ double QuantifierMonitor::computeCost(const std::shared_ptr<Hydra2Monitor> &moni
     return monitor->getEvalCost() * static_cast<double>(numEval);
 }
 
-double QuantifierMonitor::computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &monitor, size_t numEval) {
+double QuantifierMonitor::computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &monitor,
+                                                         size_t numEval) {
     double prob{monitor->getSatisfactionProbability()};
     for (size_t num{1}; num < numEval; num++)
         prob *= monitor->getSatisfactionProbability();

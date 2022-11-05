@@ -12,10 +12,7 @@
 
 class Predicate : public Expression {
   public:
-    enum Argument {
-        VARIABLE,
-        CONSTANT
-    };
+    enum Argument { VARIABLE, CONSTANT };
 
     Predicate(std::string symbol, std::string na, std::vector<std::pair<std::string, Argument>> args)
         : Expression(std::move(symbol)), name(std::move(na)), arguments(std::move(args)) {}

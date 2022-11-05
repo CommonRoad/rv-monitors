@@ -125,7 +125,8 @@ Utils::getPredicatesAndParameters(const Formula &formula) {
 // Wrapper
 std::set<std::string> Utils::getAtomics(const std::shared_ptr<Expression> &expr) { return getAtomics(expr, {}, {}); }
 
-std::set<std::string> Utils::getAtomics(const std::shared_ptr<Expression> &expr, std::set<std::string> atomics, std::set<std::string> variables) {
+std::set<std::string> Utils::getAtomics(const std::shared_ptr<Expression> &expr, std::set<std::string> atomics,
+                                        std::set<std::string> variables) {
     if (!expr) {
         return atomics;
     }
@@ -163,7 +164,8 @@ std::set<std::string> Utils::getAtomics(const std::shared_ptr<Expression> &expr,
     return atomics;
 }
 
-std::set<std::string> Utils::getPredicates(const std::shared_ptr<Expression> &expr, std::set<std::string> predicates, std::set<std::string> variables) {
+std::set<std::string> Utils::getPredicates(const std::shared_ptr<Expression> &expr, std::set<std::string> predicates,
+                                           std::set<std::string> variables) {
     if (!expr) {
         return predicates;
     }
@@ -205,7 +207,8 @@ std::set<std::string> Utils::getPredicates(const std::shared_ptr<Expression> &ex
 }
 
 std::set<std::string> Utils::getAtomicsAndPredicates(const std::shared_ptr<Expression> &expr,
-                                                     const std::set<std::string> &atomics, const std::set<std::string> &variables) {
+                                                     const std::set<std::string> &atomics,
+                                                     const std::set<std::string> &variables) {
     auto collectedAtomics{getAtomics(expr, atomics, variables)};
     auto predicates{getPredicates(expr, atomics, variables)};
     std::set<std::string> combinedSet;
@@ -222,9 +225,11 @@ std::set<std::string> Utils::getAtomicsAndPredicates(const Formula &formula) {
     return getAtomicsAndPredicates(formula.getExpr());
 }
 
-std::map<std::string, std::tuple<std::string, std::vector<std::pair<std::string, Predicate::Argument>>>> Utils::getPredicatesAndParameters(
+std::map<std::string, std::tuple<std::string, std::vector<std::pair<std::string, Predicate::Argument>>>>
+Utils::getPredicatesAndParameters(
     const std::shared_ptr<Expression> &expr,
-    std::map<std::string, std::tuple<std::string, std::vector<std::pair<std::string, Predicate::Argument>>>> predicatesWithParameters) {
+    std::map<std::string, std::tuple<std::string, std::vector<std::pair<std::string, Predicate::Argument>>>>
+        predicatesWithParameters) {
     if (!expr) {
         return predicatesWithParameters;
     }

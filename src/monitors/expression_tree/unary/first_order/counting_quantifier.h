@@ -1,7 +1,7 @@
 #pragma once
 
-#include "monitors/expression_tree/unary/unary.h"
 #include "monitors/expression_tree/first_order_operator.h"
+#include "monitors/expression_tree/unary/unary.h"
 
 /**
  * Class representing counting quantifier.
@@ -21,8 +21,8 @@ class CountingQuantifier : public Unary, public FirstOrderOperator {
      * @param op Operator type.
      * @param num Number.
      */
-    explicit CountingQuantifier(std::shared_ptr<Expression> &left, std::vector<Variable> &variables,
-                                Operator op, size_t num);
+    explicit CountingQuantifier(std::shared_ptr<Expression> &left, std::vector<Variable> &variables, Operator op,
+                                size_t num);
 
     /**
      * Second constructor.
@@ -32,8 +32,7 @@ class CountingQuantifier : public Unary, public FirstOrderOperator {
      * @param op Operator type.
      * @param num Number.
      */
-    explicit CountingQuantifier(std::shared_ptr<Expression> &left, Variable &variable,
-                                Operator op, size_t num);
+    explicit CountingQuantifier(std::shared_ptr<Expression> &left, Variable &variable, Operator op, size_t num);
 
     /**
      * Creates string representation of expression.
@@ -51,7 +50,8 @@ class CountingQuantifier : public Unary, public FirstOrderOperator {
 
     [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override;
 
-    [[nodiscard]] std::shared_ptr<Hydra2Monitor> accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval) override;
+    [[nodiscard]] std::shared_ptr<Hydra2Monitor> accept(HydraCreationVisitor2 &visitor, size_t parentId,
+                                                        bool connectedEval) override;
 
     [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override;
 
@@ -71,6 +71,5 @@ class CountingQuantifier : public Unary, public FirstOrderOperator {
 
   private:
     Operator op; //**< Operator type. */
-    size_t num; //**< Number. */
-
+    size_t num;  //**< Number. */
 };

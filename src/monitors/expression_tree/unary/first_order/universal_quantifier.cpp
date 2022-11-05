@@ -20,15 +20,14 @@ std::string UniversalQuantifier::to_string() const {
     return str;
 }
 
-std::shared_ptr<Expression> UniversalQuantifier::clone() {
-    return std::make_shared<UniversalQuantifier>(*this);
-}
+std::shared_ptr<Expression> UniversalQuantifier::clone() { return std::make_shared<UniversalQuantifier>(*this); }
 
 std::shared_ptr<Expression> UniversalQuantifier::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
     return visitor.visitUniversalQuantifier(*this, trace, index);
 }
 
-std::shared_ptr<Hydra2Monitor> UniversalQuantifier::accept(HydraCreationVisitor2 &visitor, size_t parentId, bool connectedEval) {
+std::shared_ptr<Hydra2Monitor> UniversalQuantifier::accept(HydraCreationVisitor2 &visitor, size_t parentId,
+                                                           bool connectedEval) {
     return visitor.visitUniversalQuantifier(*this, parentId, connectedEval);
 }
 
