@@ -667,6 +667,8 @@ bool HydraRewriteVisitor::hasUsedQuantifiedVariable(Expression &expr, std::strin
     if (auto *atomic = dynamic_cast<Atomic *>(&expr)) {
         return atomic->to_string() == varName;
     } else if (auto *predicate = dynamic_cast<Predicate *>(&expr)) {
+        if (varName == predicate->getName())
+            return true;
         return std::any_of(predicate->getArguments().begin(), predicate->getArguments().end(),
                            [varName](const std::pair<std::string, Predicate::Argument> &arg) { return varName == arg.first; });
     } else if (auto *unary = dynamic_cast<Unary *>(&expr)) {

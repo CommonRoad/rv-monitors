@@ -1103,6 +1103,15 @@ TestDataBase::TestDataBase() {
             {0, 1, 2, 3},
             std::vector<Domain>({Domain{"D0", {Value("a"), Value("b")}}, Domain{"D1", {Value("c"), Value("d")}},
             Domain{"D2", {Value("e"), Value("f")}}})
+        },
+        {
+            "F98_1",
+            "G(A x in D. x(d))",
+            createExpectedResult({true, false, false}),
+            {"a(d)", "b(d)", "c(d)"},
+            {{"a(d)", "b(d)", "c(d)"}, {}, {"a(d)", "c(d)"}},
+            {0, 1, 2},
+            std::vector<Domain>({Domain{"D", {"a", "b", "c"}}})
         }
     };
 }
