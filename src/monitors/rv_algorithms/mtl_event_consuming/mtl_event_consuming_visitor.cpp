@@ -195,7 +195,7 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
     else if (auto nextWeak = std::dynamic_pointer_cast<NextWeak>(opr.getLeft())) {
         if (!trace.getEvent(index).isTerminal()) {
             auto nextWeakExpr = std::make_shared<EventOperator>(nextWeak->getLeft(), trace, index);
-            ret = nextWeak->accept(*this, trace, index + 1);
+            ret = nextWeakExpr->accept(*this, trace, index + 1);
         } else {
             ret = std::make_shared<Constant>(true);
         }
@@ -204,7 +204,7 @@ std::shared_ptr<Expression> MTLEventConsumingVisitor::visitEventOperator(EventOp
     else if (auto nextStrong = std::dynamic_pointer_cast<NextStrong>(opr.getLeft())) {
         if (!trace.getEvent(index).isTerminal()) {
             auto nextStrongExpr = std::make_shared<EventOperator>(nextStrong->getLeft(), trace, index);
-            ret = nextStrong->accept(*this, trace, index + 1);
+            ret = nextStrongExpr->accept(*this, trace, index + 1);
         } else {
             ret = std::make_shared<Constant>(false);
         }

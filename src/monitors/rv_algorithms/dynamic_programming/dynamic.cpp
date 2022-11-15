@@ -141,7 +141,7 @@ std::vector<bool> DynamicProgrammingLTL::initializePre(Event &event,
         initialize(idx, pre, eventMap, subformulas);
         // Previously
         if (std::dynamic_pointer_cast<Previously>(subformulas[idx])) {
-            pre[idx] = true;
+            pre[idx] = false;
         }
         // Once
         else if (auto once = std::dynamic_pointer_cast<Once>(subformulas[idx])) {

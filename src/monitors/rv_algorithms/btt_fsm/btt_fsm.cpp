@@ -4,9 +4,8 @@
 #include "monitors/formula/supported_formula_type.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
 
-BttFsm::BttFsm(const std::vector<Formula> &formulas)
-    : MonitorInterface(formulas, AlgorithmType::btt_fsm), states(formulaToBTT_FSM()),
-      pastEvaluation(formulas[0].checkCompatibility(TemporalFormulaType::pastSafety)) {}
+BttFsm::BttFsm(const std::vector<Formula> &formulas, bool pastEvaluation)
+    : MonitorInterface(formulas, AlgorithmType::btt_fsm), states(formulaToBTT_FSM()), pastEvaluation(pastEvaluation) {}
 
 const std::vector<StateBttFsm> &BttFsm::getStates() const { return states; }
 

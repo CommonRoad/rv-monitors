@@ -1,5 +1,7 @@
 #include "test_dynamic_programming_ltl.h"
 #include "../test_database.h"
+#include "monitors/expression_tree/binary/temporal/since.h"
+#include "monitors/expression_tree/unary/temporal/historically.h"
 #include "monitors/parser/parser.h"
 #include "monitors/rv_algorithms/dynamic_programming/dynamic.h"
 #include "monitors/trace/trace.h"
@@ -15,8 +17,8 @@ TEST(TestDynamicProgrammingLTL, testFormulaType) {
 
 TEST(TestDynamicProgrammingLTL, specificFormulaTest) {
     auto testDataBase{TestDataBase()};
-    auto testCase = testDataBase.getTestSample("F11_2");
-    auto monitor{DynamicProgrammingLTL({*testCase.formula})};
+    auto testCase = testDataBase.getTestSample("F11_1");
+    auto monitor{DynamicProgrammingLTL({*testCase.formula}, true)};
     auto trace{testCase.trace};
     EXPECT_TRUE(TestDataBase::mergeResult(monitor.evaluate(trace).at(testCase.formula->getId())) ==
                 TestDataBase::mergeResult(testCase.expectedResult))
@@ -24,17 +26,20 @@ TEST(TestDynamicProgrammingLTL, specificFormulaTest) {
 }
 
 TEST(TestDynamicProgrammingLTL, formulaTest) {
-    std::vector<std::string> excludedTestCases{
-        "F11_3", "F23_1", "F24_1", "F24_2", "F25_2", "F27_1",
-        "F29_1", "F29_2", "F29_3", "F42_1", "F46_3"}; // TODO check why monitor fails
     size_t failures{0};
     auto testDataBase{TestDataBase()};
     auto testCases{testDataBase.getDatabaseEntries(supportedFormulaTypes.at(AlgorithmType::dynamic_programming_ltl))};
     for (const auto &testCase : testCases) {
-        if (std::any_of(excludedTestCases.begin(), excludedTestCases.end(),
-                        [testCase](const std::string &name) { return name == testCase.formula->getId(); }))
+        if (testCase.formula->includeTemporalOperator('S') or testCase.formula->includeTemporalOperator('H'))
             continue;
-        auto monitor{DynamicProgrammingLTL({*testCase.formula})};
+        bool pastEvaluation;
+        if (testCase.formula->checkCompatibility(TemporalFormulaType::pastSafety))
+            pastEvaluation = true;
+        else if (testCase.formula->checkCompatibility(TemporalFormulaType::futureSafety))
+            pastEvaluation = false;
+        else
+            continue;
+        auto monitor{DynamicProgrammingLTL({*testCase.formula}, pastEvaluation)};
         auto trace{testCase.trace};
         EXPECT_TRUE(TestDataBase::mergeResult(monitor.evaluate(trace).at(testCase.formula->getId())) ==
                     TestDataBase::mergeResult(testCase.expectedResult))
@@ -44,5 +49,5 @@ TEST(TestDynamicProgrammingLTL, formulaTest) {
             failures++;
     }
     std::cout << "DynamicProgrammingLTL Formula Test: " << std::to_string(failures) << "/"
-              << std::to_string(testCases.size() - excludedTestCases.size()) << " failing formulas.";
+              << std::to_string(testCases.size()) << " failing formulas.";
 }
