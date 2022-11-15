@@ -12,7 +12,7 @@
 
 TEST(TestEventConsumingMTL, specificFormulaTest) {
     auto testDataBase{TestDataBase()};
-    auto testCase = testDataBase.getTestSample("F5_2");
+    auto testCase = testDataBase.getTestSample("F11_1");
     auto monitor{MTLEventConsuming({*testCase.formula})};
     auto trace{testCase.trace};
     auto res{TestDataBase::mergeResult(monitor.evaluate(trace).at(testCase.formula->getId()))};
@@ -21,14 +21,10 @@ TEST(TestEventConsumingMTL, specificFormulaTest) {
 }
 
 TEST(TestEventConsumingMTL, formulaTest) {
-    std::vector<std::string> excludedTestCases{"F5_1", "F76_1"}; // TODO check why monitors fail
     size_t failures{0};
     auto testDataBase{TestDataBase()};
     auto testCases{testDataBase.getDatabaseEntries(supportedFormulaTypes.at(AlgorithmType::event_consuming_mtl))};
     for (const auto &testCase : testCases) {
-        if (std::any_of(excludedTestCases.begin(), excludedTestCases.end(),
-                        [testCase](const std::string &name) { return name == testCase.formula->getId(); }))
-            continue;
         auto monitor{MTLEventConsuming({*testCase.formula})};
         auto trace{testCase.trace};
         EXPECT_TRUE(TestDataBase::mergeResult(monitor.evaluate(trace).at(testCase.formula->getId())) ==
@@ -39,5 +35,5 @@ TEST(TestEventConsumingMTL, formulaTest) {
             failures++;
     }
     std::cout << "MTL Event-Consuming Formula Test: " << std::to_string(failures) << "/"
-              << std::to_string(testCases.size() - excludedTestCases.size()) << " failing formulas.";
+              << std::to_string(testCases.size()) << " failing formulas.";
 }

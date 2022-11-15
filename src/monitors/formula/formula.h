@@ -162,6 +162,14 @@ class Formula {
     bool checkCompatibility(std::vector<MonitoringProperties> formulaTypes) const;
 
     /**
+     * Checks whether a temporal operator is included by the formula.
+     *
+     * @param tempOp Symbol of temporal operator.
+     * @return Boolean indicating whether temporal operator is included.
+     */
+    bool includeTemporalOperator(char tempOp);
+
+    /**
      * Writes formula on existing output stream.
      *
      * @param ost output stream

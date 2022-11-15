@@ -8,10 +8,9 @@
 #include "monitors/rv_algorithms/ltl_event_consuming/event_consuming.h"
 #include "monitors/trace/event_generator.h"
 
-MtFsm::MtFsm(const std::vector<Formula> &formulas)
-    : MonitorInterface(formulas, AlgorithmType::mt_fsm),
-      states(formulaToMT_FSM(formulas.at(0), formulas[0].checkCompatibility(TemporalFormulaType::pastSafety))),
-      pastEvaluation(formulas[0].checkCompatibility(TemporalFormulaType::pastSafety)) {}
+MtFsm::MtFsm(const std::vector<Formula> &formulas, bool pastEvaluation)
+    : MonitorInterface(formulas, AlgorithmType::mt_fsm), states(formulaToMT_FSM(formulas.at(0), pastEvaluation)),
+      pastEvaluation(pastEvaluation) {}
 
 // TODO check if empty
 std::string MtFsm::to_string() const {

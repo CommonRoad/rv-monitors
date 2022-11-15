@@ -256,6 +256,26 @@ std::map<std::string, std::tuple<std::string, std::vector<std::string>>> getPred
 [[nodiscard]] size_t getNumberOfAtomicsAndPredicates(const std::shared_ptr<Expression> &expr);
 
 /**
+ * Extract all subformulas with temporal operator as root node.
+ *
+ * @param expr Expression.
+ * @return Temporal operator subformulas.
+ */
+[[nodiscard]] std::vector<std::shared_ptr<Expression>>
+getTemporalOperatorSubformulas(const std::shared_ptr<Expression> &expr);
+
+/**
+ * Extract all subformulas with temporal operator as root node.
+ *
+ * @param expr Expression.
+ * @param tempOpSubformulas List of temporal subformulas.
+ * @return Temporal operator subformulas.
+ */
+[[nodiscard]] std::vector<std::shared_ptr<Expression>>
+getTemporalOperatorSubformulas(const std::shared_ptr<Expression> &expr,
+                               std::vector<std::shared_ptr<Expression>> tempOpSubformulas);
+
+/**
  * Creates event mapping from predicates (=names) to values (=bools) and wraps it into a trace of length 1.
  *
  * @param atomics Names of predicates.
