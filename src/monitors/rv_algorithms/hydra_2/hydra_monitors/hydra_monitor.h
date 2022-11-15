@@ -5,6 +5,7 @@
 // Credits: BMW Car@TUM
 //
 #pragma once
+#include "deque"
 #include "monitors/utils/utils.h"
 
 /**
@@ -57,6 +58,28 @@ class Hydra2Monitor {
      * @return Trace index.
      */
     size_t getMaxTraceIdx();
+
+    /**
+     * Extracts minimum trace idx of monitor given all parent monitors (required for connected evaluation).
+     *
+     * @return Trace index.
+     */
+    size_t getMinTraceIdx();
+
+    /**
+     * Evaluates whether another parent monitor has the same trace index.
+     *
+     * @param idx Trace index which should be used for comparison.
+     * @return Boolean indicating whether another parent monitor is at the same trace index.
+     */
+    bool traceIdxUnique(size_t idx);
+
+    /**
+     * Decrements trace indices for all parent monitors except for the provided ID.
+     *
+     * @param parentID Parent monitor ID where index should not be decremented.
+     */
+    void decrementTraceIdx(size_t parentID);
 
     /**
      * Executes monitor until desired step number is reached.
@@ -171,9 +194,10 @@ class Hydra2Monitor {
     Formula formula;                     //**< Monitored formula. */
     std::string formulaId;               //**< Id of formula */
     size_t monitorId;                    //**< Id of monitor */
-    std::vector<Verdict> verdictHistory; //**< History of verdicts belonging to monitor */
+    std::deque<Verdict> verdictHistory;  //**< History of verdicts belonging to monitor */
     std::map<size_t, size_t> traceIdx;   //**< Index of current trace element (even) */
     bool connectedEval;                  //**< Boolean indicating whether connected evaluation should be performed */
     double evalCost{0.0};                //**< Evaluation cost of monitor */
     double satisfactionProbability{1.0}; //**< Satisfaction probability of monitor */
+    size_t verdictHistoryPopCounter{0}; //**< Counter storing how often pop operation was applied on verdict history. */
 };

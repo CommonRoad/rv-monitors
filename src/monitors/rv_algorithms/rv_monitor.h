@@ -28,10 +28,12 @@ struct MonitorConfiguration {
      * @param measurement Indicates whether evaluation with time measurement should be performed
      * @param hydraConnectedEvaluation Indicates whether HYDRA monitor should perform connected evaluation
      * @param hydraReordering Indicates whether HYDRA monitor should perform reordering
-     * @param hydraShortCircuiting Indicates whether HYDRA monitor should perform short circuiting
+     * @param shortCircuiting Indicates whether monitor should perform short circuiting
+     * @param earlyTermination Indicates whether the complete trace has to be evaluated or whether the
+     * execution can be terminated as soon as a global verdict for a monitor can be provided
      */
     MonitorConfiguration(AlgorithmType algorithm, bool measurement, bool hydraConnectedEvaluation, bool hydraReordering,
-                         bool hydraShortCircuiting);
+                         bool shortCircuiting, bool earlyTermination);
 
     /**
      * Constructor defining only algorithm type, past evaluation, and performance evaluation.
@@ -51,9 +53,12 @@ struct MonitorConfiguration {
     const bool performanceMeasurement{
         false}; /**< Indicates whether evaluation with time measurement should be performed */
     const bool hydraConnectedEvaluation{
-        true};                             /**< Indicates whether HYDRA monitor should perform connected evaluation */
-    const bool hydraReordering{true};      /**< Indicates whether HYDRA monitor should perform reordering */
-    const bool hydraShortCircuiting{true}; /**< Indicates whether HYDRA monitor should perform short circuiting */
+        true};                        /**< Indicates whether HYDRA monitor should perform connected evaluation */
+    const bool hydraReordering{true}; /**< Indicates whether HYDRA monitor should perform reordering */
+    const bool shortCircuiting{true}; /**< Indicates whether monitor should perform short circuiting */
+    const bool earlyTermination{
+        false}; /**< Indicates whether the complete trace has to be evaluated or whether the
+                 * execution can be terminated as soon as a global verdict for a monitor can be provided. */
 };
 
 class RVMonitor {

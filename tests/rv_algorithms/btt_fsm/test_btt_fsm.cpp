@@ -17,8 +17,8 @@ TEST(TestBTT_FSMEvaluation, testFormulaType) {
 
 TEST(TestBTT_FSMEvaluation, specificFormulaTest) {
     auto testDataBase{TestDataBase()};
-    auto testCase = testDataBase.getTestSample("F46_3");
-    auto monitor{BttFsm({*testCase.formula})};
+    auto testCase = testDataBase.getTestSample("F11_1");
+    auto monitor{BttFsm({*testCase.formula}, true)};
     auto trace{testCase.trace};
     EXPECT_TRUE(TestDataBase::mergeResult(monitor.evaluate(trace).at(testCase.formula->getId())) ==
                 TestDataBase::mergeResult(testCase.expectedResult))
@@ -26,16 +26,24 @@ TEST(TestBTT_FSMEvaluation, specificFormulaTest) {
 }
 
 TEST(TestBTT_FSMEvaluation, formulaTest) {
-    std::vector<std::string> excludedTestCases{"F11_1", "F23_1", "F24_1", "F24_2", "F25_1",
-                                               "F27_1", "F29_1", "F29_2", "F29_3"}; // TODO check why monitor fails
+    std::vector<std::string> excludedTestCases{"F29_1", "F29_2", "F29_3"};
     size_t failures{0};
     auto testDataBase{TestDataBase()};
     auto testCases{testDataBase.getDatabaseEntries(supportedFormulaTypes.at(AlgorithmType::btt_fsm))};
     for (const auto &testCase : testCases) {
+        if (testCase.formula->includeTemporalOperator('S') or testCase.formula->includeTemporalOperator('H'))
+            continue;
+        bool pastEvaluation;
+        if (testCase.formula->checkCompatibility(TemporalFormulaType::pastSafety))
+            pastEvaluation = true;
+        else if (testCase.formula->checkCompatibility(TemporalFormulaType::futureSafety))
+            pastEvaluation = false;
+        else
+            continue;
         if (std::any_of(excludedTestCases.begin(), excludedTestCases.end(),
                         [testCase](const std::string &name) { return name == testCase.formula->getId(); }))
             continue;
-        auto monitor{BttFsm({*testCase.formula})};
+        auto monitor{BttFsm({*testCase.formula}, pastEvaluation)};
         auto trace{testCase.trace};
         EXPECT_TRUE(TestDataBase::mergeResult(monitor.evaluate(trace).at(testCase.formula->getId())) ==
                     TestDataBase::mergeResult(testCase.expectedResult))
@@ -44,6 +52,6 @@ TEST(TestBTT_FSMEvaluation, formulaTest) {
               TestDataBase::mergeResult(testCase.expectedResult)))
             failures++;
     }
-    std::cout << "BTT Formula Test: " << std::to_string(failures) << "/"
-              << std::to_string(testCases.size() - excludedTestCases.size()) << " failing formulas.";
+    std::cout << "BTT Formula Test: " << std::to_string(failures) << "/" << std::to_string(testCases.size())
+              << " failing formulas.";
 }

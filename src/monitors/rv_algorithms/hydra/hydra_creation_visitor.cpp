@@ -45,25 +45,25 @@ std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitPredicate(Predicate &to
 
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitPreviously(Previously &top) {
     return std::make_shared<PreviousMonitorHydra>(Formula(std::make_shared<Previously>(top)),
-                                                  top.getLeft()->accept(*this), top.getInterval()->getStart(),
-                                                  top.getInterval()->getEnd());
+                                                  top.getLeft()->accept(*this),
+                                                  IntervalTemporalOperator(top.getInterval()));
 }
 
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitNext(NextStrong &top) {
     return std::make_shared<NextMonitorHydra>(Formula(std::make_shared<NextStrong>(top)), top.getLeft()->accept(*this),
-                                              top.getInterval()->getStart(), top.getInterval()->getEnd());
+                                              IntervalTemporalOperator(top.getInterval()));
 }
 
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitSince(Since &top) {
     return std::make_shared<SinceMonitorHydra>(Formula(std::make_shared<Since>(top)), top.getLeft()->accept(*this),
-                                               top.getRight()->accept(*this), top.getInterval()->getStart(),
-                                               top.getInterval()->getEnd());
+                                               top.getRight()->accept(*this),
+                                               IntervalTemporalOperator(top.getInterval()));
 }
 
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitUntil(Until &top) {
     return std::make_shared<UntilMonitorHydra>(Formula(std::make_shared<Until>(top)), top.getLeft()->accept(*this),
-                                               top.getRight()->accept(*this), top.getInterval()->getStart(),
-                                               top.getInterval()->getEnd());
+                                               top.getRight()->accept(*this),
+                                               IntervalTemporalOperator(top.getInterval()));
 }
 
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitOr(Or &top) {

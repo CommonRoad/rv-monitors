@@ -6,9 +6,9 @@
 //
 #pragma once
 
-#include <utility>
-
+#include "../../../utils/interval.h"
 #include "hydra_monitor.h"
+#include <utility>
 
 /**
  * Monitor representing (strong) next Hydra2 operator.
@@ -20,16 +20,15 @@ class NextMonitor : public Hydra2Monitor {
      *
      * @param formula Formula to be monitored.
      * @param subMonitor Child monitor.
-     * @param intervalFrom Start of time interval.
-     * @param intervalTo End of time interval.
+     * @param interval  Interval of operator.
      * @param monitorId ID of monitor.
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      */
-    NextMonitor(const Formula &formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t intervalFrom,
-                size_t intervalTo, size_t monitorId, bool connectedEval)
+    NextMonitor(const Formula &formula, std::shared_ptr<Hydra2Monitor> subMonitor, IntervalTemporalOperator interval,
+                size_t monitorId, bool connectedEval)
         : Hydra2Monitor(formula, monitorId, connectedEval, subMonitor->getEvalCost(),
                         subMonitor->getSatisfactionProbability()),
-          subMonitor(std::move(subMonitor)), from(intervalFrom), to(intervalTo){};
+          subMonitor(std::move(subMonitor)), interval(interval){};
 
     /**
      * Performs concrete step of next operator monitor.
@@ -75,8 +74,7 @@ class NextMonitor : public Hydra2Monitor {
 
   private:
     std::shared_ptr<Hydra2Monitor> subMonitor; //**< Child monitor. */
-    size_t from;                               //**< Start of time interval. */
-    size_t to;                                 //**< End of time interval. */
+    IntervalTemporalOperator interval;         //**< Interval of operator. */
     std::optional<size_t> currentTime;         //**< Previous time step to check whether next verdict lies in interval.
                                                // Initialized after first event has been seen. */
 };

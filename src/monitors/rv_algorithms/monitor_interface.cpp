@@ -8,8 +8,9 @@
 
 #include <utility>
 
-MonitorInterface::MonitorInterface(Formula formula, AlgorithmType algorithm, bool formulaCompatibilityCheck)
-    : formulas({std::move(formula)}), algorithm(algorithm) {
+MonitorInterface::MonitorInterface(Formula formula, AlgorithmType algorithm, bool formulaCompatibilityCheck,
+                                   bool earlyTermination)
+    : formulas({std::move(formula)}), algorithm(algorithm), earlyTermination(earlyTermination) {
     if (formulaCompatibilityCheck and
         !std::any_of(supportedFormulaTypes.at(this->algorithm).begin(), supportedFormulaTypes.at(this->algorithm).end(),
                      [formula](MonitoringProperties formulaType) { return formula.checkCompatibility(formulaType); }))
@@ -17,8 +18,8 @@ MonitorInterface::MonitorInterface(Formula formula, AlgorithmType algorithm, boo
 }
 
 MonitorInterface::MonitorInterface(std::vector<Formula> formulas, AlgorithmType algorithm,
-                                   bool formulaCompatibilityCheck)
-    : formulas(std::move(formulas)), algorithm(algorithm) {
+                                   bool formulaCompatibilityCheck, bool earlyTermination)
+    : formulas(std::move(formulas)), algorithm(algorithm), earlyTermination(earlyTermination) {
     if (formulaCompatibilityCheck)
         for (const auto &formula : this->formulas)
             if (!std::any_of(

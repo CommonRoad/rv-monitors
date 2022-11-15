@@ -23,7 +23,7 @@ TEST(TestHydra2, testFormulaType) {
 
 TEST(TestHydra2, specificFormulaTest) {
     auto testDataBase{TestDataBase()};
-    auto testCase = testDataBase.getTestSample("F95_1");
+    auto testCase = testDataBase.getTestSample("F11_1");
     hydraTestUtils::executeHydraEval(testCase.trace, {*testCase.formula}, {testCase.expectedResult});
 }
 
@@ -31,14 +31,39 @@ TEST(TestHydra2, formulaTest) {
     std::vector<std::string> excludedTestCases{"F49_1"}; // TODO add Weak next support
     size_t failures{0};
     auto testDataBase{TestDataBase()};
+    auto numEval{0};
     for (const auto &testCase : testDataBase.getDatabaseEntries(supportedFormulaTypes.at(AlgorithmType::hydra_2_mtl))) {
         if (std::any_of(excludedTestCases.begin(), excludedTestCases.end(),
                         [testCase](const std::string &name) { return name == testCase.formula->getId(); }))
             continue;
         failures += hydraTestUtils::executeHydraEval(testCase.trace, {*testCase.formula}, {testCase.expectedResult},
                                                      testCase.domainCollection, testCase.functionCollection);
+        numEval++;
     }
-    std::cout << "Hydra Formula Test: " << std::to_string(failures) << " failing formulas.";
+    std::cout << "Hydra Formula Test: " << std::to_string(failures) << "/" << std::to_string(numEval)
+              << " failing formulas.";
+}
+
+TEST(TestBTT_FSMEvaluation, formulaTestEarlyTermination) {
+    std::vector<std::string> excludedTestCases{"F49_1"};
+    size_t failures{0};
+    auto testDataBase{TestDataBase()};
+    auto testCases{testDataBase.getDatabaseEntries(supportedFormulaTypes.at(AlgorithmType::hydra_2_mtl))};
+    for (const auto &testCase : testCases) {
+        if (std::any_of(excludedTestCases.begin(), excludedTestCases.end(),
+                        [testCase](const std::string &name) { return name == testCase.formula->getId(); }))
+            continue;
+        auto monitor{Hydra2({*testCase.formula}, false, false, false, true, {})};
+        auto trace{testCase.trace};
+        EXPECT_TRUE(TestDataBase::mergeResult(monitor.evaluate(trace).at(testCase.formula->getId())) ==
+                    TestDataBase::mergeResult(testCase.expectedResult))
+            << "Hydra Formula Test Early Termination " << testCase.formula->getId() << " failed.";
+        if (!(TestDataBase::mergeResult(monitor.evaluate(trace).at(testCase.formula->getId())) ==
+              TestDataBase::mergeResult(testCase.expectedResult)))
+            failures++;
+    }
+    std::cout << "Hydra Formula Test Early Termination: " << std::to_string(failures) << "/"
+              << std::to_string(testCases.size()) << " failing formulas.";
 }
 
 TEST(TestHydra2, testToString) {
@@ -94,6 +119,6 @@ TEST(TestHydra2, testExistentialStepLooping) {
 
 TEST(TestHydra2, testInvalidPredicateCost) {
     Formula formula = Parser::parse("G(P[0, 1](c))", "R1");
-    EXPECT_DEATH(Hydra2({formula}, {}, {}, false, false, false, {{"test", {1, 2}}}),
+    EXPECT_DEATH(Hydra2({formula}, {}, {}, false, false, false, false, {{"test", {1, 2}}}),
                  "Invalid predicate costs/probabilities");
 }

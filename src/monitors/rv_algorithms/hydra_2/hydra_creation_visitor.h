@@ -10,8 +10,10 @@
 #include "monitors/collections/function_collection.h"
 #include <any>
 #include <functional>
+#include "monitors/utils/interval.h"
 #include <map>
 #include <memory>
+#include <optional>
 #include <vector>
 
 class Hydra2Monitor;

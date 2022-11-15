@@ -105,11 +105,9 @@ set(RV_MONITOR_SRC_FILES
         monitors/utils/lazy_bool.cpp
         monitors/utils/execution_statistic.cpp
         monitors/utils/utils.cpp
-        monitors/utils/generators/formula_generator/formula_generator.h
         monitors/utils/generators/formula_generator/formula_generator.cpp
-        monitors/utils/generators/trace_generator/trace_generator.h
         monitors/utils/generators/trace_generator/trace_generator.cpp
-        monitors/utils/generators/computation_time_generator/computation_time_generator.h
+        monitors/utils/generators/computation_time_generator/computation_time_generator.cpp
         monitors/utils/generators/computation_time_generator/computation_time_generator.cpp
         monitors/collections/domain_collection.cpp
         monitors/collections/domain.cpp
@@ -117,10 +115,10 @@ set(RV_MONITOR_SRC_FILES
         monitors/collections/value.cpp
         monitors/collections/function_collection.cpp
         monitors/collections/function.cpp
-        monitors/expression_tree/unary/first_order/counting_quantifier.h
         monitors/expression_tree/unary/first_order/counting_quantifier.cpp
         monitors/rv_algorithms/hydra_2/hydra_monitors/counting_monitor.cpp
-        monitors/rv_algorithms/hydra_2/hydra_monitors/counting_monitor.h)
+        monitors/rv_algorithms/hydra_2/hydra_monitors/counting_monitor.h
+        monitors/utils/interval.cpp monitors/utils/interval.cpp)
 
 
 # create library of this project

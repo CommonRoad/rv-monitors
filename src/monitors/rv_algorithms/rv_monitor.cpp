@@ -101,7 +101,8 @@ RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration 
     case hydra_2_mtl:
         monitor =
             std::make_unique<Hydra2>(formulas, domains, functions, configuration.hydraConnectedEvaluation,
-                                     configuration.hydraReordering, configuration.hydraShortCircuiting, predicateCosts);
+                                     configuration.hydraReordering, configuration.shortCircuiting,
+                                     configuration.earlyTermination, predicateCosts);
         break;
     case event_consuming_mtl:
         monitor = std::make_unique<MTLEventConsuming>(formulas);
@@ -135,7 +136,8 @@ RVMonitor::RVMonitor(const Formula &formula, MonitorConfiguration configuration,
     case hydra_2_mtl:
         monitor = std::make_unique<Hydra2>(std::vector<Formula>{formula}, domains, functions,
                                            configuration.hydraConnectedEvaluation, configuration.hydraReordering,
-                                           configuration.hydraShortCircuiting, predicateCosts);
+                                           configuration.shortCircuiting, configuration.earlyTermination,
+                                           predicateCosts);
         break;
     case event_consuming_mtl:
         monitor = std::make_unique<MTLEventConsuming>(std::vector<Formula>{formula});
@@ -167,7 +169,8 @@ RVMonitor::RVMonitor(const RVMonitor &obj) : configuration(obj.configuration) {
         }
 
         monitor = std::make_unique<Hydra2>(formulas, obj.domains, obj.functions, configuration.hydraConnectedEvaluation,
-                                           configuration.hydraReordering, configuration.hydraShortCircuiting);
+                                           configuration.hydraReordering, configuration.shortCircuiting,
+                                           configuration.earlyTermination);
     }
     executionStatistic = obj.executionStatistic;
     domains = obj.domains;
@@ -175,7 +178,7 @@ RVMonitor::RVMonitor(const RVMonitor &obj) : configuration(obj.configuration) {
 }
 
 RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
-    if (this != &other) { // prevent self-assignment{
+    if (this != &other) { // prevent self-assignment
         if (auto *dynLTL = dynamic_cast<DynamicProgrammingLTL *>(other.monitor.get()))
             monitor = std::make_unique<DynamicProgrammingLTL>(dynLTL->getFormulas(), dynLTL->isPastEvaluation());
         else if (auto *hydra = dynamic_cast<Hydra2 *>(other.monitor.get())) {
@@ -190,7 +193,7 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
             FunctionCollection functionCollection;
             monitor = std::make_unique<Hydra2>(formulas, domainCollection, functionCollection,
                                                configuration.hydraConnectedEvaluation, configuration.hydraReordering,
-                                               configuration.hydraShortCircuiting);
+                                               configuration.shortCircuiting, configuration.earlyTermination);
         }
         // TODO other algorithms
         executionStatistic = other.executionStatistic;
@@ -201,9 +204,9 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
 std::string RVMonitor::to_string() { return monitor->to_string(); }
 
 MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool measurement, bool hydraConnectedEvaluation,
-                                           bool hydraReordering, bool hydraShortCircuiting)
+                                           bool hydraReordering, bool shortCircuiting, bool earlyTermination)
     : algorithm(algorithm), performanceMeasurement(measurement), hydraConnectedEvaluation(hydraConnectedEvaluation),
-      hydraReordering(hydraReordering), hydraShortCircuiting(hydraShortCircuiting) {}
+      hydraReordering(hydraReordering), shortCircuiting(shortCircuiting), earlyTermination(earlyTermination) {}
 
 MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool measurement)
     : algorithm(algorithm), performanceMeasurement(measurement) {}

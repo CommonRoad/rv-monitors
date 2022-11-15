@@ -12,7 +12,12 @@ Verdict PreviousMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     if (currentVerdict.has_value() and subVerdict.timeStamp.has_value()) {
         Verdict lastSubVerdict = *currentVerdict;
         currentVerdict = subVerdict;
-        if (Utils::isInInterval(subVerdict.timeStamp.value() - lastSubVerdict.timeStamp.value(), from, to))
+        if (!interval.isFinite() and
+            interval.getStart() <= subVerdict.timeStamp.value() - lastSubVerdict.timeStamp.value())
+            return {subVerdict.timeStamp.value(), lastSubVerdict.value};
+        else if (interval.isFinite() and
+                 Utils::isInInterval(subVerdict.timeStamp.value() - lastSubVerdict.timeStamp.value(),
+                                     interval.getStart(), interval.getEnd()))
             return {subVerdict.timeStamp.value(), lastSubVerdict.value};
         else
             return {subVerdict.timeStamp.value(), false};
@@ -39,8 +44,14 @@ std::shared_ptr<Hydra2Monitor> PreviousMonitor::clone() {
 }
 
 std::string PreviousMonitor::to_string() {
-    std::string interval;
-    if (from != 0 or to != 10000)
-        interval = "[" + std::to_string(from) + ", " + std::to_string(to) + "]";
-    return std::string{"P"} + interval + "(" + subMonitor->to_string() + ")";
+    std::string itv{};
+    std::string end{};
+    if (!interval.isEmpty()) {
+        if (!interval.isFinite())
+            end = "inf";
+        else
+            end = std::to_string(interval.getEnd());
+        itv = "[" + std::to_string(interval.getStart()) + ", " + end + "]";
+    }
+    return std::string{"P"} + itv + "(" + subMonitor->to_string() + ")";
 }

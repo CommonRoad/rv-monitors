@@ -1,5 +1,4 @@
 #include "formula.h"
-#include "monitors/expression_tree/binary/binary.h"
 #include "monitors/expression_tree/nary/bool/xor.h"
 #include "monitors/utils/utils.h"
 #include "nff.h"
@@ -79,6 +78,11 @@ bool Formula::checkCompatibility(MonitoringProperties formulaType) const {
         return !nonFirstOrder or this->expr->getSymbol().find(globallySymbol) != std::string::npos;
     }
     return false;
+}
+
+bool Formula::includeTemporalOperator(char tempOp) {
+    auto formulaString = getExpr()->to_string();
+    return formulaString.find(tempOp) != std::string::npos;
 }
 
 void Formula::setId(const std::string &identifier) { id = identifier; }
