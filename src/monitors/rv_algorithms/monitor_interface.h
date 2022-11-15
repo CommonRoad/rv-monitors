@@ -30,8 +30,11 @@ class MonitorInterface {
      * @param algorithm Name of algorithm.
      * @param formulaCompatibilityCheck Boolean which activates check whether formula provided to monitor is evaluated
      * for monitor compatibility.
+     * @param earlyTermination Boolean indicating whether the complete trace has to be evaluated or whether the
+     * execution can be terminated as soon as a global verdict for a monitor can be provided.
      */
-    MonitorInterface(Formula formula, AlgorithmType algorithm, bool formulaCompatibilityCheck = true);
+    MonitorInterface(Formula formula, AlgorithmType algorithm, bool formulaCompatibilityCheck = true,
+                     bool earlyTermination = false);
 
     /**
      * Constructor for monitor based on several formulas.
@@ -40,8 +43,11 @@ class MonitorInterface {
      * @param algorithm Name of algorithm.
      * @param formulaCompatibilityCheck Boolean which activates check whether formula provided to monitor is evaluated
      * for monitor compatibility.
+     * @param earlyTermination Boolean indicating whether the complete trace has to be evaluated or whether the
+     * execution can be terminated as soon as a global verdict for a monitor can be provided.
      */
-    MonitorInterface(std::vector<Formula> formulas, AlgorithmType algorithm, bool formulaCompatibilityCheck = true);
+    MonitorInterface(std::vector<Formula> formulas, AlgorithmType algorithm, bool formulaCompatibilityCheck = true,
+                     bool earlyTermination = false);
 
     /**
      * Evaluation function for monitor algorithms.
@@ -70,6 +76,8 @@ class MonitorInterface {
   protected:
     std::vector<Formula> formulas; //**< Temporal logic formulas which are evaluated by monitor */
     AlgorithmType algorithm;       //**< Name of algorithm. */
+    bool earlyTermination; //**< Boolean indicating whether the complete trace has to be evaluated or whether the
+    // execution can be terminated as soon as a global verdict for a monitor can be provided. */
 };
 
 extern const std::map<AlgorithmType, std::vector<MonitoringProperties>>
