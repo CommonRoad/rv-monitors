@@ -17,13 +17,33 @@ std::map<std::string, std::vector<Verdict>> Hydra2::evaluate(Trace &trace) {
 
     resetMonitors();
     setTraceMonitors(trace);
-    for (const auto &mon : monitors)
-        result[mon->getFormulaId()].reserve(trace.getLength());
 
-    for (size_t i{0}; i < trace.getLength(); ++i)
+    if (!earlyTermination)
         for (const auto &mon : monitors)
-            result[mon->getFormulaId()].emplace_back(mon->step(0, i));
+            result[mon->getFormulaId()].reserve(trace.getLength());
+    else
+        for (const auto &mon : monitors)
+            result[mon->getFormulaId()].push_back(true); // only single verdict required
 
+    if (!earlyTermination)
+        for (size_t i{0}; i < trace.getLength(); ++i)
+            for (const auto &mon : monitors)
+                result[mon->getFormulaId()].emplace_back(mon->step(0, i));
+    else {
+        std::vector<std::string> terminatedMonitors;
+        for (size_t i{0}; i < trace.getLength(); ++i) {
+            for (const auto &mon : monitors)
+                if (!std::any_of(terminatedMonitors.begin(), terminatedMonitors.end(),
+                                 [mon](const std::string &monId) { return mon->getFormulaId() == monId; })) {
+                    auto res{mon->step(0, i)};
+                    result[mon->getFormulaId()].at(0) = result[mon->getFormulaId()].at(0).value && res.value;
+                    if (!result[mon->getFormulaId()].at(0).value)
+                        terminatedMonitors.push_back(mon->getFormulaId());
+                }
+            if (monitors.size() == terminatedMonitors.size())
+                break;
+        }
+    }
     return result;
 }
 
@@ -62,7 +82,7 @@ void Hydra2::createMonitor(const std::vector<Formula> &formulas, bool connectedE
 }
 
 Hydra2::Hydra2(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting,
-               const std::map<std::string, std::array<double, 2>> &predicateCosts)
-    : MonitorInterface(formulas, AlgorithmType::hydra_2_mtl) {
+               bool earlyTermination, const std::map<std::string, std::array<double, 2>> &predicateCosts)
+    : MonitorInterface(formulas, AlgorithmType::hydra_2_mtl, true, earlyTermination) {
     createMonitor(formulas, connectedEval, reordering, shortCircuiting, predicateCosts);
 }

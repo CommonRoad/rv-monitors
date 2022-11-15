@@ -43,6 +43,28 @@ TEST(TestHydra2, formulaTest) {
               << " failing formulas.";
 }
 
+TEST(TestBTT_FSMEvaluation, formulaTestEarlyTermination) {
+    std::vector<std::string> excludedTestCases{"F49_1"};
+    size_t failures{0};
+    auto testDataBase{TestDataBase()};
+    auto testCases{testDataBase.getDatabaseEntries(supportedFormulaTypes.at(AlgorithmType::hydra_2_mtl))};
+    for (const auto &testCase : testCases) {
+        if (std::any_of(excludedTestCases.begin(), excludedTestCases.end(),
+                        [testCase](const std::string &name) { return name == testCase.formula->getId(); }))
+            continue;
+        auto monitor{Hydra2({*testCase.formula}, false, false, false, true, {})};
+        auto trace{testCase.trace};
+        EXPECT_TRUE(TestDataBase::mergeResult(monitor.evaluate(trace).at(testCase.formula->getId())) ==
+                    TestDataBase::mergeResult(testCase.expectedResult))
+            << "Hydra Formula Test Early Termination " << testCase.formula->getId() << " failed.";
+        if (!(TestDataBase::mergeResult(monitor.evaluate(trace).at(testCase.formula->getId())) ==
+              TestDataBase::mergeResult(testCase.expectedResult)))
+            failures++;
+    }
+    std::cout << "Hydra Formula Test Early Termination: " << std::to_string(failures) << "/"
+              << std::to_string(testCases.size()) << " failing formulas.";
+}
+
 TEST(TestHydra2, testToString) {
     Formula formula = Parser::parse("G(P(c))");
     formula.setId("R1");
@@ -85,5 +107,6 @@ TEST(TestHydra2, testCombinedSinceUntilFormulas) {
 
 TEST(TestHydra2, testInvalidPredicateCost) {
     Formula formula = Parser::parse("G(P[0, 1](c))", "R1");
-    EXPECT_DEATH(Hydra2({formula}, false, false, false, {{"test", {1, 2}}}), "Invalid predicate costs/probabilities");
+    EXPECT_DEATH(Hydra2({formula}, false, false, false, false, {{"test", {1, 2}}}),
+                 "Invalid predicate costs/probabilities");
 }
