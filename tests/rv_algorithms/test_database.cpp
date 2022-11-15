@@ -462,9 +462,9 @@ TestDataBase::TestDataBase() {
         },
         {
             "F42_1",
-            "F(!G(b -> Fc))",
+            "G(F(!G(b -> Fc)))",
             createExpectedResult(
-                {true, true, true, true, true, true, true, true, true, true, true, true, true, true, true}),
+                {true, true, true, true, true, true, true, true, true, true, true, true, true, true, false}),
             {{"a"}, {"b"}, {"a"}, {"b"}, {"a"}, {"c"}, {"a"}, {"a"}, {"b"}, {"g"}, {"f"}, {"h"}, {"c"}, {"b"}, {"a"}},
         },
         {
@@ -695,15 +695,7 @@ TestDataBase::TestDataBase() {
         {
             "F63_4",
             "G(X[0,1](a & b))",
-            createExpectedResult({
-                true,
-                true,
-                true,
-                false,
-                false,
-                true,
-                false,
-            }),
+            createExpectedResult({true, true, true, false, false, true, false}),
             {{"a"}, {"a", "b"}, {"a", "b"}, {"a", "b"}, {"b"}, {"b"}, {"a", "b"}},
         },
         {

@@ -19,8 +19,9 @@ class BttFsm : public MonitorInterface {
      * Constructor for a BTT-FSM.
      *
      * @param formula Formula that we want the BTT-FSM for.
+     * @param pastEvaluation Boolean indicating whether past evaluation has to be applied.
      */
-    BttFsm(const std::vector<Formula> &formulas);
+    BttFsm(const std::vector<Formula> &formulas, bool pastEvaluation = false);
 
     /**
      * Getter for BTT-FSM states.

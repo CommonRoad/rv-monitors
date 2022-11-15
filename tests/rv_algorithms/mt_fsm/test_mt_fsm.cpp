@@ -15,8 +15,8 @@ TEST(TestMT_FSM, testFormulaType) {
 
 TEST(TestMT_FSM, specificFormulaTest) {
     auto testDataBase{TestDataBase()};
-    auto testCase = testDataBase.getTestSample("F46_3");
-    auto monitor{MtFsm({*testCase.formula})};
+    auto testCase = testDataBase.getTestSample("F11_1");
+    auto monitor{MtFsm({*testCase.formula}, true)};
     auto trace{testCase.trace};
     EXPECT_TRUE(TestDataBase::mergeResult(monitor.evaluate(trace).at(testCase.formula->getId())) ==
                 TestDataBase::mergeResult(testCase.expectedResult))
@@ -24,16 +24,20 @@ TEST(TestMT_FSM, specificFormulaTest) {
 }
 
 TEST(TestMT_FSM, formulaTest) {
-    std::vector<std::string> excludedTestCases{"F11_1", "F23_1", "F24_1", "F24_2", "F25_1",
-                                               "F27_1", "F29_1", "F29_2", "F29_3"}; // TODO check why monitor fails
     size_t failures{0};
     auto testDataBase{TestDataBase()};
     auto testCases{testDataBase.getDatabaseEntries(supportedFormulaTypes.at(AlgorithmType::mt_fsm))};
     for (const auto &testCase : testCases) {
-        if (std::any_of(excludedTestCases.begin(), excludedTestCases.end(),
-                        [testCase](const std::string &name) { return name == testCase.formula->getId(); }))
+        if (testCase.formula->includeTemporalOperator('S') or testCase.formula->includeTemporalOperator('H'))
             continue;
-        auto monitor{MtFsm({*testCase.formula})};
+        bool pastEvaluation;
+        if (testCase.formula->checkCompatibility(TemporalFormulaType::pastSafety))
+            pastEvaluation = true;
+        else if (testCase.formula->checkCompatibility(TemporalFormulaType::futureSafety))
+            pastEvaluation = false;
+        else
+            continue;
+        auto monitor{MtFsm({*testCase.formula}, pastEvaluation)};
         auto trace{testCase.trace};
         EXPECT_TRUE(TestDataBase::mergeResult(monitor.evaluate(trace).at(testCase.formula->getId())) ==
                     TestDataBase::mergeResult(testCase.expectedResult))
@@ -42,6 +46,6 @@ TEST(TestMT_FSM, formulaTest) {
               TestDataBase::mergeResult(testCase.expectedResult)))
             failures++;
     }
-    std::cout << "MtFsm Formula Test: " << std::to_string(failures) << "/"
-              << std::to_string(testCases.size() - excludedTestCases.size()) << " failing formulas.";
+    std::cout << "MtFsm Formula Test: " << std::to_string(failures) << "/" << std::to_string(testCases.size())
+              << " failing formulas.";
 }
