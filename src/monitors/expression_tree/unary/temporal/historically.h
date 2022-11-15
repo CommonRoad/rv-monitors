@@ -13,7 +13,7 @@ class Historically : public Unary, public TemporalOperator {
      * @param left Expression.
      */
     explicit Historically(const std::shared_ptr<Expression> &left)
-        : Unary(onceSymbol, left), TemporalOperator(std::make_shared<Interval>()) {}
+        : Unary(historicallySymbol, left), TemporalOperator(std::make_shared<Interval>()) {}
 
     explicit Historically(const std::shared_ptr<Expression> &left, const std::shared_ptr<Interval> &interval)
         : Unary(historicallySymbol + interval->to_string(), left), TemporalOperator(interval) {}

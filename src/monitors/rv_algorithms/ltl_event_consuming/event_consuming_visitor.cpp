@@ -242,7 +242,7 @@ std::shared_ptr<Expression> EventConsumingVisitor::visitEventOperator(EventOpera
         if (!trace.getEvent(index).isTerminal()) {
             ret = previously->getLeft();
         } else {
-            ret = std::make_shared<Constant>(true);
+            ret = std::make_shared<Constant>(false);
         }
     }
     // Once

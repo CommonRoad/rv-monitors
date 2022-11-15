@@ -15,8 +15,8 @@ TEST(TestEventConsumingLTL, testFormulaType) {
 
 TEST(TestEventConsumingLTL, specificFormulaTest) {
     auto testDataBase{TestDataBase()};
-    auto testCase = testDataBase.getTestSample("F11_2");
-    auto monitor{EventConsumingLTL({*testCase.formula})};
+    auto testCase = testDataBase.getTestSample("F11_1");
+    auto monitor{EventConsumingLTL({*testCase.formula}, true)};
     auto trace{testCase.trace};
     EXPECT_TRUE(TestDataBase::mergeResult(monitor.evaluate(trace).at(testCase.formula->getId())) ==
                 TestDataBase::mergeResult(testCase.expectedResult))
@@ -24,16 +24,20 @@ TEST(TestEventConsumingLTL, specificFormulaTest) {
 }
 
 TEST(TestEventConsumingLTL, formulaTest) {
-    std::vector<std::string> excludedTestCases{"F11_1", "F23_1", "F24_1", "F24_2", "F25_2", "F27_1",
-                                               "F29_1", "F29_2", "F29_3", "F46_3"}; // TODO check why monitor fails
     size_t failures{0};
     auto testDataBase{TestDataBase()};
     auto testCases{testDataBase.getDatabaseEntries(supportedFormulaTypes.at(AlgorithmType::event_consuming_ltl))};
     for (const auto &testCase : testCases) {
-        if (std::any_of(excludedTestCases.begin(), excludedTestCases.end(),
-                        [testCase](const std::string &name) { return name == testCase.formula->getId(); }))
+        if (testCase.formula->includeTemporalOperator('S') or testCase.formula->includeTemporalOperator('H'))
             continue;
-        auto monitor{EventConsumingLTL({*testCase.formula})};
+        bool pastEvaluation;
+        if (testCase.formula->checkCompatibility(TemporalFormulaType::pastSafety))
+            pastEvaluation = true;
+        else if (testCase.formula->checkCompatibility(TemporalFormulaType::futureSafety))
+            pastEvaluation = false;
+        else
+            continue;
+        auto monitor{EventConsumingLTL({*testCase.formula}, pastEvaluation)};
         auto trace{testCase.trace};
         EXPECT_TRUE(TestDataBase::mergeResult(monitor.evaluate(trace).at(testCase.formula->getId())) ==
                     TestDataBase::mergeResult(testCase.expectedResult))
@@ -43,5 +47,5 @@ TEST(TestEventConsumingLTL, formulaTest) {
             failures++;
     }
     std::cout << "EventConsumingLTL Formula Test: " << std::to_string(failures) << "/"
-              << std::to_string(testCases.size() - excludedTestCases.size()) << " failing formulas.";
+              << std::to_string(testCases.size()) << " failing formulas.";
 }

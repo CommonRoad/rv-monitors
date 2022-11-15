@@ -5,11 +5,21 @@
 
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/binary/binary.h"
+#include "monitors/expression_tree/binary/temporal/release.h"
+#include "monitors/expression_tree/binary/temporal/since.h"
+#include "monitors/expression_tree/binary/temporal/until.h"
 #include "monitors/expression_tree/nary/bool/and.h"
 #include "monitors/expression_tree/nary/bool/or.h"
 #include "monitors/expression_tree/nary/bool/xor.h"
 #include "monitors/expression_tree/nary/nary.h"
 #include "monitors/expression_tree/unary/bool/not.h"
+#include "monitors/expression_tree/unary/temporal/future.h"
+#include "monitors/expression_tree/unary/temporal/globally.h"
+#include "monitors/expression_tree/unary/temporal/historically.h"
+#include "monitors/expression_tree/unary/temporal/next_strong.h"
+#include "monitors/expression_tree/unary/temporal/next_weak.h"
+#include "monitors/expression_tree/unary/temporal/once.h"
+#include "monitors/expression_tree/unary/temporal/previously.h"
 #include "monitors/expression_tree/unary/unary.h"
 #include "monitors/parser/parser.h"
 #include "monitors/trace/trace.h"
@@ -244,6 +254,32 @@ size_t Utils::getNumberOfAtomics(const std::shared_ptr<Expression> &expr) { retu
 
 size_t Utils::getNumberOfAtomicsAndPredicates(const std::shared_ptr<Expression> &expr) {
     return getAtomics(expr, {}).size() + getPredicates(expr, {}).size();
+}
+
+std::vector<std::shared_ptr<Expression>>
+Utils::getTemporalOperatorSubformulas(const std::shared_ptr<Expression> &expr) {
+    return getTemporalOperatorSubformulas(expr, {});
+}
+
+std::vector<std::shared_ptr<Expression>>
+Utils::getTemporalOperatorSubformulas(const std::shared_ptr<Expression> &expr,
+                                      std::vector<std::shared_ptr<Expression>> tempOpSubformulas) {
+    if (auto nary = std::dynamic_pointer_cast<NaryInterface>(expr)) {
+        for (const auto &itr : *nary) {
+            tempOpSubformulas = getTemporalOperatorSubformulas(itr, tempOpSubformulas);
+        }
+    } else if (auto binary = std::dynamic_pointer_cast<Binary>(expr)) {
+        if (std::dynamic_pointer_cast<TemporalOperator>(expr))
+            tempOpSubformulas.push_back(expr->clone());
+        tempOpSubformulas = getTemporalOperatorSubformulas(binary->getLeft(), tempOpSubformulas);
+        tempOpSubformulas = getTemporalOperatorSubformulas(binary->getRight(), tempOpSubformulas);
+    } else if (auto unary = std::dynamic_pointer_cast<Unary>(expr)) {
+        if (std::dynamic_pointer_cast<TemporalOperator>(expr))
+            tempOpSubformulas.push_back(expr->clone());
+        tempOpSubformulas = getTemporalOperatorSubformulas(unary->getLeft(), tempOpSubformulas);
+    }
+
+    return tempOpSubformulas;
 }
 
 Trace Utils::boolVectorToTrace(const std::set<std::string> &atomics, const std::vector<bool> &vector, bool terminal) {
