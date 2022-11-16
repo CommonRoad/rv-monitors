@@ -463,29 +463,29 @@ std::shared_ptr<Expression> RewriteVisitor::visitDerivingOperator(DerivingOperat
     return std::make_shared<DerivingOperator>(opr);
 }
 
-std::shared_ptr<Expression> RewriteVisitor::visitUniversalQuantifier(UniversalQuantifier &op, Trace &trace,
+std::shared_ptr<Expression> RewriteVisitor::visitUniversalQuantifier(UniversalQuantifier &opr, Trace &trace,
                                                                      size_t index) {
-    visitExpression(op, trace, index);
-    return std::make_shared<UniversalQuantifier>(op);
+    visitExpression(opr, trace, index);
+    return std::make_shared<UniversalQuantifier>(opr);
 }
 
-std::shared_ptr<Expression> RewriteVisitor::visitExistentialQuantifier(ExistentialQuantifier &op, Trace &trace,
+std::shared_ptr<Expression> RewriteVisitor::visitExistentialQuantifier(ExistentialQuantifier &opr, Trace &trace,
                                                                        size_t index) {
-    visitExpression(op, trace, index);
-    return std::make_shared<ExistentialQuantifier>(op);
+    visitExpression(opr, trace, index);
+    return std::make_shared<ExistentialQuantifier>(opr);
 }
 
-std::shared_ptr<Expression> RewriteVisitor::visitQuoteQuantifier(QuoteQuantifier &op, Trace &trace, size_t index) {
-    visitExpression(op, trace, index);
-    return std::make_shared<QuoteQuantifier>(op);
+std::shared_ptr<Expression> RewriteVisitor::visitQuoteQuantifier(QuoteQuantifier &opr, Trace &trace, size_t index) {
+    visitExpression(opr, trace, index);
+    return std::make_shared<QuoteQuantifier>(opr);
 }
 
-std::shared_ptr<Expression> RewriteVisitor::visitCountingQuantifier(CountingQuantifier &op, Trace &trace,
+std::shared_ptr<Expression> RewriteVisitor::visitCountingQuantifier(CountingQuantifier &opr, Trace &trace,
                                                                     size_t index) {
-    visitExpression(op, trace, index);
-    return std::make_shared<CountingQuantifier>(op);
+    visitExpression(opr, trace, index);
+    return std::make_shared<CountingQuantifier>(opr);
 }
 
-std::shared_ptr<Expression> RewriteVisitor::visitEqualityOperator(EqualityOperator &op, Trace &trace, size_t index) {
-    return std::make_shared<EqualityOperator>(op);
+std::shared_ptr<Expression> RewriteVisitor::visitEqualityOperator(EqualityOperator &opr, Trace &trace, size_t index) {
+    return std::make_shared<EqualityOperator>(opr);
 }
