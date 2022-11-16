@@ -559,6 +559,7 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitCountingQuantifier(CountingQ
     return std::make_shared<CountingQuantifier>(opr);
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitEqualityOperator(EqualityOperator &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> MtlRewriteVisitor::visitEqualityOperator(EqualityOperator &opr, Trace &trace,
+                                                                     size_t index) {
     return std::make_shared<EqualityOperator>(opr);
 }
