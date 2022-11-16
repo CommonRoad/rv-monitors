@@ -530,7 +530,21 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitUniversalQuantifier(Univer
     // A x, y in D. x <-> A x in D. x or A x in D. E x in D. x <-> A x in D. x
     auto newExpr = removeUnusedVariables(std::make_shared<UniversalQuantifier>(opr));
 
-    return newExpr;
+std::shared_ptr<Expression> HydraRewriteVisitor::visitEventOperator(EventOperator &opr, Trace &trace, size_t index) {
+    return std::make_shared<EventOperator>(opr);
+}
+
+std::shared_ptr<Expression> HydraRewriteVisitor::visitResolvingOperator(ResolvingOperator &opr, Trace &trace,
+                                                                        size_t index) {
+    return std::make_shared<ResolvingOperator>(opr);
+}
+
+std::shared_ptr<Expression> HydraRewriteVisitor::visitDerivingOperator(DerivingOperator &opr, Trace &trace,
+                                                                       size_t index) {
+    return std::make_shared<DerivingOperator>(opr);
+}
+std::shared_ptr<Expression> HydraRewriteVisitor::visitPredicate(Predicate &opr, Trace &trace, size_t index) {
+    return std::make_shared<Predicate>(opr);
 }
 
 std::shared_ptr<Expression> HydraRewriteVisitor::visitExistentialQuantifier(ExistentialQuantifier &opr, Trace &trace,
