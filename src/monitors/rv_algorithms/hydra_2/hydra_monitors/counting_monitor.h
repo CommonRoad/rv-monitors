@@ -23,8 +23,8 @@ class CountingMonitor : public QuantifierMonitor {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @param shortCircuiting Boolean indicating whether short circuiting should be used.
      */
-    CountingMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
-                    std::map<std::string, std::string> variables, DomainCollection &domains,
+    CountingMonitor(Formula formula, const std::shared_ptr<Hydra2Monitor> &subMonitor, size_t monitorId,
+                    const std::map<std::string, std::string> &variables, DomainCollection &domains,
                     CountingQuantifier::Operator op, size_t num, bool connectedEval, bool shortCircuiting);
 
     /**

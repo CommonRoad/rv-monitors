@@ -99,10 +99,9 @@ RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration 
         monitor = std::make_unique<Hydra>(formulas);
         break;
     case hydra_2_mtl:
-        monitor =
-            std::make_unique<Hydra2>(formulas, domains, functions, configuration.hydraConnectedEvaluation,
-                                     configuration.hydraReordering, configuration.shortCircuiting,
-                                     configuration.earlyTermination, predicateCosts);
+        monitor = std::make_unique<Hydra2>(formulas, domains, functions, configuration.hydraConnectedEvaluation,
+                                           configuration.hydraReordering, configuration.shortCircuiting,
+                                           configuration.earlyTermination, predicateCosts);
         break;
     case event_consuming_mtl:
         monitor = std::make_unique<MTLEventConsuming>(formulas);
@@ -134,10 +133,10 @@ RVMonitor::RVMonitor(const Formula &formula, MonitorConfiguration configuration,
         monitor = std::make_unique<Hydra>(std::vector<Formula>{formula});
         break;
     case hydra_2_mtl:
-        monitor = std::make_unique<Hydra2>(std::vector<Formula>{formula}, domains, functions,
-                                           configuration.hydraConnectedEvaluation, configuration.hydraReordering,
-                                           configuration.shortCircuiting, configuration.earlyTermination,
-                                           predicateCosts);
+        monitor =
+            std::make_unique<Hydra2>(std::vector<Formula>{formula}, domains, functions,
+                                     configuration.hydraConnectedEvaluation, configuration.hydraReordering,
+                                     configuration.shortCircuiting, configuration.earlyTermination, predicateCosts);
         break;
     case event_consuming_mtl:
         monitor = std::make_unique<MTLEventConsuming>(std::vector<Formula>{formula});

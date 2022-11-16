@@ -23,7 +23,7 @@ TEST(TestHydra2, testFormulaType) {
 
 TEST(TestHydra2, specificFormulaTest) {
     auto testDataBase{TestDataBase()};
-    auto testCase = testDataBase.getTestSample("F6_1");
+    auto testCase = testDataBase.getTestSample("F11_1");
     hydraTestUtils::executeHydraEval(testCase.trace, {*testCase.formula}, {testCase.expectedResult});
 }
 
@@ -53,7 +53,8 @@ TEST(TestHydra2, formulaTestEarlyTermination) {
         if (std::any_of(excludedTestCases.begin(), excludedTestCases.end(),
                         [testCase](const std::string &name) { return name == testCase.formula->getId(); }))
             continue;
-        auto monitor{Hydra2({*testCase.formula}, {}, {}, false, false, false, true, {})};
+        auto monitor{Hydra2({*testCase.formula}, testCase.domainCollection, testCase.functionCollection, false, false,
+                            false, true, {})};
         auto trace{testCase.trace};
         EXPECT_TRUE(TestDataBase::mergeResult(monitor.evaluate(trace).at(testCase.formula->getId())) ==
                     TestDataBase::mergeResult(testCase.expectedResult))

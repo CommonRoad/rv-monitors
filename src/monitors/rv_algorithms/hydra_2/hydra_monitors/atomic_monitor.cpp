@@ -9,7 +9,7 @@
 Verdict AtomicMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     if (stepNumber < trace.getLength()) {
         const Atomic &atomic = *std::dynamic_pointer_cast<Atomic>(formula.getExpr());
-        auto event{trace.getEvent(traceIdx[parentId])};
+        auto event{trace.getEvent(stepNumber)};
 
         auto iter{variableValues.find(atomic.to_string())};
         if (iter !=

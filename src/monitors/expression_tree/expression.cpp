@@ -12,7 +12,6 @@ bool operator==(const Expression &expr1, const Expression &expr2) {
 }
 
 bool operator<(const Expression &expr1, const Expression &expr2) { return expr1.to_string() < expr2.to_string(); }
-// bool Expression::operator==(const Expression &expr) const { return expr.to_string() == this->to_string(); }
 
 bool Expression::isConstTrue() const { return to_string() == "true"; }
 

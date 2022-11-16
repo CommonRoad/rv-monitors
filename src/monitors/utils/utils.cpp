@@ -5,10 +5,10 @@
 
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/binary/binary.h"
-#include "monitors/expression_tree/first_order_operator.h"
 #include "monitors/expression_tree/binary/temporal/release.h"
 #include "monitors/expression_tree/binary/temporal/since.h"
 #include "monitors/expression_tree/binary/temporal/until.h"
+#include "monitors/expression_tree/first_order_operator.h"
 #include "monitors/expression_tree/nary/bool/and.h"
 #include "monitors/expression_tree/nary/bool/or.h"
 #include "monitors/expression_tree/nary/bool/xor.h"

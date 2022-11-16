@@ -1,9 +1,9 @@
 #include "quote_monitor.h"
-QuoteMonitor::QuoteMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
-                           std::map<std::string, std::string> variables, DomainCollection &domains, float minQuote,
-                           float maxQuote, bool connectedEval, bool shortCircuiting)
-    : QuantifierMonitor(std::move(formula), subMonitor, monitorId, std::move(variables), domains, connectedEval,
-                        shortCircuiting, 0.0, 0.0),
+QuoteMonitor::QuoteMonitor(Formula formula, const std::shared_ptr<Hydra2Monitor> &subMonitor, size_t monitorId,
+                           const std::map<std::string, std::string> &variables, DomainCollection &domains,
+                           float minQuote, float maxQuote, bool connectedEval, bool shortCircuiting)
+    : QuantifierMonitor(std::move(formula), subMonitor, monitorId, variables, domains, connectedEval, shortCircuiting,
+                        0.0, 0.0),
       minQuote(minQuote), maxQuote(maxQuote) {
     evalCost = computeCost(subMonitor, numberCombinations);
     satisfactionProbability = computeSatisfactionProbability(subMonitor, numberCombinations);

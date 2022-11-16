@@ -13,12 +13,9 @@ class EqualityOperatorMonitor : public Hydra2Monitor {
      * @param formula Formula to be monitored.
      * @param monitorId ID of monitor.
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
-     * @param evalCost Evaluation costs.
-     * @param satisfactionProbability Satisfaction probability.
      */
-    EqualityOperatorMonitor(Formula formula, size_t monitorId, bool connectedEval, double evalCost = 0,
-                            double satisfactionProbability = 100.0)
-        : Hydra2Monitor(std::move(formula), monitorId, connectedEval, evalCost, satisfactionProbability) {}
+    EqualityOperatorMonitor(Formula formula, size_t monitorId, bool connectedEval)
+        : Hydra2Monitor(std::move(formula), monitorId, connectedEval) {}
 
     /**
      * Performs concrete step of same function monitor. Constants and variables are compared for equality.

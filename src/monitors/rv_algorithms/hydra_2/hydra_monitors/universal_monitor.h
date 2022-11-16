@@ -20,8 +20,8 @@ class UniversalMonitor : public QuantifierMonitor {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @param shortCircuiting Boolean indicating whether short circuiting should be used.
      */
-    UniversalMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
-                     std::map<std::string, std::string> variables, DomainCollection &domains, bool connectedEval,
+    UniversalMonitor(Formula formula, const std::shared_ptr<Hydra2Monitor> &subMonitor, size_t monitorId,
+                     const std::map<std::string, std::string> &variables, DomainCollection &domains, bool connectedEval,
                      bool shortCircuiting);
 
     /**

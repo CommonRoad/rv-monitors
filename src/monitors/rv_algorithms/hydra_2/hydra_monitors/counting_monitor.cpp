@@ -1,11 +1,11 @@
 #include "counting_monitor.h"
 
-CountingMonitor::CountingMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
-                                 std::map<std::string, std::string> variables, DomainCollection &domains,
-                                 CountingQuantifier::Operator op, size_t num, bool connectedEval, bool shortCircuiting)
-    : QuantifierMonitor(std::move(formula), subMonitor, monitorId, std::move(variables), domains, connectedEval,
-                        shortCircuiting, 0.0, 0.0),
-      op(op), num(num) {
+CountingMonitor::CountingMonitor(Formula formula, const std::shared_ptr<Hydra2Monitor> &subMonitor, size_t monitorId,
+                                 const std::map<std::string, std::string> &variables, DomainCollection &domains,
+                                 CountingQuantifier::Operator opr, size_t num, bool connectedEval, bool shortCircuiting)
+    : QuantifierMonitor(std::move(formula), subMonitor, monitorId, variables, domains, connectedEval, shortCircuiting,
+                        0.0, 0.0),
+      op(opr), num(num) {
     evalCost = computeCost(subMonitor, numberCombinations);
     satisfactionProbability = computeSatisfactionProbability(subMonitor, numberCombinations);
 }

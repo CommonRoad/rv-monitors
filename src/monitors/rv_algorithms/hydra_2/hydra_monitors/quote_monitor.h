@@ -22,8 +22,8 @@ class QuoteMonitor : public QuantifierMonitor {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @param shortCircuiting Boolean indicating whether short circuiting should be used.
      */
-    QuoteMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
-                 std::map<std::string, std::string> variables, DomainCollection &domains, float minQuote,
+    QuoteMonitor(Formula formula, const std::shared_ptr<Hydra2Monitor> &subMonitor, size_t monitorId,
+                 const std::map<std::string, std::string> &variables, DomainCollection &domains, float minQuote,
                  float maxQuote, bool connectedEval, bool shortCircuiting);
 
     /**

@@ -21,8 +21,8 @@ class QuantifierMonitor : public Hydra2Monitor {
      * @param satisfactionProbability Satisfaction probability of monitor.
      */
     QuantifierMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
-                      std::map<std::string, std::string> variables, DomainCollection &domains, bool connectedEval,
-                      bool shortCircuiting, double cost, double satisfactionProbability);
+                      const std::map<std::string, std::string> &variables, DomainCollection &domains,
+                      bool connectedEval, bool shortCircuiting, double cost, double satisfactionProbability);
 
     /**
      * Performs concrete step of quantifier monitor. If the current step is not covered by the trace or

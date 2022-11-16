@@ -20,9 +20,9 @@ class ExistentialMonitor : public QuantifierMonitor {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @param shortCircuiting Boolean indicating whether short circuiting should be used.
      */
-    ExistentialMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
-                       std::map<std::string, std::string> variables, DomainCollection &domains, bool connectedEval,
-                       bool shortCircuiting);
+    ExistentialMonitor(Formula formula, const std::shared_ptr<Hydra2Monitor> &subMonitor, size_t monitorId,
+                       const std::map<std::string, std::string> &variables, DomainCollection &domains,
+                       bool connectedEval, bool shortCircuiting);
 
     /**
      * Performs concrete step of existential monitor. One of the subverdicts has to be true

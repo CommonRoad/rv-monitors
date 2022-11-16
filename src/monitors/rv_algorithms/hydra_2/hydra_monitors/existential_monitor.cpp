@@ -1,10 +1,10 @@
 #include "existential_monitor.h"
 
-ExistentialMonitor::ExistentialMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
-                                       std::map<std::string, std::string> variables, DomainCollection &domains,
-                                       bool connectedEval, bool shortCircuiting)
-    : QuantifierMonitor(std::move(formula), subMonitor, monitorId, std::move(variables), domains, connectedEval,
-                        shortCircuiting, 0.0, 0.0) {
+ExistentialMonitor::ExistentialMonitor(Formula formula, const std::shared_ptr<Hydra2Monitor> &subMonitor,
+                                       size_t monitorId, const std::map<std::string, std::string> &variables,
+                                       DomainCollection &domains, bool connectedEval, bool shortCircuiting)
+    : QuantifierMonitor(std::move(formula), subMonitor, monitorId, variables, domains, connectedEval, shortCircuiting,
+                        0.0, 0.0) {
     evalCost = computeCost(subMonitor, numberCombinations);
     satisfactionProbability = computeSatisfactionProbability(subMonitor, numberCombinations);
 }

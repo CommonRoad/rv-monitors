@@ -93,5 +93,5 @@ TEST(TestHydraRewriteVisitor, quantifierUnaryTempOperator) {
     auto formula_6 = Parser::parse("Q[0., 0.5] x in D. F(F(x))");
     HydraRewriteVisitor visitor_6;
     visitor_6.rewrite(formula_6);
-    EXPECT_EQ(formula_6.to_string(), "(true U[0, 10000] (true U[0, 10000] Q[0.000000, 0.500000] x in D. x))");
+    EXPECT_EQ(formula_6.to_string(), "(true U (true U Q[0.000000, 0.500000] x in D. x))");
 }

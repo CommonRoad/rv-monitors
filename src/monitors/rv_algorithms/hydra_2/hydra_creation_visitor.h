@@ -8,9 +8,9 @@
 
 #include "monitors/collections/domain_collection.h"
 #include "monitors/collections/function_collection.h"
+#include "monitors/utils/interval.h"
 #include <any>
 #include <functional>
-#include "monitors/utils/interval.h"
 #include <map>
 #include <memory>
 #include <optional>

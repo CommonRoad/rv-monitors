@@ -1,13 +1,13 @@
 #include "quantifier_monitor.h"
 
 QuantifierMonitor::QuantifierMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
-                                     std::map<std::string, std::string> variables, DomainCollection &domains,
+                                     const std::map<std::string, std::string> &variables, DomainCollection &domains,
                                      bool connectedEval, bool shortCircuiting, double cost,
                                      double satisfactionProbability)
     : Hydra2Monitor(std::move(formula), monitorId, connectedEval, cost, satisfactionProbability),
       subMonitor(std::move(subMonitor)), shortCircuiting(shortCircuiting) {
 
-    for (auto &[varName, domainName] : variables)
+    for (const auto &[varName, domainName] : variables)
         varDomains.emplace_back(varName, domains.getDomain(domainName));
 
     for (auto &varDomain : varDomains)
