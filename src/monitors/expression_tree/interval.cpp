@@ -18,8 +18,9 @@ std::string Interval::to_string() const {
             endStr = "inf";
         else
             endStr = std::to_string(end.value());
+        return "[" + std::to_string(this->start) + ", " + endStr + "]";
     }
-    return "[" + std::to_string(this->start) + ", " + endStr + "]";
+    return "";
 }
 
 int Interval::getStart() const { return start; }
