@@ -23,7 +23,7 @@ TEST(TestHydra2, testFormulaType) {
 
 TEST(TestHydra2, specificFormulaTest) {
     auto testDataBase{TestDataBase()};
-    auto testCase = testDataBase.getTestSample("F11_1");
+    auto testCase = testDataBase.getTestSample("F6_1");
     hydraTestUtils::executeHydraEval(testCase.trace, {*testCase.formula}, {testCase.expectedResult});
 }
 
@@ -44,7 +44,7 @@ TEST(TestHydra2, formulaTest) {
               << " failing formulas.";
 }
 
-TEST(TestBTT_FSMEvaluation, formulaTestEarlyTermination) {
+TEST(TestHydra2, formulaTestEarlyTermination) {
     std::vector<std::string> excludedTestCases{"F49_1"};
     size_t failures{0};
     auto testDataBase{TestDataBase()};
@@ -53,7 +53,7 @@ TEST(TestBTT_FSMEvaluation, formulaTestEarlyTermination) {
         if (std::any_of(excludedTestCases.begin(), excludedTestCases.end(),
                         [testCase](const std::string &name) { return name == testCase.formula->getId(); }))
             continue;
-        auto monitor{Hydra2({*testCase.formula}, false, false, false, true, {})};
+        auto monitor{Hydra2({*testCase.formula}, {}, {}, false, false, false, true, {})};
         auto trace{testCase.trace};
         EXPECT_TRUE(TestDataBase::mergeResult(monitor.evaluate(trace).at(testCase.formula->getId())) ==
                     TestDataBase::mergeResult(testCase.expectedResult))
