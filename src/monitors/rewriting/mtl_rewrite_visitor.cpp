@@ -48,19 +48,19 @@ void MtlRewriteVisitor::rewrite(Formula &formula) {
     }
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitAtomic(Atomic &op, Trace &trace, size_t index) {
-    return std::make_shared<Atomic>(op);
+std::shared_ptr<Expression> MtlRewriteVisitor::visitAtomic(Atomic &opr, Trace &trace, size_t index) {
+    return std::make_shared<Atomic>(opr);
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitConstant(Constant &op, Trace &trace, size_t index) {
-    return std::make_shared<Constant>(op);
+std::shared_ptr<Expression> MtlRewriteVisitor::visitConstant(Constant &opr, Trace &trace, size_t index) {
+    return std::make_shared<Constant>(opr);
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitAnd(And &op, Trace &trace, size_t index) {
-    visitExpression(op, trace, index);
+std::shared_ptr<Expression> MtlRewriteVisitor::visitAnd(And &opr, Trace &trace, size_t index) {
+    visitExpression(opr, trace, index);
 
     // I'm a copy!
-    auto expressions = op.getExpressions();
+    auto expressions = opr.getExpressions();
 
     // Check for false
     if (expressions.find(std::make_shared<Constant>(false)) != expressions.end()) {
@@ -125,9 +125,9 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitAnd(And &op, Trace &trace, s
     return std::make_shared<And>(expressions);
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitOr(Or &op, Trace &trace, size_t index) {
-    visitExpression(op, trace, index);
-    auto expressions = op.getExpressions();
+std::shared_ptr<Expression> MtlRewriteVisitor::visitOr(Or &opr, Trace &trace, size_t index) {
+    visitExpression(opr, trace, index);
+    auto expressions = opr.getExpressions();
 
     // Check for true
     if (expressions.find(std::make_shared<Constant>(true)) != expressions.end()) {
@@ -192,10 +192,10 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitOr(Or &op, Trace &trace, siz
     // return std::make_shared<Or>(expressions);
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitXor(Xor &op, Trace &trace, size_t index) {
-    visitExpression(op, trace, index);
+std::shared_ptr<Expression> MtlRewriteVisitor::visitXor(Xor &opr, Trace &trace, size_t index) {
+    visitExpression(opr, trace, index);
 
-    auto expressions = op.getExpressions();
+    auto expressions = opr.getExpressions();
 
     // !a ^ a = true
     RewriteVisitorUtils::reduceNegations<true>(expressions);
@@ -233,299 +233,300 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitXor(Xor &op, Trace &trace, s
     return std::make_shared<Xor>(newXorSet);
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitImplication(Implication &op, Trace &trace, size_t index) {
-    visitExpression(op, trace, index);
+std::shared_ptr<Expression> MtlRewriteVisitor::visitImplication(Implication &opr, Trace &trace, size_t index) {
+    visitExpression(opr, trace, index);
     // a -> a = true
-    if (*op.getLeft() == *op.getRight()) {
+    if (*opr.getLeft() == *opr.getRight()) {
         return std::make_shared<Constant>(true);
     }
     // true -> false = false
-    if (op.getLeft()->isConstTrue() && op.getRight()->isConstFalse()) {
+    if (opr.getLeft()->isConstTrue() && opr.getRight()->isConstFalse()) {
         return std::make_shared<Constant>(false);
     }
     // a -> true = true
-    if (op.getRight()->isConstTrue()) {
+    if (opr.getRight()->isConstTrue()) {
         return std::make_shared<Constant>(true);
     }
     // false -> a = true
-    if (op.getLeft()->isConstFalse()) {
+    if (opr.getLeft()->isConstFalse()) {
         return std::make_shared<Constant>(true);
     }
 
     //    // a -> b = true ^ a ^ a & b
-    //    And::SetType_T andSet{op.getLeft(), op.getRight()};
+    //    And::SetType_T andSet{opr.getLeft(), opr.getRight()};
     //    auto andExpr = std::make_shared<And>(andSet);
-    //    Xor::SetType_T xorSet{std::make_shared<Constant>(true), op.getLeft(), andExpr};
+    //    Xor::SetType_T xorSet{std::make_shared<Constant>(true), opr.getLeft(), andExpr};
     //    return std::make_shared<Xor>(xorSet);
 
     // a -> b = a v !b
-    auto negExpr{std::make_shared<Not>(op.getLeft())};
-    Or::SetType_T orSet{op.getRight(), negExpr};
+    auto negExpr{std::make_shared<Not>(opr.getLeft())};
+    Or::SetType_T orSet{opr.getRight(), negExpr};
     auto orExpr{std::make_shared<Or>(orSet)};
     return orExpr;
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitEquivalence(Equivalence &op, Trace &trace, size_t index) {
-    if (op.getLeft() == op.getRight()) {
+std::shared_ptr<Expression> MtlRewriteVisitor::visitEquivalence(Equivalence &opr, Trace &trace, size_t index) {
+    if (opr.getLeft() == opr.getRight()) {
         return std::make_shared<Constant>(true);
     }
 
     // a <-> b = true ^ a ^ b
     auto trueExpr = std::make_shared<Constant>(true);
-    Xor::SetType_T xorSet{op.getLeft(), op.getRight(), trueExpr};
+    Xor::SetType_T xorSet{opr.getLeft(), opr.getRight(), trueExpr};
     return std::make_shared<Xor>(xorSet);
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitNot(Not &op, Trace &trace, size_t index) {
-    visitExpression(op, trace, index);
+std::shared_ptr<Expression> MtlRewriteVisitor::visitNot(Not &opr, Trace &trace, size_t index) {
+    visitExpression(opr, trace, index);
     // !true = false
-    if (op.getLeft()->isConstTrue()) {
+    if (opr.getLeft()->isConstTrue()) {
         return std::make_shared<Constant>(false);
     }
     // !false = true
-    if (op.getLeft()->isConstFalse()) {
+    if (opr.getLeft()->isConstFalse()) {
         return std::make_shared<Constant>(true);
     }
 
     // !a = true ^ a
-    Xor::SetType_T xorSet{std::make_shared<Constant>(true), op.getLeft()};
+    Xor::SetType_T xorSet{std::make_shared<Constant>(true), opr.getLeft()};
     return std::make_shared<Xor>(xorSet);
-    //    return std::make_shared<Not>(op);
+    //    return std::make_shared<Not>(opr);
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitFuture(Future &op, Trace &trace, size_t index) {
-    visitExpression(op, trace, index);
+std::shared_ptr<Expression> MtlRewriteVisitor::visitFuture(Future &opr, Trace &trace, size_t index) {
+    visitExpression(opr, trace, index);
     // F(false) = false
-    if (op.getLeft()->isConstFalse()) {
+    if (opr.getLeft()->isConstFalse()) {
         return std::make_shared<Constant>(false);
     }
     // Idempotence F(F(a)) = F(a)
-    if (auto future = std::dynamic_pointer_cast<Future>(op.getLeft())) {
+    if (auto future = std::dynamic_pointer_cast<Future>(opr.getLeft())) {
         return future;
     }
 
     // Absorption F(G(F(a))) = G(F(a))
-    if (auto globally = std::dynamic_pointer_cast<Globally>(op.getLeft())) {
+    if (auto globally = std::dynamic_pointer_cast<Globally>(opr.getLeft())) {
         if (std::dynamic_pointer_cast<Future>(globally->getLeft())) {
             return globally;
         }
     }
 
     //    // F(a) = !G(!a) <- might not be correct (not sure)
-    //    auto negateFormula = std::make_shared<Not>(op.getLeft());
-    //    auto globalExpr = std::make_shared<Globally>(negateFormula, op.getInterval());
+    //    auto negateFormula = std::make_shared<Not>(opr.getLeft());
+    //    auto globalExpr = std::make_shared<Globally>(negateFormula, opr.getInterval());
     //    return std::make_shared<Not>(globalExpr);
 
     //     F(a) = true U a
-    Until until{std::make_shared<Constant>(true), op.getLeft(), op.getInterval()};
+    Until until{std::make_shared<Constant>(true), opr.getLeft(), opr.getInterval()};
     return std::make_shared<Until>(until);
-    //       return std::make_shared<Future>(op.getLeft(), op.getInterval());
+    //       return std::make_shared<Future>(opr.getLeft(), opr.getInterval());
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitGlobally(Globally &op, Trace &trace, size_t index) {
-    visitExpression(op, trace, index);
+std::shared_ptr<Expression> MtlRewriteVisitor::visitGlobally(Globally &opr, Trace &trace, size_t index) {
+    visitExpression(opr, trace, index);
     // G(false) = false
-    if (op.getLeft()->isConstFalse()) {
+    if (opr.getLeft()->isConstFalse()) {
         return std::make_shared<Constant>(false);
     }
     // G(true) = true
-    if (op.getLeft()->isConstTrue()) {
+    if (opr.getLeft()->isConstTrue()) {
         return std::make_shared<Constant>(true);
     }
     //        // Idempotence
-    //        if ( auto globally = std::dynamic_pointer_cast<Globally>(op.getLeft()) ) {
+    //        if ( auto globally = std::dynamic_pointer_cast<Globally>(opr.getLeft()) ) {
     //            return globally;
     //        }
 
     //    // Absorption G(F(G(a))) = F(G(a))
-    //    if (auto future = std::dynamic_pointer_cast<Future>(op.getLeft())) {
+    //    if (auto future = std::dynamic_pointer_cast<Future>(opr.getLeft())) {
     //        if (std::dynamic_pointer_cast<Globally>(future->getLeft())) {
     //            return future;
     //        }
     //    }
 
     // G(a) = not F(not a) = true ^ F(true ^ a)
-    //    Xor::SetType_T xorSetOne{std::make_shared<Constant>(true), op.getLeft()};
-    //    auto future {std::make_shared<Future>(std::make_shared<Xor>(xorSetOne), op.getInterval())};
+    //    Xor::SetType_T xorSetOne{std::make_shared<Constant>(true), opr.getLeft()};
+    //    auto future {std::make_shared<Future>(std::make_shared<Xor>(xorSetOne), opr.getInterval())};
     //    Xor::SetType_T xorSetTwo{std::make_shared<Constant>(true), future};
     //    return std::make_shared<Xor>(xorSetTwo);
 
     //     G(a) = not F(not a) = ! (true U ! a)
-    //        auto future{std::make_shared<Future>(std::make_shared<Not>(op.getLeft()), op.getInterval())};
+    //        auto future{std::make_shared<Future>(std::make_shared<Not>(opr.getLeft()), opr.getInterval())};
     //        return std::make_shared<Not>(future);
     return std::make_shared<Not>(std::make_shared<Until>(std::make_shared<Constant>(true),
-                                                         std::make_shared<Not>(op.getLeft()), op.getInterval()));
+                                                         std::make_shared<Not>(opr.getLeft()), opr.getInterval()));
 
-    //    return std::make_shared<Globally>(op.getLeft(), op.getInterval());
+    //    return std::make_shared<Globally>(opr.getLeft(), opr.getInterval());
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitHistorically(Historically &op, Trace &trace, size_t index) {
-    visitExpression(op, trace, index);
+std::shared_ptr<Expression> MtlRewriteVisitor::visitHistorically(Historically &opr, Trace &trace, size_t index) {
+    visitExpression(opr, trace, index);
     // H(false) = false
-    if (op.getLeft()->isConstFalse()) {
+    if (opr.getLeft()->isConstFalse()) {
         return std::make_shared<Constant>(false);
     }
     // H(true) = true
-    if (op.getLeft()->isConstTrue()) {
+    if (opr.getLeft()->isConstTrue()) {
         return std::make_shared<Constant>(true);
     }
     // Idempotence
-    if (auto historically = std::dynamic_pointer_cast<Historically>(op.getLeft())) {
+    if (auto historically = std::dynamic_pointer_cast<Historically>(opr.getLeft())) {
         return historically;
     }
     // Absorption H(O(H(a))) = O(H(a))
-    if (auto once = std::dynamic_pointer_cast<Once>(op.getLeft())) {
+    if (auto once = std::dynamic_pointer_cast<Once>(opr.getLeft())) {
         if (std::dynamic_pointer_cast<Historically>(once->getLeft())) {
             return once;
         }
     }
 
     // H(a) = not O(not a) = true ^ O(true ^ a)
-    //    Xor::SetType_T xorSetOne{std::make_shared<Constant>(true), op.getLeft()};
-    //    auto once {std::make_shared<Once>(std::make_shared<Xor>(xorSetOne), op.getInterval())};
+    //    Xor::SetType_T xorSetOne{std::make_shared<Constant>(true), opr.getLeft()};
+    //    auto once {std::make_shared<Once>(std::make_shared<Xor>(xorSetOne), opr.getInterval())};
     //    Xor::SetType_T xorSetTwo{std::make_shared<Constant>(true), once};
     //
     //    return std::make_shared<Xor>(xorSetTwo);
 
     // H(a) = not O(not a)
-    //    auto once{std::make_shared<Once>(std::make_shared<Not>(op.getLeft()), op.getInterval())};
+    //    auto once{std::make_shared<Once>(std::make_shared<Not>(opr.getLeft()), opr.getInterval())};
     //    return std::make_shared<Not>(once);
 
     // H(a) = !a S a  // I dont think this rewriting is correct
     // H(a) = !(true S (!a))
     return std::make_shared<Not>(std::make_shared<Since>(std::make_shared<Constant>(true),
-                                                         std::make_shared<Not>(op.getLeft()), op.getInterval()));
+                                                         std::make_shared<Not>(opr.getLeft()), opr.getInterval()));
 
-    return std::make_shared<Historically>(op);
+    return std::make_shared<Historically>(opr);
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitNextStrong(NextStrong &op, Trace &trace, size_t index) {
-    visitExpression(op, trace, index);
+std::shared_ptr<Expression> MtlRewriteVisitor::visitNextStrong(NextStrong &opr, Trace &trace, size_t index) {
+    visitExpression(opr, trace, index);
     // X(false) = false
     auto false_constant = std::make_shared<Constant>(false);
 
-    if (op.getLeft()->isConstFalse()) {
+    if (opr.getLeft()->isConstFalse()) {
         return false_constant;
     }
 
     //     X(a) = false U a
-    // return std::make_shared<Until>(false_constant, op.getLeft(), op.getInterval());
-    return std::make_shared<NextStrong>(op);
+    // return std::make_shared<Until>(false_constant, opr.getLeft(), opr.getInterval());
+    return std::make_shared<NextStrong>(opr);
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitNextWeak(NextWeak &op, Trace &trace, size_t index) {
-    visitExpression(op, trace, index);
-    return std::make_shared<NextWeak>(op);
+std::shared_ptr<Expression> MtlRewriteVisitor::visitNextWeak(NextWeak &opr, Trace &trace, size_t index) {
+    visitExpression(opr, trace, index);
+    return std::make_shared<NextWeak>(opr);
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitOnce(Once &op, Trace &trace, size_t index) {
-    visitExpression(op, trace, index);
+std::shared_ptr<Expression> MtlRewriteVisitor::visitOnce(Once &opr, Trace &trace, size_t index) {
+    visitExpression(opr, trace, index);
     // O(false) = false
-    if (op.getLeft()->isConstFalse()) {
+    if (opr.getLeft()->isConstFalse()) {
         return std::make_shared<Constant>(false);
     }
 
     // Idempotence
-    if (auto once = std::dynamic_pointer_cast<Once>(op.getLeft())) {
+    if (auto once = std::dynamic_pointer_cast<Once>(opr.getLeft())) {
         return once;
     }
 
     // O(a) = true S a
-    // Since since{std::make_shared<Constant>(true), op.getLeft(), op.getInterval()};
-    return std::make_shared<Since>(std::make_shared<Constant>(true), op.getLeft(), op.getInterval());
-    //     return std::make_shared<Once>(op.getLeft(), op.getInterval());
+    // Since since{std::make_shared<Constant>(true), opr.getLeft(), opr.getInterval()};
+    return std::make_shared<Since>(std::make_shared<Constant>(true), opr.getLeft(), opr.getInterval());
+    //     return std::make_shared<Once>(opr.getLeft(), opr.getInterval());
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitPreviously(Previously &op, Trace &trace, size_t index) {
-    visitExpression(op, trace, index);
-    return std::make_shared<Previously>(op);
+std::shared_ptr<Expression> MtlRewriteVisitor::visitPreviously(Previously &opr, Trace &trace, size_t index) {
+    visitExpression(opr, trace, index);
+    return std::make_shared<Previously>(opr);
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitRelease(Release &op, Trace &trace, size_t index) {
-    visitExpression(op, trace, index);
+std::shared_ptr<Expression> MtlRewriteVisitor::visitRelease(Release &opr, Trace &trace, size_t index) {
+    visitExpression(opr, trace, index);
     // a R true = true
-    if (op.getRight()->isConstTrue()) {
+    if (opr.getRight()->isConstTrue()) {
         return std::make_shared<Constant>(true);
     }
     // a R false = false
-    if (op.getRight()->isConstFalse()) {
+    if (opr.getRight()->isConstFalse()) {
         return std::make_shared<Constant>(false);
     }
 
     // Idempotence
-    if (auto release = std::dynamic_pointer_cast<Release>(op.getLeft())) {
-        if (release->getRight() == op.getRight()) {
+    if (auto release = std::dynamic_pointer_cast<Release>(opr.getLeft())) {
+        if (release->getRight() == opr.getRight()) {
             return release;
         }
     }
-    if (auto release = std::dynamic_pointer_cast<Release>(op.getRight())) {
-        if (release->getLeft() == op.getLeft()) {
+    if (auto release = std::dynamic_pointer_cast<Release>(opr.getRight())) {
+        if (release->getLeft() == opr.getLeft()) {
             return release;
         }
     }
 
     // f1 R f2 = !f1 U !f2
-    return std::make_shared<Until>(std::make_shared<Not>(op.getLeft()), std::make_shared<Not>(op.getRight()),
-                                   op.getInterval());
+    return std::make_shared<Until>(std::make_shared<Not>(opr.getLeft()), std::make_shared<Not>(opr.getRight()),
+                                   opr.getInterval());
 
-    return std::make_shared<Release>(op);
+    return std::make_shared<Release>(opr);
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitUntil(Until &op, Trace &trace, size_t index) {
-    visitExpression(op, trace, index);
+std::shared_ptr<Expression> MtlRewriteVisitor::visitUntil(Until &opr, Trace &trace, size_t index) {
+    visitExpression(opr, trace, index);
     // a U false = false
-    if (op.getRight()->isConstFalse()) {
+    if (opr.getRight()->isConstFalse()) {
         return std::make_shared<Constant>(false);
     }
 
     // Idempotence
-    if (auto until = std::dynamic_pointer_cast<Until>(op.getLeft())) {
-        if (until->getRight() == op.getRight()) {
+    if (auto until = std::dynamic_pointer_cast<Until>(opr.getLeft())) {
+        if (until->getRight() == opr.getRight()) {
             return until;
         }
     }
-    if (auto until = std::dynamic_pointer_cast<Until>(op.getRight())) {
-        if (until->getLeft() == op.getLeft()) {
+    if (auto until = std::dynamic_pointer_cast<Until>(opr.getRight())) {
+        if (until->getLeft() == opr.getLeft()) {
             return until;
         }
     }
-    return std::make_shared<Until>(op.getLeft(), op.getRight(), op.getInterval());
+    return std::make_shared<Until>(opr.getLeft(), opr.getRight(), opr.getInterval());
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitSince(Since &op, Trace &trace, size_t index) {
-    visitExpression(op, trace, index);
+std::shared_ptr<Expression> MtlRewriteVisitor::visitSince(Since &opr, Trace &trace, size_t index) {
+    visitExpression(opr, trace, index);
     // a U false = false
-    if (op.getRight()->isConstFalse()) {
+    if (opr.getRight()->isConstFalse()) {
         return std::make_shared<Constant>(false);
     }
 
     // Idempotence
-    if (auto since = std::dynamic_pointer_cast<Since>(op.getLeft())) {
-        if (since->getRight() == op.getRight()) {
+    if (auto since = std::dynamic_pointer_cast<Since>(opr.getLeft())) {
+        if (since->getRight() == opr.getRight()) {
             return since;
         }
     }
-    if (auto since = std::dynamic_pointer_cast<Since>(op.getRight())) {
-        if (since->getLeft() == op.getLeft()) {
+    if (auto since = std::dynamic_pointer_cast<Since>(opr.getRight())) {
+        if (since->getLeft() == opr.getLeft()) {
             return since;
         }
     }
 
-    return std::make_shared<Since>(op.getLeft(), op.getRight(), op.getInterval());
+    return std::make_shared<Since>(opr.getLeft(), opr.getRight(), opr.getInterval());
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitEventOperator(EventOperator &op, Trace &trace, size_t index) {
-    return std::make_shared<EventOperator>(op);
+std::shared_ptr<Expression> MtlRewriteVisitor::visitEventOperator(EventOperator &opr, Trace &trace, size_t index) {
+    return std::make_shared<EventOperator>(opr);
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitResolvingOperator(ResolvingOperator &op, Trace &trace,
+std::shared_ptr<Expression> MtlRewriteVisitor::visitResolvingOperator(ResolvingOperator &opr, Trace &trace,
                                                                       size_t index) {
-    return std::make_shared<ResolvingOperator>(op);
+    return std::make_shared<ResolvingOperator>(opr);
 }
 
-std::shared_ptr<Expression> MtlRewriteVisitor::visitDerivingOperator(DerivingOperator &op, Trace &trace, size_t index) {
-    return std::make_shared<DerivingOperator>(op);
+std::shared_ptr<Expression> MtlRewriteVisitor::visitDerivingOperator(DerivingOperator &opr, Trace &trace,
+                                                                     size_t index) {
+    return std::make_shared<DerivingOperator>(opr);
 }
-std::shared_ptr<Expression> MtlRewriteVisitor::visitPredicate(Predicate &op, Trace &trace, size_t index) {
-    return std::make_shared<Predicate>(op);
+std::shared_ptr<Expression> MtlRewriteVisitor::visitPredicate(Predicate &opr, Trace &trace, size_t index) {
+    return std::make_shared<Predicate>(opr);
 }
