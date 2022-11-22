@@ -120,11 +120,11 @@ target_include_directories(${LIBRARY_NAME}
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
+        spdlog::spdlog
         )
 
 target_link_libraries(${LIBRARY_NAME} PRIVATE
         antlr4cpp
-        spdlog::spdlog
         )
 
 add_executable(rvmonitors_eval monitors/evaluation/evaluation.cpp)
