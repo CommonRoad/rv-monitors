@@ -11,7 +11,6 @@
 #include "monitors/expression_tree/unary/temporal/globally.h"
 #include "mtl_event_consuming_visitor.h"
 #include <iostream>
-#include <spdlog/spdlog.h>
 
 MTLEventConsuming::MTLEventConsuming(const std::vector<Formula> &formulas)
     : MonitorInterface(formulas, AlgorithmType::event_consuming_mtl) {}
@@ -20,7 +19,7 @@ std::map<std::string, std::vector<Verdict>> MTLEventConsuming::evaluate(Trace &t
     std::map<std::string, std::vector<Verdict>> result;
     // Empty trace
     if (trace.getTrace().empty()) {
-        spdlog::info("Hydra::evaluate | Trace is empty");
+        std::cout << "Hydra2::evaluate | Trace is empty\n";
         result[formulas.at(0).getId()] = {};
         return result;
     }

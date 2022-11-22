@@ -126,10 +126,6 @@ target_link_libraries(${LIBRARY_NAME} PRIVATE
         antlr4cpp
         )
 
-target_link_libraries(${LIBRARY_NAME} PUBLIC
-        spdlog
-        )
-
 add_executable(rvmonitors_eval monitors/evaluation/evaluation.cpp)
 target_link_libraries(rvmonitors_eval
     PUBLIC
