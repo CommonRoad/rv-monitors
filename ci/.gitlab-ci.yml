@@ -8,7 +8,7 @@ stages:
 
 
 
-image: $CI_REGISTRY/cps/rapid-prototyping-setup/ci:1.2
+image: $CI_REGISTRY/cps/rapid-prototyping-setup/ci:1.5
 
 ### static test ###
 clang-format:
