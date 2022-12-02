@@ -514,7 +514,7 @@ class Visitor : public FormulaBaseVisitor {
      */
     antlrcpp::Any visitFiniteInterval(FormulaParser::FiniteIntervalContext *ctx) override {
         bool finite{false};
-        if (visit(ctx->u).as<int>() > 0)
+        if (visit(ctx->u).as<int>() >= 0)
             finite = true;
         auto lower = visit(ctx->l).as<int>();
         auto upper = visit(ctx->u).as<int>();
