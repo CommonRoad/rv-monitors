@@ -853,6 +853,34 @@ TestDataBase::TestDataBase() {
             createExpectedResult({true, true, true, true, true, false, true, true, true, true, true, true, true}),
             {{"d"}, {"d"}, {"d"}, {"d"}, {"d"}, {"b", "d"}, {"d"}, {"d"}, {"d"}, {}, {}, {}, {}},
         },
+        {
+            "F77_1",
+            "G(a U[0,0] b)",
+            createExpectedResult({{0, false}, {1, true}, {2, true}, {3, false}, {4, false}}),
+            {{"a"}, {"a", "b"}, {"a", "b"}, {}, {}},
+            {0, 1, 2, 3, 4},
+        },
+        {
+            "F78_1",
+            "G(X[0,0] a)",
+            createExpectedResult({{0, false}, {1, false}, {2, false}, {3, false}, {4, false}}),
+            {{"a"}, {"a", "b"}, {"a", "b"}, {}, {}},
+            {0, 1, 2, 3, 4},
+        },
+        {
+            "F79_1",
+            "G((b U[0,0] (P[0,8] a)) U[0,10] (X[0,0] a))",
+            createExpectedResult({{0, false}, {1, false}, {2, false}, {3, false}, {4, false}, {5, false}}),
+            {{"a"}, {"a"}, {"a"}, {"a", "b"}, {"a"}, {"b"}},
+            {0, 1, 2, 3, 4, 5},
+        },
+        {
+            "F80_1",
+            "G((a U[0,0] (P[0,8] b)))",
+            createExpectedResult({{0, false}, {1, false}, {2, true}, {3, true}, {4, false}}),
+            {{"a"}, {"a", "b"}, {"a", "b"}, {}, {}},
+            {0, 1, 2, 3, 4},
+        },
     };
 }
 

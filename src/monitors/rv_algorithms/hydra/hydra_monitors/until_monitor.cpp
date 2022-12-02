@@ -38,6 +38,8 @@ Verdict UntilMonitorHydra::concreteStep() {
     subVerdictH = subMonitorH->concreteStep();
     if (subVerdictH->timeStamp)
         positionMonitorH.update(subVerdictH->timeStamp.value());
+    else
+        return {false};
 
     if (last_sat && last_sat->second < positionMonitorH.tp)
         last_sat = {};
