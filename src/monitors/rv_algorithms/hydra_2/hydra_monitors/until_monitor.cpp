@@ -26,6 +26,8 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     subVerdictBaseTimeStep = subMonitorBaseTimeStep->step(monitorId, stepNumber, true);
     if (subVerdictBaseTimeStep->timeStamp)
         headPositionMonitorBaseTimeStep.update(subVerdictBaseTimeStep->timeStamp.value());
+    else
+        return {false};
 
     if (lastSatisfaction &&
         lastSatisfaction->traceIdx <

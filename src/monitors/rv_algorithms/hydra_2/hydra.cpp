@@ -22,7 +22,7 @@ std::map<std::string, std::vector<Verdict>> Hydra2::evaluate(Trace &trace) {
             result[mon->getFormulaId()].reserve(trace.getLength());
     else
         for (const auto &mon : monitors)
-            result[mon->getFormulaId()].push_back(true); // only single verdict required
+            result[mon->getFormulaId()].emplace_back(true); // only single verdict required
 
     if (!earlyTermination)
         for (size_t i{0}; i < trace.getLength(); ++i)
