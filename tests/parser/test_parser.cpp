@@ -62,6 +62,9 @@ TEST(TestParser, interval) {
 
     formula = Parser::parse("X(a)");
     EXPECT_EQ(formula.to_string(), "X(a)");
+
+    formula = Parser::parse("X[0, 0](a)");
+    EXPECT_EQ(formula.to_string(), "X[0, 0](a)");
 }
 
 TEST(TestParser, constant_formula) {
