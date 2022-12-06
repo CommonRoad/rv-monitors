@@ -85,6 +85,13 @@ TestDataBase::TestDataBase() {
             {0, 1, 2, 3, 4, 5, 6},
         },
         {
+            "F5_5",
+            "G((a)U[0, 4](b))",
+            createExpectedResult({{0, true}, {1, true}, {2, true}, {3, true}, {4, false}, {5, false}, {6, false}}),
+            {{"a"}, {"a"}, {"a"}, {"a", "b"}, {"a"}, {"a"}, {"a"}},
+            {0, 1, 2, 3, 4, 5, 6},
+        },
+        {
             "F6_1",
             "G(((a)U[0, 4](b)) and a)",
             createExpectedResult({{0, true}, {0, true}, {2, true}, {4, true}, {5, false}, {10, false}}),
@@ -879,6 +886,20 @@ TestDataBase::TestDataBase() {
             "G((a U[0,0] (P[0,8] b)))",
             createExpectedResult({{0, false}, {1, false}, {2, true}, {3, true}, {4, false}}),
             {{"a"}, {"a", "b"}, {"a", "b"}, {}, {}},
+            {0, 1, 2, 3, 4},
+        },
+        {
+            "F81_1",
+            "G((b S a) & (X(G(b)) | X(b U c)))",
+            createExpectedResult({{0, true}, {1, true}, {2, true}, {3, true}, {4, false}}),
+            {{"a", "c"}, {"a", "b"}, {"b"}, {"b"}, {"b"}},
+            {0, 1, 2, 3, 4},
+        },
+        {
+            "F82_1",
+            "G(X(b))",
+            createExpectedResult({{0, true}, {1, true}, {2, true}, {3, true}, {4, false}}),
+            {{"a", "c"}, {"a", "b"}, {"b"}, {"b"}, {"b"}},
             {0, 1, 2, 3, 4},
         },
     };
