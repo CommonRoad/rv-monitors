@@ -1,4 +1,4 @@
-#include "implication.h"
+#include "monitors/expression_tree/binary/bool/implication.h"
 
 std::shared_ptr<Expression> Implication::clone() { return std::make_shared<Implication>(*this); }
 

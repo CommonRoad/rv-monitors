@@ -4,7 +4,7 @@
 // Copyright (c) 2021 Technical University of Munich. All rights reserved.
 // Credits: BMW Car@TUM
 //
-#include "computation_time_generator.h"
+#include "monitors/utils/generators/computation_time_generator/computation_time_generator.h"
 #include <chrono>
 
 std::shared_ptr<Expression> ComputationTimeGenerator::generateAtom(size_t delay_index) {

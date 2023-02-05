@@ -1,4 +1,4 @@
-#include "atomic.h"
+#include "monitors/expression_tree/atomic/atomic.h"
 
 std::string Atomic::to_string() const { return this->getSymbol(); }
 

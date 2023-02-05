@@ -1,4 +1,4 @@
-#include "hydra_rewrite_visitor.h"
+#include "monitors/rewriting/hydra_rewrite_visitor.h"
 #include "monitors/expression_tree/atomic/atomic.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/atomic/predicate.h"

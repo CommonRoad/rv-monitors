@@ -4,12 +4,12 @@
 // Copyright (c) 2021 Technical University of Munich. All rights reserved.
 // Credits: BMW Car@TUM
 //
-#include "mtl_event_consuming.h"
-#include "../../rewriting/mtl_rewrite_visitor.h"
+#include "monitors/rv_algorithms/mtl_event_consuming//mtl_event_consuming.h"
+#include "monitors//rewriting/mtl_rewrite_visitor.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/unary/event_operator.h"
 #include "monitors/expression_tree/unary/temporal/globally.h"
-#include "mtl_event_consuming_visitor.h"
+#include "monitors/rv_algorithms/mtl_event_consuming//mtl_event_consuming_visitor.h"
 #include <iostream>
 
 MTLEventConsuming::MTLEventConsuming(const std::vector<Formula> &formulas)
