@@ -2,7 +2,7 @@
 // Created by Sebastian Maierhofer on 12.01.21.
 //
 
-#include "interval.h"
+#include "monitors/expression_tree/interval.h"
 #include "cassert"
 
 Interval::Interval(int start, int end) : start(start), end(end), finite(true), empty(false) {}

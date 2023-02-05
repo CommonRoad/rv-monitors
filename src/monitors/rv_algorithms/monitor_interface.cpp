@@ -4,7 +4,7 @@
 // Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
 // Credits: BMW Car@TUM
 //
-#include "monitor_interface.h"
+#include "monitors/rv_algorithms/monitor_interface.h"
 
 #include <utility>
 

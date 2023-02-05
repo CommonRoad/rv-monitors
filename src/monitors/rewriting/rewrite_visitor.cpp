@@ -1,4 +1,4 @@
-#include "rewrite_visitor.h"
+#include "monitors/rewriting/rewrite_visitor.h"
 #include "monitors/expression_tree/atomic/atomic.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/atomic/predicate.h"
@@ -24,8 +24,8 @@
 #include "monitors/expression_tree/unary/temporal/once.h"
 #include "monitors/expression_tree/unary/temporal/previously.h"
 #include "monitors/expression_tree/unary/unary.h"
+#include "monitors/rewriting/rewrite_visitor_utils.h"
 #include "monitors/trace/event.h"
-#include "rewrite_visitor_utils.h"
 #include <iostream>
 
 void RewriteVisitor::rewrite(Formula &formula) {

@@ -1,4 +1,4 @@
-#include "equivalence.h"
+#include "monitors/expression_tree/binary/bool/equivalence.h"
 
 std::shared_ptr<Expression> Equivalence::clone() { return std::make_shared<Equivalence>(*this); }
 

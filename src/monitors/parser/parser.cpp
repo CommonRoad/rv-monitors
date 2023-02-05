@@ -1,11 +1,11 @@
-#include "parser.h"
-#include "log_visitor.h"
-#include "monitors/parser/gen/FormulaLexer.h"
-#include "monitors/parser/gen/FormulaParser.h"
-#include "monitors/parser/gen/LogLexer.h"
-#include "monitors/parser/gen/LogParser.h"
-#include "visitor.h"
+#include "monitors/parser/parser.h"
+#include "monitors/parser/log_visitor.h"
+#include "monitors/parser/visitor.h"
 #include <ANTLRInputStream.h>
+#include <monitors/parser/generated/FormulaGrammarParser/FormulaLexer.h>
+#include <monitors/parser/generated/FormulaGrammarParser/FormulaParser.h>
+#include <monitors/parser/generated/LogGrammarParser/LogLexer.h>
+#include <monitors/parser/generated/LogGrammarParser/LogParser.h>
 
 Formula Parser::parse(const std::string &formula, const std::string &formulaId) {
 
@@ -16,7 +16,7 @@ Formula Parser::parse(const std::string &formula, const std::string &formulaId) 
     FormulaParser parser(&tokens);
     antlr4::tree::ParseTree *treePointer = parser.formula();
     Visitor visitor;
-    Formula form{visitor.visit(treePointer).as<Formula>()};
+    Formula form{std::any_cast<Formula>(visitor.visit(treePointer))};
     form.setId(formulaId);
     return form;
 }
@@ -29,6 +29,6 @@ Trace Parser::parse_log(const std::string &log) {
     LogParser parser(&tokens);
     antlr4::tree::ParseTree *treePointer = parser.log();
     impl::LogVisitor visitor;
-    Trace trace{visitor.visit(treePointer).as<Trace>()};
+    Trace trace{std::any_cast<Trace>(visitor.visit(treePointer))};
     return trace;
 }

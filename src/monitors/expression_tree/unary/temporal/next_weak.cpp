@@ -1,4 +1,4 @@
-#include "next_weak.h"
+#include "monitors/expression_tree/unary/temporal/next_weak.h"
 
 std::shared_ptr<Expression> NextWeak::clone() { return std::make_shared<NextWeak>(*this); }
 

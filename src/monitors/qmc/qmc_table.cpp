@@ -1,6 +1,6 @@
-#include "qmc_table.h"
+#include "monitors/qmc/qmc_table.h"
 #include "monitors/parser/parser.h"
-#include "qmc.h"
+#include "monitors/qmc/qmc.h"
 
 #include <algorithm>
 #include <monitors/utils/utils.h>

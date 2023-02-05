@@ -8,15 +8,20 @@ stages:
 
 
 
-image: $CI_REGISTRY/cps/rapid-prototyping-setup/ci:1.5
+image: $CI_REGISTRY/cps/rapid-prototyping-setup/ci-lite:1.1
+
+before_script:
+  - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lrz.de/".insteadOf "git@gitlab.lrz.de:"
 
 ### static test ###
 clang-format:
+  image: $CI_REGISTRY/cps/rapid-prototyping-setup/ci:1.4
   stage: static-test
   script: bash ./ci/clang-format.sh
   needs: []
 
 clang-tidy:
+  image: $CI_REGISTRY/cps/rapid-prototyping-setup/ci:1.4
   stage: static-test
   script: bash ./ci/clang-tidy.sh
   needs:
@@ -32,6 +37,22 @@ cppcheck:
   needs:
     - job: build-compile-commands
       artifacts: true
+
+.cache-build-dir:
+  cache: &cache_dependency_archives
+    key: cache-dependency-archives
+    paths:
+      - build/_deps/*-subbuild/*-populate-prefix/src/*.{tar*,zip}
+    policy: pull
+
+generate-cache:
+  stage: compile
+  cache:
+    <<: *cache_dependency_archives
+    policy: push
+  script:
+    - cmake -G "Ninja Multi-Config" -S . -B build -DFETCHCONTENT_QUIET:BOOL=OFF
+  needs: []
 
 ### build project ###
 build-compile-commands:
@@ -49,122 +70,103 @@ build-compile-commands:
 
 build-clang:
   stage: compile
+  cache:
+    <<: *cache_dependency_archives
+  variables:
+    CC: clang
+    CXX: clang++
   script:
-    - export CC=clang
-    - export CXX=clang++
-    - mkdir build && cd build
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Release ..
-    - make rvmonitors -j4
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DRVMONITORS_BUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release ..
-    - make rvmonitors -j4
+    - printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)"
+      section_config "CMake Configuration"
+    - cmake -G "Ninja Multi-Config" -S . -B build
+    - printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)"
+      section_config
+    - printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)"
+      section_build "CMake Build"
+    - cmake --build build --config Release
+    - printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)"
+      section_build
   needs: []
 
 build-gcc:
   stage: compile
+  cache:
+    <<: *cache_dependency_archives
+  variables:
+    CC: gcc
+    CXX: g++
   script:
-    - export CC=gcc
-    - export CXX=g++
-    - mkdir build && cd build
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Release ..
-    - make rvmonitors -j4
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DRVMONITORS_BUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release ..
-    - make rvmonitors -j4
+    - printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)"
+      section_config "CMake Configuration"
+    - cmake -G "Ninja Multi-Config" -S . -B build
+    - printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)"
+      section_config
+    - printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)"
+      section_build "CMake Build"
+    - cmake --build build --config Release
+    - printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)"
+      section_build
   needs: []
-
-build-test:
-  stage: compile
-  script:
-    - mkdir build && cd build
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Debug ..
-    - make rvmonitors_test -j4
-  artifacts:
-    paths:
-      - ./build/
-    expire_in: 20 minutes
 
 build-evaluation:
   stage: compile
+  cache:
+    <<: *cache_dependency_archives
   script:
-    - mkdir build && cd build
-    - cmake
-      -DCMAKE_PREFIX_PATH=/commonroad/dist
-      -DCMAKE_BUILD_TYPE=RelWithDebInfo
-      ..
-    - make rvmonitors_eval -j4
-  artifacts:
-    paths:
-      - ./build/
-    expire_in: 20 minutes
+    - printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)"
+      section_config "CMake Configuration"
+    - cmake -G "Ninja Multi-Config" -S . -B build
+    - printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)"
+      section_config
+    - printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)"
+      section_build "CMake Build"
+    - cmake --build build --config Release --target rvmonitors_eval
+    - printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)"
+      section_build
+  needs: []
 
-build-run-coverage:
+
+build-test:
   stage: compile
+  cache:
+    <<: *cache_dependency_archives
   script:
-    - mkdir build && cd build
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DRVMONITORS_BUILD_CODE_COVERAGE=ON -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_BUILD_TYPE=Debug ..
-    - make rvmonitors_coverage -j4
+    - printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)"
+      section_config "CMake Configuration"
+    - cmake -G "Ninja Multi-Config" -S . -B build
+    - printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)"
+      section_config
+    - printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)"
+      section_build "CMake Build"
+    - cmake --build build --config Debug --target rvmonitors_test
+    - printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)"
+      section_build
   needs: []
   artifacts:
     paths:
-      - ./build/
-    expire_in: 20 minutes
+      - build
+    expire_in: 30 minutes
 
-
-### tests ###
-test-coverage:
-  stage: test
+build-coverage:
+  stage: compile
+  cache:
+    <<: *cache_dependency_archives
   script:
-    - ./build/rvmonitors_test --gtest_output="xml:report.xml"
-  dependencies:
-    - build-test
-  artifacts:
-    reports:
-      junit: ./report.xml
-
-
-### coverage ###
-coverage-analyze:
-  stage: coverage
-  script:
-    - gcovr --version
-    - gcovr
-      -f src/
-      -e src/Parser/gen
-      --print-summary
-      --exclude-unreachable-branches
-      --output coverage.xml
-      --xml
-  needs:
-    - job: build-run-coverage
-      artifacts: true
-  coverage: /^\s*lines:\s*\d+.\d+\%/
-  artifacts:
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: coverage.xml
-
-coverage-report:
-  stage: coverage
-  script:
-    - gcovr --version
-    - gcovr
-      -f src/
-      -e src/Parser/gen
-      --print-summary
-      --exclude-unreachable-branches
-      --output coverage.html
-      --html
-      --html-details
-    - mkdir coverage
-    - mv coverage*.html coverage
-  needs:
-    - job: build-run-coverage
-      artifacts: true
+    - printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)"
+      section_config "CMake Configuration"
+    - cmake -G "Ninja Multi-Config" -S . -B build -DRVMONITORS_BUILD_CODE_COVERAGE=ON
+    - printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)"
+      section_config
+    - printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)"
+      section_build "CMake Build"
+    - cmake --build build --config Debug --target rvmonitors_test
+    - printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)"
+      section_build
+  needs: []
   artifacts:
     paths:
-      - coverage
-    expose_as: 'Coverage Report'
-    expire_in: 20 minutes
+      - build
+    expire_in: 30 minutes
 
 ### create documentation ###
 docs:

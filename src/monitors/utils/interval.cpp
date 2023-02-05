@@ -2,7 +2,7 @@
 // Created by sebastian on 19.09.22.
 //
 
-#include "interval.h"
+#include "monitors/utils/interval.h"
 #include "cassert"
 
 IntervalTemporalOperator::IntervalTemporalOperator(size_t start, size_t end, bool finite, bool empty)

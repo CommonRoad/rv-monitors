@@ -1,4 +1,4 @@
-#include "event_consuming_visitor.h"
+#include "monitors/rv_algorithms/ltl_event_consuming/event_consuming_visitor.h"
 #include "monitors/expression_tree/atomic/atomic.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/atomic/predicate.h"

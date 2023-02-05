@@ -4,7 +4,7 @@
 // Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
 // Credits: BMW Car@TUM
 //
-#include "next_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/next_monitor.h"
 #include <iostream>
 
 Verdict NextMonitor::concreteStep(size_t parentId, size_t stepNumber) {

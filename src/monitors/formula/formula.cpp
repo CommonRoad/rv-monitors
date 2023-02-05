@@ -1,7 +1,7 @@
-#include "formula.h"
+#include "monitors/formula/formula.h"
 #include "monitors/expression_tree/nary/bool/xor.h"
+#include "monitors/formula/nff.h"
 #include "monitors/utils/utils.h"
-#include "nff.h"
 
 void Formula::toNnf() {
     auto before = deepCopy(expr);
