@@ -1,4 +1,4 @@
-#include "dynamic.h"
+#include "monitors/rv_algorithms/dynamic_programming/dynamic.h"
 #include "monitors/expression_tree/atomic/atomic.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/binary/bool/implication.h"

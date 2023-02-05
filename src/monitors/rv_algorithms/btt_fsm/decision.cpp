@@ -1,5 +1,5 @@
-#include "decision.h"
-#include "state_btt_fsm.h"
+#include "monitors/rv_algorithms/btt_fsm/decision.h"
+#include "monitors/rv_algorithms/btt_fsm/state_btt_fsm.h"
 
 #include <sstream>
 #include <utility>

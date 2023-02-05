@@ -23,7 +23,7 @@
 #include "monitors/expression_tree/unary/unary.h"
 #include "monitors/parser/parser.h"
 #include "monitors/trace/trace.h"
-#include "utils.h"
+#include "monitors/utils/utils.h"
 
 bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr, event_map_t &eventMap) {
     // Atomic

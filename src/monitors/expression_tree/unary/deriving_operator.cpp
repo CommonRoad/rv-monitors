@@ -2,7 +2,7 @@
 // Created by Sebastian Maierhofer on 14.01.21.
 //
 
-#include "deriving_operator.h"
+#include "monitors/expression_tree/unary/deriving_operator.h"
 
 std::shared_ptr<Expression> DerivingOperator::clone() { return std::make_shared<DerivingOperator>(*this); }
 

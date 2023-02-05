@@ -4,7 +4,7 @@
 // Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
 // Credits: BMW Car@TUM
 //
-#include "atomic_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/atomic_monitor.h"
 
 Verdict AtomicMonitorHydra::concreteStep() {
     if (traceIdx < trace.value().getLength()) {

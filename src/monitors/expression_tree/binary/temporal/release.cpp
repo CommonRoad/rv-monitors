@@ -1,4 +1,4 @@
-#include "release.h"
+#include "monitors/expression_tree/binary/temporal/release.h"
 
 std::shared_ptr<Expression> Release::clone() { return std::make_shared<Release>(*this); }
 

@@ -2,7 +2,7 @@
 // Created by Sebastian Maierhofer on 08.06.21.
 //
 
-#include "predicate.h"
+#include "monitors/expression_tree/atomic/predicate.h"
 
 std::string Predicate::to_string() const {
     std::string str{name + "("};

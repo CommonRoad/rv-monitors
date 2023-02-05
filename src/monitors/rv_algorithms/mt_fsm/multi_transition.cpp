@@ -1,4 +1,4 @@
-#include "multi_transition.h"
+#include "monitors/rv_algorithms/mt_fsm/multi_transition.h"
 #include "monitors/utils/utils.h"
 
 MultiTransition::MultiTransition(std::map<Formula, size_t> transitions) : transitions(std::move(transitions)) {}

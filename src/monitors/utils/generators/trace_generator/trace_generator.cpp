@@ -4,7 +4,7 @@
 // Copyright (c) 2021 Technical University of Munich. All rights reserved.
 // Credits: BMW Car@TUM
 //
-#include "trace_generator.h"
+#include "monitors/utils/generators/trace_generator/trace_generator.h"
 #include "monitors/trace/event.h"
 #include <iostream>
 Trace TraceGenerator ::generateTrace(const size_t length) {
