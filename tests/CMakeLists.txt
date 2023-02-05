@@ -1,17 +1,3 @@
-# make test optional. Useful also when no network connection is available
-option(
-        MONITORS_BUILD_TESTS
-        "Build tests based on the Google Test Framework" ON
-)
-
-# do nothing if nothing should be done
-if (NOT MONITORS_BUILD_TESTS)
-    return()
-endif ()
-
-# includes the gtest modules
-include(monitors_googletest)
-
 set(RV_MONITOR_TEST_SRC_FILES
         all_tests.cpp
         rv_algorithms/btt_fsm/test_btt_fsm.cpp
@@ -61,15 +47,39 @@ set(RV_MONITOR_TEST_SRC_FILES
 
         )
 
+# Create executable for test
+if (RVMONITORS_BUILD_TESTS)
+    add_executable(rvmonitors_test ${RV_MONITOR_TEST_SRC_FILES})
 
-add_executable(rvmonitors_test ${RV_MONITOR_TEST_SRC_FILES})
-target_compile_definitions(rvmonitors_test PRIVATE)
-target_link_libraries(
-        rvmonitors_test
-        PUBLIC
-        rvmonitors
-        gmock # gmock includes the gtest target, so we don't need it here.
-)
+    target_compile_features(rvmonitors_test
+            PUBLIC cxx_lambdas cxx_auto_type
+            PRIVATE cxx_lambdas cxx_auto_type)
+
+    set_property(TARGET rvmonitors_test PROPERTY POSITION_INDEPENDENT_CODE ON)
+
+    target_link_libraries(rvmonitors_test
+            PRIVATE
+            rvmonitors
+            GTest::gtest
+            )
+
+    target_precompile_headers(rvmonitors_test
+            PRIVATE
+            <gtest/gtest.h>)
+
+    include(GoogleTest)
+    # queries the compiled executable for tests, this requires the executable to be runnable. if you are
+    # cross compiling, make sure to properly set CMAKE_CROSSCOMPILING_EMULATOR.
+    gtest_discover_tests(
+            rvmonitors_test
+            # TEST_PREFIX "./"
+            # increase the discovery timeout for `rvmonitors_test --gtest_list_tests`
+            DISCOVERY_TIMEOUT 60
+            WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+            XML_OUTPUT_DIR ${PROJECT_BINARY_DIR}/test-reports
+    )
+endif ()
+
 
 add_executable(rvmonitors_performance_eval performance/eval_performance.cpp)
 target_compile_definitions(rvmonitors_performance_eval PRIVATE)
@@ -80,43 +90,38 @@ target_link_libraries(
 )
 
 
-include(GoogleTest)
-# queries the compiled executable for tests, this requires the executable to be runnable. if you are
-# cross compiling, make sure to properly set CMAKE_CROSSCOMPILING_EMULATOR.
-gtest_discover_tests(
-        rvmonitors_test TEST_PREFIX "testMonitors/"
-        # increase the discovery timeout for `runTests --gtest_list_tests`
-        DISCOVERY_TIMEOUT 60
-)
-
-
 # Code coverage
-if (CMAKE_BUILD_TYPE MATCHES Debug)
-    if (RVMONITORS_BUILD_CODE_COVERAGE)
-        add_executable(rvmonitors_test_coverage ${RV_MONITOR_SRC_FILES} ${RV_MONITOR_TEST_SRC_FILES})
-        target_include_directories(rvmonitors_test_coverage PUBLIC "../src/")
-        target_link_libraries(rvmonitors_test_coverage PUBLIC
-                rvmonitors
-                antlr4cpp
-                gtest
-                )
-        include(CodeCoverage)
-        append_coverage_compiler_flags()
-        setup_target_for_coverage_gcovr_html(
-                NAME rvmonitors_coverage                                          # New target name
-                EXECUTABLE rvmonitors_test_coverage                               # Executable in PROJECT_BINARY_DIR
-                DEPENDENCIES rvmonitors_test_coverage                             # Dependencies to build first
-                BASE_DIRECTORY "../"                                              # Base directory for report
-                #  (defaults to PROJECT_SOURCE_DIR)
-                EXCLUDE                                                           # Patterns to exclude (can be relative
-                "ci/"                                                             #  to BASE_DIRECTORY, with CMake 3.4+)
-                "docs/"
-                "external/"
-                "src/parser/gen/"
-                "build/"
-                "cmake/"
-                "cmake-build-debug/"
-                "cmake-build-debug-coverage/"
-        )
-    endif()
+# NOTE: The CodeCoverage module will already warn if the build type is not Debug
+if (RVMONITORS_BUILD_CODE_COVERAGE)
+    include(FetchContent)
+    FetchContent_Declare(
+            bilke_cmake_modules
+
+            GIT_REPOSITORY https://github.com/bilke/cmake-modules.git
+            GIT_TAG        1b68d17d3e3321c08092f994a40e0b6a13dff817
+    )
+    FetchContent_MakeAvailable(bilke_cmake_modules)
+    include(${bilke_cmake_modules_SOURCE_DIR}/CodeCoverage.cmake)
+
+    # Add definition for toolchain::gcov
+    include(toolchain/ToolchainLibraries)
+
+    # Unfortunately, append_coverage_compiler_flags_to_target is currently broken,
+    # so we simply add the required flags ourselves
+
+    set(COVERAGE_FLAGS -g -fprofile-arcs -ftest-coverage -fprofile-abs-path)
+
+    set_property(SOURCE allTests.cpp PROPERTY COMPILE_DEFINITIONS CODE_COVERAGE)
+
+    foreach(target rvmonitors_core rvmonitors_test)
+        # append_coverage_compiler_flags_to_target(${target})
+        target_compile_options(${target} PRIVATE ${COVERAGE_FLAGS})
+        target_link_libraries(${target} PRIVATE toolchain::gcov)
+    endforeach()
+
+    setup_target_for_coverage_gcovr_html(
+            NAME rvmonitors_coverage
+            EXECUTABLE rvmonitors_test
+            EXCLUDES ${FETCHCONTENT_BASE_DIR}
+    )
 endif()

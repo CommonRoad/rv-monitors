@@ -8,7 +8,7 @@
 #include "monitors/parser/parser.h"
 #include "monitors/rv_algorithms/btt_fsm/btt_fsm.h"
 #include "monitors/rv_algorithms/dynamic_programming/dynamic.h"
-#include "monitors/rv_algorithms/hydra_2/hydra.h"
+#include "monitors/rv_algorithms/hydra_2//hydra.h"
 #include "monitors/rv_algorithms/ltl_event_consuming/event_consuming.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
 #include "monitors/rv_algorithms/mtl_event_consuming/mtl_event_consuming.h"
@@ -118,8 +118,8 @@ Trace createRandomLazyTrace(size_t length) {
     return Trace(eventList);
 }
 
-double evalHydraCombined(Trace &trace, const std::vector<Formula> &formulas) {
-    auto monitor{Hydra(formulas)};
+double evalHydra2Combined(Trace &trace, const std::vector<Formula> &formulas) {
+    auto monitor{Hydra2(formulas)};
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     monitor.evaluate(trace);
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
@@ -127,11 +127,11 @@ double evalHydraCombined(Trace &trace, const std::vector<Formula> &formulas) {
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 }
 
-double evalHydraSingleConnected(Trace &trace, const std::vector<Formula> &formulas) {
-    std::vector<Hydra> monitors;
+double evalHydra2SingleConnected(Trace &trace, const std::vector<Formula> &formulas) {
+    std::vector<Hydra2> monitors;
     monitors.reserve(formulas.size());
     for (const auto &form : formulas)
-        monitors.push_back(Hydra({form}));
+        monitors.push_back(Hydra2({form}));
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
     for (size_t i{0}; i < monitors.size(); ++i)
@@ -141,11 +141,11 @@ double evalHydraSingleConnected(Trace &trace, const std::vector<Formula> &formul
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 }
 
-double evalHydraSingle(Trace &trace, const std::vector<Formula> &formulas) {
-    std::vector<Hydra> monitors;
+double evalHydra2Single(Trace &trace, const std::vector<Formula> &formulas) {
+    std::vector<Hydra2> monitors;
     monitors.reserve(formulas.size());
     for (const auto &form : formulas)
-        monitors.push_back(Hydra({form}, false));
+        monitors.push_back(Hydra2({form}, false));
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
     for (size_t i{0}; i < monitors.size(); ++i)
@@ -162,9 +162,9 @@ void executeEval(const std::vector<Formula> &formulas1, size_t numExecutions, si
 
     for (size_t i{0}; i < numExecutions; ++i) {
         Trace trace = createRandomLazyTrace(traceLength);
-        avgCompTimeCombined.push_back(evalHydraCombined(trace, formulas1));
-        avgCompTimeConnected.push_back(evalHydraSingleConnected(trace, formulas1));
-        avgCompTimeSingle.push_back(evalHydraSingle(trace, formulas1));
+        avgCompTimeCombined.push_back(evalHydra2Combined(trace, formulas1));
+        avgCompTimeConnected.push_back(evalHydra2SingleConnected(trace, formulas1));
+        avgCompTimeSingle.push_back(evalHydra2Single(trace, formulas1));
     }
     std::cout << "Combined: "
               << std::accumulate(avgCompTimeCombined.begin(), avgCompTimeCombined.end(), 0) / numExecutions << '\n';
@@ -190,9 +190,9 @@ void executeEvalAtomic(const std::vector<Formula> &formulas1, size_t numExecutio
 
     for (size_t i{0}; i < numExecutions; ++i) {
         Trace trace = createRandomTrace({"a", "b", "c", "d", "e", "f", "g", "i", "j"}, traceLength);
-        avgCompTimeCombined.push_back(evalHydraCombined(trace, formulas1));
-        avgCompTimeConnected.push_back(evalHydraSingleConnected(trace, formulas1));
-        avgCompTimeSingle.push_back(evalHydraSingle(trace, formulas1));
+        avgCompTimeCombined.push_back(evalHydra2Combined(trace, formulas1));
+        avgCompTimeConnected.push_back(evalHydra2SingleConnected(trace, formulas1));
+        avgCompTimeSingle.push_back(evalHydra2Single(trace, formulas1));
     }
     std::cout << "Combined: "
               << std::accumulate(avgCompTimeCombined.begin(), avgCompTimeCombined.end(), 0) / numExecutions << '\n';
@@ -217,9 +217,9 @@ void executeEvaluate2(const std::vector<Formula> &formulas1, size_t numExecution
     std::vector<double> avgCompTimeSingle;
 
     for (size_t i{0}; i < numExecutions; ++i) {
-        avgCompTimeCombined.push_back(evalHydraCombined(trace, formulas1));
-        avgCompTimeConnected.push_back(evalHydraSingleConnected(trace, formulas1));
-        avgCompTimeSingle.push_back(evalHydraSingle(trace, formulas1));
+        avgCompTimeCombined.push_back(evalHydra2Combined(trace, formulas1));
+        avgCompTimeConnected.push_back(evalHydra2SingleConnected(trace, formulas1));
+        avgCompTimeSingle.push_back(evalHydra2Single(trace, formulas1));
     }
     std::cout << "Combined: "
               << std::accumulate(avgCompTimeCombined.begin(), avgCompTimeCombined.end(), 0) / numExecutions << '\n';
@@ -238,8 +238,8 @@ void executeEvaluate2(const std::vector<Formula> &formulas1, size_t numExecution
     std::cout << '\n';
 }
 
-double evaluateSingleHydra(const Formula &formula, Trace &trace) {
-    auto monitor{Hydra({formula})};
+double evaluateSingleHydra2(const Formula &formula, Trace &trace) {
+    auto monitor{Hydra2({formula})};
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     monitor.evaluate(trace);
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
@@ -247,13 +247,13 @@ double evaluateSingleHydra(const Formula &formula, Trace &trace) {
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 }
 
-double executeEvaluateHydra(const Formula &formulas, size_t numExecutions, Trace &trace, std::ofstream &out) {
+double executeEvaluateHydra2(const Formula &formulas, size_t numExecutions, Trace &trace, std::ofstream &out) {
     std::vector<double> avgCompTime;
     for (size_t i{0}; i < numExecutions; ++i) {
-        avgCompTime.push_back(evaluateSingleHydra(formulas, trace));
+        avgCompTime.push_back(evaluateSingleHydra2(formulas, trace));
     }
     double result = std::accumulate(avgCompTime.begin(), avgCompTime.end(), 0) / numExecutions;
-    out << "[Hydra] Results: " << result << '\n';
+    out << "[Hydra2] Results: " << result << '\n';
     for (const auto &val : avgCompTime)
         out << val << "\t";
     out << '\n';
@@ -430,7 +430,8 @@ void testFormulasOnTraces(std::vector<Formula> &formulas, std::vector<Trace> &tr
             // out); averageResults[2] += executeEvaluateDynamicLTL(formulas.at(iterIndex), numExecutions,
             // traces.at(iterIndex), out); averageResults[3] += executeEvaluateLTL(formulas.at(iterIndex),
             // numExecutions, traces.at(iterIndex), out);
-            averageResults[4] += executeEvaluateHydra(formulas.at(iterIndex), numExecutions, traces.at(iterIndex), out);
+            averageResults[4] +=
+                executeEvaluateHydra2(formulas.at(iterIndex), numExecutions, traces.at(iterIndex), out);
             // averageResults[5] += executeEvaluateBTTFsm(formulas.at(iterIndex), numExecutions, traces.at(iterIndex),
             // out);
             out << std::endl;
@@ -452,7 +453,7 @@ void testFormulasOnTraces(std::vector<Formula> &formulas, std::vector<Trace> &tr
                 out << "[LTL]";
                 break;
             case 4:
-                out << "[Hydra]";
+                out << "[Hydra2]";
                 break;
             case 5:
                 out << "[BTTFsm]";

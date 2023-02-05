@@ -1,7 +1,7 @@
-#include "hydra.h"
-#include "../../rewriting/hydra_rewrite_visitor.h"
-#include "hydra_creation_visitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra.h"
 #include "monitors/expression_tree/unary/temporal/globally.h"
+#include "monitors/rewriting/hydra_rewrite_visitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_creation_visitor.h"
 #include <iostream>
 
 std::map<std::string, std::vector<Verdict>> Hydra2::evaluate(Trace &trace) {

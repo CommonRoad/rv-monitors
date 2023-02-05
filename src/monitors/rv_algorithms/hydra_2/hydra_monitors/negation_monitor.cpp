@@ -4,7 +4,7 @@
 // Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
 // Credits: BMW Car@TUM
 //
-#include "negation_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/negation_monitor.h"
 
 Verdict NegationMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     return !subMonitor->step(monitorId, stepNumber);

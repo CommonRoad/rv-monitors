@@ -1,7 +1,7 @@
-#include "log_visitor.h"
-#include "monitors/parser/gen/LogBaseVisitor.h"
+#include "monitors/parser/log_visitor.h"
 #include "monitors/trace/trace.h"
 #include "monitors/utils/utils.h"
+#include <monitors/parser/generated/LogGrammarParser/LogBaseVisitor.h>
 
 namespace impl {
 
@@ -22,8 +22,7 @@ antlrcpp::Any LogVisitor::visitLog(LogParser::LogContext *context) {
     std::vector<size_t> time_steps;
 
     for (auto &a_entry : context->entry()) {
-        LogEntry entry = visit(a_entry).as<LogEntry>();
-
+        LogEntry entry{std::any_cast<LogEntry>(visit(a_entry))};
         time_steps.push_back(entry.time);
 
         for (auto &atomic : entry.true_atomics) {
@@ -39,11 +38,12 @@ antlrcpp::Any LogVisitor::visitLog(LogParser::LogContext *context) {
 }
 
 antlrcpp::Any LogVisitor::visitEntry(LogParser::EntryContext *context) {
-    auto time = visit(context->time()).as<size_t>();
+    auto time{std::any_cast<size_t>(visit(context->time()))};
+
     std::vector<identifier> true_atomics;
 
     for (auto &entry : context->identifier()) {
-        auto atomic = visit(entry).as<identifier>();
+        auto atomic{std::any_cast<identifier>(visit(entry))};
         true_atomics.push_back(atomic);
     }
 

@@ -4,17 +4,7 @@
 // Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
 // Credits: BMW Car@TUM
 //
-#include "hydra_creation_visitor.h"
-#include "hydra_monitors/and_monitor.h"
-#include "hydra_monitors/atomic_monitor.h"
-#include "hydra_monitors/constant_monitor.h"
-#include "hydra_monitors/negation_monitor.h"
-#include "hydra_monitors/next_monitor.h"
-#include "hydra_monitors/or_monitor.h"
-#include "hydra_monitors/predicate_monitor.h"
-#include "hydra_monitors/previous_monitor.h"
-#include "hydra_monitors/since_monitor.h"
-#include "hydra_monitors/until_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_creation_visitor.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/binary/temporal/since.h"
 #include "monitors/expression_tree/binary/temporal/until.h"
@@ -24,6 +14,16 @@
 #include "monitors/expression_tree/unary/temporal/next_strong.h"
 #include "monitors/expression_tree/unary/temporal/previously.h"
 #include "monitors/formula/formula.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/and_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/atomic_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/constant_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/negation_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/next_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/or_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/predicate_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/previous_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/since_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/until_monitor.h"
 #include <numeric>
 #include <utility>
 

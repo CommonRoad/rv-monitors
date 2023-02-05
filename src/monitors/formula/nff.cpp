@@ -1,4 +1,4 @@
-#include "nff.h"
+#include "monitors/formula/nff.h"
 
 #include "monitors/expression_tree/atomic/atomic.h"
 #include "monitors/expression_tree/atomic/constant.h"

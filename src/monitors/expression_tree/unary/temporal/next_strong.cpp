@@ -1,4 +1,4 @@
-#include "next_strong.h"
+#include "monitors/expression_tree/unary/temporal/next_strong.h"
 
 std::shared_ptr<Expression> NextStrong::clone() { return std::make_shared<NextStrong>(*this); }
 

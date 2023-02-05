@@ -1,4 +1,4 @@
-#include "event.h"
+#include "monitors/trace/event.h"
 
 bool Event::getValue(const std::string &atomic) const { return eventMap.at(atomic).get(); }
 

@@ -4,7 +4,7 @@
 // Copyright (c) 2021 Technical University of Munich. All rights reserved.
 // Credits: BMW Car@TUM
 //
-#include "formula_generator.h"
+#include "monitors/utils/generators/formula_generator/formula_generator.h"
 
 std::shared_ptr<Expression> FormulaGenerator::generateUnaryExpression(const std::string &op,
                                                                       const std::shared_ptr<Expression> &exprLeft,

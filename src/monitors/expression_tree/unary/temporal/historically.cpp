@@ -2,7 +2,7 @@
 // Created by Sebastian Maierhofer on 26.01.21.
 //
 
-#include "historically.h"
+#include "monitors/expression_tree/unary/temporal/historically.h"
 
 std::shared_ptr<Expression> Historically::clone() { return std::make_shared<Historically>(*this); }
 

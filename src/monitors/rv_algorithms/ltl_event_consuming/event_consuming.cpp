@@ -1,8 +1,8 @@
-#include "event_consuming.h"
-#include "event_consuming_visitor.h"
+#include "monitors/rv_algorithms/ltl_event_consuming//event_consuming.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/unary/event_operator.h"
 #include "monitors/rewriting/rewrite_visitor.h"
+#include "monitors/rv_algorithms/ltl_event_consuming/event_consuming_visitor.h"
 #include <iostream>
 #include <memory>
 

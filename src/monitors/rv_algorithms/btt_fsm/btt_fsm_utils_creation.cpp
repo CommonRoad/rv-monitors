@@ -1,9 +1,9 @@
-#include "btt_fsm_utils_creation.h"
-#include "decision.h"
+#include "monitors/rv_algorithms/btt_fsm/btt_fsm_utils_creation.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/nary/nary_interface.h"
 #include "monitors/expression_tree/unary/bool/not.h"
 #include "monitors/rewriting/basic_rewrite_visitor.h"
+#include "monitors/rv_algorithms/btt_fsm/decision.h"
 #include <iostream>
 
 std::shared_ptr<Expression> BTT_FSMUtilsCreation::replaceAtomicByConstant(const Formula &formula,

@@ -4,7 +4,7 @@
 // Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
 // Credits: BMW Car@TUM
 //
-#include "and_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/and_monitor.h"
 
 Verdict AndMonitorHydra::concreteStep() {
     Verdict verdict{subMonitors.at(0)->concreteStep()};

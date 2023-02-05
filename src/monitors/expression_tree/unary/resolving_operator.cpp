@@ -2,7 +2,7 @@
 // Created by Sebastian Maierhofer on 14.01.21.
 //
 
-#include "resolving_operator.h"
+#include "monitors/expression_tree/unary/resolving_operator.h"
 
 std::shared_ptr<Expression> ResolvingOperator::clone() { return std::make_shared<ResolvingOperator>(*this); }
 
