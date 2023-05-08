@@ -108,6 +108,8 @@ set(RV_MONITOR_HDR_FILES
         monitors/expression_tree/binary/temporal/until.h
         monitors/expression_tree/binary/temporal/release.h
         monitors/expression_tree/binary/temporal/since.h
+        monitors/expression_tree/nary/nary_interface.h
+        monitors/expression_tree/nary/nary.h
         monitors/expression_tree/nary/bool/and.h
         monitors/expression_tree/nary/bool/or.h
         monitors/expression_tree/nary/bool/xor.h
@@ -142,6 +144,7 @@ set(RV_MONITOR_HDR_FILES
         monitors/rv_algorithms/btt_fsm/btt_fsm.h
         monitors/rv_algorithms/btt_fsm/btt_fsm_utils_creation.h
         monitors/rv_algorithms/btt_fsm/decision.h
+        monitors/rv_algorithms/btt_fsm/node.h
         monitors/rv_algorithms/btt_fsm/state_btt_fsm.h
         monitors/rv_algorithms/dynamic_programming/dynamic.h
         monitors/rv_algorithms/ltl_event_consuming/event_consuming.h
@@ -177,8 +180,10 @@ set(RV_MONITOR_HDR_FILES
         monitors/rv_algorithms/hydra/hydra_monitors/or_monitor.h
         monitors/rv_algorithms/hydra/hydra_monitors/and_monitor.h
         monitors/rv_algorithms/hydra/hydra_monitors/negation_monitor.h
+        monitors/symbols/symbols.h
         monitors/trace/event.h
         monitors/trace/event_generator.h
+        monitors/trace/trace.h
         monitors/utils/lazy_bool.h
         monitors/utils/execution_statistic.h
         monitors/utils/utils.h

@@ -12,8 +12,8 @@ set(export_name ${PROJECT_NAME}_Targets)
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.23.0)
     install(TARGETS rvmonitors_core rvmonitors_parser
             EXPORT ${export_name}
-            FILE_SET rvmonitors_core_headers
-            FILE_SET rvmonitors_parser_headers
+            FILE_SET rvmonitors_core_headers DESTINATION include
+            FILE_SET rvmonitors_parser_headers DESTINATION include
             LIBRARY ARCHIVE RUNTIME)
     install(TARGETS rvmonitors
             EXPORT ${export_name})
@@ -31,7 +31,7 @@ endif()
 # This information is used in the installed config file.
 include(FetchContent)
 
-foreach(fc_target antlr4)
+foreach(fc_target antlr4-runtime)
     FetchContent_GetProperties(${fc_target})
 
     message(DEBUG "check ${fc_target} (variable name: ${fc_target}_SOURCE_DIR)")

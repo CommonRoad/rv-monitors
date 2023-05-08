@@ -107,6 +107,9 @@ TEST(TestHydra2, testCombinedSinceUntilFormulas) {
 
 TEST(TestHydra2, testInvalidPredicateCost) {
     Formula formula = Parser::parse("G(P[0, 1](c))", "R1");
+#ifdef NDEBUG
+    GTEST_SKIP() << "assertions are disabled";
+#endif
     EXPECT_DEATH(Hydra2({formula}, false, false, false, false, {{"test", {1, 2}}}),
                  "Invalid predicate costs/probabilities");
 }
