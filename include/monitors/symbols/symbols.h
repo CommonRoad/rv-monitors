@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 static constexpr char notSymbol[] = "!";
 static constexpr char andSymbol[] = "&";
 static constexpr char orSymbol[] = "|";

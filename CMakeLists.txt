@@ -99,7 +99,7 @@ else()
             "process a bit.\n"
             "In case you have all required dependencies installed, you can try "
             "enabling the option\n"
-            "\tENV_MODEL_SYSTEM_PACKAGES_FORCE\n"
+            "\tRVMONITORS_SYSTEM_PACKAGES_FORCE\n"
             "which will force using find_package for all dependencies.")
 endif()
 
@@ -137,7 +137,7 @@ if(CMAKE_SUPPORTS_TRY_FIND_PACKAGE)
     if(SKBUILD_SELF_CONTAINED)
         set(FETCHCONTENT_TRY_FIND_PACKAGE_MODE NEVER)
     endif()
-    if(ENV_MODEL_SYSTEM_PACKAGES)
+    if(RVMONITORS_SYSTEM_PACKAGES)
         set(FETCHCONTENT_TRY_FIND_PACKAGE_MODE OPT_IN)
     else()
         set(FETCHCONTENT_TRY_FIND_PACKAGE_MODE NEVER)
@@ -153,7 +153,7 @@ if(RVMONITORS_SYSTEM_PACKAGES_FORCE)
 
     message(WARNING "RVMONITORS_SYSTEM_PACKAGES_FORCE is set - trying to satisfy "
             "all dependencies using installed system packages.\n"
-            "If this fails, consider disabling ENV_MODEL_SYSTEM_PACKAGES_FORCE and "
+            "If this fails, consider disabling RVMONITORS_SYSTEM_PACKAGES_FORCE and "
             "trying again.")
 
     find_package(GTest)
