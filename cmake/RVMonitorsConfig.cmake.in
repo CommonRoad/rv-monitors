@@ -3,8 +3,8 @@
 include(CMakeFindDependencyMacro)
 
 # Ensure dependencies are available
-if(@INSTALL_antlr4_FROM_SYSTEM@)
-    find_dependency(antlr4)
+if(@INSTALL_antlr4-runtime_FROM_SYSTEM@)
+    find_dependency(antlr4-runtime @antlr4-runtime_VERSION@)
 endif()
 
 
