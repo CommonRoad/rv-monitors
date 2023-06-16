@@ -199,3 +199,5 @@ MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool measure
 
 MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool measurement)
     : algorithm(algorithm), performanceMeasurement(measurement) {}
+
+MonitorConfiguration RVMonitor::getConfiguration() { return configuration; }

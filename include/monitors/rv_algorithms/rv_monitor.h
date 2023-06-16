@@ -48,15 +48,15 @@ struct MonitorConfiguration {
      */
     MonitorConfiguration() = default;
 
-    const AlgorithmType algorithm{
+    AlgorithmType algorithm{
         AlgorithmType::hydra_2_mtl}; /**< Algorithm to use, e.g., Hydra, LTL event consuming, .... */
-    const bool performanceMeasurement{
+    bool performanceMeasurement{
         false}; /**< Indicates whether evaluation with time measurement should be performed */
-    const bool hydraConnectedEvaluation{
+    bool hydraConnectedEvaluation{
         true};                        /**< Indicates whether HYDRA monitor should perform connected evaluation */
-    const bool hydraReordering{true}; /**< Indicates whether HYDRA monitor should perform reordering */
-    const bool shortCircuiting{true}; /**< Indicates whether monitor should perform short circuiting */
-    const bool earlyTermination{
+    bool hydraReordering{true}; /**< Indicates whether HYDRA monitor should perform reordering */
+    bool shortCircuiting{true}; /**< Indicates whether monitor should perform short circuiting */
+    bool earlyTermination{
         false}; /**< Indicates whether the complete trace has to be evaluated or whether the
                  * execution can be terminated as soon as a global verdict for a monitor can be provided. */
 };
@@ -119,6 +119,12 @@ class RVMonitor {
      * @return String representation of activated monitoring algorithm.
      */
     std::string to_string();
+
+    /**
+     * Getter for configuration
+     * @return MonitorConfiguration
+     */
+    MonitorConfiguration getConfiguration();
 
   protected:
     std::unique_ptr<MonitorInterface> monitor; //**< Pointer to monitoring algorithm */
