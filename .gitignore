@@ -1,8 +1,12 @@
 .idea
 cmake-*/
-build/
+build-*/
 
 rvmonitors_test
 rvmonitors_test_coverage
 *.a
 *.so
+/rvmonitors_performance_eval
+
+/build/
+/gen/

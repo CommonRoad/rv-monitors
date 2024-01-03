@@ -4,30 +4,45 @@
 // Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
 // Credits: BMW Car@TUM
 //
-#include "next_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/next_monitor.h"
 #include <iostream>
 
-Verdict NextMonitor::step() {
+Verdict NextMonitorHydra::concreteStep() {
     do {
-        auto subVerdict = subMonitor->step();
-        if (subVerdict.ts and currentTime) {
+        auto subVerdict = subMonitor->concreteStep();
+        if (subVerdict.timeStamp and currentTime) {
             size_t lastTime = *currentTime;
-            currentTime = subVerdict.ts;
-            if (Utils::isInInterval(subVerdict.ts.value() - lastTime, from, to))
-                return Verdict(lastTime, subVerdict.b);
+            currentTime = subVerdict.timeStamp;
+            if (!interval.isFinite() and interval.getStart() <= lastTime)
+                return {lastTime, subVerdict.value};
+            if (Utils::isInInterval(subVerdict.timeStamp.value() - lastTime, interval.getStart(), interval.getEnd()))
+                return {lastTime, subVerdict.value};
             else
-                return Verdict(lastTime, false);
-        } else if (!subVerdict.ts) {
-            return Verdict(*currentTime, false);
+                return {lastTime, false};
+        } else if (!subVerdict.timeStamp) {
+            return {*currentTime, false};
         } else {
-            currentTime = subVerdict.ts;
+            currentTime = subVerdict.timeStamp;
         }
     } while (true);
 }
 
-void NextMonitor::setTrace(const Trace &tr) { subMonitor->setTrace(tr); }
+void NextMonitorHydra::setTrace(const Trace &tra) { subMonitor->setTrace(tra); }
 
-void NextMonitor::reset() {
+void NextMonitorHydra::reset() {
     currentTime = {};
     subMonitor->reset();
+}
+
+std::string NextMonitorHydra::to_string() {
+    std::string itv{};
+    std::string end{};
+    if (!interval.isEmpty()) {
+        if (!interval.isFinite())
+            end = "inf";
+        else
+            end = std::to_string(interval.getEnd());
+        itv = "[" + std::to_string(interval.getStart()) + ", " + end + "]";
+    }
+    return std::string{"X"} + itv + "(" + subMonitor->to_string() + ")";
 }

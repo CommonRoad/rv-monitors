@@ -1,10 +1,7 @@
-#include "formula.h"
-
-#include "monitors/expression_tree/binary/binary.h"
+#include "monitors/formula/formula.h"
 #include "monitors/expression_tree/nary/bool/xor.h"
+#include "monitors/formula/nff.h"
 #include "monitors/utils/utils.h"
-#include "nff.h"
-#include <utility>
 
 void Formula::toNnf() {
     auto before = deepCopy(expr);
@@ -19,10 +16,6 @@ void Formula::toNnf() {
 
 void Formula::setExpr(const std::shared_ptr<Expression> &expression) { expr = expression; }
 
-const std::shared_ptr<Event> &Formula::getEvent() const { return event; }
-
-void Formula::setEvent(std::shared_ptr<Event> ev) { event = std::move(ev); }
-
 [[nodiscard]] bool Formula::sameTree(const std::shared_ptr<Expression> &before,
                                      const std::shared_ptr<Expression> &after) {
     return before->to_string() == after->to_string();
@@ -30,9 +23,9 @@ void Formula::setEvent(std::shared_ptr<Event> ev) { event = std::move(ev); }
 
 [[nodiscard]] std::string Formula::to_string() const { return getExpr()->to_string(); }
 
-[[nodiscard]] std::ostream &operator<<(std::ostream &os, const Formula &formula) {
-    os << formula.to_string();
-    return os;
+[[nodiscard]] std::ostream &operator<<(std::ostream &ost, const Formula &formula) {
+    ost << formula.to_string();
+    return ost;
 }
 
 bool Formula::containsAtomic(const std::shared_ptr<Atomic> &atomic) const {
@@ -40,8 +33,64 @@ bool Formula::containsAtomic(const std::shared_ptr<Atomic> &atomic) const {
     return atomics.find(atomic->to_string()) != atomics.end();
 }
 
-Formula Formula::deepCopy() const { return Formula(Formula::deepCopy(getExpr())); }
+Formula Formula::deepCopy() const { return Formula(Formula::deepCopy(getExpr()), id); }
 
-bool operator==(const Formula &f1, const Formula &f2) { return *(f1.getExpr()) == *(f2.getExpr()); }
+const std::string &Formula::getId() const { return id; }
 
-bool operator<(const Formula &f1, const Formula &f2) { return *(f1.getExpr()) < *(f2.getExpr()); }
+bool Formula::checkCompatibility(std::vector<MonitoringProperties> formulaTypes) const {
+    return std::any_of(formulaTypes.begin(), formulaTypes.end(),
+                       [this](MonitoringProperties formulaType) { return this->checkCompatibility(formulaType); });
+}
+
+bool Formula::checkCompatibility(MonitoringProperties formulaType) const {
+    auto formulaString = getExpr()->to_string();
+    if (!formulaType.interval and formulaString.find('[') != std::string::npos)
+        return false;
+    bool nonFirstOrder =
+        !std::any_of(firstOrderOperators.begin(), firstOrderOperators.end(),
+                     [formulaString](char oper) { return formulaString.find(oper) != std::string::npos; });
+    switch (formulaType.formulaType) {
+    case futureOnly:
+        return nonFirstOrder and !std::any_of(pastOperators.begin(), pastOperators.end(), [formulaString](char oper) {
+                   return formulaString.find(oper) != std::string::npos;
+               });
+    case pastOnly:
+        return nonFirstOrder and
+               !std::any_of(futureOperators.begin(), futureOperators.end(),
+                            [formulaString](char oper) { return formulaString.find(oper) != std::string::npos; });
+    case safetyGeneral:
+        return nonFirstOrder and this->expr->getSymbol().find(globallySymbol) != std::string::npos;
+    case futureSafety:
+        return nonFirstOrder and this->expr->getSymbol() == globallySymbol and
+               !std::any_of(pastOperators.begin(), pastOperators.end(),
+                            [formulaString](char oper) { return formulaString.find(oper) != std::string::npos; });
+    case pastSafety:
+        return nonFirstOrder and this->expr->getSymbol() == globallySymbol and
+               std::count(formulaString.begin(), formulaString.end(), globallySymbol[0]) == 1 and
+               !std::any_of(futureOperators.begin(), futureOperators.end(), [formulaString](char oper) {
+                   return (formulaString.find(oper) != std::string::npos) and oper != globallySymbol[0];
+               });
+    case futurePastCombined:
+        return nonFirstOrder;
+    case firstOrder:
+        return !nonFirstOrder;
+    case safetyFirstOrder:
+        return !nonFirstOrder or this->expr->getSymbol().find(globallySymbol) != std::string::npos;
+    }
+    return false;
+}
+
+bool Formula::includeTemporalOperator(char tempOp) {
+    auto formulaString = getExpr()->to_string();
+    return formulaString.find(tempOp) != std::string::npos;
+}
+
+void Formula::setId(const std::string &identifier) { id = identifier; }
+
+bool operator==(const Formula &formula1, const Formula &formula2) {
+    return *(formula1.getExpr()) == *(formula2.getExpr());
+}
+
+bool operator<(const Formula &formula1, const Formula &formula2) {
+    return *(formula1.getExpr()) < *(formula2.getExpr());
+}

@@ -1,97 +1,53 @@
 #include "test_dynamic_programming_ltl.h"
+#include "../test_database.h"
+#include "monitors/expression_tree/binary/temporal/since.h"
+#include "monitors/expression_tree/unary/temporal/historically.h"
 #include "monitors/parser/parser.h"
 #include "monitors/rv_algorithms/dynamic_programming/dynamic.h"
 #include "monitors/trace/trace.h"
-#include "monitors/utils/utils.h"
 
-TEST(TestDynamicFuture, violated1) {
-    Trace trace1 = Utils::createTrace(
-        {"a", "b", "c", "g", "f"},
-        {{"a"}, {"b"}, {"a"}, {"b"}, {"a"}, {"c"}, {"a"}, {"a"}, {"b"}, {"g"}, {"f"}, {"h"}, {"c"}, {"b"}, {"a"}});
-    Formula formula = Parser::parse("G(a -> Fb)");
-    auto dynamic{DynamicProgrammingLTL(formula)};
-    EXPECT_FALSE(dynamic.evaluate(trace1).at(0).b);
+TEST(TestDynamicProgrammingLTL, testFormulaType) {
+    Formula formulaOne = Parser::parse("G(a -> F(b))");
+    Formula formulaTwo = Parser::parse("H(a -> F(b))");
+    Formula formulaThree = Parser::parse("G(a -> F(b) & O(c))");
+    EXPECT_NO_THROW(DynamicProgrammingLTL({formulaOne}));
+    EXPECT_THROW(DynamicProgrammingLTL({formulaTwo}), std::logic_error);
+    EXPECT_THROW(DynamicProgrammingLTL({formulaThree}), std::logic_error);
 }
 
-TEST(TestDynamicFuture, satisfied2) {
-    Formula formula = Parser::parse("G(b -> Fc)");
-    Trace trace2 = Utils::createTrace(
-        {"a", "b", "c", "g", "f", "h"},
-        {{"a"}, {"b"}, {"a"}, {"b"}, {"a"}, {"c"}, {"a"}, {"a"}, {"b"}, {"g"}, {"f"}, {"h"}, {"c"}, {"b"}, {"c"}});
-    auto dynamic{DynamicProgrammingLTL(formula)};
-    EXPECT_TRUE(dynamic.evaluate(trace2).at(0).b);
+TEST(TestDynamicProgrammingLTL, specificFormulaTest) {
+    auto testDataBase{TestDataBase()};
+    auto testCase = testDataBase.getTestSample("F11_1");
+    auto monitor{DynamicProgrammingLTL({*testCase.formula}, true)};
+    auto trace{testCase.trace};
+    EXPECT_TRUE(TestDataBase::mergeResult(monitor.evaluate(trace).at(testCase.formula->getId())) ==
+                TestDataBase::mergeResult(testCase.expectedResult))
+        << "DynamicProgrammingLTL formula test " << testCase.formula->getId() << " failed.";
 }
 
-TEST(TestDynamicFuture, violated2) {
-    Trace trace2 = Utils::createTrace(
-        {"a", "b", "c", "g", "f", "h"},
-        {{"a"}, {"b"}, {"a"}, {"b"}, {"a"}, {"c"}, {"a"}, {"a"}, {"b"}, {"g"}, {"f"}, {"h"}, {"c"}, {"b"}, {"c"}});
-    Formula formula = Parser::parse("F(!(G(b -> Fc)))");
-    auto dynamic{DynamicProgrammingLTL(formula)};
-    EXPECT_FALSE(dynamic.evaluate(trace2).at(0).b);
-}
-
-TEST(TestDynamicFuture, violatedEnd) {
-    Trace trace = Utils::createTrace({"green", "yellow", "red"},
-                                     {{"green"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}, {"green"}, {"red"}});
-    Formula formula = Parser::parse("G(green -> !red U yellow)");
-    auto dynamic{DynamicProgrammingLTL(formula)};
-    EXPECT_FALSE(dynamic.evaluate(trace).at(0).b);
-}
-
-TEST(TestDynamicFuture, violatedBeginning) {
-    Trace trace =
-        Utils::createTrace({"green", "yellow", "red"},
-                           {{"green"}, {"red"}, {"yellow"}, {"red"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}});
-    Formula formula = Parser::parse("G(green -> !red U yellow)");
-    auto dynamic{DynamicProgrammingLTL(formula)};
-    EXPECT_FALSE(dynamic.evaluate(trace).at(0).b);
-}
-
-TEST(TestDynamicFuture, satisfied) {
-    Trace trace = Utils::createTrace({"green", "yellow", "red"},
-                                     {{"green"}, {"yellow"}, {"red"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}});
-    Formula formula = Parser::parse("G(green -> !red U yellow)");
-    auto dynamic{DynamicProgrammingLTL(formula)};
-    EXPECT_TRUE(dynamic.evaluate(trace).at(0).b);
-}
-
-TEST(TestDynamicFuture, strongNext) {
-    Trace trace = Utils::createTrace({"a", "b"}, {{"b"}, {"a"}, {"b"}});
-    Formula formula = Parser::parse("G(b -> (X(a)))");
-
-    auto dynamic{DynamicProgrammingLTL(formula)};
-    EXPECT_FALSE(dynamic.evaluate(trace).at(0).b);
-}
-
-TEST(TestDynamicFuture, until) {
-    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"b"}, {"a"}, {"b"}});
-    Formula formula = Parser::parse("a U b");
-    auto dynamic{DynamicProgrammingLTL(formula)};
-    EXPECT_TRUE(dynamic.evaluate(trace).at(0).b);
-}
-
-TEST(TestDynamicPast, violatedEnd) {
-    Trace trace =
-        Utils::createTrace({"green", "yellow", "red"}, {{"green"}, {"red"}, {"yellow"}, {"green"}, {"red"}, {"green"}});
-    Formula formula = Parser::parse("G(green -> P(yellow))");
-    auto dynamic{DynamicProgrammingLTL(formula, true)};
-    EXPECT_FALSE(dynamic.evaluate(trace).at(0).b);
-}
-
-TEST(TestDynamicPast, violatedBeginning) {
-    Trace trace = Utils::createTrace({"green", "yellow", "red"},
-                                     {{"red"}, {"green"}, {"red"}, {"yellow"}, {"red"}, {"green"}, {"yellow"}});
-    Formula formula = Parser::parse("G(green -> P(yellow))");
-    auto dynamic{DynamicProgrammingLTL(formula, true)};
-    EXPECT_FALSE(dynamic.evaluate(trace).at(0).b);
-}
-
-TEST(TestDynamicPast, satisfied) {
-    Trace trace =
-        Utils::createTrace({"green", "yellow", "red"},
-                           {{"yellow"}, {"green"}, {"red"}, {"yellow"}, {"green"}, {"red"}, {"yellow"}, {"green"}});
-    Formula formula = Parser::parse("G(green -> P(yellow))");
-    auto dynamic{DynamicProgrammingLTL(formula, true)};
-    EXPECT_TRUE(dynamic.evaluate(trace).at(0).b);
+TEST(TestDynamicProgrammingLTL, formulaTest) {
+    size_t failures{0};
+    auto testDataBase{TestDataBase()};
+    auto testCases{testDataBase.getDatabaseEntries(supportedFormulaTypes.at(AlgorithmType::dynamic_programming_ltl))};
+    for (const auto &testCase : testCases) {
+        if (testCase.formula->includeTemporalOperator('S') or testCase.formula->includeTemporalOperator('H'))
+            continue;
+        bool pastEvaluation;
+        if (testCase.formula->checkCompatibility(FormulaType::pastSafety))
+            pastEvaluation = true;
+        else if (testCase.formula->checkCompatibility(FormulaType::futureSafety))
+            pastEvaluation = false;
+        else
+            continue;
+        auto monitor{DynamicProgrammingLTL({*testCase.formula}, pastEvaluation)};
+        auto trace{testCase.trace};
+        EXPECT_TRUE(TestDataBase::mergeResult(monitor.evaluate(trace).at(testCase.formula->getId())) ==
+                    TestDataBase::mergeResult(testCase.expectedResult))
+            << "DynamicProgrammingLTL formula test " << testCase.formula->getId() << " failed.";
+        if (!(TestDataBase::mergeResult(monitor.evaluate(trace).at(testCase.formula->getId())) ==
+              TestDataBase::mergeResult(testCase.expectedResult)))
+            failures++;
+    }
+    std::cout << "DynamicProgrammingLTL Formula Test: " << std::to_string(failures) << "/"
+              << std::to_string(testCases.size()) << " failing formulas.";
 }

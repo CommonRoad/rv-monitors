@@ -1,83 +1,80 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
-#include "hydra_creation_visitor.h"
-#include "hydra_monitors/and_monitor.h"
-#include "hydra_monitors/atomic_monitor.h"
-#include "hydra_monitors/constant_monitor.h"
-#include "hydra_monitors/negation_monitor.h"
-#include "hydra_monitors/next_monitor.h"
-#include "hydra_monitors/or_monitor.h"
-#include "hydra_monitors/predicate_monitor.h"
-#include "hydra_monitors/previous_monitor.h"
-#include "hydra_monitors/since_monitor.h"
-#include "hydra_monitors/until_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_creation_visitor.h"
 #include "monitors/expression_tree/atomic/constant.h"
-#include "monitors/expression_tree/binary//temporal/ltlf/until.h"
-#include "monitors/expression_tree/binary//temporal/ptlf/since.h"
+#include "monitors/expression_tree/atomic/predicate.h"
+#include "monitors/expression_tree/binary/temporal/since.h"
+#include "monitors/expression_tree/binary/temporal/until.h"
 #include "monitors/expression_tree/nary/bool/and.h"
 #include "monitors/expression_tree/nary/bool/or.h"
 #include "monitors/expression_tree/unary/bool/not.h"
-#include "monitors/expression_tree/unary/temporal/ltlf/next_strong.h"
-#include "monitors/expression_tree/unary/temporal/ptlf/previously.h"
+#include "monitors/expression_tree/unary/temporal/next_strong.h"
+#include "monitors/expression_tree/unary/temporal/previously.h"
 #include "monitors/formula/formula.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/and_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/atomic_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/constant_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/negation_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/next_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/or_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/predicate_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/previous_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/since_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/until_monitor.h"
 
 std::shared_ptr<HydraMonitor> HydraCreationVisitor::createMonitor(Formula &formula) {
-    return formula.getExpr()->accept(*this);
+    auto newMonitor{formula.getExpr()->accept(*this)};
+    newMonitor->setFormulaId(formula.getId());
+    return newMonitor;
 }
 
-std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitAtomic(Atomic &op) {
-    return std::make_shared<AtomicMonitor>(Formula(std::make_shared<Atomic>(op)));
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitAtomic(Atomic &top) {
+    return std::make_shared<AtomicMonitorHydra>(Formula(std::make_shared<Atomic>(top)));
 }
 
-std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitConstant(Constant &op) {
-    return std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(op)));
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitConstant(Constant &top) {
+    return std::make_shared<ConstantMonitorHydra>(Formula(std::make_shared<Constant>(top)));
 }
 
-std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitPredicate(Predicate &op) {
-    return std::make_shared<PredicateMonitor>(Formula(std::make_shared<Predicate>(op)));
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitPredicate(Predicate &top) {
+    return std::make_shared<PredicateMonitorHydra>(Formula(std::make_shared<Predicate>(top)));
 }
 
-std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitPreviously(Previously &op) {
-    return std::make_shared<PreviousMonitor>(Formula(std::make_shared<Previously>(op)), op.getLeft()->accept(*this),
-                                             op.getInterval()->getStart(), op.getInterval()->getEnd());
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitPreviously(Previously &top) {
+    return std::make_shared<PreviousMonitorHydra>(Formula(std::make_shared<Previously>(top)),
+                                                  top.getLeft()->accept(*this),
+                                                  IntervalTemporalOperator(top.getInterval()));
 }
 
-std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitNext(NextStrong &op) {
-    return std::make_shared<NextMonitor>(Formula(std::make_shared<NextStrong>(op)), op.getLeft()->accept(*this),
-                                         op.getInterval()->getStart(), op.getInterval()->getEnd());
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitNext(NextStrong &top) {
+    return std::make_shared<NextMonitorHydra>(Formula(std::make_shared<NextStrong>(top)), top.getLeft()->accept(*this),
+                                              IntervalTemporalOperator(top.getInterval()));
 }
 
-std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitSince(Since &op) {
-    return std::make_shared<SinceMonitor>(Formula(std::make_shared<Since>(op)), op.getLeft()->accept(*this),
-                                          op.getRight()->accept(*this), op.getInterval()->getStart(),
-                                          op.getInterval()->getEnd());
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitSince(Since &top) {
+    return std::make_shared<SinceMonitorHydra>(Formula(std::make_shared<Since>(top)), top.getLeft()->accept(*this),
+                                               top.getRight()->accept(*this),
+                                               IntervalTemporalOperator(top.getInterval()));
 }
 
-std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitUntil(Until &op) {
-    return std::make_shared<UntilMonitor>(Formula(std::make_shared<Until>(op)), op.getLeft()->accept(*this),
-                                          op.getRight()->accept(*this),
-                                          std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(true))),
-                                          op.getInterval()->getStart(), op.getInterval()->getEnd());
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitUntil(Until &top) {
+    return std::make_shared<UntilMonitorHydra>(Formula(std::make_shared<Until>(top)), top.getLeft()->accept(*this),
+                                               top.getRight()->accept(*this),
+                                               IntervalTemporalOperator(top.getInterval()));
 }
 
-std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitOr(Or &op) {
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitOr(Or &top) {
     std::vector<std::shared_ptr<HydraMonitor>> monitors;
-    for (const auto &expr : op.getExpressions())
+    for (const auto &expr : top.getExpressions())
         monitors.push_back(expr->accept(*this));
-    return std::make_shared<OrMonitor>(Formula(std::make_shared<Or>(op)), monitors);
+    return std::make_shared<OrMonitorHydra>(Formula(std::make_shared<Or>(top)), monitors);
 }
 
-std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitAnd(And &op) {
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitAnd(And &top) {
     std::vector<std::shared_ptr<HydraMonitor>> monitors;
-    for (const auto &expr : op.getExpressions())
+    for (const auto &expr : top.getExpressions())
         monitors.push_back(expr->accept(*this));
-    return std::make_shared<AndMonitor>(Formula(std::make_shared<And>(op)), monitors);
+    return std::make_shared<AndMonitorHydra>(Formula(std::make_shared<And>(top)), monitors);
 }
 
-std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitNot(Not &op) {
-    return std::make_shared<NegationMonitor>(Formula(std::make_shared<Not>(op)), op.getLeft()->accept(*this));
+std::shared_ptr<HydraMonitor> HydraCreationVisitor::visitNot(Not &top) {
+    return std::make_shared<NegationMonitorHydra>(Formula(std::make_shared<Not>(top)), top.getLeft()->accept(*this));
 }

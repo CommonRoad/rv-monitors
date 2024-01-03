@@ -4,10 +4,10 @@
 // Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
 // Credits: BMW Car@TUM
 //
-#include "constant_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/constant_monitor.h"
 #include <monitors/expression_tree/atomic/constant.h>
 
-Verdict ConstantMonitor::step() {
+Verdict ConstantMonitorHydra::concreteStep() {
     if (traceIdx < trace.value().getLength()) {
         auto event{trace.value().getEvent(traceIdx)};
         auto verdict{
@@ -15,8 +15,11 @@ Verdict ConstantMonitor::step() {
         ++traceIdx;
         return verdict;
     } else
-        return Verdict(false);
+        return {false};
 }
 
-void ConstantMonitor::setTrace(const Trace &tr) { trace = tr; }
-void ConstantMonitor::reset() { traceIdx = 0; }
+void ConstantMonitorHydra::setTrace(const Trace &tra) { trace = tra; }
+
+void ConstantMonitorHydra::reset() { traceIdx = 0; }
+
+std::string ConstantMonitorHydra::to_string() { return formula.getExpr()->getSymbol(); }

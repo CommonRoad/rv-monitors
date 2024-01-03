@@ -1,0 +1,31 @@
+% !TeX root = ../rvmonitor.tex
+
+\section{Terms and Terminology}
+
+%\subsection{Propositional and Higher-Order Logic}
+
+\subsection{Temporal Logic}
+Temporal logic is an extension of propositional logic integrating temporal relationships.
+There exist different types of temporal logics which provide specific extension or are tailored for certain applications.
+There exist temporal logics, i.e., the semantics, which can cover specifications forward, backward, forward and backward, over real-valued signals/events or only boolean, and also temporal logics which extend to regular expressions or consider first-order logic operators.´
+The basic temporal logic is called linear temporal logic (LTL).
+It extends propositional logic with operators specifying temporal operations such that something has to hold at the next time step or that something must hold until something else is valid.
+A further 
+
+\subsection{Runtime Verification}
+We first want to introduce some important terms.
+An event is a tuple $(\tau_i, \Gamma_i)$, where $i \in \mathcal{N}_0$ is a non-negative index ,$\tau_i \in \mathcal{T}$ is a time-stamp, and $ \Gamma_i \subseteq \mathcal{AP}$ is a subset of atomic predicates.
+A stream is an infinite sequence of events, where a finite prefix of stream is denoted as trace.
+
+Runtime Verification (RV) is an approach for monitoring a system.
+In RV, a system is verified by analyzing system events against a specification.
+Usually the specification is given in a temporal logic, e.g., LTL, MTL, MFOTL, or STL.
+RV is highly-related to model checking but model checking verifies whether a system description complies with the specification whereas RV only uses a stream or trace.
+
+RV is distinguished between online and offline monitoring. 
+Online monitoring processes events at runtime while offline monitoring processes them after the system has stopped.
+Speaking more general, offline monitoring assumes that all events are given or could be created when the monitoring starts, whereas in online monitoring events for a future time step can still be undefined at a previous time step, but have to be defined later on.
+
+
+There exists different types of runtime verification algorithms.
+The two main categories are rewriting- and automaton-based.
