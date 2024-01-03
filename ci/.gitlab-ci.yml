@@ -1,14 +1,58 @@
 stages:
   - compile
   - test
-  #  - sanitizer TODO
   - coverage
   - static-test
   - docs
+  - evaluation
 
 
 
-image: $CI_REGISTRY/maierhofer/rv-monitors/ci:0.4.3
+image: $CI_REGISTRY/cps/rapid-prototyping-setup/ci-lite:1.1
+
+before_script:
+  - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lrz.de/".insteadOf "git@gitlab.lrz.de:"
+
+### static test ###
+clang-format:
+  image: $CI_REGISTRY/cps/rapid-prototyping-setup/ci:1.4
+  stage: static-test
+  script: bash ./ci/clang-format.sh
+  needs: []
+
+clang-tidy:
+  image: $CI_REGISTRY/cps/rapid-prototyping-setup/ci:1.4
+  stage: static-test
+  script: bash ./ci/clang-tidy.sh
+  needs:
+    - job: build-compile-commands
+      artifacts: true
+
+cppcheck:
+  stage: static-test
+  script:
+    cppcheck
+    --project=build/compile_commands.json
+    -i"$(pwd)/external"
+  needs:
+    - job: build-compile-commands
+      artifacts: true
+
+.cache-build-dir:
+  cache: &cache_dependency_archives
+    key: cache-dependency-archives
+    paths:
+      - build/_deps/*-subbuild/*-populate-prefix/src/*.{tar*,zip}
+    policy: pull
+
+generate-cache:
+  stage: compile
+  cache:
+    <<: *cache_dependency_archives
+    policy: push
+  script:
+    - cmake -G "Ninja Multi-Config" -S . -B build -DFETCHCONTENT_QUIET:BOOL=OFF
+  needs: []
 
 ### build project ###
 build-compile-commands:
@@ -26,143 +70,76 @@ build-compile-commands:
 
 build-clang:
   stage: compile
+  cache:
+    <<: *cache_dependency_archives
+  variables:
+    CC: clang
+    CXX: clang++
   script:
-    - export CC=clang
-    - export CXX=clang++
-    - mkdir build && cd build
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Release ..
-    - make rvmonitors -j4
+    - cmake -G "Ninja Multi-Config" -S . -B build
+    - cmake --build build --config Release
   needs: []
 
 build-gcc:
   stage: compile
+  cache:
+    <<: *cache_dependency_archives
+  variables:
+    CC: gcc
+    CXX: g++
   script:
-    - export CC=gcc
-    - export CXX=g++
-    - mkdir build && cd build
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Release ..
-    - make rvmonitors -j4
+    - cmake -G "Ninja Multi-Config" -S . -B build
+    - cmake --build build --config Release
   needs: []
+
+build-evaluation:
+  stage: compile
+  cache:
+    <<: *cache_dependency_archives
+  script:
+    - cmake -G "Ninja Multi-Config" -S . -B build
+    - cmake --build build --config Release --target rvmonitors_eval
+  needs: []
+
 
 build-test:
   stage: compile
+  cache:
+    <<: *cache_dependency_archives
   script:
-    - mkdir build && cd build
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Debug ..
-    - make rvmonitors_test -j4
+    - cmake -G "Ninja Multi-Config" -S . -B build
+    - cmake --build build --config Debug --target rvmonitors_test
+  needs: []
   artifacts:
     paths:
-      - ./build/
-      - ./rvmonitors_test
-      - ./librvmonitors.so
-    expire_in: 20 minutes
+      - build
+    expire_in: 30 minutes
 
-build-run-coverage:
+build-coverage:
   stage: compile
+  cache:
+    <<: *cache_dependency_archives
   script:
-    - mkdir build && cd build
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCODE_COVERAGE=ON -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_BUILD_TYPE=Debug ..
-    - make rvmonitors_coverage -j4
+    - cmake -G "Ninja Multi-Config" -S . -B build -DRVMONITORS_BUILD_CODE_COVERAGE=ON
+    - cmake --build build --config Debug --target rvmonitors_test
   needs: []
   artifacts:
     paths:
-      - ./build/
-      - ./rvmonitors_coverage
-      - ./librvmonitors.so
-    expire_in: 20 minutes
+      - build
+    expire_in: 30 minutes
 
-
-### tests ###
-test-coverage:
-  stage: test
+build-nix:
+  stage: compile
+  image: nixos/nix:latest
   script:
-    - ./rvmonitors_test --gtest_output="xml:report.xml"
-  dependencies:
-    - build-test
-  artifacts:
-    reports:
-      junit: ./report.xml
-
-### static test ###
-clang-format:
-  stage: static-test
-  script: bash ./ci/clang-format.sh
-  needs: []
-
-clang-tidy:
-  stage: static-test
-  variables:
-    GIT_STRATEGY: clone
-  before_script:
-    - git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME $CI_DEFAULT_BRANCH
-    # The compile_commands.json mention build/src as a directory, and clang-tidy
-    # gets confused if that directory does not exist.
-    # The contents of build/src don't actually matter here.
-    - mkdir build/src
-  script: bash ./ci/clang-tidy.sh
-  needs:
-    - job: build-compile-commands
-      artifacts: true
-
-cppcheck:
-  stage: static-test
-  script:
-    cppcheck
-    --project=build/compile_commands.json
-    -i"$(pwd)/external"
-  needs:
-    - job: build-compile-commands
-      artifacts: true
-
-### coverage ###
-coverage-analyze:
-  stage: coverage
-  script:
-    - gcovr --version
-    - gcovr
-      -f src/
-      -e src/Parser/gen
-      --print-summary
-      --exclude-unreachable-branches
-      --output coverage.xml
-      --xml
-  needs:
-    - job: build-run-coverage
-      artifacts: true
-  coverage: /^\s*lines:\s*\d+.\d+\%/
-  artifacts:
-    reports:
-      cobertura: coverage.xml
-
-coverage-report:
-  stage: coverage
-  script:
-    - gcovr --version
-    - gcovr
-      -f src/
-      -e src/Parser/gen
-      --print-summary
-      --exclude-unreachable-branches
-      --output coverage.html
-      --html
-      --html-details
-    - mkdir coverage
-    - mv coverage*.html coverage
-  needs:
-    - job: build-run-coverage
-      artifacts: true
-  artifacts:
-    paths:
-      - coverage
-    expose_as: 'Coverage Report'
-    expire_in: 20 minutes
+    - nix --extra-experimental-features "nix-command flakes" --print-build-logs build
 
 ### create documentation ###
 docs:
   stage: docs
   script:
     - mkdir -p build && cd build
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Debug -DBUILD_DOXYGEN=ON  ..
+    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Debug -DRVMONITORS_BUILD_DOXYGEN=ON  ..
     - make doc_doxygen ..
   dependencies: []
   artifacts:
@@ -170,3 +147,27 @@ docs:
       - build/doc_doxygen/html/
     expose_as: 'Doxygen Documentation'
     expire_in: 20 minutes
+
+### evaluate rvmonitors ###
+evaluation:
+  stage: evaluation
+  image: $CI_REGISTRY/maierhofer/rv-monitors/ci-hydra:0.5.0
+  allow_failure: true
+  when: manual
+  script:
+    - /commonroad/evaluate.sh "$(pwd)/build/rvmonitors_eval"
+  after_script:
+    - mkdir -p eval_results
+    - cp -r --target-directory=eval_results
+      /opt/hydra/evaluation/output
+      /opt/hydra/evaluation/fmlas
+      /opt/hydra/evaluation/logs
+      /opt/hydra/evaluation/error.log
+      /opt/hydra/evaluation/bug*.mdl 
+  needs:
+    - job: build-evaluation
+      artifacts: true
+  artifacts:
+    name: evaluation_artifacts
+    paths:
+      - eval_results
