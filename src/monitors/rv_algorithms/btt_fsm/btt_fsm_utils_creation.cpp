@@ -1,10 +1,9 @@
-#include "btt_fsm_utils_creation.h"
-#include "decision.h"
+#include "monitors/rv_algorithms/btt_fsm/btt_fsm_utils_creation.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/nary/nary_interface.h"
 #include "monitors/expression_tree/unary/bool/not.h"
 #include "monitors/rewriting/basic_rewrite_visitor.h"
-#include "monitors/utils/utils.h"
+#include "monitors/rv_algorithms/btt_fsm/decision.h"
 #include <iostream>
 
 std::shared_ptr<Expression> BTT_FSMUtilsCreation::replaceAtomicByConstant(const Formula &formula,
@@ -41,22 +40,18 @@ std::shared_ptr<Expression> BTT_FSMUtilsCreation::replaceAtomicByConstant(const 
     if (itr != nary->end()) {
         nary->eraseExpression(itr);
         nary->addExpression(std::make_shared<Constant>(constant));
-        // std::cout << "Found " << atomic->to_string() << std::endl;
     }
     // Atomic could be negated
     else if (auto itrNot = nary->findExpression(std::make_shared<Not>(atomic)); itrNot != nary->end()) {
         nary->eraseExpression(itrNot);
         nary->addExpression(std::make_shared<Constant>(!constant));
-        // std::cout << "Found !" << atomic->to_string() << std::endl;
     }
 
     // Rewrite to reduce if possible
     Formula newFormula(nary);
-    BasicRewriteVisitor br;
-    br.rewrite(newFormula);
-    //    std::cout << "Result of " << atomic->to_string() << " replaced with " << constant << " in " <<
-    //    formula.to_string()
-    //              << ": " << newFormula.to_string() << std::endl;
+    BasicRewriteVisitor brv;
+    brv.rewrite(newFormula);
+
     return newFormula.getExpr();
 }
 
@@ -133,24 +128,21 @@ std::shared_ptr<node> BTT_FSMUtilsCreation::findNextNode(const MultiTransition &
         for (const auto &[formula, nextState] : multiTransition.getTransitions()) {
             if (formula.containsAtomic(atomic)) {
                 for (bool constant : {true, false}) {
-                    // std::cout << "Current atomic: " << atomic->to_string() << " evaluated as " << constant << " on "
-                    // << formula.to_string() << std::endl;
+
                     auto formulaCopy = formula.deepCopy();
                     auto resExpr = replaceAtomicByConstant(formulaCopy, atomic, constant);
-                    //                    std::cout << "Replacing " << atomic->to_string() << " with " << constant << "
-                    //                    in " << formulaCopy.to_string() << " is "
-                    //                              << resExpr->to_string() << std::endl;
+
                     // Check if replacing this atomic resolves the formula to true
                     if (resExpr->isConstTrue()) {
                         // Last atomic = base case
                         if (weights.size() == 1) {
                             auto left = std::make_shared<StateBttFsm>(nextState);
 
-                            std::map<std::string, lazy_bool> eventMap;
+                            event_map_t eventMap;
 
-                            eventMap.emplace(atomic->to_string(), lazy_bool(not constant));
+                            eventMap.emplace(atomic->to_string(), EventValue<bool>(not constant));
                             auto right = std::make_shared<StateBttFsm>(multiTransition.evaluate(eventMap));
-                            // Get left an right in order
+                            // Get left and right in order
                             if (constant) {
                                 return std::make_shared<Decision>(left, right, atomic);
                             }
@@ -158,8 +150,6 @@ std::shared_ptr<node> BTT_FSMUtilsCreation::findNextNode(const MultiTransition &
                         } else {
                             // Replace atomic with constant in all formulas by building new multiTransition
                             auto newMultitransition = eraseAtomicFromFormula(multiTransition, atomic);
-                            // std::cout << "MT after removing " << atomic->to_string() << "\n" <<
-                            // newMultitransition.to_string() << std::endl;
                             // Copy atomic since we erase it in the next step
                             auto atomicCopy = std::make_shared<Atomic>(atomic->to_string());
                             // Erase atomic from weights
