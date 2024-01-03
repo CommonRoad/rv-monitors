@@ -31,14 +31,11 @@ MonitorInterface::MonitorInterface(std::vector<Formula> formulas, AlgorithmType 
 const std::vector<Formula> &MonitorInterface::getFormulas() const { return formulas; }
 
 const std::map<AlgorithmType, std::vector<MonitoringProperties>> supportedFormulaTypes{
-    {AlgorithmType::hydra_mtl, {{TemporalFormulaType::safetyGeneral, true}}},
-    {AlgorithmType::hydra_2_mtl, {{TemporalFormulaType::safetyGeneral, true}}},
-    {AlgorithmType::btt_fsm, {{TemporalFormulaType::futureOnly, false}, {TemporalFormulaType::pastSafety, false}}},
-    {AlgorithmType::dynamic_programming_ltl,
-     {{TemporalFormulaType::futureOnly, false}, {TemporalFormulaType::pastSafety, false}}},
-    {AlgorithmType::event_consuming_ltl,
-     {{TemporalFormulaType::futureOnly, false}, {TemporalFormulaType::pastSafety, false}}},
-    {AlgorithmType::mt_fsm, {{TemporalFormulaType::futureOnly, false}, {TemporalFormulaType::pastSafety, false}}},
-    {AlgorithmType::event_consuming_mtl, {{TemporalFormulaType::safetyGeneral, true, true}}},
-
+    {AlgorithmType::hydra_mtl, {{FormulaType::safetyGeneral, true}}},
+    {AlgorithmType::hydra_2_mtl, {{FormulaType::safetyFirstOrder, true}}},
+    {AlgorithmType::btt_fsm, {{FormulaType::futureOnly, false}, {FormulaType::pastSafety, false}}},
+    {AlgorithmType::dynamic_programming_ltl, {{FormulaType::futureOnly, false}, {FormulaType::pastSafety, false}}},
+    {AlgorithmType::event_consuming_ltl, {{FormulaType::futureOnly, false}, {FormulaType::pastSafety, false}}},
+    {AlgorithmType::mt_fsm, {{FormulaType::futureOnly, false}, {FormulaType::pastSafety, false}}},
+    {AlgorithmType::event_consuming_mtl, {{FormulaType::safetyGeneral, true, true}}},
 };

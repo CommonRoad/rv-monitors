@@ -8,10 +8,10 @@
 
 Verdict AtomicMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     if (stepNumber < trace.getLength()) {
-        auto event{trace.getEvent(stepNumber)};
-        auto verdict{
-            Verdict(event.getTimeStep(), event.getValue(*std::dynamic_pointer_cast<Atomic>(formula.getExpr())))};
-        return verdict;
+        if (!domainValue.empty())
+            return trace.verdictAtTimeStep(stepNumber, domainValue);
+        else
+            return trace.verdictAtTimeStep(stepNumber, name);
     } else
         return {false};
 }
@@ -19,3 +19,11 @@ Verdict AtomicMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 void AtomicMonitor::setTrace(const Trace &tra) { trace = tra; }
 
 std::string AtomicMonitor::to_string() { return formula.to_string(); }
+
+void AtomicMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
+    for (const auto &dom : vals)
+        if (dom.getVariable() == name)
+            domainValue = std::any_cast<const char *>(dom.getValue());
+}
+
+std::shared_ptr<Hydra2Monitor> AtomicMonitor::clone() { return std::make_shared<AtomicMonitor>(*this); }

@@ -12,9 +12,25 @@
 #include "monitors/utils/utils.h"
 
 namespace hydraTestUtils {
+Trace createTraceWithVariable(size_t length, std::shared_ptr<IFunction<bool>> function);
+
 size_t executeHydraEval(Trace trace, const std::vector<Formula> &formulas,
-                        const std::vector<std::vector<Verdict>> &expSolution);
+                        const std::vector<std::vector<Verdict>> &expSolution,
+                        const std::vector<std::shared_ptr<DomainStorage>> &domains = {});
 
 size_t evalHydra(const std::vector<Formula> &formulas, const std::vector<std::vector<Verdict>> &expSolution,
                  Hydra2 &monitor, Trace &trac, const std::string &evaluation);
+
+bool higher_than_time_step(size_t timeStep, size_t val);
+
+std::tuple<size_t, size_t> twoSizeTArgs(std::vector<DomainValue> values);
+
+bool higher_than_zero(size_t timeStep, size_t val);
+
+bool equal_to_time_step(size_t timeStep, size_t value);
+
+bool divisible_by_time_step(size_t timeStep, size_t val);
+
+bool lower_than_time_step(size_t timeStep, size_t val);
+
 } // namespace hydraTestUtils

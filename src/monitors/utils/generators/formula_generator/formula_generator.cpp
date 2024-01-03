@@ -1,10 +1,6 @@
-//
-// Created by Evald Nexhipi.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #include "monitors/utils/generators/formula_generator/formula_generator.h"
+#include "monitors/expression_tree/atomic/atomic.h"
+#include "monitors/expression_tree/atomic/predicate.h"
 
 std::shared_ptr<Expression> FormulaGenerator::generateUnaryExpression(const std::string &op,
                                                                       const std::shared_ptr<Expression> &exprLeft,

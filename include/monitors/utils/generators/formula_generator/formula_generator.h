@@ -1,16 +1,8 @@
-//
-// Created by Evald Nexhipi.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
-
 #pragma once
 #include "monitors/formula/formula.h"
 #include <utility>
 
 #include "monitors/expression_tree/atomic/atomic.h"
-#include "monitors/expression_tree/atomic/predicate.h"
 #include "monitors/expression_tree/binary/bool/equivalence.h"
 #include "monitors/expression_tree/binary/bool/implication.h"
 #include "monitors/expression_tree/nary/bool/and.h"

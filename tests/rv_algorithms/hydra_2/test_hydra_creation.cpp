@@ -6,25 +6,27 @@
 //
 #include "test_hydra_creation.h"
 
+#include "monitors/collections/domain.h"
 #include "monitors/parser/parser.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_creation_visitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/hydra_monitor.h"
 
 void executeTest(Formula inputFormula, const std::string &expectedFormulaStringReordered,
-                 const std::map<std::string, std::array<double, 2>> &predicateCosts) {
-    HydraCreationVisitor2 hcv{HydraCreationVisitor2(predicateCosts, false)};
+                 const std::map<std::string, std::array<double, 2>> &predicateCosts,
+                 const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) {
+    HydraCreationVisitor2 hcv{HydraCreationVisitor2(predicateCosts, false, true, domains)};
     std::shared_ptr<Hydra2Monitor> mon = hcv.createMonitor(inputFormula, 0, false);
     EXPECT_EQ(mon->to_string(), inputFormula.to_string());
 
-    hcv = HydraCreationVisitor2(predicateCosts, false);
+    hcv = HydraCreationVisitor2(predicateCosts, false, true, domains);
     mon = hcv.createMonitor(inputFormula, 0, true);
     EXPECT_EQ(mon->to_string(), inputFormula.to_string());
 
-    hcv = HydraCreationVisitor2(predicateCosts, true);
+    hcv = HydraCreationVisitor2(predicateCosts, true, true, domains);
     mon = hcv.createMonitor(inputFormula, 0, false);
     EXPECT_EQ(mon->to_string(), expectedFormulaStringReordered);
 
-    hcv = HydraCreationVisitor2(predicateCosts, true);
+    hcv = HydraCreationVisitor2(predicateCosts, true, true, domains);
     mon = hcv.createMonitor(inputFormula, 0, true);
     EXPECT_EQ(mon->to_string(), expectedFormulaStringReordered);
 }
@@ -90,7 +92,6 @@ TEST(TestHydraCreation, testNextAnd) {
     formula.setId("R1");
     std::map<std::string, std::array<double, 2>> predicateCosts{
         {"a", {20.0, 0.80}}, {"b", {100.0, 0.20}}, {"c", {100.0, 0.80}}, {"d", {20.0, 0.20}}};
-    HydraCreationVisitor2 hcv{HydraCreationVisitor2(predicateCosts)};
     std::string expectedFormula{"(X(d(test)) & X(a(test)) & X(b(test)) & X(c(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -338,6 +339,78 @@ TEST(TestHydraCreation, testAndOrDuplicatedPredicate) {
         {"a", {20.0, 0.80}}, {"b", {100.0, 0.20}}, {"c", {100.0, 0.80}}, {"d", {20.0, 0.20}}};
     std::string expectedFormula{"(a(test) & (a(test) | c(test) | b(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
+}
+
+TEST(TestHydraCreation, testUniversalSimple) {
+    Formula formula = Parser::parse("A x, y in D. p(x, y)");
+    formula.setId("R1");
+    std::map<std::string, std::array<double, 2>> predicateCosts{};
+    std::string expectedFormula{"A x in D, y in D. p(x, y)"};
+    DomainStorage dom1{"D", {"1", "2", "3"}};
+    std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1)};
+    executeTest(formula, expectedFormula, predicateCosts, domains);
+}
+
+TEST(TestHydraCreation, testUniversalNested) {
+    Formula formula = Parser::parse("A w in D0, x in D1. A y, z in D2. p(w, x, y, z)");
+    formula.setId("R1");
+    std::map<std::string, std::array<double, 2>> predicateCosts{};
+    std::string expectedFormula{"A w in D0, x in D1. A y in D2, z in D2. p(w, x, y, z)"};
+    DomainStorage dom1{"D0", {"0"}};
+    DomainStorage dom2{"D1", {"1"}};
+    DomainStorage dom3{"D2", {"2"}};
+    std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1),
+                                                        std::make_shared<DomainStorage>(dom2),
+                                                        std::make_shared<DomainStorage>(dom3)};
+    executeTest(formula, expectedFormula, predicateCosts, domains);
+}
+
+TEST(TestHydraCreation, testExistentialSimple) {
+    Formula formula = Parser::parse("E x in D0, y in D1, z in D2. p0(x, y) & p1(y, z)");
+    formula.setId("R1");
+    std::map<std::string, std::array<double, 2>> predicateCosts{};
+    std::string expectedFormula{"E x in D0, y in D1, z in D2. (p0(x, y) & p1(y, z))"};
+    DomainStorage dom1{"D0", {"1", "2", "3"}};
+    DomainStorage dom2{"D1", {"4", "5", "6"}};
+    DomainStorage dom3{"D2", {"7", "8", "9"}};
+    std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1),
+                                                        std::make_shared<DomainStorage>(dom2),
+                                                        std::make_shared<DomainStorage>(dom3)};
+    executeTest(formula, expectedFormula, predicateCosts, domains);
+}
+
+TEST(TestHydraCreation, testQuoteSimple) {
+    Formula formula = Parser::parse("Q[0.1, 0.5] x in D0, y in D1. p(x, y)");
+    formula.setId("R1");
+    std::map<std::string, std::array<double, 2>> predicateCosts{};
+    std::string expectedFormula{"Q[0.100000, 0.500000] x in D0, y in D1. p(x, y)"};
+    DomainStorage dom1{"D0", {"0"}};
+    DomainStorage dom2{"D1", {"1"}};
+    std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1),
+                                                        std::make_shared<DomainStorage>(dom2)};
+    executeTest(formula, expectedFormula, predicateCosts, domains);
+}
+
+TEST(TesthydraCreation, testCountingSimple) {
+    Formula formula = Parser::parse("C<=3 x in D. p(x)");
+    formula.setId("R1");
+    std::map<std::string, std::array<double, 2>> predicateCosts{};
+    std::string expectedFormula{"C<=3 x in D. p(x)"};
+    DomainStorage dom1{"D", {"a", "b", "c"}};
+    std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1)};
+    executeTest(formula, expectedFormula, predicateCosts, domains);
+}
+
+TEST(TestHydraCreation, testCountingNested) {
+    Formula formula = Parser::parse("C=2 x in D0. C>=4 y in D1. x & y");
+    formula.setId("R1");
+    std::map<std::string, std::array<double, 2>> predicateCosts{};
+    std::string expectedFormula{"C=2 x in D0. C>=4 y in D1. (x & y)"};
+    DomainStorage dom1{"D0", {"a"}};
+    DomainStorage dom2{"D1", {"b"}};
+    std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1),
+                                                        std::make_shared<DomainStorage>(dom2)};
+    executeTest(formula, expectedFormula, predicateCosts, domains);
 }
 
 TEST(TestHydraCreation, testInvalidPredicateCost) {

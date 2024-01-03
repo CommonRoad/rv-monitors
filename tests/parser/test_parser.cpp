@@ -67,6 +67,70 @@ TEST(TestParser, interval) {
     EXPECT_EQ(formula.to_string(), "X[0, 0](a)");
 }
 
+TEST(TestParser, universal) {
+    std::string ex_1 = "A x, y in D. p(x, y)";
+    Formula formula_1 = Parser::parse(ex_1, "Ex1");
+
+    std::string ex_parsed_1 = "A x in D, y in D. p(x, y)";
+    EXPECT_EQ(formula_1.to_string(), ex_parsed_1);
+
+    std::string ex_2 = "A x0, x1 in D0, y0, y1, y2 in D2. p(x0, x1, y0, y1, y2)";
+    Formula formula_2 = Parser::parse(ex_2, "Ex2");
+
+    std::string ex_parsed_2 = "A x0 in D0, x1 in D0, y0 in D2, y1 in D2, y2 in D2. p(x0, x1, y0, y1, y2)";
+    EXPECT_EQ(formula_2.to_string(), ex_parsed_2);
+}
+
+TEST(TestParser, functionDomain) {
+    std::string ex_1 = "A b,c in a(x, y). test";
+    Formula formula_1 = Parser::parse(ex_1, "Ex1");
+
+    std::string ex_parsed_1 = "A b in a(x, y), c in a(x, y). test";
+    EXPECT_EQ(formula_1.to_string(), ex_parsed_1);
+}
+
+TEST(TestParser, existential) {
+    std::string exi = "E x, y in D. p(x, y)";
+    Formula formula = Parser::parse(exi, "Ex1");
+
+    std::string ex_parsed = "E x in D, y in D. p(x, y)";
+    EXPECT_EQ(formula.to_string(), ex_parsed);
+}
+
+TEST(TestParser, quote) {
+    std::string ex_1 = "Q[0.1, 0.3] x, y in D. p(x, y)";
+    Formula formula_1 = Parser::parse(ex_1, "Ex1");
+
+    std::string ex_parsed_1 = "Q[0.100000, 0.300000] x in D, y in D. p(x, y)";
+    EXPECT_EQ(formula_1.to_string(), ex_parsed_1);
+
+    std::string ex_2 = "Q[1., 1.] x in D. p(x)";
+    Formula formula_2 = Parser::parse(ex_2, "Ex2");
+
+    std::string ex_parsed_2 = "Q[1.000000, 1.000000] x in D. p(x)";
+    EXPECT_EQ(formula_2.to_string(), ex_parsed_2);
+}
+
+TEST(TestParser, counting) {
+    std::string ex_1 = "C=2 x in D. p(x)";
+    Formula formula_1 = Parser::parse(ex_1, "Ex1");
+
+    std::string ex_parsed_1 = "C=2 x in D. p(x)";
+    EXPECT_EQ(formula_1.to_string(), ex_parsed_1);
+
+    std::string ex_2 = "C<=10 x, y in D. p(x, y)";
+    Formula formula_2 = Parser::parse(ex_2, "Ex2");
+
+    std::string ex_parsed_2 = "C<=10 x in D, y in D. p(x, y)";
+    EXPECT_EQ(formula_2.to_string(), ex_parsed_2);
+
+    std::string ex_3 = "C>=0 x, y in D0, z in D1. p(x, y, z)";
+    Formula formula_3 = Parser::parse(ex_3, "Ex3");
+
+    std::string ex_parsed_3 = "C>=0 x in D0, y in D0, z in D1. p(x, y, z)";
+    EXPECT_EQ(formula_3.to_string(), ex_parsed_3);
+}
+
 TEST(TestParser, constant_formula) {
     std::string ex_mtl = "true";
     Formula formula = Parser::parse(ex_mtl, "Ex1");

@@ -8,3 +8,5 @@ rvmonitors_test_coverage
 *.so
 /rvmonitors_performance_eval
 
+/build/
+/gen/

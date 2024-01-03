@@ -5,6 +5,7 @@
 // Credits: BMW Car@TUM
 //
 #include "monitors/rv_algorithms/hydra/hydra_monitors/predicate_monitor.h"
+#include "monitors/expression_tree/atomic/predicate.h"
 
 Verdict PredicateMonitorHydra::concreteStep() {
     if (traceIdx < trace.value().getLength()) {

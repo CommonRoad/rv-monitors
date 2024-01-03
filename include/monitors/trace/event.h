@@ -1,12 +1,15 @@
 #pragma once
 
-#include "monitors/expression_tree/atomic/atomic.h"
-#include "monitors/expression_tree/atomic/predicate.h"
-#include "monitors/utils/lazy_bool.h"
+#include "monitors/trace/event_value.h"
+#include "monitors/utils/verdict.h"
 #include <sstream>
 #include <unordered_map>
 
-using event_map_t = std::unordered_map<std::string, lazy_bool>;
+class Predicate;
+class Atomic;
+class DomainValue;
+
+using event_map_t = std::unordered_map<std::string, EventValue<bool>>;
 
 /**
  * Event of a trace.
@@ -25,6 +28,8 @@ class Event {
      */
     explicit Event(event_map_t event, size_t time, bool terminal) noexcept
         : eventMap(std::move(event)), timeStep(time), terminal(terminal) {}
+
+    explicit Event(size_t time, bool terminal) noexcept : timeStep(time), terminal(terminal) {}
 
     Event(const Event &) = default;
     Event &operator=(const Event &) = default;
@@ -71,12 +76,6 @@ class Event {
     [[nodiscard]] bool isTerminal() const;
 
     /**
-     * Setter for eventMap.
-     * @param eventMap
-     */
-    void setEventMap(const event_map_t &eventMap);
-
-    /**
      * Setter for terminal attribute.
      * @param terminal
      */
@@ -90,9 +89,7 @@ class Event {
      */
     [[nodiscard]] size_t getTimeStep() const;
 
-    /**
-     * Setter for time step.
-     * @param timeStep time step to be set
-     */
-    void setTimeStep(size_t timeStep);
+    Verdict getVerdict(const std::string &name);
+
+    void addEventValueFunction(const std::string &name, EventValue<bool> func);
 };

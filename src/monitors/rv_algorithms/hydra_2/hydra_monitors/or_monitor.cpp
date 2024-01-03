@@ -41,6 +41,15 @@ void OrMonitor::reset() {
         mon->reset();
 }
 
+std::shared_ptr<Hydra2Monitor> OrMonitor::clone() {
+    auto clonedMonitor = std::make_shared<OrMonitor>(*this);
+    std::vector<std::shared_ptr<Hydra2Monitor>> clonedSubMonitors;
+    for (const auto &mon : subMonitors)
+        clonedSubMonitors.push_back(mon->clone());
+    clonedMonitor->subMonitors = clonedSubMonitors;
+    return clonedMonitor;
+}
+
 std::string OrMonitor::to_string() {
     std::string str{"("};
     for (const auto &mon : subMonitors)
@@ -63,4 +72,9 @@ double OrMonitor::computeSatisfactionProbability(const std::vector<std::shared_p
         probs.insert(mon->getSatisfactionProbability());
     }
     return *probs.rbegin();
+}
+
+void OrMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
+    for (const auto &sub : subMonitors)
+        sub->addDomainValues(vals);
 }

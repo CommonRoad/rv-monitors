@@ -204,4 +204,37 @@ class MTLEventConsumingVisitor : public ExpressionVisitor {
      * @return op as a shared_ptr.
      */
     std::shared_ptr<Expression> visitPredicate(Predicate &opr, Trace &trace, size_t index) override;
+
+    /**
+     * Converts op to a shared_ptr.
+     * @param op Universal quantifier.
+     * @param trace Trace.
+     * @return Op as a shared_ptr.
+     */
+    std::shared_ptr<Expression> visitUniversalQuantifier(UniversalQuantifier &op, Trace &trace, size_t index) override;
+
+    /**
+     * Converts op to a shared_ptr.
+     * @param op Existential quantifier.
+     * @param trace Trace.
+     * @return Op as a shared_ptr.
+     */
+    std::shared_ptr<Expression> visitExistentialQuantifier(ExistentialQuantifier &op, Trace &trace,
+                                                           size_t index) override;
+
+    /**
+     * Converts op to a shared_ptr.
+     * @param op Quote quantifier.
+     * @param trace Trace.
+     * @return Op as a shared_ptr.
+     */
+    std::shared_ptr<Expression> visitQuoteQuantifier(QuoteQuantifier &op, Trace &trace, size_t index) override;
+
+    /**
+     * Converts op to a shared_ptr.
+     * @param op Counting quantifier.
+     * @param trace Trace.
+     * @return Op as a shared_ptr.
+     */
+    std::shared_ptr<Expression> visitCountingQuantifier(CountingQuantifier &op, Trace &trace, size_t index) override;
 };
