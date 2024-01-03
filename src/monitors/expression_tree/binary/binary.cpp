@@ -1,4 +1,4 @@
-#include "binary.h"
+#include "monitors/expression_tree/binary/binary.h"
 
 const std::shared_ptr<Expression> &Binary::getLeft() const { return left; }
 

@@ -1,4 +1,4 @@
-#include "multi_transition.h"
+#include "monitors/rv_algorithms/mt_fsm/multi_transition.h"
 #include "monitors/utils/utils.h"
 
 MultiTransition::MultiTransition(std::map<Formula, size_t> transitions) : transitions(std::move(transitions)) {}
@@ -16,7 +16,7 @@ std::string MultiTransition::to_string() const {
     return ret.str();
 }
 
-size_t MultiTransition::evaluate(std::map<std::string, lazy_bool> &eventMap) const {
+size_t MultiTransition::evaluate(event_map_t &eventMap) const {
     for (const auto &[formula, state] : transitions) {
         if (Utils::evaluateBooleanExpression(formula.getExpr(), eventMap)) {
             return state;

@@ -1,14 +1,14 @@
-#include "qmc.h"
+#include "monitors/qmc/qmc.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/nary/bool/and.h"
 #include "monitors/expression_tree/nary/bool/or.h"
 #include "monitors/expression_tree/nary/bool/xor.h"
 #include "monitors/expression_tree/unary/bool/not.h"
 #include "monitors/parser/parser.h"
+#include "monitors/qmc/qmc_table.h"
 #include "monitors/rewriting/basic_rewrite_visitor.h"
 #include "monitors/trace/event_generator.h"
 #include "monitors/utils/utils.h"
-#include "qmc_table.h"
 #include <algorithm>
 #include <cmath>
 #include <iostream>

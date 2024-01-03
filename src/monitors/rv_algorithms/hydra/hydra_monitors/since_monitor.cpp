@@ -4,44 +4,47 @@
 // Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
 // Credits: BMW Car@TUM
 //
-#include "since_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/since_monitor.h"
 
-Verdict SinceMonitor::step() {
-    subVerdictF = subMonitorF->step();
-    if (subVerdictF->ts)
-        positionMonitorF.update(subVerdictF->ts.value());
-    else if (!subVerdictF->b)
+Verdict SinceMonitorHydra::concreteStep() {
+    subVerdictF = subMonitorF->concreteStep();
+    if (subVerdictF->timeStamp)
+        positionMonitorF.update(subVerdictF->timeStamp.value());
+    if (!subVerdictF->value)
         last_viol = std::make_pair(positionMonitorF.ts, positionMonitorF.tp);
 
     if (positionMonitorG.tp == -1) {
-        subVerdictG = subMonitorG->step();
-        if (subVerdictG->ts)
-            positionMonitorG.update(subVerdictG->ts.value());
+        subVerdictG = subMonitorG->concreteStep();
+        if (subVerdictG->timeStamp)
+            positionMonitorG.update(subVerdictG->timeStamp.value());
     }
 
     while (!positionMonitorG.eof && positionMonitorG.tp <= positionMonitorF.tp &&
-           positionMonitorF.ts - positionMonitorG.ts >= from) {
-        if (subVerdictG->b)
+           positionMonitorF.ts - positionMonitorG.ts >= interval.getStart()) {
+        if (subVerdictG->value)
             last_sat = std::make_pair(positionMonitorG.ts, positionMonitorG.tp);
 
-        subVerdictG = subMonitorG->step();
-        if (subVerdictG->ts)
-            positionMonitorG.update(subVerdictG->ts.value());
+        subVerdictG = subMonitorG->concreteStep();
+        if (subVerdictG->timeStamp)
+            positionMonitorG.update(subVerdictG->timeStamp.value());
         else {
             positionMonitorG.eof = true;
             positionMonitorG.tp++;
         }
     }
 
-    int v = static_cast<int>(last_sat && positionMonitorF.ts - last_sat->first <= to &&
-                             (!last_viol || last_sat->second >= last_viol->second));
-    return Verdict(positionMonitorF.ts, v != 0);
+    int verd = static_cast<int>(last_sat &&
+                                (!interval.isFinite() or positionMonitorF.ts - last_sat->first <= interval.getEnd()) &&
+                                (!last_viol || last_sat->second >= last_viol->second));
+    return {positionMonitorF.ts, verd != 0};
 }
-void SinceMonitor::setTrace(const Trace &tr) {
-    subMonitorF->setTrace(tr);
-    subMonitorG->setTrace(tr);
+
+void SinceMonitorHydra::setTrace(const Trace &tra) {
+    subMonitorF->setTrace(tra);
+    subMonitorG->setTrace(tra);
 }
-void SinceMonitor::reset() {
+
+void SinceMonitorHydra::reset() {
     subMonitorG->reset();
     subMonitorF->reset();
     subVerdictF = {};
@@ -50,4 +53,17 @@ void SinceMonitor::reset() {
     last_viol = {};
     positionMonitorG.reset();
     positionMonitorF.reset();
+}
+
+std::string SinceMonitorHydra::to_string() {
+    std::string itv{" "};
+    std::string end{};
+    if (!interval.isEmpty()) {
+        if (!interval.isFinite())
+            end = "inf";
+        else
+            end = std::to_string(interval.getEnd());
+        itv = "[" + std::to_string(interval.getStart()) + ", " + end + "] ";
+    }
+    return "(" + subMonitorF->to_string() + " S" + itv + subMonitorG->to_string() + ")";
 }

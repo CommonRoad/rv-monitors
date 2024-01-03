@@ -1,0 +1,28 @@
+//
+// Created by Sebastian Maierhofer.
+// Technical University of Munich - Cyber-Physical Systems Group
+// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
+// Credits: BMW Car@TUM
+//
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/negation_monitor.h"
+
+Verdict NegationMonitor::concreteStep(size_t parentId, size_t stepNumber) {
+    return !subMonitor->step(monitorId, stepNumber);
+}
+
+void NegationMonitor::setTrace(const Trace &tra) { subMonitor->setTrace(tra); }
+
+void NegationMonitor::reset() {
+    Hydra2Monitor::reset();
+    subMonitor->reset();
+}
+
+std::shared_ptr<Hydra2Monitor> NegationMonitor::clone() {
+    auto clonedMonitor = std::make_shared<NegationMonitor>(*this);
+    clonedMonitor->subMonitor = subMonitor->clone();
+    return clonedMonitor;
+}
+
+std::string NegationMonitor::to_string() { return "!(" + subMonitor->to_string() + ")"; }
+
+void NegationMonitor::addDomainValues(const std::vector<DomainValue> &vals) { subMonitor->addDomainValues(vals); }

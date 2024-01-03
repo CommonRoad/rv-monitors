@@ -6,11 +6,9 @@
 //
 #pragma once
 
+#include "monitors/rv_algorithms/hydra/hydra.h"
 #include "monitors/trace/trace.h"
 #include "monitors/utils/utils.h"
 #include <gtest/gtest.h>
 
-class TestHydra : public testing::Test {
-  public:
-    static void evalHydra(Trace &trace, const Formula &formula, const std::vector<Verdict> &expSolution);
-};
+class TestHydra : public testing::Test {};

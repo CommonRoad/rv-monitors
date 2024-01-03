@@ -4,9 +4,10 @@
 // Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
 // Credits: BMW Car@TUM
 //
-#include "predicate_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/predicate_monitor.h"
+#include "monitors/expression_tree/atomic/predicate.h"
 
-Verdict PredicateMonitor::step() {
+Verdict PredicateMonitorHydra::concreteStep() {
     if (traceIdx < trace.value().getLength()) {
         auto event{trace.value().getEvent(traceIdx)};
         auto verdict{
@@ -14,8 +15,11 @@ Verdict PredicateMonitor::step() {
         ++traceIdx;
         return verdict;
     } else
-        return Verdict(false);
+        return {false};
 }
 
-void PredicateMonitor::setTrace(const Trace &tr) { trace = tr; }
-void PredicateMonitor::reset() { traceIdx = 0; }
+void PredicateMonitorHydra::setTrace(const Trace &tra) { trace = tra; }
+
+void PredicateMonitorHydra::reset() { traceIdx = 0; }
+
+std::string PredicateMonitorHydra::to_string() { return formula.to_string(); }

@@ -4,9 +4,12 @@
 // Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
 // Credits: BMW Car@TUM
 //
-#include "negation_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra_monitors/negation_monitor.h"
 
-Verdict NegationMonitor::step() { return !subMonitor->step(); }
+Verdict NegationMonitorHydra::concreteStep() { return !subMonitor->concreteStep(); }
 
-void NegationMonitor::setTrace(const Trace &tr) { subMonitor->setTrace(tr); }
-void NegationMonitor::reset() { subMonitor->reset(); }
+void NegationMonitorHydra::setTrace(const Trace &tra) { subMonitor->setTrace(tra); }
+
+void NegationMonitorHydra::reset() { subMonitor->reset(); }
+
+std::string NegationMonitorHydra::to_string() { return "!(" + subMonitor->to_string() + ")"; }

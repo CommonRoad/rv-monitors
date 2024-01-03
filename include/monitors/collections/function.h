@@ -1,0 +1,119 @@
+#pragma once
+
+#include "monitors/collections/domain_value.h"
+#include <any>
+#include <functional>
+#include <memory>
+#include <stdexcept>
+#include <string>
+
+template <typename T> class IFunction {
+  public:
+    IFunction() = default;
+
+    IFunction(std::string name, std::vector<std::string> argumentNames, float cost = 0.0);
+
+    /**
+     * Returns costs of function.
+     *
+     * @return Costs.
+     */
+    [[nodiscard]] float getCosts() const;
+
+    /**
+     * Returns name of function.
+     *
+     * @return Name.
+     */
+    [[nodiscard]] std::string getName() const;
+
+    /**
+     * Returns names of function arguments.
+     *
+     * @return List of names in correct order.
+     */
+    [[nodiscard]] std::vector<std::string> getArgumentNames() const;
+
+    virtual std::function<T()> getFunction();
+
+    [[nodiscard]] virtual std::function<T()> getFunction(const std::vector<DomainValue> &args);
+
+    virtual T evaluateFunction();
+
+  private:
+    std::string name; //**< Name of function. */
+    std::vector<std::string> argumentNames;
+    float costs; //**< Costs for evaluation. */
+};
+template <typename T> std::function<T()> IFunction<T>::getFunction(const std::vector<DomainValue> &args) {
+    std::runtime_error("IFunction<T>::getFunction: This call should not happen");
+    return {};
+}
+template <typename T> std::function<T()> IFunction<T>::getFunction() {
+    std::runtime_error("IFunction<T>::getFunction: This call should not happen");
+    return {};
+}
+template <typename T> T IFunction<T>::evaluateFunction() {
+    std::runtime_error("IFunction<T>::getFunction: This call should not happen");
+    return {};
+}
+
+template <typename T> IFunction<T>::IFunction(std::string name, std::vector<std::string> argumentNames, float cost)
+    : name(std::move(name)), argumentNames(std::move(argumentNames)), costs(cost) {}
+
+template <typename T> std::string IFunction<T>::getName() const { return name; }
+
+template <typename T> std::vector<std::string> IFunction<T>::getArgumentNames() const { return argumentNames; }
+
+template <typename T> float IFunction<T>::getCosts() const { return costs; }
+
+/**
+ * Function is used to evaluate a predicate and can also be time dependent.
+ */
+template <typename T, typename... Args> class Function : public IFunction<T> {
+  public:
+    /**
+     * Constructor.
+     *
+     * @param name Name of function.
+     * @param function Function.
+     * @param costs Costs for evaluation.
+     */
+    Function(std::string name, std::vector<std::string> argumentNames, std::function<T(Args... args)> function,
+             std::function<std::tuple<Args...>(std::vector<DomainValue>)> arguments, float costs = 0.0);
+
+    Function() = default;
+
+    operator T() const;
+
+    /**
+     * Returns function.
+     *
+     * @return Function.
+     */
+    [[nodiscard]] std::function<T()> getFunction(const std::vector<DomainValue> &args);
+
+    [[nodiscard]] T evaluateFunction(Args... args);
+
+  private:
+    std::function<T(Args... args)> function; //**< Function. */
+
+    std::function<std::tuple<Args...>(std::vector<DomainValue>)> arguments; //**< Function. */
+};
+
+template <typename T, typename... Args>
+std::function<T()> Function<T, Args...>::getFunction(const std::vector<DomainValue> &args) {
+    return [this, args]() { return std::apply(this->function, this->arguments(args)); };
+}
+
+template <typename T, typename... Args> Function<T, Args...>::operator T() const { function(); }
+
+template <typename T, typename... Args> T Function<T, Args...>::evaluateFunction(Args... args) {
+    return function(args...);
+}
+
+template <typename T, typename... Args>
+Function<T, Args...>::Function(std::string name, std::vector<std::string> argumentNames,
+                               std::function<T(Args...)> function,
+                               std::function<std::tuple<Args...>(std::vector<DomainValue>)> arguments, float costs)
+    : IFunction<T>(std::move(name), std::move(argumentNames), costs), function(function), arguments(arguments) {}

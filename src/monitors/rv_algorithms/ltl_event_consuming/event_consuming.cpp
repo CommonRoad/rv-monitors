@@ -1,14 +1,15 @@
-#include "event_consuming.h"
-#include "event_consuming_visitor.h"
+#include "monitors/rv_algorithms/ltl_event_consuming//event_consuming.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/unary/event_operator.h"
 #include "monitors/rewriting/rewrite_visitor.h"
+#include "monitors/rv_algorithms/ltl_event_consuming/event_consuming_visitor.h"
 #include <iostream>
 #include <memory>
-#include <utility>
 
-EventConsumingLTL::EventConsumingLTL(Formula formula, bool pastEvaluation)
-    : MonitorInterface((std::move(formula))), pastEvaluation(pastEvaluation) {}
+EventConsumingLTL::EventConsumingLTL(const std::vector<Formula> &formulas, bool pastEvaluation,
+                                     bool formulaCompatibilityCheck)
+    : MonitorInterface(formulas, AlgorithmType::event_consuming_ltl, formulaCompatibilityCheck),
+      pastEvaluation(pastEvaluation) {}
 
 Formula EventConsumingLTL::eventConsumingFuture(Trace &trace) {
     // Empty trace
@@ -17,15 +18,15 @@ Formula EventConsumingLTL::eventConsumingFuture(Trace &trace) {
         return Formula(std::make_shared<Constant>(false));
     }
     // Copy formula before working on it
-    auto formulaCopy = formula.deepCopy();
-    RewriteVisitor rw;
-    EventConsumingVisitor ec;
+    auto formulaCopy = formulas.at(0).deepCopy();
+    RewriteVisitor rwv;
+    EventConsumingVisitor ecv;
 
     // Rewrite
-    rw.rewrite(formulaCopy);
+    rwv.rewrite(formulaCopy);
     for (size_t i = 0; i < trace.getLength(); ++i) {
-        ec.consumeEvent(formulaCopy, trace, i);
-        rw.rewrite(formulaCopy);
+        ecv.consumeEvent(formulaCopy, trace, i);
+        rwv.rewrite(formulaCopy);
         if (formulaCopy.to_string() == "false") {
             break;
         }
@@ -39,23 +40,22 @@ Formula EventConsumingLTL::eventConsumingFuture(Trace &trace) {
 Formula EventConsumingLTL::eventConsumingPast(Trace &trace) {
     // Empty trace
     if (trace.getTrace().empty()) {
-        std::cout << "Trace is empty" << std::endl;
         return Formula(std::make_shared<Constant>(false));
     }
     // Copy formula before working on it
-    auto formulaCopy = formula.deepCopy();
-    RewriteVisitor rw;
-    EventConsumingVisitor ec;
+    auto formulaCopy = formulas.at(0).deepCopy();
+    RewriteVisitor rwv;
+    EventConsumingVisitor ecv;
 
     // Update terminal event
     trace.setTerminalEvent(false);
     // Rewrite
-    rw.rewrite(formulaCopy);
+    rwv.rewrite(formulaCopy);
     auto &traceRef = trace.getTraceRef();
     // Traverse trace backwards
-    for (size_t i = traceRef.size() - 1; i >= 0 && i < traceRef.size(); --i) {
-        ec.consumeEvent(formulaCopy, trace, i);
-        rw.rewrite(formulaCopy);
+    for (int i = static_cast<int>(traceRef.size()) - 1; i >= 0; --i) {
+        ecv.consumeEvent(formulaCopy, trace, static_cast<size_t>(i));
+        rwv.rewrite(formulaCopy);
         if (formulaCopy.to_string() == "false") {
             break;
         }
@@ -66,10 +66,12 @@ Formula EventConsumingLTL::eventConsumingPast(Trace &trace) {
     return formulaCopy;
 }
 
-std::vector<Verdict> EventConsumingLTL::evaluate(Trace &trace) {
-    if (!pastEvaluation) {
-        return {Verdict{0, eventConsumingFuture(trace).to_string() == "true"}};
-    }
-    return {Verdict{0, eventConsumingPast(trace).to_string() == "true"}};
+std::map<std::string, std::vector<Verdict>> EventConsumingLTL::evaluate(Trace &trace) {
+    std::map<std::string, std::vector<Verdict>> result;
+    if (!pastEvaluation)
+        result[formulas.at(0).getId()] = {Verdict{eventConsumingFuture(trace).to_string() == "true"}};
+    else
+        result[formulas.at(0).getId()] = {Verdict{eventConsumingPast(trace).to_string() == "true"}};
+    return result;
 }
 std::string EventConsumingLTL::to_string() const { return "TODO"; }
