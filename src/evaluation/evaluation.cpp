@@ -25,7 +25,7 @@ static void print_solution(const std::vector<Verdict> &solution) {
 }
 
 int main(int argc, char **argv) {
-    if (argc != 3) {
+    if (argc < 3) {
         std::cerr << "Usage: " << argv[0] << " FORMULA LOG" << std::endl;
         return EXIT_FAILURE;
     }
@@ -47,6 +47,7 @@ int main(int argc, char **argv) {
 
     auto monitor{Hydra2({formula})};
     auto solution_map{monitor.evaluate(trace)};
+
     const auto &solution = solution_map[formula.getId()];
     print_solution(solution);
 

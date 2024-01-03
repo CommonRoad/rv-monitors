@@ -276,7 +276,7 @@ target_link_libraries(${LIBRARY_NAME}
 
 add_library(RVMonitors::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
-add_executable(rvmonitors_eval monitors/evaluation/evaluation.cpp)
+add_executable(rvmonitors_eval evaluation/evaluation.cpp)
 target_link_libraries(${LIBRARY_NAME}_eval
         PUBLIC
         ${LIBRARY_NAME}

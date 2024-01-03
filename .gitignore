@@ -10,3 +10,8 @@ rvmonitors_test_coverage
 
 /build/
 /gen/
+/evaluation/output/
+/evaluation/logs/
+/evaluation/stats/
+/evaluation/figs/
+/evaluation/fmlas/
