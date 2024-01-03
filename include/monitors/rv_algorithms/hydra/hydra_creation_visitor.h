@@ -24,6 +24,8 @@ class Atomic;
 
 class Constant;
 
+class Constant;
+
 class And;
 
 class Or;

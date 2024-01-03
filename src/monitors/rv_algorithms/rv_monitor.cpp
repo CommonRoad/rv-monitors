@@ -76,7 +76,8 @@ AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
 }
 
 RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration configuration,
-                     const std::map<std::string, std::array<double, 2>> &predicateCosts)
+                     const std::map<std::string, std::array<double, 2>> &predicateCosts,
+                     const std::vector<std::shared_ptr<DomainStorage>> &domains)
     : configuration(configuration) {
     for (const auto &pred : predicateCosts)
         assert(pred.second[0] >= 0 and pred.second[0] <= 100 and pred.second[1] >= 0 and pred.second[1] <= 1);
@@ -97,9 +98,9 @@ RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration 
         monitor = std::make_unique<Hydra>(formulas);
         break;
     case hydra_2_mtl:
-        monitor =
-            std::make_unique<Hydra2>(formulas, configuration.hydraConnectedEvaluation, configuration.hydraReordering,
-                                     configuration.shortCircuiting, configuration.earlyTermination, predicateCosts);
+        monitor = std::make_unique<Hydra2>(formulas, configuration.hydraConnectedEvaluation,
+                                           configuration.hydraReordering, configuration.shortCircuiting,
+                                           configuration.earlyTermination, domains, predicateCosts);
         break;
     case event_consuming_mtl:
         monitor = std::make_unique<MTLEventConsuming>(formulas);
@@ -108,7 +109,8 @@ RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration 
 }
 
 RVMonitor::RVMonitor(const Formula &formula, MonitorConfiguration configuration,
-                     const std::map<std::string, std::array<double, 2>> &predicateCosts)
+                     const std::map<std::string, std::array<double, 2>> &predicateCosts,
+                     const std::vector<std::shared_ptr<DomainStorage>> &domains)
     : configuration(configuration) {
     for (const auto &pred : predicateCosts)
         assert(pred.second[0] >= 0 and pred.second[0] <= 100 and pred.second[1] >= 0 and pred.second[1] <= 1);
@@ -131,7 +133,7 @@ RVMonitor::RVMonitor(const Formula &formula, MonitorConfiguration configuration,
     case hydra_2_mtl:
         monitor = std::make_unique<Hydra2>(std::vector<Formula>{formula}, configuration.hydraConnectedEvaluation,
                                            configuration.hydraReordering, configuration.shortCircuiting,
-                                           configuration.earlyTermination, predicateCosts);
+                                           configuration.earlyTermination, domains, predicateCosts);
         break;
     case event_consuming_mtl:
         monitor = std::make_unique<MTLEventConsuming>(std::vector<Formula>{formula});
@@ -163,7 +165,8 @@ RVMonitor::RVMonitor(const RVMonitor &obj) : configuration(obj.configuration) {
         }
         monitor =
             std::make_unique<Hydra2>(formulas, configuration.hydraConnectedEvaluation, configuration.hydraReordering,
-                                     configuration.shortCircuiting, configuration.earlyTermination);
+                                     configuration.shortCircuiting, configuration.earlyTermination,
+                                     hydra2->getDomains(), hydra2->getPredicateCost());
     }
     executionStatistic = obj.executionStatistic;
 }
@@ -179,10 +182,11 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
                 formulaCopy.setId(form.getId());
                 formulas.push_back(formulaCopy);
             }
-            // auto predicateCost{hydra.};
+
             monitor = std::make_unique<Hydra2>(formulas, configuration.hydraConnectedEvaluation,
                                                configuration.hydraReordering, configuration.shortCircuiting,
-                                               configuration.earlyTermination);
+                                               configuration.earlyTermination, hydra->getDomains(),
+                                               hydra->getPredicateCost());
         }
         // TODO other algorithms
         executionStatistic = other.executionStatistic;

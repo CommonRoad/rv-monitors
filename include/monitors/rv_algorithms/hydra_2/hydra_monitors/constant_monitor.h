@@ -44,6 +44,19 @@ class ConstantMonitor : public Hydra2Monitor {
     void setTrace(const Trace &trace) override;
 
     /**
+     * Adds domain value in other monitors. Not relevant for constant monitor.
+     *
+     * @param vals Domain values which should be added.
+     */
+    void addDomainValues(const std::vector<DomainValue> &vals) override;
+
+    /**
+     * Clones this monitor.
+     * @return New shared_ptr of this monitor.
+     */
+    std::shared_ptr<Hydra2Monitor> clone() override;
+
+    /**
      * Creates string representation of monitor.
      *
      * @return String representing monitor.

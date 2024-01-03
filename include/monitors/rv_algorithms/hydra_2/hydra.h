@@ -30,6 +30,7 @@ class Hydra2 : public MonitorInterface {
      */
     Hydra2(const std::vector<Formula> &formulas, bool connectedEval = true, bool reordering = true,
            bool shortCircuiting = true, bool earlyTermination = false,
+           const std::vector<std::shared_ptr<DomainStorage>> &domains = {},
            const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
 
     /**
@@ -48,6 +49,20 @@ class Hydra2 : public MonitorInterface {
      */
     [[nodiscard]] std::string to_string() const override;
 
+    /**
+     * Getter for domains.
+     *
+     * @return List of registered domains.
+     */
+    [[nodiscard]] std::vector<std::shared_ptr<DomainStorage>> &getDomains();
+
+    /**
+     * Getter for predicate cost.
+     *
+     * @return Registered predicate costs.
+     */
+    std::map<std::string, std::array<double, 2>> &getPredicateCost();
+
   private:
     /**
      * Creates monitors for specified formulas based on provided configuration information.
@@ -59,8 +74,7 @@ class Hydra2 : public MonitorInterface {
      * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
      * satisfaction probability in interval [0, 1].
      */
-    void createMonitor(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting,
-                       const std::map<std::string, std::array<double, 2>> &predicateCosts);
+    void createMonitor(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting);
 
     /**
      * Resets monitor variables to default values.
@@ -74,6 +88,24 @@ class Hydra2 : public MonitorInterface {
      */
     void setTraceMonitors(const Trace &tra);
 
+    /**
+     * Evaluate complete trace.
+     *
+     * @param trace Trace to be evaluated.
+     * @param result Data structure for storing evaluation result.
+     */
+    void evalCompleteTrace(Trace &trace, std::map<std::string, std::vector<Verdict>> &result);
+
+    /**
+     * Evaluates trace until verdict can be provided.
+     *
+     * @param trace Trace to be evaluated.
+     * @param result Data structure for storing evaluation result.
+     */
+    void evalEarlyTermination(Trace &trace, std::map<std::string, std::vector<Verdict>> &result);
+
     std::vector<std::shared_ptr<Hydra2Monitor>>
         monitors; //**< List of monitors corresponding to the formulas which should be evaluated. */
+    mutable std::vector<std::shared_ptr<DomainStorage>> domains;         //**< List of domains. */
+    mutable std::map<std::string, std::array<double, 2>> predicateCosts; //**< Predicate costs. */
 };

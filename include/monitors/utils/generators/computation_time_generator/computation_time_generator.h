@@ -1,13 +1,4 @@
-//
-// Created by Evald Nexhipi.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
-
 #pragma once
-#include "monitors/expression_tree/atomic/atomic.h"
-#include "monitors/expression_tree/atomic/predicate.h"
 #include <iostream>
 #include <memory>
 #include <monitors/expression_tree/expression.h>

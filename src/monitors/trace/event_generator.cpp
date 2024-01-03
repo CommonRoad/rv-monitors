@@ -1,7 +1,7 @@
 #include "monitors/trace/event_generator.h"
 #include <algorithm>
 
-EventGenerator::EventGenerator(size_t length) : numberOfTrue(0), event(length, false) {}
+EventGenerator::EventGenerator(size_t length) : event(length, false), numberOfTrue(0) {}
 
 const std::vector<bool> &EventGenerator::getNext() {
 

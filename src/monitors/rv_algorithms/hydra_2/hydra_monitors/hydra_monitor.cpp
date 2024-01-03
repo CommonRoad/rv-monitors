@@ -63,7 +63,7 @@ bool Hydra2Monitor::traceIdxUnique(size_t idx) {
 
 Verdict Hydra2Monitor::step(size_t parentId, size_t stepNumber, bool singleStep) {
     Verdict verdict{Verdict(false)};
-    if (!connectedEval or traceIdx.size() == 1)
+    if (!singleStep and (!connectedEval or traceIdx.size() == 1))
         if (stepNumber >= (traceIdx[parentId] +
                            verdictHistoryPopCounter)) { // required step equals stored step, perform next step directly
             verdict = simulateVerdict(parentId, stepNumber);

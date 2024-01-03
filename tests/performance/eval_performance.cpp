@@ -1,14 +1,6 @@
-//
-// Created by Sebastian Maierhofer and Evald Nexhipi.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
-
-#include "monitors/parser/parser.h"
+#include "monitors/expression_tree/atomic/predicate.h"
 #include "monitors/rv_algorithms/btt_fsm/btt_fsm.h"
 #include "monitors/rv_algorithms/dynamic_programming/dynamic.h"
-#include "monitors/rv_algorithms/hydra_2//hydra.h"
 #include "monitors/rv_algorithms/ltl_event_consuming/event_consuming.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
 #include "monitors/rv_algorithms/mtl_event_consuming/mtl_event_consuming.h"
@@ -90,7 +82,7 @@ Trace createRandomTrace(const std::set<std::string> &atomics, size_t length) {
         event_map_t event;
         for (const auto &atom : atomics) {
             bool atomicValue{uint_dist2(rng) == 1};
-            event[atom] = lazy_bool(atomicValue);
+            event[atom] = EventValue<bool>(atomicValue);
         }
         eventList.emplace_back(event, timeStepIdx, timeStepIdx == length - 1);
         event.clear();
@@ -110,7 +102,7 @@ Trace createRandomLazyTrace(size_t length) {
         event_map_t event;
         for (auto const &[atomic, valueFetcher] : atomicsAndFunctions) {
             auto valueFetcherBound = std::bind(valueFetcher, 0);
-            event[atomic] = lazy_bool(valueFetcherBound);
+            event[atomic] = EventValue<bool>(valueFetcherBound);
         }
         eventList.emplace_back(event, timeStepIdx, timeStepIdx == length - 1);
         event.clear();
@@ -611,10 +603,14 @@ void test_1(std::ofstream &out) {
     auto atomB = std::make_shared<Atomic>("b");
     auto atomC = std::make_shared<Atomic>("c");
     auto atomD = std::make_shared<Atomic>("d");
-    auto predicateP = std::make_shared<Predicate>("p", "p", std::vector<std::string>{"p_1", "p_2"});
-    auto predicateQ = std::make_shared<Predicate>("q", "q", std::vector<std::string>{"q_1", "q_2", "q_3"});
-    auto predicateT = std::make_shared<Predicate>("t", "q", std::vector<std::string>{"t_1"});
-    auto predicateV = std::make_shared<Predicate>("v", "q", std::vector<std::string>{"v_1", "v_2"});
+    auto predicateP = std::make_shared<Predicate>("p", "p", std::vector<std::string>{"p_1", "p_2"},
+                                                  std::vector<std::string>{"p_1", "p_2"});
+    auto predicateQ = std::make_shared<Predicate>("q", "q", std::vector<std::string>{"q_1", "q_2", "q_3"},
+                                                  std::vector<std::string>{"q_1", "q_2", "q_3"});
+    auto predicateT =
+        std::make_shared<Predicate>("t", "q", std::vector<std::string>{"t_1"}, std::vector<std::string>{"t_1"});
+    auto predicateV = std::make_shared<Predicate>("v", "q", std::vector<std::string>{"v_1", "v_2"},
+                                                  std::vector<std::string>{"v_1", "v_2"});
 
     /* Distribution 1 */
     std::vector<std::shared_ptr<Atomic>> atoms_1 = {atomA, atomB, atomC};
@@ -681,10 +677,14 @@ void test_2(std::ofstream &out) {
     auto atomB = std::make_shared<Atomic>("b");
     auto atomC = std::make_shared<Atomic>("c");
     auto atomD = std::make_shared<Atomic>("d");
-    auto predicateP = std::make_shared<Predicate>("p", "p", std::vector<std::string>{"p_1", "p_2"});
-    auto predicateQ = std::make_shared<Predicate>("q", "q", std::vector<std::string>{"q_1", "q_2", "q_3"});
-    auto predicateT = std::make_shared<Predicate>("t", "q", std::vector<std::string>{"t_1"});
-    auto predicateV = std::make_shared<Predicate>("v", "q", std::vector<std::string>{"v_1", "v_2"});
+    auto predicateP = std::make_shared<Predicate>("p", "p", std::vector<std::string>{"p_1", "p_2"},
+                                                  std::vector<std::string>{"p_1", "p_2"});
+    auto predicateQ = std::make_shared<Predicate>("q", "q", std::vector<std::string>{"q_1", "q_2", "q_3"},
+                                                  std::vector<std::string>{"q_1", "q_2", "q_3"});
+    auto predicateT =
+        std::make_shared<Predicate>("t", "q", std::vector<std::string>{"t_1"}, std::vector<std::string>{"t_1"});
+    auto predicateV = std::make_shared<Predicate>("v", "q", std::vector<std::string>{"v_1", "v_2"},
+                                                  std::vector<std::string>{"v_1", "v_2"});
 
     /* Distribution 1 */
     std::vector<std::shared_ptr<Atomic>> atoms_1 = {atomA, atomB, atomC};
@@ -746,10 +746,14 @@ void test_3(std::ofstream &out) {
     auto atomB = std::make_shared<Atomic>("b");
     auto atomC = std::make_shared<Atomic>("c");
     auto atomD = std::make_shared<Atomic>("d");
-    auto predicateP = std::make_shared<Predicate>("p", "p", std::vector<std::string>{"p_1", "p_2"});
-    auto predicateQ = std::make_shared<Predicate>("q", "q", std::vector<std::string>{"q_1", "q_2", "q_3"});
-    auto predicateT = std::make_shared<Predicate>("t", "q", std::vector<std::string>{"t_1"});
-    auto predicateV = std::make_shared<Predicate>("v", "q", std::vector<std::string>{"v_1", "v_2"});
+    auto predicateP = std::make_shared<Predicate>("p", "p", std::vector<std::string>{"p_1", "p_2"},
+                                                  std::vector<std::string>{"p_1", "p_2"});
+    auto predicateQ = std::make_shared<Predicate>("q", "q", std::vector<std::string>{"q_1", "q_2", "q_3"},
+                                                  std::vector<std::string>{"q_1", "q_2", "q_3"});
+    auto predicateT =
+        std::make_shared<Predicate>("t", "q", std::vector<std::string>{"t_1"}, std::vector<std::string>{"t_1"});
+    auto predicateV = std::make_shared<Predicate>("v", "q", std::vector<std::string>{"v_1", "v_2"},
+                                                  std::vector<std::string>{"v_1", "v_2"});
 
     /* Distribution 1 */
     std::vector<std::shared_ptr<Atomic>> atoms_1 = {atomA, atomB, atomC};
@@ -807,10 +811,14 @@ void test_4(std::ofstream &out) {
     auto atomB = std::make_shared<Atomic>("b");
     auto atomC = std::make_shared<Atomic>("c");
     auto atomD = std::make_shared<Atomic>("d");
-    auto predicateP = std::make_shared<Predicate>("p", "p", std::vector<std::string>{"p_1", "p_2"});
-    auto predicateQ = std::make_shared<Predicate>("q", "q", std::vector<std::string>{"q_1", "q_2", "q_3"});
-    auto predicateT = std::make_shared<Predicate>("t", "q", std::vector<std::string>{"t_1"});
-    auto predicateV = std::make_shared<Predicate>("v", "q", std::vector<std::string>{"v_1", "v_2"});
+    auto predicateP = std::make_shared<Predicate>("p", "p", std::vector<std::string>{"p_1", "p_2"},
+                                                  std::vector<std::string>{"p_1", "p_2"});
+    auto predicateQ = std::make_shared<Predicate>("q", "q", std::vector<std::string>{"q_1", "q_2", "q_3"},
+                                                  std::vector<std::string>{"q_1", "q_2", "q_3"});
+    auto predicateT =
+        std::make_shared<Predicate>("t", "q", std::vector<std::string>{"t_1"}, std::vector<std::string>{"t_1"});
+    auto predicateV = std::make_shared<Predicate>("v", "q", std::vector<std::string>{"v_1", "v_2"},
+                                                  std::vector<std::string>{"v_1", "v_2"});
 
     /* Distribution 1 */
     std::vector<std::shared_ptr<Atomic>> atoms_1 = {atomA, atomB, atomC};
@@ -873,10 +881,14 @@ void test_5(std::ofstream &out) {
     auto atomB = std::make_shared<Atomic>("b");
     auto atomC = std::make_shared<Atomic>("c");
     auto atomD = std::make_shared<Atomic>("d");
-    auto predicateP = std::make_shared<Predicate>("p", "p", std::vector<std::string>{"p_1", "p_2"});
-    auto predicateQ = std::make_shared<Predicate>("q", "q", std::vector<std::string>{"q_1", "q_2", "q_3"});
-    auto predicateT = std::make_shared<Predicate>("t", "q", std::vector<std::string>{"t_1"});
-    auto predicateV = std::make_shared<Predicate>("v", "q", std::vector<std::string>{"v_1", "v_2"});
+    auto predicateP = std::make_shared<Predicate>("p", "p", std::vector<std::string>{"p_1", "p_2"},
+                                                  std::vector<std::string>{"p_1", "p_2"});
+    auto predicateQ = std::make_shared<Predicate>("q", "q", std::vector<std::string>{"q_1", "q_2", "q_3"},
+                                                  std::vector<std::string>{"q_1", "q_2", "q_3"});
+    auto predicateT =
+        std::make_shared<Predicate>("t", "q", std::vector<std::string>{"t_1"}, std::vector<std::string>{"t_1"});
+    auto predicateV = std::make_shared<Predicate>("v", "q", std::vector<std::string>{"v_1", "v_2"},
+                                                  std::vector<std::string>{"v_1", "v_2"});
 
     /* Distribution 1 */
     std::vector<std::shared_ptr<Atomic>> atoms_1 = {atomA, atomB, atomC};
@@ -939,10 +951,14 @@ void test_6(std::ofstream &out) {
     auto atomB = std::make_shared<Atomic>("b");
     auto atomC = std::make_shared<Atomic>("c");
     auto atomD = std::make_shared<Atomic>("d");
-    auto predicateP = std::make_shared<Predicate>("p", "p", std::vector<std::string>{"p_1", "p_2"});
-    auto predicateQ = std::make_shared<Predicate>("q", "q", std::vector<std::string>{"q_1", "q_2", "q_3"});
-    auto predicateT = std::make_shared<Predicate>("t", "q", std::vector<std::string>{"t_1"});
-    auto predicateV = std::make_shared<Predicate>("v", "q", std::vector<std::string>{"v_1", "v_2"});
+    auto predicateP = std::make_shared<Predicate>("p", "p", std::vector<std::string>{"p_1", "p_2"},
+                                                  std::vector<std::string>{"p_1", "p_2"});
+    auto predicateQ = std::make_shared<Predicate>("q", "q", std::vector<std::string>{"q_1", "q_2", "q_3"},
+                                                  std::vector<std::string>{"q_1", "q_2", "q_3"});
+    auto predicateT =
+        std::make_shared<Predicate>("t", "q", std::vector<std::string>{"t_1"}, std::vector<std::string>{"t_1"});
+    auto predicateV = std::make_shared<Predicate>("v", "q", std::vector<std::string>{"v_1", "v_2"},
+                                                  std::vector<std::string>{"v_1", "v_2"});
 
     /* Distribution 1 */
     std::vector<std::shared_ptr<Atomic>> atoms_1 = {atomA, atomB, atomC};
@@ -1004,10 +1020,14 @@ void test_7(std::ofstream &out) {
     auto atomB = std::make_shared<Atomic>("b");
     auto atomC = std::make_shared<Atomic>("c");
     auto atomD = std::make_shared<Atomic>("d");
-    auto predicateP = std::make_shared<Predicate>("p", "p", std::vector<std::string>{"p_1", "p_2"});
-    auto predicateQ = std::make_shared<Predicate>("q", "q", std::vector<std::string>{"q_1", "q_2", "q_3"});
-    auto predicateT = std::make_shared<Predicate>("t", "q", std::vector<std::string>{"t_1"});
-    auto predicateV = std::make_shared<Predicate>("v", "q", std::vector<std::string>{"v_1", "v_2"});
+    auto predicateP = std::make_shared<Predicate>("p", "p", std::vector<std::string>{"p_1", "p_2"},
+                                                  std::vector<std::string>{"p_1", "p_2"});
+    auto predicateQ = std::make_shared<Predicate>("q", "q", std::vector<std::string>{"q_1", "q_2", "q_3"},
+                                                  std::vector<std::string>{"q_1", "q_2", "q_3"});
+    auto predicateT =
+        std::make_shared<Predicate>("t", "q", std::vector<std::string>{"t_1"}, std::vector<std::string>{"t_1"});
+    auto predicateV = std::make_shared<Predicate>("v", "q", std::vector<std::string>{"v_1", "v_2"},
+                                                  std::vector<std::string>{"v_1", "v_2"});
 
     /* Distribution 1 */
     std::vector<std::shared_ptr<Atomic>> atoms_1 = {atomA, atomB, atomC};
@@ -1070,10 +1090,14 @@ void test_8(std::ofstream &out) {
     auto atomB = std::make_shared<Atomic>("b");
     auto atomC = std::make_shared<Atomic>("c");
     auto atomD = std::make_shared<Atomic>("d");
-    auto predicateP = std::make_shared<Predicate>("p", "p", std::vector<std::string>{"p_1", "p_2"});
-    auto predicateQ = std::make_shared<Predicate>("q", "q", std::vector<std::string>{"q_1", "q_2", "q_3"});
-    auto predicateT = std::make_shared<Predicate>("t", "q", std::vector<std::string>{"t_1"});
-    auto predicateV = std::make_shared<Predicate>("v", "q", std::vector<std::string>{"v_1", "v_2"});
+    auto predicateP = std::make_shared<Predicate>("p", "p", std::vector<std::string>{"p_1", "p_2"},
+                                                  std::vector<std::string>{"p_1", "p_2"});
+    auto predicateQ = std::make_shared<Predicate>("q", "q", std::vector<std::string>{"q_1", "q_2", "q_3"},
+                                                  std::vector<std::string>{"q_1", "q_2", "q_3"});
+    auto predicateT =
+        std::make_shared<Predicate>("t", "q", std::vector<std::string>{"t_1"}, std::vector<std::string>{"t_1"});
+    auto predicateV = std::make_shared<Predicate>("v", "q", std::vector<std::string>{"v_1", "v_2"},
+                                                  std::vector<std::string>{"v_1", "v_2"});
 
     /* Distribution 1 */
     std::vector<std::shared_ptr<Atomic>> atoms_1 = {atomA, atomB, atomC};

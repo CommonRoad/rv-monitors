@@ -34,6 +34,13 @@ void NextMonitor::reset() {
     currentTime = {};
     subMonitor->reset();
 }
+
+std::shared_ptr<Hydra2Monitor> NextMonitor::clone() {
+    auto clonedMonitor = std::make_shared<NextMonitor>(*this);
+    clonedMonitor->subMonitor = subMonitor->clone();
+    return clonedMonitor;
+}
+
 std::string NextMonitor::to_string() {
     std::string itv{};
     std::string end{};
@@ -46,3 +53,5 @@ std::string NextMonitor::to_string() {
     }
     return std::string{"X"} + itv + "(" + subMonitor->to_string() + ")";
 }
+
+void NextMonitor::addDomainValues(const std::vector<DomainValue> &vals) { subMonitor->addDomainValues(vals); }

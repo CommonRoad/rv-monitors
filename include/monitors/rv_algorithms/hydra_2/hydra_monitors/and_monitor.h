@@ -43,10 +43,25 @@ class AndMonitor : public Hydra2Monitor {
      */
     void setTrace(const Trace &trace) override;
 
+    //  void updateTrace(const std::vector<DomainValue> &ieve) override;
+
     /**
      * Resets monitor variables to default values.
      */
     void reset() override;
+
+    /**
+     * Calls sub-monitors to add domain value.
+     *
+     * @param vals Domain values which should be added.
+     */
+    void addDomainValues(const std::vector<DomainValue> &vals) override;
+
+    /**
+     * Clones this monitor.
+     * @return New shared_ptr of this monitor.
+     */
+    std::shared_ptr<Hydra2Monitor> clone() override;
 
     /**
      * Creates string representation of monitor.

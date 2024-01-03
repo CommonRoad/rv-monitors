@@ -1,5 +1,30 @@
 #include "monitors/parser/visitor.h"
 
+#include "monitors/expression_tree/atomic/atomic.h"
+#include "monitors/expression_tree/atomic/constant.h"
+#include "monitors/expression_tree/atomic/predicate.h"
+#include "monitors/expression_tree/binary/bool/equivalence.h"
+#include "monitors/expression_tree/binary/bool/implication.h"
+#include "monitors/expression_tree/binary/temporal/release.h"
+#include "monitors/expression_tree/binary/temporal/since.h"
+#include "monitors/expression_tree/binary/temporal/until.h"
+#include "monitors/expression_tree/interval.h"
+#include "monitors/expression_tree/nary/bool/and.h"
+#include "monitors/expression_tree/nary/bool/or.h"
+#include "monitors/expression_tree/nary/bool/xor.h"
+#include "monitors/expression_tree/unary/bool/not.h"
+#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/quote_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
+#include "monitors/expression_tree/unary/temporal/future.h"
+#include "monitors/expression_tree/unary/temporal/globally.h"
+#include "monitors/expression_tree/unary/temporal/historically.h"
+#include "monitors/expression_tree/unary/temporal/next_strong.h"
+#include "monitors/expression_tree/unary/temporal/next_weak.h"
+#include "monitors/expression_tree/unary/temporal/once.h"
+#include "monitors/expression_tree/unary/temporal/previously.h"
+
 std::shared_ptr<Expression> Visitor::getType(const std::any &expr) {
     // Atomic
     std::string exprTypeName{expr.type().name()};
@@ -76,6 +101,26 @@ std::shared_ptr<Expression> Visitor::getType(const std::any &expr) {
     // Historically
     if (exprTypeName == typeid(std::shared_ptr<Historically>).name()) {
         return std::any_cast<std::shared_ptr<Historically>>(expr);
+    }
+    // Universal
+    if (exprTypeName == typeid(std::shared_ptr<UniversalQuantifier>).name()) {
+        return std::any_cast<std::shared_ptr<UniversalQuantifier>>(expr);
+    }
+    // Existential
+    if (exprTypeName == typeid(std::shared_ptr<ExistentialQuantifier>).name()) {
+        return std::any_cast<std::shared_ptr<ExistentialQuantifier>>(expr);
+    }
+    // Quote
+    if (exprTypeName == typeid(std::shared_ptr<QuoteQuantifier>).name()) {
+        return std::any_cast<std::shared_ptr<QuoteQuantifier>>(expr);
+    }
+    // Counting
+    if (exprTypeName == typeid(std::shared_ptr<CountingQuantifier>).name()) {
+        return std::any_cast<std::shared_ptr<CountingQuantifier>>(expr);
+    }
+    // Domain
+    if (exprTypeName == typeid(std::shared_ptr<Domain>).name()) {
+        return std::any_cast<std::shared_ptr<Domain>>(expr);
     }
 
     throw std::runtime_error("Visitor::getType() No type found. Check your formula string.");
@@ -313,19 +358,111 @@ std::any Visitor::visitInfiniteInterval(FormulaParser::InfiniteIntervalContext *
 std::any Visitor::visitDigit(FormulaParser::DigitContext *ctx) { return std::stoi(ctx->getText()); }
 
 std::any Visitor::visitPredicate(FormulaParser::PredicateContext *ctx) {
+    auto params = extractFunctionParameters(ctx);
+    std::string name{ctx->getText().substr(0, ctx->getText().find('('))};
+    std::string symbol{name + "_" + std::get<2>(params)};
+    return std::make_shared<Predicate>(Predicate(symbol, name, std::get<0>(params), std::get<1>(params)));
+}
+
+std::tuple<std::vector<std::string>, std::vector<std::string>, std::string>
+Visitor::extractFunctionParameters(FormulaParser::UnaryContext *ctx) {
     const std::vector<std::string> invalidLiterals{"(", ")", ","};
-    std::vector<std::string> params;
+    std::vector<std::string> paramsVar;
+    std::vector<std::string> allParams;
+    std::string name;
     for (size_t idx{1}; idx < ctx->children.size(); ++idx) {
         auto child{ctx->children.at(idx)->getText()};
         if (std::any_of(invalidLiterals.begin(), invalidLiterals.end(),
                         [child](const std::string &lit) { return lit == child; }))
             continue;
-        params.push_back(child);
+        if (child[0] == '\'' and child[child.length() - 1] == '\'') {
+            child = child.substr(1, child.length() - 2);
+            allParams.push_back(child);
+        } else {
+            allParams.push_back(child);
+            paramsVar.push_back(child);
+        }
+        name += "_" + child;
     }
-    std::string name{ctx->getText().substr(0, ctx->getText().find('('))};
-    std::string symbol{name};
-    for (const auto &par : params)
-        symbol += par + "_";
-    symbol = symbol.substr(0, symbol.size() - 1);
-    return std::make_shared<Predicate>(Predicate(symbol, name, params));
+    return {allParams, paramsVar, name};
 }
+
+std::any Visitor::visitUniversal(FormulaParser::UniversalContext *ctx) {
+    auto right = getType(visit(ctx->right));
+    auto dva = std::any_cast<std::vector<Variable>>(visit(ctx->dv));
+    return std::make_shared<UniversalQuantifier>(right, dva);
+}
+
+std::any Visitor::visitExistential(FormulaParser::ExistentialContext *ctx) {
+    auto right = getType(visit(ctx->right));
+    auto dva = std::any_cast<std::vector<Variable>>(visit(ctx->dv));
+    return std::make_shared<ExistentialQuantifier>(right, dva);
+}
+
+std::any Visitor::visitQuote(FormulaParser::QuoteContext *ctx) {
+    auto piv = std::any_cast<QuoteInterval>(visit(ctx->piv));
+    auto right = getType(visit(ctx->right));
+    auto dva = std::any_cast<std::vector<Variable>>(visit(ctx->dv));
+    return std::make_shared<QuoteQuantifier>(right, dva, piv);
+}
+
+std::any Visitor::visitCounting(FormulaParser::CountingContext *ctx) {
+    auto opStr = ctx->cop->getText();
+    CountingQuantifier::Operator ope;
+    if (opStr == "<=")
+        ope = CountingQuantifier::LESS_EQ;
+    else if (opStr == "=")
+        ope = CountingQuantifier::EQ;
+    else
+        ope = CountingQuantifier::GREATER_EQ;
+    auto num = std::stol(ctx->num->getText(), nullptr, 10);
+    auto right = getType(visit(ctx->right));
+    auto dva = std::any_cast<std::vector<Variable>>(visit(ctx->dv));
+    return std::make_shared<CountingQuantifier>(right, dva, ope, num);
+}
+
+std::any Visitor::visitFiniteQuoteInterval(FormulaParser::FiniteQuoteIntervalContext *ctx) {
+    auto lower = std::any_cast<float>(visit(ctx->l));
+    auto upper = std::any_cast<float>(visit(ctx->u));
+
+    return QuoteInterval{lower, upper};
+}
+
+std::any Visitor::visitDomainVariables(FormulaParser::DomainVariablesContext *ctx) {
+    std::vector<Variable> variables;
+
+    const std::vector<std::string> invalidLiterals{"(", ")", ","};
+
+    std::vector<std::string> names;
+    for (size_t idx = 0; idx < ctx->children.size(); idx++) {
+        auto child = ctx->children.at(idx)->getText();
+        if (std::any_of(invalidLiterals.begin(), invalidLiterals.end(),
+                        [child](const std::string &lit) { return lit == child; }))
+            continue;
+
+        if (child == "in") {
+            std::shared_ptr<Domain> domain{std::any_cast<std::shared_ptr<Domain>>(visit(ctx->children.at(idx + 1)))};
+            for (const auto &name : names)
+                variables.emplace_back(name, *domain);
+            names.clear();
+            idx++;
+            continue;
+        }
+
+        names.push_back(child);
+    }
+    return variables;
+}
+
+std::any Visitor::visitStringDomain(FormulaParser::StringDomainContext *ctx) {
+    return std::make_shared<Domain>(Domain(ctx->getText(), ctx->getText(), {}, {}));
+}
+
+std::any Visitor::visitFunctionDomain(FormulaParser::FunctionDomainContext *ctx) {
+    auto params = extractFunctionParameters(reinterpret_cast<FormulaParser::UnaryContext *>(ctx));
+    std::string name{ctx->getText().substr(0, ctx->getText().find('('))};
+    std::string symbol{name + "_" + std::get<2>(params)};
+    return std::make_shared<Domain>(Domain(symbol, name, std::get<0>(params), std::get<1>(params)));
+}
+
+std::any Visitor::visitQuoteDigit(FormulaParser::QuoteDigitContext *ctx) { return std::stof(ctx->getText()); }

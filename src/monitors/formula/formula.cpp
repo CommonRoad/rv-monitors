@@ -46,27 +46,36 @@ bool Formula::checkCompatibility(MonitoringProperties formulaType) const {
     auto formulaString = getExpr()->to_string();
     if (!formulaType.interval and formulaString.find('[') != std::string::npos)
         return false;
+    bool nonFirstOrder =
+        !std::any_of(firstOrderOperators.begin(), firstOrderOperators.end(),
+                     [formulaString](char oper) { return formulaString.find(oper) != std::string::npos; });
     switch (formulaType.formulaType) {
     case futureOnly:
-        return !std::any_of(pastOperators.begin(), pastOperators.end(),
-                            [formulaString](char oper) { return formulaString.find(oper) != std::string::npos; });
+        return nonFirstOrder and !std::any_of(pastOperators.begin(), pastOperators.end(), [formulaString](char oper) {
+                   return formulaString.find(oper) != std::string::npos;
+               });
     case pastOnly:
-        return !std::any_of(futureOperators.begin(), futureOperators.end(),
+        return nonFirstOrder and
+               !std::any_of(futureOperators.begin(), futureOperators.end(),
                             [formulaString](char oper) { return formulaString.find(oper) != std::string::npos; });
     case safetyGeneral:
-        return this->expr->getSymbol().find(globallySymbol) != std::string::npos;
+        return nonFirstOrder and this->expr->getSymbol().find(globallySymbol) != std::string::npos;
     case futureSafety:
-        return this->expr->getSymbol() == globallySymbol and
+        return nonFirstOrder and this->expr->getSymbol() == globallySymbol and
                !std::any_of(pastOperators.begin(), pastOperators.end(),
                             [formulaString](char oper) { return formulaString.find(oper) != std::string::npos; });
     case pastSafety:
-        return this->expr->getSymbol() == globallySymbol and
+        return nonFirstOrder and this->expr->getSymbol() == globallySymbol and
                std::count(formulaString.begin(), formulaString.end(), globallySymbol[0]) == 1 and
                !std::any_of(futureOperators.begin(), futureOperators.end(), [formulaString](char oper) {
                    return (formulaString.find(oper) != std::string::npos) and oper != globallySymbol[0];
                });
     case futurePastCombined:
-        return true;
+        return nonFirstOrder;
+    case firstOrder:
+        return !nonFirstOrder;
+    case safetyFirstOrder:
+        return !nonFirstOrder or this->expr->getSymbol().find(globallySymbol) != std::string::npos;
     }
     return false;
 }

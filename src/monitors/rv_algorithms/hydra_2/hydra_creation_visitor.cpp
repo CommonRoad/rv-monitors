@@ -11,18 +11,26 @@
 #include "monitors/expression_tree/nary/bool/and.h"
 #include "monitors/expression_tree/nary/bool/or.h"
 #include "monitors/expression_tree/unary/bool/not.h"
+#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/quote_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
 #include "monitors/expression_tree/unary/temporal/next_strong.h"
 #include "monitors/expression_tree/unary/temporal/previously.h"
 #include "monitors/formula/formula.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/and_monitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/atomic_monitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/constant_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/counting_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/existential_monitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/negation_monitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/next_monitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/or_monitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/predicate_monitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/previous_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/quote_monitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/since_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/universal_monitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/until_monitor.h"
 #include <numeric>
 #include <utility>
@@ -204,8 +212,10 @@ std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitNot(Not &top, size_t 
 }
 
 HydraCreationVisitor2::HydraCreationVisitor2(std::map<std::string, std::array<double, 2>> predicateCosts,
-                                             bool reordering, bool shortCircuiting)
-    : reordering(reordering), shortCircuiting(shortCircuiting), predicateCosts(std::move(predicateCosts)) {
+                                             bool reordering, bool shortCircuiting,
+                                             const std::vector<std::shared_ptr<DomainStorage>> &domains)
+    : reordering(reordering), shortCircuiting(shortCircuiting), predicateCosts(std::move(predicateCosts)),
+      domains(domains) {
     for (const auto &pred : this->predicateCosts)
         assert((pred.second[0] >= 0 and pred.second[0] <= 100 and pred.second[1] >= 0 and pred.second[1] <= 1) &&
                "Invalid predicate costs/probabilities Hydra2 Creation Visitor.");
@@ -228,4 +238,69 @@ void HydraCreationVisitor2::reorder(std::vector<std::shared_ptr<Hydra2Monitor>> 
     auto tmpSubMonitors{monitors};
     for (size_t idx{0}; idx < monitors.size(); ++idx)
         monitors[idx] = tmpSubMonitors.at(tmp.at(idx));
+}
+
+std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitUniversalQuantifier(UniversalQuantifier &top,
+                                                                               size_t parentId, bool connectedEval) {
+    size_t idx{maxId++};
+    auto newMonitor{std::make_shared<UniversalMonitor>(Formula(std::make_shared<UniversalQuantifier>(top)),
+                                                       top.getLeft()->accept(*this, idx, connectedEval), idx,
+                                                       findDomain(top.getVariables()), connectedEval, shortCircuiting)};
+
+    baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
+    newMonitor->registerParent(parentId);
+    return newMonitor;
+}
+
+std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitExistentialQuantifier(ExistentialQuantifier &top,
+                                                                                 size_t parentId, bool connectedEval) {
+    size_t idx{maxId++};
+    auto newMonitor{std::make_shared<ExistentialMonitor>(
+        Formula(std::make_shared<ExistentialQuantifier>(top)), top.getLeft()->accept(*this, idx, connectedEval), idx,
+        findDomain(top.getVariables()), connectedEval, shortCircuiting)};
+
+    baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
+    newMonitor->registerParent(parentId);
+    return newMonitor;
+}
+
+std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitQuoteQuantifier(QuoteQuantifier &top, size_t parentId,
+                                                                           bool connectedEval) {
+    size_t idx{maxId++};
+    auto newMonitor{std::make_shared<QuoteMonitor>(Formula(std::make_shared<QuoteQuantifier>(top)),
+                                                   top.getLeft()->accept(*this, idx, connectedEval), idx,
+                                                   findDomain(top.getVariables()), top.getQuoteInterval().getMin(),
+                                                   top.getQuoteInterval().getMax(), connectedEval, shortCircuiting)};
+
+    baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
+    newMonitor->registerParent(parentId);
+    return newMonitor;
+}
+
+std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitCountingQuantifier(CountingQuantifier &top, size_t parentId,
+                                                                              bool connectedEval) {
+    size_t idx{maxId++};
+    auto newMonitor{std::make_shared<CountingMonitor>(
+        Formula(std::make_shared<CountingQuantifier>(top)), top.getLeft()->accept(*this, idx, connectedEval), idx,
+        findDomain(top.getVariables()), top.getOperator(), top.getNum(), connectedEval, shortCircuiting)};
+
+    baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
+    newMonitor->registerParent(parentId);
+    return newMonitor;
+}
+
+std::map<std::string, std::shared_ptr<DomainStorage>>
+HydraCreationVisitor2::findDomain(const std::vector<Variable> &variables) const {
+    std::map<std::string, std::shared_ptr<DomainStorage>> variableValues;
+    for (const auto &var : variables) {
+        for (const auto &dom : domains) {
+            if (dom->getName() == var.getDomain().getName()) {
+                variableValues[var.getName()] = dom;
+                break;
+            }
+        }
+        if (variableValues.count(var.getName()) != 1)
+            throw std::runtime_error("HydraCreationVisitor::findDomain: Unknown domain name.");
+    }
+    return variableValues;
 }

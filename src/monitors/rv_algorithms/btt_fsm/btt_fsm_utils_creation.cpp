@@ -140,7 +140,7 @@ std::shared_ptr<node> BTT_FSMUtilsCreation::findNextNode(const MultiTransition &
 
                             event_map_t eventMap;
 
-                            eventMap.emplace(atomic->to_string(), lazy_bool(not constant));
+                            eventMap.emplace(atomic->to_string(), EventValue<bool>(not constant));
                             auto right = std::make_shared<StateBttFsm>(multiTransition.evaluate(eventMap));
                             // Get left and right in order
                             if (constant) {

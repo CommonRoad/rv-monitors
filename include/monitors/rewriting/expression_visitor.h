@@ -14,6 +14,8 @@ class Atomic;
 
 class Constant;
 
+class Constant;
+
 class And;
 
 class Or;
@@ -55,6 +57,14 @@ class DerivingOperator;
 class Equivalence;
 
 class Predicate;
+
+class UniversalQuantifier;
+
+class ExistentialQuantifier;
+
+class QuoteQuantifier;
+
+class CountingQuantifier;
 
 /**
  * Parent class to apply the visitor pattern to the expression tree.
@@ -239,4 +249,39 @@ class ExpressionVisitor {
      * @return Transformed EventOperator as a shared_ptr.
      */
     virtual std::shared_ptr<Expression> visitPredicate(Predicate &expr, Trace &trace, size_t index) = 0;
+
+    /**
+     * Visits an UniversalQuantifier.
+     * @param expr Expression.
+     * @param trace Trace.
+     * @return Transformed UniversalQuantifier as a shared_ptr.
+     */
+    virtual std::shared_ptr<Expression> visitUniversalQuantifier(UniversalQuantifier &expr, Trace &trace,
+                                                                 size_t index) = 0;
+
+    /**
+     * Visits an ExistentialQuantifier.
+     * @param expr Expression.
+     * @param trace Trace.
+     * @return Transformed ExistentialQuantifier as a shared_ptr.
+     */
+    virtual std::shared_ptr<Expression> visitExistentialQuantifier(ExistentialQuantifier &expr, Trace &trace,
+                                                                   size_t index) = 0;
+
+    /**
+     * Visits a QuoteQuantifier.
+     * @param expr Expression.
+     * @param trace Trace.
+     * @return Transformed QuoteQuantifier as a shared_ptr.
+     */
+    virtual std::shared_ptr<Expression> visitQuoteQuantifier(QuoteQuantifier &expr, Trace &trace, size_t index) = 0;
+
+    /**
+     * Visits a CountingQuantifier.
+     * @param expr Expression.
+     * @param trace Trace.
+     * @return Transformed CountingQuantifier as a shared_ptr.
+     */
+    virtual std::shared_ptr<Expression> visitCountingQuantifier(CountingQuantifier &expr, Trace &trace,
+                                                                size_t index) = 0;
 };
