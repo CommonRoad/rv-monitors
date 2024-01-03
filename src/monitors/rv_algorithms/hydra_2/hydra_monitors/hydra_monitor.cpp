@@ -103,7 +103,6 @@ Verdict Hydra2Monitor::simulateVerdict(size_t parentId, size_t stepNumber) {
             verdict = concreteStep(parentId, traceIdx[parentId] + verdictHistoryPopCounter);
             verdictHistory.push_back(verdict);
             ++traceIdx[parentId];
-            // storeVerdict(parentId, stepNumber, concreteStep(parentId, traceIdx[parentId]));
         } else { // if required step was already performed based on other parent monitor, use already computed verdict
             verdict = verdictHistory[traceIdx[parentId]];
             auto minIdx{getMinTraceIdx()};
