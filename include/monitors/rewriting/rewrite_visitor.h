@@ -63,4 +63,16 @@ class RewriteVisitor : public ExpressionVisitor {
                                                                     size_t index) override;
 
     [[nodiscard]] std::shared_ptr<Expression> visitPredicate(Predicate &opr, Trace &trace, size_t index) override;
+
+    [[nodiscard]] std::shared_ptr<Expression> visitUniversalQuantifier(UniversalQuantifier &opr, Trace &trace,
+                                                                       size_t index) override;
+
+    [[nodiscard]] std::shared_ptr<Expression> visitExistentialQuantifier(ExistentialQuantifier &opr, Trace &trace,
+                                                                         size_t index) override;
+
+    [[nodiscard]] std::shared_ptr<Expression> visitQuoteQuantifier(QuoteQuantifier &opr, Trace &trace,
+                                                                   size_t index) override;
+
+    [[nodiscard]] std::shared_ptr<Expression> visitCountingQuantifier(CountingQuantifier &opr, Trace &trace,
+                                                                      size_t index) override;
 };

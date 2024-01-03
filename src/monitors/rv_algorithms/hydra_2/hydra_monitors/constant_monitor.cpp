@@ -19,4 +19,8 @@ Verdict ConstantMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 
 void ConstantMonitor::setTrace(const Trace &tra) { trace = tra; }
 
+std::shared_ptr<Hydra2Monitor> ConstantMonitor::clone() { return std::make_shared<ConstantMonitor>(*this); }
+
 std::string ConstantMonitor::to_string() { return formula.getExpr()->getSymbol(); }
+
+void ConstantMonitor::addDomainValues(const std::vector<DomainValue> &vals) {}

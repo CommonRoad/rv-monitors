@@ -1,6 +1,9 @@
 #pragma once
 
 #include "event.h"
+#include "monitors/collections/function.h"
+#include "monitors/utils/verdict.h"
+#include <utility>
 #include <vector>
 
 /**
@@ -9,13 +12,15 @@
 class Trace {
   private:
     std::vector<Event> trace;
+    std::shared_ptr<IFunction<bool>> functionCollection;
 
   public:
     /**
      * Constructor.
      * @param trace
      */
-    explicit Trace(std::vector<Event> trace) : trace(std::move(trace)) {}
+    explicit Trace(std::vector<Event> trace, std::shared_ptr<IFunction<bool>> functionCollection = {})
+        : trace(std::move(trace)), functionCollection(std::move(functionCollection)) {}
 
     /**
      * Constructor.
@@ -82,5 +87,13 @@ class Trace {
             expTimeStamp++;
         }
         return true;
+    }
+
+    Verdict verdictAtTimeStep(size_t step, const std::string &name) { return trace.at(step).getVerdict(name); }
+
+    void updateEvent(size_t step, const std::string &exprName, std::vector<DomainValue> &argValues) {
+        argValues.insert(argValues.begin(), DomainValue("time_step", trace.at(step).getTimeStep()));
+        auto func{functionCollection->getFunction(argValues)};
+        trace.at(step).addEventValueFunction(exprName, EventValue<bool>(func));
     }
 };

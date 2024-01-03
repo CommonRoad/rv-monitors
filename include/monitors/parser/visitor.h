@@ -1,26 +1,6 @@
 #pragma once
 
 #include <monitors/parser/generated/FormulaGrammarParser/FormulaBaseVisitor.h>
-#include "monitors/expression_tree/atomic/atomic.h"
-#include "monitors/expression_tree/atomic/constant.h"
-#include "monitors/expression_tree/atomic/predicate.h"
-#include "monitors/expression_tree/binary/bool/equivalence.h"
-#include "monitors/expression_tree/binary/bool/implication.h"
-#include "monitors/expression_tree/binary/temporal/release.h"
-#include "monitors/expression_tree/binary/temporal/since.h"
-#include "monitors/expression_tree/binary/temporal/until.h"
-#include "monitors/expression_tree/interval.h"
-#include "monitors/expression_tree/nary/bool/and.h"
-#include "monitors/expression_tree/nary/bool/or.h"
-#include "monitors/expression_tree/nary/bool/xor.h"
-#include "monitors/expression_tree/unary/bool/not.h"
-#include "monitors/expression_tree/unary/temporal/future.h"
-#include "monitors/expression_tree/unary/temporal/globally.h"
-#include "monitors/expression_tree/unary/temporal/historically.h"
-#include "monitors/expression_tree/unary/temporal/next_strong.h"
-#include "monitors/expression_tree/unary/temporal/next_weak.h"
-#include "monitors/expression_tree/unary/temporal/once.h"
-#include "monitors/expression_tree/unary/temporal/previously.h"
 
 /**
  * Visitor for parsing.
@@ -304,7 +284,6 @@ class Visitor : public FormulaBaseVisitor {
     /**
      * Visits a false constant and builds a Constant with it.
      *
-     *
      * @param ctx Content.
      * @return False constant.
      */
@@ -357,4 +336,86 @@ class Visitor : public FormulaBaseVisitor {
      * @return Predicate.
      */
     std::any visitPredicate(FormulaParser::PredicateContext *ctx) override;
+
+    /**
+     * Helper function to extract function parameters from a corresponding antrl4 context.
+     *
+     * @param ctx Context.
+     * @return Tuple consisting list of all parameter values/names, list of all variables (no constants),
+     * concatenated name of parameters separated by underscore
+     */
+    static std::tuple<std::vector<std::string>, std::vector<std::string>, std::string>
+    extractFunctionParameters(FormulaParser::UnaryContext *ctx);
+
+    /**
+     * Builds a universal quantifier from a string.
+     *
+     * @param ctx Context.
+     * @return Universal quantifier.
+     */
+    std::any visitUniversal(FormulaParser::UniversalContext *ctx) override;
+
+    /**
+     * Builds a existential quantifier from a string.
+     *
+     * @param ctx Context.
+     * @return Existential quantifier.
+     */
+    std::any visitExistential(FormulaParser::ExistentialContext *ctx) override;
+
+    /**
+     * Builds an quote quantifier from a string.
+     *
+     * @param ctx Context.
+     * @return Quote quantifier.
+     */
+    std::any visitQuote(FormulaParser::QuoteContext *ctx) override;
+
+    /**
+     * Builds a counting quantifier from a string.
+     *
+     * @param ctx Context.
+     * @return Counting quantifier.
+     */
+    std::any visitCounting(FormulaParser::CountingContext *ctx) override;
+
+    /**
+     * Builds a finite quote quantifier from a string.
+     *
+     * @param ctx Context.
+     * @return Finite quote quantifier.
+     */
+    std::any visitFiniteQuoteInterval(FormulaParser::FiniteQuoteIntervalContext *ctx) override;
+
+    /**
+     * Builds a domain variable from a string.
+     *
+     * @param ctx Context.
+     * @return Domain variable.
+     */
+    std::any visitDomainVariables(FormulaParser::DomainVariablesContext *ctx) override;
+
+    /**
+     * Builds a fixed domain from a string.
+     *
+     * @param ctx Context.
+     * @return Domain.
+     */
+    std::any visitStringDomain(FormulaParser::StringDomainContext *ctx) override;
+
+    /**
+     * Builds a dynamic function domain from a string.
+     *
+     * @param ctx Context.
+     * @return Domain.
+     */
+    std::any visitFunctionDomain(FormulaParser::FunctionDomainContext *ctx) override;
+
+    /**
+     * Builds a quote quantifier digit from a string.
+     *
+     * @param ctx Context.
+     * @return Digit.
+     */
+    std::any visitQuoteDigit(FormulaParser::QuoteDigitContext *ctx) override;
 };

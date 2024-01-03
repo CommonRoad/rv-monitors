@@ -1,4 +1,6 @@
 #include "monitors/trace/event.h"
+#include "monitors/expression_tree/atomic/predicate.h"
+#include <utility>
 
 bool Event::getValue(const std::string &atomic) const { return eventMap.at(atomic).get(); }
 
@@ -11,8 +13,6 @@ bool Event::getValue(const Atomic &atomic) const { return getValue(atomic.to_str
 bool Event::getValue(const Predicate &predicate) const { return getValue(predicate.to_string()); }
 
 bool Event::isTerminal() const { return terminal; }
-
-void Event::setEventMap(const event_map_t &newEventMap) { Event::eventMap = newEventMap; }
 
 void Event::setTerminal(bool isTerminal) { Event::terminal = isTerminal; }
 
@@ -28,4 +28,6 @@ std::string Event::to_string() const {
 
 size_t Event::getTimeStep() const { return timeStep; }
 
-void Event::setTimeStep(size_t newTimeStep) { Event::timeStep = newTimeStep; }
+Verdict Event::getVerdict(const std::string &name) { return {timeStep, eventMap.at(name).get()}; }
+
+void Event::addEventValueFunction(const std::string &name, EventValue<bool> func) { eventMap[name] = std::move(func); }

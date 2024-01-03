@@ -4,6 +4,7 @@ set(RV_MONITOR_SRC_FILES
         monitors/expression_tree/expression.cpp
         monitors/expression_tree/interval.cpp
         monitors/expression_tree/temporal_operator.cpp
+        monitors/expression_tree/first_order_operator.cpp
         monitors/expression_tree/interval.cpp
         monitors/expression_tree/atomic/atomic.cpp
         monitors/expression_tree/atomic/constant.cpp
@@ -22,6 +23,10 @@ set(RV_MONITOR_SRC_FILES
         monitors/expression_tree/unary/resolving_operator.cpp
         monitors/expression_tree/unary/unary.cpp
         monitors/expression_tree/unary/bool/not.cpp
+        monitors/expression_tree/unary/first_order/quote_quantifier.cpp
+        monitors/expression_tree/unary/first_order/existential_quantifier.cpp
+        monitors/expression_tree/unary/first_order/universal_quantifier.cpp
+        monitors/expression_tree/unary/first_order/counting_quantifier.cpp
         monitors/expression_tree/unary/temporal/future.cpp
         monitors/expression_tree/unary/temporal/globally.cpp
         monitors/expression_tree/unary/temporal/next_strong.cpp
@@ -29,6 +34,7 @@ set(RV_MONITOR_SRC_FILES
         monitors/expression_tree/unary/temporal/historically.cpp
         monitors/expression_tree/unary/temporal/once.cpp
         monitors/expression_tree/unary/temporal/previously.cpp
+        monitors/expression_tree/domain.cpp
         monitors/formula/formula.cpp
         monitors/formula/supported_formula_type.cpp
         monitors/formula/nff.cpp
@@ -70,6 +76,11 @@ set(RV_MONITOR_SRC_FILES
         monitors/rv_algorithms/hydra_2/hydra_monitors/or_monitor.cpp
         monitors/rv_algorithms/hydra_2/hydra_monitors/and_monitor.cpp
         monitors/rv_algorithms/hydra_2/hydra_monitors/negation_monitor.cpp
+        monitors/rv_algorithms/hydra_2/hydra_monitors/universal_monitor.cpp
+        monitors/rv_algorithms/hydra_2/hydra_monitors/quantifier_monitor.cpp
+        monitors/rv_algorithms/hydra_2/hydra_monitors/quote_monitor.cpp
+        monitors/rv_algorithms/hydra_2/hydra_monitors/existential_monitor.cpp
+        monitors/rv_algorithms/hydra_2/hydra_monitors/counting_monitor.cpp
         monitors/rv_algorithms/hydra/hydra.cpp
         monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.cpp
         monitors/rv_algorithms/hydra/hydra_monitors/previous_monitor.cpp
@@ -85,19 +96,22 @@ set(RV_MONITOR_SRC_FILES
         monitors/rv_algorithms/hydra/hydra_monitors/negation_monitor.cpp
         monitors/trace/event.cpp
         monitors/trace/event_generator.cpp
-        monitors/utils/lazy_bool.cpp
         monitors/utils/execution_statistic.cpp
         monitors/utils/utils.cpp
         monitors/utils/generators/formula_generator/formula_generator.cpp
         monitors/utils/generators/trace_generator/trace_generator.cpp
         monitors/utils/generators/computation_time_generator/computation_time_generator.cpp
         monitors/utils/interval.cpp monitors/utils/interval.cpp
-        )
+        monitors/collections/domain_collection.cpp
+        monitors/collections/domain.cpp
+        monitors/collections/domain_value.cpp
+        monitors/utils/verdict.cpp)
 
 set(RV_MONITOR_HDR_FILES
         monitors/expression_tree/expression.h
         monitors/expression_tree/interval.h
         monitors/expression_tree/temporal_operator.h
+        monitors/expression_tree/first_order_operator.h
         monitors/expression_tree/interval.h
         monitors/expression_tree/atomic/atomic.h
         monitors/expression_tree/atomic/constant.h
@@ -108,8 +122,6 @@ set(RV_MONITOR_HDR_FILES
         monitors/expression_tree/binary/temporal/until.h
         monitors/expression_tree/binary/temporal/release.h
         monitors/expression_tree/binary/temporal/since.h
-        monitors/expression_tree/nary/nary_interface.h
-        monitors/expression_tree/nary/nary.h
         monitors/expression_tree/nary/bool/and.h
         monitors/expression_tree/nary/bool/or.h
         monitors/expression_tree/nary/bool/xor.h
@@ -118,6 +130,10 @@ set(RV_MONITOR_HDR_FILES
         monitors/expression_tree/unary/resolving_operator.h
         monitors/expression_tree/unary/unary.h
         monitors/expression_tree/unary/bool/not.h
+        monitors/expression_tree/unary/first_order/quote_quantifier.h
+        monitors/expression_tree/unary/first_order/existential_quantifier.h
+        monitors/expression_tree/unary/first_order/universal_quantifier.h
+        monitors/expression_tree/unary/first_order/counting_quantifier.h
         monitors/expression_tree/unary/temporal/future.h
         monitors/expression_tree/unary/temporal/globally.h
         monitors/expression_tree/unary/temporal/next_strong.h
@@ -125,6 +141,7 @@ set(RV_MONITOR_HDR_FILES
         monitors/expression_tree/unary/temporal/historically.h
         monitors/expression_tree/unary/temporal/once.h
         monitors/expression_tree/unary/temporal/previously.h
+        monitors/expression_tree/domain.h
         monitors/formula/formula.h
         monitors/formula/supported_formula_type.h
         monitors/formula/nff.h
@@ -144,7 +161,6 @@ set(RV_MONITOR_HDR_FILES
         monitors/rv_algorithms/btt_fsm/btt_fsm.h
         monitors/rv_algorithms/btt_fsm/btt_fsm_utils_creation.h
         monitors/rv_algorithms/btt_fsm/decision.h
-        monitors/rv_algorithms/btt_fsm/node.h
         monitors/rv_algorithms/btt_fsm/state_btt_fsm.h
         monitors/rv_algorithms/dynamic_programming/dynamic.h
         monitors/rv_algorithms/ltl_event_consuming/event_consuming.h
@@ -167,6 +183,11 @@ set(RV_MONITOR_HDR_FILES
         monitors/rv_algorithms/hydra_2/hydra_monitors/or_monitor.h
         monitors/rv_algorithms/hydra_2/hydra_monitors/and_monitor.h
         monitors/rv_algorithms/hydra_2/hydra_monitors/negation_monitor.h
+        monitors/rv_algorithms/hydra_2/hydra_monitors/universal_monitor.h
+        monitors/rv_algorithms/hydra_2/hydra_monitors/quantifier_monitor.h
+        monitors/rv_algorithms/hydra_2/hydra_monitors/quote_monitor.h
+        monitors/rv_algorithms/hydra_2/hydra_monitors/existential_monitor.h
+        monitors/rv_algorithms/hydra_2/hydra_monitors/counting_monitor.h
         monitors/rv_algorithms/hydra/hydra.h
         monitors/rv_algorithms/hydra/hydra_monitors/hydra_monitor.h
         monitors/rv_algorithms/hydra/hydra_monitors/previous_monitor.h
@@ -180,17 +201,18 @@ set(RV_MONITOR_HDR_FILES
         monitors/rv_algorithms/hydra/hydra_monitors/or_monitor.h
         monitors/rv_algorithms/hydra/hydra_monitors/and_monitor.h
         monitors/rv_algorithms/hydra/hydra_monitors/negation_monitor.h
-        monitors/symbols/symbols.h
         monitors/trace/event.h
         monitors/trace/event_generator.h
-        monitors/trace/trace.h
-        monitors/utils/lazy_bool.h
         monitors/utils/execution_statistic.h
         monitors/utils/utils.h
         monitors/utils/generators/formula_generator/formula_generator.h
         monitors/utils/generators/trace_generator/trace_generator.h
         monitors/utils/generators/computation_time_generator/computation_time_generator.h
-        monitors/utils/interval.h
+        monitors/utils/interval.h monitors/utils/interval.h
+        monitors/collections/domain_collection.h
+        monitors/collections/domain.h
+        monitors/collections/domain_value.h
+        monitors/utils/verdict.h
         )
 
 include(./rvmonitors_parser.cmake)
@@ -229,7 +251,6 @@ target_include_directories(${LIBRARY_NAME}_core
 
 target_precompile_headers(${LIBRARY_NAME}_core
         PUBLIC
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/monitors/utils/lazy_bool.h>
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/monitors/utils/utils.h>
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/monitors/trace/trace.h>
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/monitors/trace/event.h>
@@ -274,5 +295,3 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
         target_compile_options(${LIBRARY_NAME}_core PRIVATE /W3 /WX)
     endforeach()
 endif()
-
-

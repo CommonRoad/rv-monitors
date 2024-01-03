@@ -6,8 +6,8 @@
 
 std::shared_ptr<Expression> ResolvingOperator::clone() { return std::make_shared<ResolvingOperator>(*this); }
 
-std::shared_ptr<Expression> ResolvingOperator::accept(ExpressionVisitor &visitor, Trace &tr, size_t idx) {
-    return visitor.visitResolvingOperator(*this, tr, idx);
+std::shared_ptr<Expression> ResolvingOperator::accept(ExpressionVisitor &visitor, Trace &tra, size_t idx) {
+    return visitor.visitResolvingOperator(*this, tra, idx);
 }
 
 Event ResolvingOperator::getEvent() { return trace.getEvent(index); }

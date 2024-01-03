@@ -8,6 +8,7 @@
 #include "test_hydra.h"
 #include "../test_database.h"
 #include "hydra_test_utils.h"
+#include "monitors/collections/domain.h"
 #include "monitors/parser/parser.h"
 
 TEST(TestHydra2, testFormulaType) {
@@ -23,8 +24,8 @@ TEST(TestHydra2, testFormulaType) {
 
 TEST(TestHydra2, specificFormulaTest) {
     auto testDataBase{TestDataBase()};
-    auto testCase = testDataBase.getTestSample("F82_1");
-    hydraTestUtils::executeHydraEval(testCase.trace, {*testCase.formula}, {testCase.expectedResult});
+    auto testCase = testDataBase.getTestSample("F94_1");
+    hydraTestUtils::executeHydraEval(testCase.trace, {*testCase.formula}, {testCase.expectedResult}, testCase.domains);
 }
 
 TEST(TestHydra2, formulaTest) {
@@ -36,14 +37,15 @@ TEST(TestHydra2, formulaTest) {
         if (std::any_of(excludedTestCases.begin(), excludedTestCases.end(),
                         [testCase](const std::string &name) { return name == testCase.formula->getId(); }))
             continue;
-        failures += hydraTestUtils::executeHydraEval(testCase.trace, {*testCase.formula}, {testCase.expectedResult});
+        failures += hydraTestUtils::executeHydraEval(testCase.trace, {*testCase.formula}, {testCase.expectedResult},
+                                                     testCase.domains);
         numEval++;
     }
     std::cout << "Hydra Formula Test: " << std::to_string(failures) << "/" << std::to_string(numEval)
               << " failing formulas.";
 }
 
-TEST(TestBTT_FSMEvaluation, formulaTestEarlyTermination) {
+TEST(TestHydra2, formulaTestEarlyTermination) {
     std::vector<std::string> excludedTestCases{"F49_1"};
     size_t failures{0};
     auto testDataBase{TestDataBase()};
@@ -52,7 +54,7 @@ TEST(TestBTT_FSMEvaluation, formulaTestEarlyTermination) {
         if (std::any_of(excludedTestCases.begin(), excludedTestCases.end(),
                         [testCase](const std::string &name) { return name == testCase.formula->getId(); }))
             continue;
-        auto monitor{Hydra2({*testCase.formula}, false, false, false, true, {})};
+        auto monitor{Hydra2({*testCase.formula}, false, false, false, true, testCase.domains)};
         auto trace{testCase.trace};
         EXPECT_TRUE(TestDataBase::mergeResult(monitor.evaluate(trace).at(testCase.formula->getId())) ==
                     TestDataBase::mergeResult(testCase.expectedResult))
@@ -105,11 +107,37 @@ TEST(TestHydra2, testCombinedSinceUntilFormulas) {
     hydraTestUtils::executeHydraEval(trace, formulas, expSolutions);
 }
 
+TEST(TestHydra2, testExistentialStepLooping) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a", "b", "c"}, {}, {"b"}, {"a", "c"}});
+    Formula formula = Parser::parse("G(C<=2 x in D. x)");
+    formula.setId("R1");
+    std::vector<Formula> formulas = {formula};
+    std::vector<std::vector<Verdict>> expSolutions{
+        {Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true}}};
+    DomainStorage dom1{"D", {"a", "b", "c"}};
+    std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1)};
+    hydraTestUtils::executeHydraEval(trace, formulas, expSolutions, domains);
+}
+
+std::vector<std::any> createStringDomain(size_t stepNumber) { return {"a", "b", "c"}; }
+
+TEST(TestHydra2, testExistentialStepLoopingDynamicDomain) {
+    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a", "b", "c"}, {}, {"b"}, {"a", "c"}});
+    Formula formula = Parser::parse("G(C<=2 x in D. x)");
+    formula.setId("R1");
+    std::vector<Formula> formulas = {formula};
+    std::vector<std::vector<Verdict>> expSolutions{
+        {Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true}}};
+    DomainStorage dom1{"D", createStringDomain};
+    std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1)};
+    hydraTestUtils::executeHydraEval(trace, formulas, expSolutions, domains);
+}
+
 TEST(TestHydra2, testInvalidPredicateCost) {
     Formula formula = Parser::parse("G(P[0, 1](c))", "R1");
 #ifdef NDEBUG
     GTEST_SKIP() << "assertions are disabled";
 #endif
-    EXPECT_DEATH(Hydra2({formula}, false, false, false, false, {{"test", {1, 2}}}),
+    EXPECT_DEATH(Hydra2({formula}, false, false, false, false, {}, {{"test", {1, 2}}}),
                  "Invalid predicate costs/probabilities");
 }

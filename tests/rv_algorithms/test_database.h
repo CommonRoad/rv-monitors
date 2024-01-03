@@ -18,14 +18,18 @@ struct TestSample {
      * @param expectedResult Expected result of trace evaluation given formula.
      * @param trueAtomics Satisfied atomic propositions per time step.
      * @param timeSteps Time steps of trace elements.
+     * @param domains Collection of domains.
      */
     TestSample(const std::string &testName, const std::string &formulaStr, std::vector<Verdict> expectedResult,
-               const std::vector<std::vector<std::string>> &trueAtomics, const std::vector<size_t> &timeSteps = {});
+               const std::vector<std::vector<std::string>> &trueAtomics, const std::vector<size_t> &timeSteps = {},
+               const std::vector<std::shared_ptr<DomainStorage>> &domains = {},
+               const std::vector<std::shared_ptr<IFunction<bool>>> &functions = {});
 
-    std::string testName;                //**< Trace which should be monitored. */
-    std::shared_ptr<Formula> formula;    //**< Pointer to formula object. */
-    Trace trace;                         //**< Trace which should be monitored. */
-    std::vector<Verdict> expectedResult; //**< Expected result per trace element. */
+    std::string testName;                                //**< Trace which should be monitored. */
+    std::shared_ptr<Formula> formula;                    //**< Pointer to formula object. */
+    Trace trace;                                         //**< Trace which should be monitored. */
+    std::vector<Verdict> expectedResult;                 //**< Expected result per trace element. */
+    std::vector<std::shared_ptr<DomainStorage>> domains; //**< Collection of domains. */
 };
 
 /**

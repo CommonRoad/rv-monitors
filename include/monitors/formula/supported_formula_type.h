@@ -9,20 +9,24 @@
 
 #include <set>
 
-enum TemporalFormulaType {
+enum FormulaType {
     futureOnly,    //**< Formula can only have future operators. */
     pastOnly,      //**< Formula can only have past operators. */
-    safetyGeneral, //**< Formula must start with globally operator. Rest of formula can be arbitrary. */
+    safetyGeneral, //**< Formula must start with globally operator. Rest of formula can consist of arbitrary temporal
+                   // operators. */
     futureSafety,  //**< Formula must start with globally operator. Rest of formula must only contain future operators.
                    //*/
     pastSafety,    //**< Formula must start with globally operator. Rest of formula must only contain past operators. */
-    futurePastCombined //**< Formula can consist of arbitrary combination of operators. */
+    futurePastCombined, //**< Formula can consist of arbitrary combination of temporal operators. */
+    firstOrder,         //**< Formula must include fragments from the first-order extension. */
+    safetyFirstOrder //**< Formula must start with globally operator. In formula first-order fragments can be included.
+                     //*/
 };
 
 struct MonitoringProperties {
-    const TemporalFormulaType formulaType; //**< Supported temporal formula type. */
-    const bool interval;                   //**< Boolean indicating that a formula can have intervals. */
-    const bool equidistantTime;            //**< Boolean indicating that the trace must have equidistant time steps. */
+    const FormulaType formulaType; //**< Supported temporal formula type. */
+    const bool interval;           //**< Boolean indicating that a formula can have intervals. */
+    const bool equidistantTime;    //**< Boolean indicating that the trace must have equidistant time steps. */
 
     /**
      *
@@ -30,5 +34,5 @@ struct MonitoringProperties {
      * @param interval Boolean indicating that a formula can have intervals.
      * @param equidistantTime Boolean indicating that the trace must have equidistant time steps.
      */
-    MonitoringProperties(const TemporalFormulaType &formulaType, bool interval = true, bool equidistantTime = false);
+    MonitoringProperties(const FormulaType &formulaType, bool interval = true, bool equidistantTime = false);
 };

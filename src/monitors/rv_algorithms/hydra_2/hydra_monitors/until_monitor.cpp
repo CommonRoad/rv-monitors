@@ -95,6 +95,15 @@ void UntilMonitor::reset() {
     stepNumberUntil = 0;
     endReached = false;
 }
+
+std::shared_ptr<Hydra2Monitor> UntilMonitor::clone() {
+    auto clonedMonitor = std::make_shared<UntilMonitor>(*this);
+    clonedMonitor->subMonitorRight = subMonitorRight->clone();
+    clonedMonitor->subMonitorLeft = subMonitorLeft->clone();
+    clonedMonitor->subMonitorBaseTimeStep = subMonitorBaseTimeStep->clone();
+    return clonedMonitor;
+}
+
 std::string UntilMonitor::to_string() {
     std::string itv{" "};
     std::string end{};
@@ -106,4 +115,10 @@ std::string UntilMonitor::to_string() {
         itv = "[" + std::to_string(interval.getStart()) + ", " + end + "] ";
     }
     return "(" + subMonitorLeft->to_string() + " U" + itv + subMonitorRight->to_string() + ")";
+}
+
+void UntilMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
+    subMonitorRight->addDomainValues(vals);
+    subMonitorLeft->addDomainValues(vals);
+    subMonitorBaseTimeStep->addDomainValues(vals);
 }
