@@ -49,13 +49,11 @@ struct MonitorConfiguration {
     MonitorConfiguration() = default;
 
     AlgorithmType algorithm{
-        AlgorithmType::hydra_2_mtl}; /**< Algorithm to use, e.g., Hydra, LTL event consuming, .... */
-    bool performanceMeasurement{
-        false}; /**< Indicates whether evaluation with time measurement should be performed */
-    bool hydraConnectedEvaluation{
-        true};                        /**< Indicates whether HYDRA monitor should perform connected evaluation */
-    bool hydraReordering{true}; /**< Indicates whether HYDRA monitor should perform reordering */
-    bool shortCircuiting{true}; /**< Indicates whether monitor should perform short circuiting */
+        AlgorithmType::hydra_2_mtl};     /**< Algorithm to use, e.g., Hydra, LTL event consuming, .... */
+    bool performanceMeasurement{false};  /**< Indicates whether evaluation with time measurement should be performed */
+    bool hydraConnectedEvaluation{true}; /**< Indicates whether HYDRA monitor should perform connected evaluation */
+    bool hydraReordering{true};          /**< Indicates whether HYDRA monitor should perform reordering */
+    bool shortCircuiting{true};          /**< Indicates whether monitor should perform short circuiting */
     bool earlyTermination{
         false}; /**< Indicates whether the complete trace has to be evaluated or whether the
                  * execution can be terminated as soon as a global verdict for a monitor can be provided. */
