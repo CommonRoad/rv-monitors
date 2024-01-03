@@ -62,6 +62,14 @@ void SinceMonitor::reset() {
     stepNumberRight = 0;
     endReached = false;
 }
+
+std::shared_ptr<Hydra2Monitor> SinceMonitor::clone() {
+    auto clonedMonitor = std::make_shared<SinceMonitor>(*this);
+    clonedMonitor->subMonitorRight = subMonitorRight->clone();
+    clonedMonitor->subMonitorLeft = subMonitorLeft->clone();
+    return clonedMonitor;
+}
+
 std::string SinceMonitor::to_string() {
     std::string itv{" "};
     std::string end{};
@@ -73,4 +81,9 @@ std::string SinceMonitor::to_string() {
         itv = "[" + std::to_string(interval.getStart()) + ", " + end + "] ";
     }
     return "(" + subMonitorLeft->to_string() + " S" + itv + subMonitorRight->to_string() + ")";
+}
+
+void SinceMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
+    subMonitorRight->addDomainValues(vals);
+    subMonitorLeft->addDomainValues(vals);
 }

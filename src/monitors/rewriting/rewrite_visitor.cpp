@@ -15,6 +15,10 @@
 #include "monitors/expression_tree/unary/bool/not.h"
 #include "monitors/expression_tree/unary/deriving_operator.h"
 #include "monitors/expression_tree/unary/event_operator.h"
+#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/quote_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
 #include "monitors/expression_tree/unary/resolving_operator.h"
 #include "monitors/expression_tree/unary/temporal/future.h"
 #include "monitors/expression_tree/unary/temporal/globally.h"
@@ -456,4 +460,27 @@ std::shared_ptr<Expression> RewriteVisitor::visitResolvingOperator(ResolvingOper
 
 std::shared_ptr<Expression> RewriteVisitor::visitDerivingOperator(DerivingOperator &opr, Trace &trace, size_t index) {
     return std::make_shared<DerivingOperator>(opr);
+}
+
+std::shared_ptr<Expression> RewriteVisitor::visitUniversalQuantifier(UniversalQuantifier &opr, Trace &trace,
+                                                                     size_t index) {
+    visitExpression(opr, trace, index);
+    return std::make_shared<UniversalQuantifier>(opr);
+}
+
+std::shared_ptr<Expression> RewriteVisitor::visitExistentialQuantifier(ExistentialQuantifier &opr, Trace &trace,
+                                                                       size_t index) {
+    visitExpression(opr, trace, index);
+    return std::make_shared<ExistentialQuantifier>(opr);
+}
+
+std::shared_ptr<Expression> RewriteVisitor::visitQuoteQuantifier(QuoteQuantifier &opr, Trace &trace, size_t index) {
+    visitExpression(opr, trace, index);
+    return std::make_shared<QuoteQuantifier>(opr);
+}
+
+std::shared_ptr<Expression> RewriteVisitor::visitCountingQuantifier(CountingQuantifier &opr, Trace &trace,
+                                                                    size_t index) {
+    visitExpression(opr, trace, index);
+    return std::make_shared<CountingQuantifier>(opr);
 }

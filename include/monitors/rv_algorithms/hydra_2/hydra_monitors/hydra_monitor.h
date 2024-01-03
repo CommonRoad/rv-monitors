@@ -6,6 +6,7 @@
 //
 #pragma once
 #include "deque"
+#include "monitors/collections/domain_value.h"
 #include "monitors/utils/utils.h"
 
 /**
@@ -135,6 +136,13 @@ class Hydra2Monitor {
     virtual void reset();
 
     /**
+     * Adds domain value to function/predicate or calls sub-monitors to do it.
+     *
+     * @param vals Domain values which should be added.
+     */
+    virtual void addDomainValues(const std::vector<DomainValue> &vals) = 0;
+
+    /**
      * Registers parent monitor.
      *
      * @param parentId ID of parent monitor.
@@ -167,6 +175,13 @@ class Hydra2Monitor {
      * @return Satisfaction probability of monitor in interval [0, 1].
      */
     double getSatisfactionProbability() const;
+
+    /**
+     * Clones this monitor.
+     *
+     * @return New shared_ptr of this monitor.
+     */
+    virtual std::shared_ptr<Hydra2Monitor> clone() = 0;
 
     /**
      * Creates string representation of monitor.

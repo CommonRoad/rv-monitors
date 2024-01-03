@@ -8,7 +8,6 @@
 #include "test_or_monitor.h"
 #include "monitors/parser/parser.h"
 #include "monitors/rv_algorithms/hydra/hydra_monitors/constant_monitor.h"
-#include "monitors/rv_algorithms/hydra/hydra_monitors/negation_monitor.h"
 #include "monitors/rv_algorithms/hydra/hydra_monitors/or_monitor.h"
 #include "monitors/utils/utils.h"
 

@@ -21,7 +21,8 @@ class AtomicMonitor : public Hydra2Monitor {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      */
     AtomicMonitor(const Formula &formula, size_t monitorId, bool connectedEval)
-        : Hydra2Monitor(formula, monitorId, connectedEval){};
+        : Hydra2Monitor(formula, monitorId, connectedEval),
+          name(std::dynamic_pointer_cast<Atomic>(this->formula.getExpr())->to_string()){};
 
     /**
      * Performs concrete step of atomic monitor. It evaluates the trace element of the concrete step. Returns false if
@@ -41,6 +42,19 @@ class AtomicMonitor : public Hydra2Monitor {
     void setTrace(const Trace &trace) override;
 
     /**
+     * Adds domain value in other monitors. Not relevant for constant monitor.
+     *
+     * @param vals Domain values which should be added.
+     */
+    void addDomainValues(const std::vector<DomainValue> &vals) override;
+
+    /**
+     * Clones this monitor.
+     * @return New shared_ptr of this monitor.
+     */
+    std::shared_ptr<Hydra2Monitor> clone() override;
+
+    /**
      * Creates string representation of monitor.
      *
      * @return String representing monitor.
@@ -49,4 +63,6 @@ class AtomicMonitor : public Hydra2Monitor {
 
   private:
     Trace trace; //**< Trace which should be monitored. */
+    std::string name;
+    std::string domainValue;
 };

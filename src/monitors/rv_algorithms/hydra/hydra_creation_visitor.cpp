@@ -1,11 +1,6 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #include "monitors/rv_algorithms/hydra/hydra_creation_visitor.h"
 #include "monitors/expression_tree/atomic/constant.h"
+#include "monitors/expression_tree/atomic/predicate.h"
 #include "monitors/expression_tree/binary/temporal/since.h"
 #include "monitors/expression_tree/binary/temporal/until.h"
 #include "monitors/expression_tree/nary/bool/and.h"

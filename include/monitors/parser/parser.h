@@ -16,8 +16,8 @@ class Parser {
     [[nodiscard]] static Formula parse(const std::string &formula, const std::string &formulaId = "");
 
     /**
-     * Transforms a Hydra-style log string into a log (trace) object.
-     * @param formula Hydra-style log string to be parsed.
+     * Transforms a Hydra2-style log string into a log (trace) object.
+     * @param formula Hydra2-style log string to be parsed.
      * @return Trace object.
      */
     [[nodiscard]] static Trace parse_log(const std::string &trace);

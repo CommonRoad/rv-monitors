@@ -72,7 +72,8 @@ class RVMonitor {
      * satisfaction probability in interval [0, 1].
      */
     RVMonitor(const Formula &formula, MonitorConfiguration configuration = {},
-              const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
+              const std::map<std::string, std::array<double, 2>> &predicateCosts = {},
+              const std::vector<std::shared_ptr<DomainStorage>> &domains = {});
 
     /*
      * Copy constructor.
@@ -96,7 +97,8 @@ class RVMonitor {
      * satisfaction probability in interval [0, 1].
      */
     RVMonitor(const std::vector<Formula> &formula, MonitorConfiguration configuration,
-              const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
+              const std::map<std::string, std::array<double, 2>> &predicateCosts = {},
+              const std::vector<std::shared_ptr<DomainStorage>> &domains = {});
 
     /**
      * Evaluates trace based on temporal logic formula.

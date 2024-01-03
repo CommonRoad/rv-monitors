@@ -76,16 +76,8 @@ build-clang:
     CC: clang
     CXX: clang++
   script:
-    - printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)"
-      section_config "CMake Configuration"
     - cmake -G "Ninja Multi-Config" -S . -B build
-    - printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)"
-      section_config
-    - printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)"
-      section_build "CMake Build"
     - cmake --build build --config Release
-    - printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)"
-      section_build
   needs: []
 
 build-gcc:
@@ -96,16 +88,8 @@ build-gcc:
     CC: gcc
     CXX: g++
   script:
-    - printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)"
-      section_config "CMake Configuration"
     - cmake -G "Ninja Multi-Config" -S . -B build
-    - printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)"
-      section_config
-    - printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)"
-      section_build "CMake Build"
     - cmake --build build --config Release
-    - printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)"
-      section_build
   needs: []
 
 build-evaluation:
@@ -113,16 +97,8 @@ build-evaluation:
   cache:
     <<: *cache_dependency_archives
   script:
-    - printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)"
-      section_config "CMake Configuration"
     - cmake -G "Ninja Multi-Config" -S . -B build
-    - printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)"
-      section_config
-    - printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)"
-      section_build "CMake Build"
     - cmake --build build --config Release --target rvmonitors_eval
-    - printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)"
-      section_build
   needs: []
 
 
@@ -131,16 +107,8 @@ build-test:
   cache:
     <<: *cache_dependency_archives
   script:
-    - printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)"
-      section_config "CMake Configuration"
     - cmake -G "Ninja Multi-Config" -S . -B build
-    - printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)"
-      section_config
-    - printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)"
-      section_build "CMake Build"
     - cmake --build build --config Debug --target rvmonitors_test
-    - printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)"
-      section_build
   needs: []
   artifacts:
     paths:
@@ -152,16 +120,8 @@ build-coverage:
   cache:
     <<: *cache_dependency_archives
   script:
-    - printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)"
-      section_config "CMake Configuration"
     - cmake -G "Ninja Multi-Config" -S . -B build -DRVMONITORS_BUILD_CODE_COVERAGE=ON
-    - printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)"
-      section_config
-    - printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)"
-      section_build "CMake Build"
     - cmake --build build --config Debug --target rvmonitors_test
-    - printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)"
-      section_build
   needs: []
   artifacts:
     paths:

@@ -6,6 +6,7 @@
  * Parent class for all unary expressions.
  */
 class Unary : public Expression {
+  protected:
     std::shared_ptr<Expression> left;
 
   public:

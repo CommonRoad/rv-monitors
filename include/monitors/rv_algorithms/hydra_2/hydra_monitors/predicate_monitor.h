@@ -23,8 +23,7 @@ class PredicateMonitor : public Hydra2Monitor {
      * @param satisfactionProbability Satisfaction probability of monitor.
      */
     PredicateMonitor(Formula formula, size_t monitorId, bool connectedEval, double evalCost = 0.0,
-                     double satisfactionProbability = 1.0)
-        : Hydra2Monitor(std::move(formula), monitorId, connectedEval, evalCost, satisfactionProbability){};
+                     double satisfactionProbability = 1.0);
 
     /**
      * Performs concrete step of predicate monitor. It evaluates the trace element of the concrete step. Returns false
@@ -44,6 +43,21 @@ class PredicateMonitor : public Hydra2Monitor {
     void setTrace(const Trace &trace) override;
 
     /**
+     * Calls sub-monitors to add domain value.
+     *
+     * @param vals Domain values which should be added.
+     */
+    void addDomainValues(const std::vector<DomainValue> &vals) override;
+
+    void reset() override;
+
+    /**
+     * Clones this monitor.
+     * @return New shared_ptr of this monitor.
+     */
+    std::shared_ptr<Hydra2Monitor> clone() override;
+
+    /**
      * Creates string representation of monitor.
      *
      * @return String representing monitor.
@@ -52,4 +66,9 @@ class PredicateMonitor : public Hydra2Monitor {
 
   private:
     Trace trace; //**< Trace which should be monitored. */
+    std::string name;
+    std::vector<std::string> relevantArguments;
+    std::vector<std::string> constArguments;
+    std::vector<DomainValue> domainValueArguments;
+    void updateTrace(size_t stepNumber);
 };

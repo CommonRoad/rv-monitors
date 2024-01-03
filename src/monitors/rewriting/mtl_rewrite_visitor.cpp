@@ -21,6 +21,10 @@
 #include "monitors/expression_tree/unary/bool/not.h"
 #include "monitors/expression_tree/unary/deriving_operator.h"
 #include "monitors/expression_tree/unary/event_operator.h"
+#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/quote_quantifier.h"
+#include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
 #include "monitors/expression_tree/unary/resolving_operator.h"
 #include "monitors/expression_tree/unary/temporal/future.h"
 #include "monitors/expression_tree/unary/temporal/globally.h"
@@ -529,4 +533,27 @@ std::shared_ptr<Expression> MtlRewriteVisitor::visitDerivingOperator(DerivingOpe
 }
 std::shared_ptr<Expression> MtlRewriteVisitor::visitPredicate(Predicate &opr, Trace &trace, size_t index) {
     return std::make_shared<Predicate>(opr);
+}
+
+std::shared_ptr<Expression> MtlRewriteVisitor::visitUniversalQuantifier(UniversalQuantifier &op, Trace &trace,
+                                                                        size_t index) {
+    visitExpression(op, trace, index);
+    return std::make_shared<UniversalQuantifier>(op);
+}
+
+std::shared_ptr<Expression> MtlRewriteVisitor::visitExistentialQuantifier(ExistentialQuantifier &op, Trace &trace,
+                                                                          size_t index) {
+    visitExpression(op, trace, index);
+    return std::make_shared<ExistentialQuantifier>(op);
+}
+
+std::shared_ptr<Expression> MtlRewriteVisitor::visitQuoteQuantifier(QuoteQuantifier &op, Trace &trace, size_t index) {
+    visitExpression(op, trace, index);
+    return std::make_shared<QuoteQuantifier>(op);
+}
+
+std::shared_ptr<Expression> MtlRewriteVisitor::visitCountingQuantifier(CountingQuantifier &op, Trace &trace,
+                                                                       size_t index) {
+    visitExpression(op, trace, index);
+    return std::make_shared<CountingQuantifier>(op);
 }

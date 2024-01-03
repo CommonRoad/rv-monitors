@@ -1,9 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #pragma once
 
 #include "monitors/expression_tree/expression.h"
@@ -12,8 +6,8 @@
 
 class Predicate : public Expression {
   public:
-    Predicate(std::string symbol, std::string na, std::vector<std::string> params)
-        : Expression(std::move(symbol)), name(std::move(na)), parameters(std::move(params)) {}
+    Predicate(std::string symbol, std::string name, std::vector<std::string> parameters,
+              std::vector<std::string> parameterVariables);
 
     [[nodiscard]] std::string to_string() const override;
 
@@ -28,9 +22,15 @@ class Predicate : public Expression {
 
     const std::string &getName() const;
 
+    const std::vector<std::string> &getVarParameters() const;
+
+    const std::vector<std::string> &getConstParameters() const;
+
     const std::vector<std::string> &getParameters() const;
 
-  private:
+  protected:
     std::string name;
     std::vector<std::string> parameters;
+    std::vector<std::string> parameterVariables;
+    std::vector<std::string> parameterConstants;
 };

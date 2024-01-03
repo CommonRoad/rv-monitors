@@ -17,4 +17,12 @@ void NegationMonitor::reset() {
     subMonitor->reset();
 }
 
+std::shared_ptr<Hydra2Monitor> NegationMonitor::clone() {
+    auto clonedMonitor = std::make_shared<NegationMonitor>(*this);
+    clonedMonitor->subMonitor = subMonitor->clone();
+    return clonedMonitor;
+}
+
 std::string NegationMonitor::to_string() { return "!(" + subMonitor->to_string() + ")"; }
+
+void NegationMonitor::addDomainValues(const std::vector<DomainValue> &vals) { subMonitor->addDomainValues(vals); }

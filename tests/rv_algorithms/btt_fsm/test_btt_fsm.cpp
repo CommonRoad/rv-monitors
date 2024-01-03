@@ -34,9 +34,9 @@ TEST(TestBTT_FSMEvaluation, formulaTest) {
         if (testCase.formula->includeTemporalOperator('S') or testCase.formula->includeTemporalOperator('H'))
             continue;
         bool pastEvaluation;
-        if (testCase.formula->checkCompatibility(TemporalFormulaType::pastSafety))
+        if (testCase.formula->checkCompatibility(FormulaType::pastSafety))
             pastEvaluation = true;
-        else if (testCase.formula->checkCompatibility(TemporalFormulaType::futureSafety))
+        else if (testCase.formula->checkCompatibility(FormulaType::futureSafety))
             pastEvaluation = false;
         else
             continue;

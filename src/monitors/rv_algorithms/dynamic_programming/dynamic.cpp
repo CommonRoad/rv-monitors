@@ -1,6 +1,7 @@
 #include "monitors/rv_algorithms/dynamic_programming/dynamic.h"
 #include "monitors/expression_tree/atomic/atomic.h"
 #include "monitors/expression_tree/atomic/constant.h"
+#include "monitors/expression_tree/atomic/predicate.h"
 #include "monitors/expression_tree/binary/bool/implication.h"
 #include "monitors/expression_tree/binary/temporal/until.h"
 #include "monitors/expression_tree/nary/bool/and.h"
@@ -13,7 +14,6 @@
 #include "monitors/expression_tree/unary/temporal/next_weak.h"
 #include "monitors/expression_tree/unary/temporal/once.h"
 #include "monitors/expression_tree/unary/temporal/previously.h"
-#include <monitors/utils/lazy_bool.h>
 
 DynamicProgrammingLTL::DynamicProgrammingLTL(const std::vector<Formula> &formulas, bool pastEvaluation)
     : MonitorInterface(formulas, AlgorithmType::dynamic_programming_ltl), pastEvaluation(pastEvaluation) {}

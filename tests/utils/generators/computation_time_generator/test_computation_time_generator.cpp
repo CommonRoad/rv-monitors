@@ -5,6 +5,7 @@
 // Credits: BMW Car@TUM
 //
 #include "test_computation_time_generator.h"
+#include "monitors/expression_tree/atomic/predicate.h"
 #include "monitors/utils/generators/computation_time_generator/computation_time_generator.h"
 
 void print_predicates(std::vector<std::vector<std::shared_ptr<Expression>> *> &allPredicates) {
@@ -28,8 +29,10 @@ TEST(TestComputationTimeGenerator, testGeneral) {
     auto a11 = std::make_shared<Atomic>("a11");
     auto a12 = std::make_shared<Atomic>("a12");
     auto a13 = std::make_shared<Atomic>("a13");
-    auto p11 = std::make_shared<Predicate>("p11", "p11", std::vector<std::string>{"params1", "params2"});
-    auto p12 = std::make_shared<Predicate>("p12", "p12", std::vector<std::string>{"params1", "params2", "params3"});
+    auto p11 = std::make_shared<Predicate>("p11", "p11", std::vector<std::string>{"params1", "params2"},
+                                           std::vector<std::string>{});
+    auto p12 = std::make_shared<Predicate>("p12", "p12", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
     /* Distribution 1 */
     std::vector<std::shared_ptr<Atomic>> atoms_1 = {a11, a12, a13};
     std::vector<std::shared_ptr<Predicate>> predicates_1 = {p11, p12};
@@ -41,10 +44,14 @@ TEST(TestComputationTimeGenerator, testGeneral) {
     /* Atoms and Predicates of Delay 2 */
     auto a21 = std::make_shared<Atomic>("a21");
     auto a22 = std::make_shared<Atomic>("a22");
-    auto p21 = std::make_shared<Predicate>("p21", "p21", std::vector<std::string>{"params1", "params2"});
-    auto p22 = std::make_shared<Predicate>("p22", "p22", std::vector<std::string>{"params1", "params2", "params3"});
-    auto p23 = std::make_shared<Predicate>("p23", "p23", std::vector<std::string>{"params1", "params2", "params3"});
-    auto p24 = std::make_shared<Predicate>("p24", "p24", std::vector<std::string>{"params1", "params2", "params3"});
+    auto p21 = std::make_shared<Predicate>("p21", "p21", std::vector<std::string>{"params1", "params2"},
+                                           std::vector<std::string>{});
+    auto p22 = std::make_shared<Predicate>("p22", "p22", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
+    auto p23 = std::make_shared<Predicate>("p23", "p23", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
+    auto p24 = std::make_shared<Predicate>("p24", "p24", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
     /* Distribution 2 */
     std::vector<std::shared_ptr<Atomic>> atoms_2 = {a21, a22};
     std::vector<std::shared_ptr<Predicate>> predicates_2 = {p21, p22, p23, p24};
@@ -58,8 +65,10 @@ TEST(TestComputationTimeGenerator, testGeneral) {
     auto a32 = std::make_shared<Atomic>("a32");
     auto a33 = std::make_shared<Atomic>("a33");
     auto a34 = std::make_shared<Atomic>("a34");
-    auto p31 = std::make_shared<Predicate>("p31", "p31", std::vector<std::string>{"params1", "params2"});
-    auto p32 = std::make_shared<Predicate>("p32", "p32", std::vector<std::string>{"params1", "params2", "params3"});
+    auto p31 = std::make_shared<Predicate>("p31", "p31", std::vector<std::string>{"params1", "params2"},
+                                           std::vector<std::string>{});
+    auto p32 = std::make_shared<Predicate>("p32", "p32", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
     /* Distribution 3 */
     std::vector<std::shared_ptr<Atomic>> atoms_3 = {a31, a32, a33, a34};
     std::vector<std::shared_ptr<Predicate>> predicates_3 = {p31, p32};
@@ -71,8 +80,10 @@ TEST(TestComputationTimeGenerator, testGeneral) {
     /* Atoms and Predicates of Delay 4 */
     auto a41 = std::make_shared<Atomic>("a41");
     auto a42 = std::make_shared<Atomic>("a42");
-    auto p41 = std::make_shared<Predicate>("p41", "p41", std::vector<std::string>{"params1", "params2"});
-    auto p42 = std::make_shared<Predicate>("p42", "p41", std::vector<std::string>{"params1", "params2", "params3"});
+    auto p41 = std::make_shared<Predicate>("p41", "p41", std::vector<std::string>{"params1", "params2"},
+                                           std::vector<std::string>{});
+    auto p42 = std::make_shared<Predicate>("p42", "p41", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
     /* Distribution 4 */
     std::vector<std::shared_ptr<Atomic>> atoms_4 = {a41, a42};
     std::vector<std::shared_ptr<Predicate>> predicates_4 = {p41, p42};
@@ -97,8 +108,10 @@ TEST(TestComputationTimeGenerator, testLongerDelays) {
     auto a11 = std::make_shared<Atomic>("a11");
     auto a12 = std::make_shared<Atomic>("a12");
     auto a13 = std::make_shared<Atomic>("a13");
-    auto p11 = std::make_shared<Predicate>("p11", "p11", std::vector<std::string>{"params1", "params2"});
-    auto p12 = std::make_shared<Predicate>("p12", "p12", std::vector<std::string>{"params1", "params2", "params3"});
+    auto p11 = std::make_shared<Predicate>("p11", "p11", std::vector<std::string>{"params1", "params2"},
+                                           std::vector<std::string>{});
+    auto p12 = std::make_shared<Predicate>("p12", "p12", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
     /* Distribution 1 */
     std::vector<std::shared_ptr<Atomic>> atoms_1 = {a11, a12, a13};
     std::vector<std::shared_ptr<Predicate>> predicates_1 = {p11, p12};
@@ -110,10 +123,14 @@ TEST(TestComputationTimeGenerator, testLongerDelays) {
     /* Atoms and Predicates of Delay 2 */
     auto a21 = std::make_shared<Atomic>("a21");
     auto a22 = std::make_shared<Atomic>("a22");
-    auto p21 = std::make_shared<Predicate>("p21", "p21", std::vector<std::string>{"params1", "params2"});
-    auto p22 = std::make_shared<Predicate>("p22", "p22", std::vector<std::string>{"params1", "params2", "params3"});
-    auto p23 = std::make_shared<Predicate>("p23", "p23", std::vector<std::string>{"params1", "params2", "params3"});
-    auto p24 = std::make_shared<Predicate>("p24", "p24", std::vector<std::string>{"params1", "params2", "params3"});
+    auto p21 = std::make_shared<Predicate>("p21", "p21", std::vector<std::string>{"params1", "params2"},
+                                           std::vector<std::string>{});
+    auto p22 = std::make_shared<Predicate>("p22", "p22", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
+    auto p23 = std::make_shared<Predicate>("p23", "p23", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
+    auto p24 = std::make_shared<Predicate>("p24", "p24", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
     /* Distribution 2 */
     std::vector<std::shared_ptr<Atomic>> atoms_2 = {a21, a22};
     std::vector<std::shared_ptr<Predicate>> predicates_2 = {p21, p22, p23, p24};
@@ -127,8 +144,10 @@ TEST(TestComputationTimeGenerator, testLongerDelays) {
     auto a32 = std::make_shared<Atomic>("a32");
     auto a33 = std::make_shared<Atomic>("a33");
     auto a34 = std::make_shared<Atomic>("a34");
-    auto p31 = std::make_shared<Predicate>("p31", "p31", std::vector<std::string>{"params1", "params2"});
-    auto p32 = std::make_shared<Predicate>("p32", "p32", std::vector<std::string>{"params1", "params2", "params3"});
+    auto p31 = std::make_shared<Predicate>("p31", "p31", std::vector<std::string>{"params1", "params2"},
+                                           std::vector<std::string>{});
+    auto p32 = std::make_shared<Predicate>("p32", "p32", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
     /* Distribution 3 */
     std::vector<std::shared_ptr<Atomic>> atoms_3 = {a31, a32, a33, a34};
     std::vector<std::shared_ptr<Predicate>> predicates_3 = {p31, p32};
@@ -140,8 +159,10 @@ TEST(TestComputationTimeGenerator, testLongerDelays) {
     /* Atoms and Predicates of Delay 4 */
     auto a41 = std::make_shared<Atomic>("a41");
     auto a42 = std::make_shared<Atomic>("a42");
-    auto p41 = std::make_shared<Predicate>("p41", "p41", std::vector<std::string>{"params1", "params2"});
-    auto p42 = std::make_shared<Predicate>("p42", "p42", std::vector<std::string>{"params1", "params2", "params3"});
+    auto p41 = std::make_shared<Predicate>("p41", "p41", std::vector<std::string>{"params1", "params2"},
+                                           std::vector<std::string>{});
+    auto p42 = std::make_shared<Predicate>("p42", "p42", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
     /* Distribution 4 */
     std::vector<std::shared_ptr<Atomic>> atoms_4 = {a41, a42};
     std::vector<std::shared_ptr<Predicate>> predicates_4 = {p41, p42};
@@ -163,8 +184,10 @@ TEST(TestComputationTimeGenerator, testHighNumberOfPredicates) {
     auto a11 = std::make_shared<Atomic>("a11");
     auto a12 = std::make_shared<Atomic>("a12");
     auto a13 = std::make_shared<Atomic>("a13");
-    auto p11 = std::make_shared<Predicate>("p11", "p11", std::vector<std::string>{"params1", "params2"});
-    auto p12 = std::make_shared<Predicate>("p12", "p12", std::vector<std::string>{"params1", "params2", "params3"});
+    auto p11 = std::make_shared<Predicate>("p11", "p11", std::vector<std::string>{"params1", "params2"},
+                                           std::vector<std::string>{});
+    auto p12 = std::make_shared<Predicate>("p12", "p12", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
     /* Distribution 1 */
     std::vector<std::shared_ptr<Atomic>> atoms_1 = {a11, a12, a13};
     std::vector<std::shared_ptr<Predicate>> predicates_1 = {p11, p12};
@@ -176,10 +199,14 @@ TEST(TestComputationTimeGenerator, testHighNumberOfPredicates) {
     /* Atoms and Predicates of Delay 2 */
     auto a21 = std::make_shared<Atomic>("a21");
     auto a22 = std::make_shared<Atomic>("a22");
-    auto p21 = std::make_shared<Predicate>("p21", "p21", std::vector<std::string>{"params1", "params2"});
-    auto p22 = std::make_shared<Predicate>("p22", "p22", std::vector<std::string>{"params1", "params2", "params3"});
-    auto p23 = std::make_shared<Predicate>("p23", "p23", std::vector<std::string>{"params1", "params2", "params3"});
-    auto p24 = std::make_shared<Predicate>("p24", "p24", std::vector<std::string>{"params1", "params2", "params3"});
+    auto p21 = std::make_shared<Predicate>("p21", "p21", std::vector<std::string>{"params1", "params2"},
+                                           std::vector<std::string>{});
+    auto p22 = std::make_shared<Predicate>("p22", "p22", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
+    auto p23 = std::make_shared<Predicate>("p23", "p23", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
+    auto p24 = std::make_shared<Predicate>("p24", "p24", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
     /* Distribution 2 */
     std::vector<std::shared_ptr<Atomic>> atoms_2 = {a21, a22};
     std::vector<std::shared_ptr<Predicate>> predicates_2 = {p21, p22, p23, p24};
@@ -193,8 +220,10 @@ TEST(TestComputationTimeGenerator, testHighNumberOfPredicates) {
     auto a32 = std::make_shared<Atomic>("a32");
     auto a33 = std::make_shared<Atomic>("a33");
     auto a34 = std::make_shared<Atomic>("a34");
-    auto p31 = std::make_shared<Predicate>("p31", "p31", std::vector<std::string>{"params1", "params2"});
-    auto p32 = std::make_shared<Predicate>("p32", "p32", std::vector<std::string>{"params1", "params2", "params3"});
+    auto p31 = std::make_shared<Predicate>("p31", "p31", std::vector<std::string>{"params1", "params2"},
+                                           std::vector<std::string>{});
+    auto p32 = std::make_shared<Predicate>("p32", "p32", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
     /* Distribution 3 */
     std::vector<std::shared_ptr<Atomic>> atoms_3 = {a31, a32, a33, a34};
     std::vector<std::shared_ptr<Predicate>> predicates_3 = {p31, p32};
@@ -206,8 +235,10 @@ TEST(TestComputationTimeGenerator, testHighNumberOfPredicates) {
     /* Atoms and Predicates of Delay 4 */
     auto a41 = std::make_shared<Atomic>("a41");
     auto a42 = std::make_shared<Atomic>("a42");
-    auto p41 = std::make_shared<Predicate>("p41", "p41", std::vector<std::string>{"params1", "params2"});
-    auto p42 = std::make_shared<Predicate>("p42", "p42", std::vector<std::string>{"params1", "params2", "params3"});
+    auto p41 = std::make_shared<Predicate>("p41", "p41", std::vector<std::string>{"params1", "params2"},
+                                           std::vector<std::string>{});
+    auto p42 = std::make_shared<Predicate>("p42", "p42", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
     /* Distribution 4 */
     std::vector<std::shared_ptr<Atomic>> atoms_4 = {a41, a42};
     std::vector<std::shared_ptr<Predicate>> predicates_4 = {p41, p42};
@@ -229,8 +260,10 @@ TEST(TestComputationTimeGenerator, testNoPredicates) {
     auto a11 = std::make_shared<Atomic>("a11");
     auto a12 = std::make_shared<Atomic>("a12");
     auto a13 = std::make_shared<Atomic>("a13");
-    auto p11 = std::make_shared<Predicate>("p11", "p11", std::vector<std::string>{"params1", "params2"});
-    auto p12 = std::make_shared<Predicate>("p12", "p12", std::vector<std::string>{"params1", "params2", "params3"});
+    auto p11 = std::make_shared<Predicate>("p11", "p11", std::vector<std::string>{"params1", "params2"},
+                                           std::vector<std::string>{});
+    auto p12 = std::make_shared<Predicate>("p12", "p12", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
     /* Distribution 1 */
     std::vector<std::shared_ptr<Atomic>> atoms_1 = {a11, a12, a13};
     std::vector<std::shared_ptr<Predicate>> predicates_1 = {p11, p12};
@@ -242,10 +275,14 @@ TEST(TestComputationTimeGenerator, testNoPredicates) {
     /* Atoms and Predicates of Delay 2 */
     auto a21 = std::make_shared<Atomic>("a21");
     auto a22 = std::make_shared<Atomic>("a22");
-    auto p21 = std::make_shared<Predicate>("p21", "p21", std::vector<std::string>{"params1", "params2"});
-    auto p22 = std::make_shared<Predicate>("p22", "p22", std::vector<std::string>{"params1", "params2", "params3"});
-    auto p23 = std::make_shared<Predicate>("p23", "p23", std::vector<std::string>{"params1", "params2", "params3"});
-    auto p24 = std::make_shared<Predicate>("p24", "p24", std::vector<std::string>{"params1", "params2", "params3"});
+    auto p21 = std::make_shared<Predicate>("p21", "p21", std::vector<std::string>{"params1", "params2"},
+                                           std::vector<std::string>{});
+    auto p22 = std::make_shared<Predicate>("p22", "p22", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
+    auto p23 = std::make_shared<Predicate>("p23", "p23", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
+    auto p24 = std::make_shared<Predicate>("p24", "p24", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
     /* Distribution 2 */
     std::vector<std::shared_ptr<Atomic>> atoms_2 = {a21, a22};
     std::vector<std::shared_ptr<Predicate>> predicates_2 = {p21, p22, p23, p24};
@@ -259,8 +296,10 @@ TEST(TestComputationTimeGenerator, testNoPredicates) {
     auto a32 = std::make_shared<Atomic>("a32");
     auto a33 = std::make_shared<Atomic>("a33");
     auto a34 = std::make_shared<Atomic>("a34");
-    auto p31 = std::make_shared<Predicate>("p31", "p31", std::vector<std::string>{"params1", "params2"});
-    auto p32 = std::make_shared<Predicate>("p32", "p32", std::vector<std::string>{"params1", "params2", "params3"});
+    auto p31 = std::make_shared<Predicate>("p31", "p31", std::vector<std::string>{"params1", "params2"},
+                                           std::vector<std::string>{});
+    auto p32 = std::make_shared<Predicate>("p32", "p32", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
     /* Distribution 3 */
     std::vector<std::shared_ptr<Atomic>> atoms_3 = {a31, a32, a33, a34};
     std::vector<std::shared_ptr<Predicate>> predicates_3 = {p31, p32};
@@ -272,8 +311,10 @@ TEST(TestComputationTimeGenerator, testNoPredicates) {
     /* Atoms and Predicates of Delay 4 */
     auto a41 = std::make_shared<Atomic>("a41");
     auto a42 = std::make_shared<Atomic>("a42");
-    auto p41 = std::make_shared<Predicate>("p41", "p41", std::vector<std::string>{"params1", "params2"});
-    auto p42 = std::make_shared<Predicate>("p42", "p42", std::vector<std::string>{"params1", "params2", "params3"});
+    auto p41 = std::make_shared<Predicate>("p41", "p41", std::vector<std::string>{"params1", "params2"},
+                                           std::vector<std::string>{});
+    auto p42 = std::make_shared<Predicate>("p42", "p42", std::vector<std::string>{"params1", "params2", "params3"},
+                                           std::vector<std::string>{});
     /* Distribution 4 */
     std::vector<std::shared_ptr<Atomic>> atoms_4 = {a41, a42};
     std::vector<std::shared_ptr<Predicate>> predicates_4 = {p41, p42};

@@ -41,6 +41,15 @@ void AndMonitor::reset() {
         mon->reset();
 }
 
+std::shared_ptr<Hydra2Monitor> AndMonitor::clone() {
+    auto clonedMonitor = std::make_shared<AndMonitor>(*this);
+    std::vector<std::shared_ptr<Hydra2Monitor>> clonedSubMonitors;
+    for (const auto &mon : subMonitors)
+        clonedSubMonitors.push_back(mon->clone());
+    clonedMonitor->subMonitors = clonedSubMonitors;
+    return clonedMonitor;
+}
+
 std::string AndMonitor::to_string() {
     std::string str{"("};
     for (const auto &mon : subMonitors)
@@ -62,4 +71,9 @@ double AndMonitor::computeSatisfactionProbability(const std::vector<std::shared_
     for (size_t idx{1}; idx < monitors.size(); ++idx)
         prob *= monitors.at(idx)->getSatisfactionProbability();
     return prob;
+}
+
+void AndMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
+    for (const auto &sub : subMonitors)
+        sub->addDomainValues(vals);
 }
