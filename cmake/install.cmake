@@ -69,12 +69,17 @@ install(EXPORT ${export_name}
         )
 
 
-# Export target configuration (allows find_package to find local build tree without
-# first installing it)
-export(EXPORT ${export_name}
-        FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake
-        NAMESPACE ${PROJECT_NAME}::
-        )
+# Export is disabled by default because it can cause issues with FetchContent in surprising ways
+set(_enable_package_export FALSE)
+
+if(_enable_package_export)
+    # Export target configuration (allows find_package to find local build tree without
+    # first installing it)
+    export(EXPORT ${export_name}
+            FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake
+            NAMESPACE ${PROJECT_NAME}::
+            )
+endif()
 
 # Required for export()
 foreach(foreign_target antlr4)
