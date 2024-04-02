@@ -506,9 +506,9 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitPredicate(Predicate &opr, 
 
 std::shared_ptr<Expression> HydraRewriteVisitor::visitUniversalQuantifier(UniversalQuantifier &opr, Trace &trace,
                                                                           size_t index) {
-    // A x in D. X(x) <-> X(A x in D. x)
-    if (auto rewExpr = swapQuantifierAndTempUnary(std::make_shared<UniversalQuantifier>(opr), trace, index))
-        return rewExpr;
+    // A x in D. X(x) <-> X(A x in D. x)  TODO activate his again
+    // if (auto rewExpr = swapQuantifierAndTempUnary(std::make_shared<UniversalQuantifier>(opr), trace, index))
+    //     return rewExpr;
 
     visitExpression(opr, trace, index);
 

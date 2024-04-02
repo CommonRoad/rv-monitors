@@ -1,9 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #include "monitors/rv_algorithms/rv_monitor.h"
 #include "monitors/rv_algorithms/hydra/hydra.h"
 #include "monitors/rv_algorithms/hydra_2/hydra.h"
@@ -13,12 +7,13 @@
 #include "monitors/utils/utils.h"
 #include <cassert>
 
-std::map<std::string, std::vector<Verdict>> RVMonitor::verify(Trace trace) {
+std::map<std::string, std::vector<Verdict>>
+RVMonitor::verify(Trace trace, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     std::chrono::high_resolution_clock::time_point startTime;
     if (configuration.performanceMeasurement)
         startTime = ExecutionStatistic::start();
 
-    auto verdict{monitor->evaluate(trace)};
+    auto verdict{monitor->evaluate(trace, domains)};
 
     if (configuration.performanceMeasurement)
         executionStatistic.stop(startTime, trace.getLength());
@@ -205,3 +200,7 @@ MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool measure
     : algorithm(algorithm), performanceMeasurement(measurement) {}
 
 MonitorConfiguration RVMonitor::getConfiguration() { return configuration; }
+
+std::map<std::string, std::map<size_t, std::vector<std::vector<DomainValue>>>> RVMonitor::getMfotlRes() const {
+    return monitor->getViolatingDomainValues();
+}

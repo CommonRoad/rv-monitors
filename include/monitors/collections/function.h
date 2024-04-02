@@ -7,10 +7,23 @@
 #include <stdexcept>
 #include <string>
 
+/**
+ * Template class representing a function with arbitrary return value and arguments.
+ */
 template <typename T> class IFunction {
   public:
+    /**
+     * Default constructor.
+     */
     IFunction() = default;
 
+    /**
+     * Constructor.
+     *
+     * @param name Name of function.
+     * @param argumentNames Names of function arguments.
+     * @param cost Cost for evaluation of function.
+     */
     IFunction(std::string name, std::vector<std::string> argumentNames, float cost = 0.0);
 
     /**
@@ -34,16 +47,31 @@ template <typename T> class IFunction {
      */
     [[nodiscard]] std::vector<std::string> getArgumentNames() const;
 
+    /**
+     * Getter for concrete function.
+     *
+     * @return Function object.
+     */
     virtual std::function<T()> getFunction();
 
+    /**
+     *  Getter for function where domain values are assigned dynamically.
+     * @param args Domain value arguments.
+     * @return Function object.
+     */
     [[nodiscard]] virtual std::function<T()> getFunction(const std::vector<DomainValue> &args);
 
+    /**
+     * Evaluates function.
+     *
+     * @return Function return value.
+     */
     virtual T evaluateFunction();
 
   private:
-    std::string name; //**< Name of function. */
-    std::vector<std::string> argumentNames;
-    float costs; //**< Costs for evaluation. */
+    std::string name;                       //**< Name of function. */
+    std::vector<std::string> argumentNames; //**< List of argument names. */
+    float costs;                            //**< Costs for evaluation. */
 };
 template <typename T> std::function<T()> IFunction<T>::getFunction(const std::vector<DomainValue> &args) {
     std::runtime_error("IFunction<T>::getFunction: This call should not happen");
@@ -82,8 +110,15 @@ template <typename T, typename... Args> class Function : public IFunction<T> {
     Function(std::string name, std::vector<std::string> argumentNames, std::function<T(Args... args)> function,
              std::function<std::tuple<Args...>(std::vector<DomainValue>)> arguments, float costs = 0.0);
 
+    /**
+     * Default constructor.
+     */
     Function() = default;
 
+    /**
+     * Evaluation of function.
+     * @return
+     */
     operator T() const;
 
     /**
@@ -93,6 +128,12 @@ template <typename T, typename... Args> class Function : public IFunction<T> {
      */
     [[nodiscard]] std::function<T()> getFunction(const std::vector<DomainValue> &args);
 
+    /**
+     * Evaluation of function with variable argument list.
+     *
+     * @param args List of arguments.
+     * @return Return value of function.
+     */
     [[nodiscard]] T evaluateFunction(Args... args);
 
   private:

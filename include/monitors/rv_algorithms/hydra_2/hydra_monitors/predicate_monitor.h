@@ -1,9 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #pragma once
 
 #include "hydra_monitor.h"
@@ -39,8 +33,9 @@ class PredicateMonitor : public Hydra2Monitor {
      * Setter for trace.
      *
      * @param trace Trace.
+     * @param domains List of domains.
      */
-    void setTrace(const Trace &trace) override;
+    void setTrace(const Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 
     /**
      * Calls sub-monitors to add domain value.
@@ -49,6 +44,9 @@ class PredicateMonitor : public Hydra2Monitor {
      */
     void addDomainValues(const std::vector<DomainValue> &vals) override;
 
+    /**
+     * Resets predicate monitor class members.
+     */
     void reset() override;
 
     /**
@@ -65,10 +63,16 @@ class PredicateMonitor : public Hydra2Monitor {
     std::string to_string() override;
 
   private:
-    Trace trace; //**< Trace which should be monitored. */
-    std::string name;
-    std::vector<std::string> relevantArguments;
-    std::vector<std::string> constArguments;
-    std::vector<DomainValue> domainValueArguments;
+    Trace trace;                                   //**< Trace which should be monitored. */
+    std::string name;                              //**< Name of predicate. */
+    std::vector<std::string> relevantArguments;    //**< All arguments of predicate. */
+    std::vector<std::string> constArguments;       //**< Constant arguments of predicate. */
+    std::vector<DomainValue> domainValueArguments; //**< Domain values. */
+
+    /**
+     * Adds predicate functions with domain values to trace.
+     *
+     * @param stepNumber Step number of trace which needs to be updated.
+     */
     void updateTrace(size_t stepNumber);
 };

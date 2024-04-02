@@ -1,9 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #pragma once
 
 #include "../../utils/utils.h"
@@ -33,18 +27,20 @@ class Hydra : public MonitorInterface {
      * Evaluation function for monitor algorithms.
      *
      * @param trace Trace which should be evaluated.
+     * @param domains List of domains. Not used by Hydra.
      * @return List of verdicts for each time step of the trace. If the length of the vector is 1,
      * the runtime verification algorithm can only provide a global verdict for the complete trace.
      */
-    std::map<std::string, std::vector<Verdict>> evaluate(Trace &trace) override;
+    std::map<std::string, std::vector<Verdict>>
+    evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 
   private:
+    std::shared_ptr<HydraMonitor> monitor; //**< Monitor corresponding to the formulas which should be evaluated. */
+
     /**
      * Creates monitor for specified formula.
      *
      * @param formula Formula which should be monitored.
      */
     void createMonitor(const Formula &formula);
-
-    std::shared_ptr<HydraMonitor> monitor; //**< Monitor corresponding to the formulas which should be evaluated. */
 };

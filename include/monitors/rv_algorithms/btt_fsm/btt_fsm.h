@@ -50,8 +50,10 @@ class BttFsm : public MonitorInterface {
      * Evaluation function for monitor algorithms.
      *
      * @param trace Trace which should be evaluated.
+     * @param domains List of domains. Not used by BTT-FSM.
      * @return List of verdicts for each time step of the trace. If the length of the vector is 1,
      * the runtime verification algorithm can only provide a global verdict for the complete trace.
      */
-    std::map<std::string, std::vector<Verdict>> evaluate(Trace &trace) override;
+    std::map<std::string, std::vector<Verdict>>
+    evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 };

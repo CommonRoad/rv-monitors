@@ -1,16 +1,10 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #include "monitors/rv_algorithms/monitor_interface.h"
 
 #include <utility>
 
 MonitorInterface::MonitorInterface(Formula formula, AlgorithmType algorithm, bool formulaCompatibilityCheck,
-                                   bool earlyTermination)
-    : formulas({std::move(formula)}), algorithm(algorithm), earlyTermination(earlyTermination) {
+                                   bool earlyTermination, const std::vector<std::shared_ptr<DomainStorage>> &domains)
+    : formulas({std::move(formula)}), algorithm(algorithm), earlyTermination(earlyTermination), domains(domains) {
     if (formulaCompatibilityCheck and
         !std::any_of(supportedFormulaTypes.at(this->algorithm).begin(), supportedFormulaTypes.at(this->algorithm).end(),
                      [formula](MonitoringProperties formulaType) { return formula.checkCompatibility(formulaType); }))
@@ -18,8 +12,9 @@ MonitorInterface::MonitorInterface(Formula formula, AlgorithmType algorithm, boo
 }
 
 MonitorInterface::MonitorInterface(std::vector<Formula> formulas, AlgorithmType algorithm,
-                                   bool formulaCompatibilityCheck, bool earlyTermination)
-    : formulas(std::move(formulas)), algorithm(algorithm), earlyTermination(earlyTermination) {
+                                   bool formulaCompatibilityCheck, bool earlyTermination,
+                                   const std::vector<std::shared_ptr<DomainStorage>> &domains)
+    : formulas(std::move(formulas)), algorithm(algorithm), earlyTermination(earlyTermination), domains(domains) {
     if (formulaCompatibilityCheck)
         for (const auto &formula : this->formulas)
             if (!std::any_of(
@@ -29,6 +24,13 @@ MonitorInterface::MonitorInterface(std::vector<Formula> formulas, AlgorithmType 
 }
 
 const std::vector<Formula> &MonitorInterface::getFormulas() const { return formulas; }
+
+std::vector<std::shared_ptr<DomainStorage>> &MonitorInterface::getDomains() { return domains; }
+
+std::map<std::string, std::map<size_t, std::vector<std::vector<DomainValue>>>>
+MonitorInterface::getViolatingDomainValues() const {
+    throw std::runtime_error("MonitorInterface::getViolatingDomainValues only implemented for Hydra2.");
+}
 
 const std::map<AlgorithmType, std::vector<MonitoringProperties>> supportedFormulaTypes{
     {AlgorithmType::hydra_mtl, {{FormulaType::safetyGeneral, true}}},

@@ -1,9 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #pragma once
 
 #include "hydra_monitor.h"
@@ -38,8 +32,9 @@ class AtomicMonitor : public Hydra2Monitor {
      * Setter for trace.
      *
      * @param trace Trace.
+     * @param domains List of domains.
      */
-    void setTrace(const Trace &trace) override;
+    void setTrace(const Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 
     /**
      * Adds domain value in other monitors. Not relevant for constant monitor.
@@ -62,7 +57,7 @@ class AtomicMonitor : public Hydra2Monitor {
     std::string to_string() override;
 
   private:
-    Trace trace; //**< Trace which should be monitored. */
-    std::string name;
-    std::string domainValue;
+    Trace trace;             //**< Trace which should be monitored. */
+    std::string name;        //**< Name of atomic value. */
+    std::string domainValue; //**< Name of domain if atomic is one otherwise empty string. */
 };

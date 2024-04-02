@@ -2,7 +2,8 @@
 
 void TestDomainCollection::SetUp() {
     dom1 = DomainStorage("testDomain1");
-    dom2 = DomainStorage("testDomain2", {"a", "b", "c", "d"});
+    dom2 = DomainStorage("testDomain2", {"a", "b", "c", "d"},
+                         [](const std::any &val) { return std::any_cast<const char *>(val); });
     domC1 = DomainCollection(dom1);
     domC2 = DomainCollection({dom1, dom2});
 }
@@ -10,11 +11,6 @@ void TestDomainCollection::SetUp() {
 TEST_F(TestDomainCollection, constructor) {
     EXPECT_EQ(domC1.size(), 1);
     EXPECT_EQ(domC2.size(), 2);
-}
-
-TEST_F(TestDomainCollection, addDomain) {
-    domC1.addDomain(dom2);
-    EXPECT_EQ(domC1.size(), 2);
 }
 
 TEST_F(TestDomainCollection, removeDomain) {

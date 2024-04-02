@@ -1,9 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/next_monitor.h"
 #include <iostream>
 
@@ -11,6 +5,12 @@ Verdict NextMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 
     if (!currentTime) // first event in trace (next time step specifies verdict
         currentTime = subMonitor->step(monitorId, stepNumber).timeStamp;
+
+    if (!std::all_of(
+            domainValueArguments.begin(), domainValueArguments.end(),
+            [step = stepNumber + 1](const DomainValue &dv) { return dv.isConst() or dv.checkValidity(step); })) {
+        return {*currentTime, false};
+    }
 
     auto subVerdict{subMonitor->step(monitorId, stepNumber + 1)};
     if (subVerdict.timeStamp.has_value() and currentTime) {
@@ -27,7 +27,9 @@ Verdict NextMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         return {*currentTime, false};
 }
 
-void NextMonitor::setTrace(const Trace &tra) { subMonitor->setTrace(tra); }
+void NextMonitor::setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+    subMonitor->setTrace(tra, domains);
+}
 
 void NextMonitor::reset() {
     Hydra2Monitor::reset();
@@ -54,4 +56,11 @@ std::string NextMonitor::to_string() {
     return std::string{"X"} + itv + "(" + subMonitor->to_string() + ")";
 }
 
-void NextMonitor::addDomainValues(const std::vector<DomainValue> &vals) { subMonitor->addDomainValues(vals); }
+void NextMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
+    domainValueArguments = vals;
+    subMonitor->addDomainValues(vals);
+}
+void NextMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
+    Hydra2Monitor::setStepNumber(stepNumber, parentId);
+    subMonitor->setStepNumber(stepNumber, monitorId);
+}

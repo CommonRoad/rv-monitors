@@ -1,22 +1,19 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/atomic_monitor.h"
 
 Verdict AtomicMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     if (stepNumber < trace.getLength()) {
-        if (!domainValue.empty())
+        if (!domainValue.empty()) {
+            trace.updateEvent(stepNumber, domainValue);
             return trace.verdictAtTimeStep(stepNumber, domainValue);
-        else
+        } else
             return trace.verdictAtTimeStep(stepNumber, name);
     } else
         return {false};
 }
 
-void AtomicMonitor::setTrace(const Trace &tra) { trace = tra; }
+void AtomicMonitor::setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+    trace = tra;
+}
 
 std::string AtomicMonitor::to_string() { return formula.to_string(); }
 

@@ -1,9 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #pragma once
 
 #include "../../utils/utils.h"
@@ -28,19 +22,21 @@ class Hydra2 : public MonitorInterface {
      * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
      * satisfaction probability in interval [0, 1].
      */
-    Hydra2(const std::vector<Formula> &formulas, bool connectedEval = true, bool reordering = true,
-           bool shortCircuiting = true, bool earlyTermination = false,
-           const std::vector<std::shared_ptr<DomainStorage>> &domains = {},
-           const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
+    explicit Hydra2(const std::vector<Formula> &formulas, bool connectedEval = true, bool reordering = true,
+                    bool shortCircuiting = true, bool earlyTermination = false,
+                    const std::vector<std::shared_ptr<DomainStorage>> &domains = {},
+                    const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
 
     /**
      * Evaluation function for monitor algorithms.
      *
      * @param trace Trace which should be evaluated.
+     * @param domains List of domains.
      * @return List of verdicts for each time step of the trace. If the length of the vector is 1,
      * the runtime verification algorithm can only provide a global verdict for the complete trace.
      */
-    std::map<std::string, std::vector<Verdict>> evaluate(Trace &trace) override;
+    std::map<std::string, std::vector<Verdict>>
+    evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 
     /**
      * Creates string representation for corresponding monitors.
@@ -50,20 +46,25 @@ class Hydra2 : public MonitorInterface {
     [[nodiscard]] std::string to_string() const override;
 
     /**
-     * Getter for domains.
-     *
-     * @return List of registered domains.
-     */
-    [[nodiscard]] std::vector<std::shared_ptr<DomainStorage>> &getDomains();
-
-    /**
      * Getter for predicate cost.
      *
      * @return Registered predicate costs.
      */
     std::map<std::string, std::array<double, 2>> &getPredicateCost();
 
+    /**
+     * Function to extract combination of violating domain values.
+     *
+     * @return Map containing violating domain values per rule and time step.
+     */
+    std::map<std::string, std::map<size_t, std::vector<std::vector<DomainValue>>>>
+    getViolatingDomainValues() const override;
+
   private:
+    std::vector<std::shared_ptr<Hydra2Monitor>>
+        monitors; //**< List of monitors corresponding to the formulas which should be evaluated. */
+    mutable std::map<std::string, std::array<double, 2>> predicateCosts; //**< Predicate costs. */
+
     /**
      * Creates monitors for specified formulas based on provided configuration information.
      *
@@ -86,7 +87,7 @@ class Hydra2 : public MonitorInterface {
      *
      * @param tra Trace object.
      */
-    void setTraceMonitors(const Trace &tra);
+    void setTraceMonitors(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains);
 
     /**
      * Evaluate complete trace.
@@ -103,9 +104,4 @@ class Hydra2 : public MonitorInterface {
      * @param result Data structure for storing evaluation result.
      */
     void evalEarlyTermination(Trace &trace, std::map<std::string, std::vector<Verdict>> &result);
-
-    std::vector<std::shared_ptr<Hydra2Monitor>>
-        monitors; //**< List of monitors corresponding to the formulas which should be evaluated. */
-    mutable std::vector<std::shared_ptr<DomainStorage>> domains;         //**< List of domains. */
-    mutable std::map<std::string, std::array<double, 2>> predicateCosts; //**< Predicate costs. */
 };

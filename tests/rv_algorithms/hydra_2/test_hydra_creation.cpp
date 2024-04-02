@@ -1,9 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #include "test_hydra_creation.h"
 
 #include "monitors/collections/domain.h"
@@ -346,7 +340,7 @@ TEST(TestHydraCreation, testUniversalSimple) {
     formula.setId("R1");
     std::map<std::string, std::array<double, 2>> predicateCosts{};
     std::string expectedFormula{"A x in D, y in D. p(x, y)"};
-    DomainStorage dom1{"D", {"1", "2", "3"}};
+    DomainStorage dom1{"D", {"1", "2", "3"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
     std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1)};
     executeTest(formula, expectedFormula, predicateCosts, domains);
 }
@@ -356,9 +350,9 @@ TEST(TestHydraCreation, testUniversalNested) {
     formula.setId("R1");
     std::map<std::string, std::array<double, 2>> predicateCosts{};
     std::string expectedFormula{"A w in D0, x in D1. A y in D2, z in D2. p(w, x, y, z)"};
-    DomainStorage dom1{"D0", {"0"}};
-    DomainStorage dom2{"D1", {"1"}};
-    DomainStorage dom3{"D2", {"2"}};
+    DomainStorage dom1{"D0", {"0"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
+    DomainStorage dom2{"D1", {"1"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
+    DomainStorage dom3{"D2", {"2"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
     std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1),
                                                         std::make_shared<DomainStorage>(dom2),
                                                         std::make_shared<DomainStorage>(dom3)};
@@ -370,9 +364,9 @@ TEST(TestHydraCreation, testExistentialSimple) {
     formula.setId("R1");
     std::map<std::string, std::array<double, 2>> predicateCosts{};
     std::string expectedFormula{"E x in D0, y in D1, z in D2. (p0(x, y) & p1(y, z))"};
-    DomainStorage dom1{"D0", {"1", "2", "3"}};
-    DomainStorage dom2{"D1", {"4", "5", "6"}};
-    DomainStorage dom3{"D2", {"7", "8", "9"}};
+    DomainStorage dom1{"D0", {"1", "2", "3"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
+    DomainStorage dom2{"D1", {"4", "5", "6"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
+    DomainStorage dom3{"D2", {"7", "8", "9"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
     std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1),
                                                         std::make_shared<DomainStorage>(dom2),
                                                         std::make_shared<DomainStorage>(dom3)};
@@ -384,8 +378,8 @@ TEST(TestHydraCreation, testQuoteSimple) {
     formula.setId("R1");
     std::map<std::string, std::array<double, 2>> predicateCosts{};
     std::string expectedFormula{"Q[0.100000, 0.500000] x in D0, y in D1. p(x, y)"};
-    DomainStorage dom1{"D0", {"0"}};
-    DomainStorage dom2{"D1", {"1"}};
+    DomainStorage dom1{"D0", {"0"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
+    DomainStorage dom2{"D1", {"1"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
     std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1),
                                                         std::make_shared<DomainStorage>(dom2)};
     executeTest(formula, expectedFormula, predicateCosts, domains);
@@ -396,7 +390,7 @@ TEST(TesthydraCreation, testCountingSimple) {
     formula.setId("R1");
     std::map<std::string, std::array<double, 2>> predicateCosts{};
     std::string expectedFormula{"C<=3 x in D. p(x)"};
-    DomainStorage dom1{"D", {"a", "b", "c"}};
+    DomainStorage dom1{"D", {"a", "b", "c"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
     std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1)};
     executeTest(formula, expectedFormula, predicateCosts, domains);
 }
@@ -406,8 +400,8 @@ TEST(TestHydraCreation, testCountingNested) {
     formula.setId("R1");
     std::map<std::string, std::array<double, 2>> predicateCosts{};
     std::string expectedFormula{"C=2 x in D0. C>=4 y in D1. (x & y)"};
-    DomainStorage dom1{"D0", {"a"}};
-    DomainStorage dom2{"D1", {"b"}};
+    DomainStorage dom1{"D0", {"a"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
+    DomainStorage dom2{"D1", {"b"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
     std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1),
                                                         std::make_shared<DomainStorage>(dom2)};
     executeTest(formula, expectedFormula, predicateCosts, domains);
