@@ -17,16 +17,41 @@
  */
 class DynamicProgrammingLTL : public MonitorInterface {
   public:
+    /**
+     * Constructor for aDynamicProgrammingLTL.
+     *
+     * @param formula Formula that we want the DynamicProgrammingLTL for.
+     * @param pastEvaluation Boolean indicating whether past evaluation has to be applied.
+     */
     DynamicProgrammingLTL(const std::vector<Formula> &formulas, bool pastEvaluation = false);
 
-    std::map<std::string, std::vector<Verdict>> evaluate(Trace &trace) override;
+    /**
+     * Evaluation function for monitor algorithms.
+     *
+     * @param trace Trace which should be evaluated.
+     * @param domains List of domains. Not used by DynamicProgrammingLTL.
+     * @return List of verdicts for each time step of the trace. If the length of the vector is 1,
+     * the runtime verification algorithm can only provide a global verdict for the complete trace.
+     */
+    std::map<std::string, std::vector<Verdict>>
+    evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 
-    std::string to_string() const override;
+    /**
+     * to_string() function.
+     *
+     * @return String representation of the DynamicProgramming class.
+     */
+    [[nodiscard]] std::string to_string() const override;
 
-    bool isPastEvaluation() const;
+    /**
+     * Getter for pastEvaluation.
+     *
+     * @return Boolean indicating whether past evaluation is used.
+     */
+    [[nodiscard]] bool isPastEvaluation() const;
 
   private:
-    bool pastEvaluation;
+    bool pastEvaluation; //**< Boolean indicating whether past-based evaluation should be applied. */
 
     /**
      * Initializes vector pre/next with values according to eventMap.

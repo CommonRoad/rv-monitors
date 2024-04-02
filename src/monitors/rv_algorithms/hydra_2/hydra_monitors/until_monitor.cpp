@@ -1,9 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/until_monitor.h"
 
 void UntilMonitor::stepLeftRightMonitors() {
@@ -41,12 +35,12 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         lastViolation = {};
 
     // if not step was performed yet or last verdicts are behind base time step, execute step for current base step
-    if (stepNumberUntil == 0 or
-        (subVerdictLeft->timeStamp.has_value() and
-         subVerdictLeft->timeStamp.value() < headPositionMonitorBaseTimeStep.timeStep) or
-        (subVerdictRight->timeStamp.has_value() and
-         subVerdictRight->timeStamp.value() <
-             headPositionMonitorBaseTimeStep.timeStep)) { // only executed at first call of function
+    if (!endReached and (stepNumberUntil == 0 or
+                         (subVerdictLeft->timeStamp.has_value() and
+                          subVerdictLeft->timeStamp.value() < headPositionMonitorBaseTimeStep.timeStep) or
+                         (subVerdictRight->timeStamp.has_value() and
+                          subVerdictRight->timeStamp.value() <
+                              headPositionMonitorBaseTimeStep.timeStep))) { // only executed at first call of function
         stepLeftRightMonitors();
     }
 
@@ -63,6 +57,12 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         if (!subVerdictLeft->value) {
             lastViolation = HeadPosHydra2(headPositionMonitorLeft.timeStep, headPositionMonitorLeft.traceIdx);
         }
+        if (!std::all_of(
+                domainValueArguments.begin(), domainValueArguments.end(),
+                [step = stepNumberUntil](const DomainValue &dv) { return dv.isConst() or dv.checkValidity(step); })) {
+            endReached = true; // just for completeness, could be removed
+            break;
+        }
         stepLeftRightMonitors();
     }
     // check whether right side of until was satisfied, whether satisfaction is after start of allowed time interval,
@@ -75,10 +75,10 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         return {headPositionMonitorBaseTimeStep.timeStep, false};
 }
 
-void UntilMonitor::setTrace(const Trace &tra) {
-    subMonitorLeft->setTrace(tra);
-    subMonitorRight->setTrace(tra);
-    subMonitorBaseTimeStep->setTrace(tra);
+void UntilMonitor::setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+    subMonitorLeft->setTrace(tra, domains);
+    subMonitorRight->setTrace(tra, domains);
+    subMonitorBaseTimeStep->setTrace(tra, domains);
 }
 void UntilMonitor::reset() {
     Hydra2Monitor::reset();
@@ -118,7 +118,14 @@ std::string UntilMonitor::to_string() {
 }
 
 void UntilMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
+    domainValueArguments = vals;
     subMonitorRight->addDomainValues(vals);
     subMonitorLeft->addDomainValues(vals);
     subMonitorBaseTimeStep->addDomainValues(vals);
+}
+void UntilMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
+    Hydra2Monitor::setStepNumber(stepNumber, parentId);
+    subMonitorRight->setStepNumber(stepNumber, monitorId);
+    subMonitorLeft->setStepNumber(stepNumber, monitorId);
+    stepNumberUntil = stepNumber;
 }

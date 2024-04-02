@@ -11,7 +11,7 @@ TEST(TestCountingMonitor, testCountingMonitorStandard) {
     Formula formula = Parser::parse("C>=2 x in D. x");
     Formula formulaAtomic = Parser::parse("x");
     formula.setId("R1");
-    DomainStorage dom1{"D", {"a", "b", "c"}};
+    DomainStorage dom1{"D", {"a", "b", "c"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
 
     auto mon1{std::make_shared<AtomicMonitor>(formulaAtomic, 2, false)};
     mon1->registerParent(1);

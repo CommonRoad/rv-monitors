@@ -12,22 +12,28 @@ class DomainStorage {
      *
      * @param name Name of DomainStorage.
      * @param dynamicDomainStorageFunction Function to create dynamic domain.
+     * @param idFunction Function to extract unique ID of domain value.
+     * @param validityCondition Boolean functions which checks whether dynamic domain value is valid at step number.
      */
-    DomainStorage(std::string name, std::function<std::vector<std::any>(size_t)> dynamicDomainStorageFunction);
+    DomainStorage(std::string name, std::function<std::vector<std::any>(size_t)> dynamicDomainStorageFunction,
+                  const std::function<std::string(std::any)> &idFunction,
+                  std::function<bool(size_t, std::any)> validityCondition);
     /**
      * Constructor with name and values as arguments.
      *
      * @param name Name of DomainStorage.
      * @param values Values of DomainStorage.
+     * @param idFunction Function to extract unique ID of domain value.
      */
-    DomainStorage(std::string name, const std::vector<std::any> &values);
+    DomainStorage(std::string name, const std::vector<std::any> &values,
+                  const std::function<std::string(std::any)> &idFunction);
 
     /**
      * Constructor with only name as argument.
      *
      * @param name Name of DomainStorage.
      */
-    DomainStorage(std::string name);
+    explicit DomainStorage(std::string name);
 
     /**
      * Default constructor;
@@ -37,7 +43,7 @@ class DomainStorage {
     /**
      * Returns size of DomainStorage.
      *
-     * @return Size.
+     * @return Size of domain.
      */
     [[nodiscard]] size_t size() const;
 
@@ -70,18 +76,12 @@ class DomainStorage {
     [[nodiscard]] std::vector<std::any>::iterator end();
 
     /**
-     * Adds value to domain.
-     *
-     * @param val Value.
-     */
-    void addValue(const std::any &val);
-
-    /**
-     * Adds values to domain.
+     * Adds values to domain. Deletes previously added values.
      *
      * @param values Values.
+     * @param func ID function for values.
      */
-    void addValues(const std::vector<std::any> &vals);
+    void addValues(const std::vector<std::any> &vals, const std::function<std::string(std::any)> &func);
 
     /**
      * Getter for values.
@@ -103,9 +103,34 @@ class DomainStorage {
      */
     void reset();
 
+    /**
+     * Checks whether domain is constant.
+     *
+     * @return Boolean indicating whether domain is const.
+     */
+    [[nodiscard]] bool isConstDomain() const;
+
+    /**
+     * Getter for ID function.
+     *
+     * @return ID extraction function.
+     */
+    const std::function<std::string(std::any)> &getIdFunction() const;
+
+    /**
+     * Getter for validity condition function.
+     *
+     * @return Validity condition function.
+     */
+    const std::function<bool(size_t, std::any)> &getValidityCondition() const;
+
   private:
-    std::string name;                                                          //**< Name of DomainStorage. */
-    std::vector<std::any> values;                                              //**< Values of DomainStorage. */
-    std::function<std::vector<std::any>(size_t)> dynamicDomainStorageFunction; //**< Function for dynamic domain. */
-    bool constDomainStorage; //**< Boolean indicating whether domain is const or dynamic. */
+    mutable std::string name;     //**< Name of DomainStorage. */
+    std::vector<std::any> values; //**< Values of DomainStorage. */
+    mutable std::function<std::vector<std::any>(size_t)>
+        dynamicDomainStorageFunction;      //**< Function for dynamic domain. */
+    mutable bool constDomainStorage{true}; //**< Boolean indicating whether domain is const or dynamic. */
+    mutable std::optional<std::function<bool(size_t, std::any)>>
+        validityCondition;                                   //**< Validity condition function. */
+    mutable std::function<std::string(std::any)> idFunction; //**< ID function. */
 };

@@ -15,7 +15,8 @@
 MTLEventConsuming::MTLEventConsuming(const std::vector<Formula> &formulas)
     : MonitorInterface(formulas, AlgorithmType::event_consuming_mtl) {}
 
-std::map<std::string, std::vector<Verdict>> MTLEventConsuming::evaluate(Trace &trace) {
+std::map<std::string, std::vector<Verdict>>
+MTLEventConsuming::evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     std::map<std::string, std::vector<Verdict>> result;
     // Empty trace
     if (trace.getTrace().empty()) {

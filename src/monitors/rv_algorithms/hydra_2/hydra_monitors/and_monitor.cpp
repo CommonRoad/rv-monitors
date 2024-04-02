@@ -1,9 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/and_monitor.h"
 #include <iostream>
 
@@ -30,9 +24,9 @@ Verdict AndMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     return verdict;
 }
 
-void AndMonitor::setTrace(const Trace &tra) {
+void AndMonitor::setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     for (const auto &mon : subMonitors)
-        mon->setTrace(tra);
+        mon->setTrace(tra, domains);
 }
 
 void AndMonitor::reset() {
@@ -76,4 +70,9 @@ double AndMonitor::computeSatisfactionProbability(const std::vector<std::shared_
 void AndMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
     for (const auto &sub : subMonitors)
         sub->addDomainValues(vals);
+}
+void AndMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
+    Hydra2Monitor::setStepNumber(stepNumber, parentId);
+    for (const auto &sub : subMonitors)
+        sub->setStepNumber(stepNumber, monitorId);
 }

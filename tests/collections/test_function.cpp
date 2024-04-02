@@ -33,7 +33,19 @@ TEST_F(TestFunction, GetFunctionWithoutArgs) {
     double val3_2{1.0};
     std::shared_ptr<IFunction<bool>> tmp{test_f};
     EXPECT_TRUE(
-        tmp->getFunction({DomainValue("val1", val1_1), DomainValue("val2", val2_1), DomainValue("val3", val3_1)})());
+        tmp->getFunction({DomainValue("val1", val1_1, true,
+                                      [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }),
+                          DomainValue("val2", val2_1, true,
+                                      [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }),
+                          DomainValue("val3", val3_1, true, [](const std::any &val) {
+                              return std::to_string(std::any_cast<size_t>(val));
+                          })})());
     EXPECT_FALSE(
-        tmp->getFunction({DomainValue("val1", val1_2), DomainValue("val2", val2_2), DomainValue("val3", val3_2)})());
+        tmp->getFunction({DomainValue("val1", val1_2, true,
+                                      [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }),
+                          DomainValue("val2", val2_2, true,
+                                      [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }),
+                          DomainValue("val3", val3_2, true, [](const std::any &val) {
+                              return std::to_string(std::any_cast<size_t>(val));
+                          })})());
 }

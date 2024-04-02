@@ -1,9 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #pragma once
 
 #include "hydra_monitor.h"
@@ -41,8 +35,9 @@ class OrMonitor : public Hydra2Monitor {
      * Setter for trace.
      *
      * @param trace Trace.
+     * @param domains List of domains.
      */
-    void setTrace(const Trace &trace) override;
+    void setTrace(const Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 
     /**
      * Resets monitor variables to default values.
@@ -68,6 +63,14 @@ class OrMonitor : public Hydra2Monitor {
      * @return String representing monitor.
      */
     std::string to_string() override;
+
+    /**
+     * Sets step number of monitor and sub-monitors.
+     *
+     * @param stepNumber Desired step number.
+     * @param parentId ID of parent monitor.
+     */
+    void setStepNumber(size_t stepNumber, size_t parentId) override;
 
   private:
     std::vector<std::shared_ptr<Hydra2Monitor>> subMonitors; //**< Child monitors. */

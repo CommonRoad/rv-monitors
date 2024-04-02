@@ -36,6 +36,7 @@ template <typename T> bool isInInterval(const T &value, const T &low, const T &h
  *
  * @param atomics All possible predicates as strings.
  * @param trueAtomics Vector of vectors containing predicates that are true in each event.
+ * @param timeSteps Time steps for which predicates should be evaluated.
  * @return Trace.
  */
 [[nodiscard]] Trace createTrace(const std::set<std::string> &atomics,
@@ -46,6 +47,8 @@ template <typename T> bool isInInterval(const T &value, const T &low, const T &h
  * Creates a Trace.
  *
  * @param trueAtomics Vector of vectors containing predicates that are true in each event.
+ * @param timeSteps Time steps for which predicates should be evaluated.
+ * @param formula Formula for which trace is created.
  * @return Trace.
  */
 [[nodiscard]] Trace createTrace(const std::vector<std::vector<std::string>> &trueAtomics,
@@ -56,7 +59,7 @@ template <typename T> bool isInInterval(const T &value, const T &low, const T &h
  * Creates a Trace with lazy evaluation of the predicates.
  * @param atomicsAndFunctions map containing lazy predicates
  * @param timeSteps time steps for which predicates should be evaluated
- * @return
+ * @return Trace.
  */
 [[nodiscard]] Trace createLazyTrace(const std::map<std::string, std::function<bool(size_t)>> &atomicsAndFunctions,
                                     const std::vector<size_t> &timeSteps);
@@ -65,7 +68,7 @@ template <typename T> bool isInInterval(const T &value, const T &low, const T &h
  * Creates a Trace with lazy evaluation of the predicates.
  * @param atomicsAndFunctions map containing lazy predicates
  * @param timeSteps time steps for which predicates should be evaluated
- * @return
+ * @return Trace.
  */
 [[nodiscard]] Trace createLazyTrace(std::map<std::string, std::function<bool(size_t)>> &&atomicsAndFunctions,
                                     const std::vector<size_t> &timeSteps);
