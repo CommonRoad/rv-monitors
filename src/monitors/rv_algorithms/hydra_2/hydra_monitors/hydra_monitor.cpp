@@ -1,9 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/hydra_monitor.h"
 #include <cassert>
 #include <iostream>
@@ -124,3 +118,7 @@ void Hydra2Monitor::setFormulaId(const std::string &formula_id) { formulaId = fo
 double Hydra2Monitor::getEvalCost() const { return evalCost; }
 
 double Hydra2Monitor::getSatisfactionProbability() const { return satisfactionProbability; }
+
+std::map<size_t, std::vector<std::vector<DomainValue>>> Hydra2Monitor::getViolatingDomainValues() const { return {}; }
+
+void Hydra2Monitor::setStepNumber(size_t stepNumber, size_t parentId) { traceIdx[parentId] = stepNumber; }

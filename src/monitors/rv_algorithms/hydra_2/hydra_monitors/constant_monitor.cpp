@@ -1,9 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/constant_monitor.h"
 #include <monitors/expression_tree/atomic/constant.h>
 
@@ -17,7 +11,9 @@ Verdict ConstantMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         return {false};
 }
 
-void ConstantMonitor::setTrace(const Trace &tra) { trace = tra; }
+void ConstantMonitor::setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+    trace = tra;
+}
 
 std::shared_ptr<Hydra2Monitor> ConstantMonitor::clone() { return std::make_shared<ConstantMonitor>(*this); }
 

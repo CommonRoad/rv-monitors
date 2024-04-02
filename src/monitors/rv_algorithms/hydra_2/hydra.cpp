@@ -4,7 +4,8 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_creation_visitor.h"
 #include <iostream>
 
-std::map<std::string, std::vector<Verdict>> Hydra2::evaluate(Trace &trace) {
+std::map<std::string, std::vector<Verdict>>
+Hydra2::evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     std::map<std::string, std::vector<Verdict>> result;
     // Empty trace
     if (trace.getTrace().empty()) {
@@ -15,7 +16,7 @@ std::map<std::string, std::vector<Verdict>> Hydra2::evaluate(Trace &trace) {
     }
 
     resetMonitors();
-    setTraceMonitors(trace);
+    setTraceMonitors(trace, domains);
 
     if (!earlyTermination)
         evalCompleteTrace(trace, result);
@@ -56,9 +57,9 @@ void Hydra2::resetMonitors() {
         mon->reset();
 }
 
-void Hydra2::setTraceMonitors(const Trace &tra) {
+void Hydra2::setTraceMonitors(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     for (const auto &mon : monitors)
-        mon->setTrace(tra);
+        mon->setTrace(tra, domains);
 }
 
 void Hydra2::createMonitor(const std::vector<Formula> &formulas, bool connectedEval, bool reordering,
@@ -82,12 +83,10 @@ void Hydra2::createMonitor(const std::vector<Formula> &formulas, bool connectedE
 Hydra2::Hydra2(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting,
                bool earlyTermination, const std::vector<std::shared_ptr<DomainStorage>> &domains,
                const std::map<std::string, std::array<double, 2>> &predicateCosts)
-    : MonitorInterface(formulas, AlgorithmType::hydra_2_mtl, true, earlyTermination), domains(domains),
+    : MonitorInterface(formulas, AlgorithmType::hydra_2_mtl, true, earlyTermination, domains),
       predicateCosts(predicateCosts) {
     createMonitor(formulas, connectedEval, reordering, shortCircuiting);
 }
-
-std::vector<std::shared_ptr<DomainStorage>> &Hydra2::getDomains() { return domains; }
 
 std::map<std::string, std::array<double, 2>> &Hydra2::getPredicateCost() { return predicateCosts; }
 
@@ -97,4 +96,12 @@ void Hydra2::evalCompleteTrace(Trace &trace, std::map<std::string, std::vector<V
     for (size_t i{0}; i < trace.getLength(); ++i)
         for (const auto &mon : this->monitors)
             result[mon->getFormulaId()].emplace_back(mon->step(0, i));
+}
+
+std::map<std::string, std::map<size_t, std::vector<std::vector<DomainValue>>>>
+Hydra2::getViolatingDomainValues() const {
+    std::map<std::string, std::map<size_t, std::vector<std::vector<DomainValue>>>> violations;
+    for (const auto &mon : this->monitors)
+        violations[mon->getFormulaId()] = mon->getViolatingDomainValues();
+    return violations;
 }

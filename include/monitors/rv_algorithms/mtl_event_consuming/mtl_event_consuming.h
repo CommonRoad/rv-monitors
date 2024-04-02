@@ -1,9 +1,3 @@
-//
-// Created by Sebastian Maierhofer and Evald Nexhipi.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #pragma once
 
 #include "monitors/formula/formula.h"
@@ -25,10 +19,12 @@ class MTLEventConsuming : public MonitorInterface {
      * Evaluation function for monitor algorithms.
      *
      * @param trace Trace which should be evaluated.
+     * @param domains List of domains. Not used by MTLEventConsuming.
      * @return List of verdicts for each time step of the trace. If the length of the vector is 1,
      * the runtime verification algorithm can only provide a global verdict for the complete trace.
      */
-    std::map<std::string, std::vector<Verdict>> evaluate(Trace &trace) override;
+    std::map<std::string, std::vector<Verdict>>
+    evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 
     /**
      * to_string() function.

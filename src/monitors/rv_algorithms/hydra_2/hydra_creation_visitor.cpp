@@ -1,9 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #include "monitors/rv_algorithms/hydra_2/hydra_creation_visitor.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/binary/temporal/since.h"
@@ -300,7 +294,7 @@ HydraCreationVisitor2::findDomain(const std::vector<Variable> &variables) const 
             }
         }
         if (variableValues.count(var.getName()) != 1)
-            throw std::runtime_error("HydraCreationVisitor::findDomain: Unknown domain name.");
+            variableValues[var.getName()] = {std::make_shared<DomainStorage>(var.getDomain().getName())};
     }
     return variableValues;
 }

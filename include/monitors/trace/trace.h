@@ -1,8 +1,12 @@
 #pragma once
 
 #include "event.h"
+#include "monitors/collections/constant_collection.h"
+#include "monitors/collections/constant_value.h"
 #include "monitors/collections/function.h"
 #include "monitors/utils/verdict.h"
+#include <algorithm>
+#include <map>
 #include <utility>
 #include <vector>
 
@@ -12,15 +16,18 @@
 class Trace {
   private:
     std::vector<Event> trace;
-    std::shared_ptr<IFunction<bool>> functionCollection;
+    std::vector<std::shared_ptr<IFunction<bool>>> functionCollection;
+    ConstantCollection constantCollection;
 
   public:
     /**
      * Constructor.
      * @param trace
      */
-    explicit Trace(std::vector<Event> trace, std::shared_ptr<IFunction<bool>> functionCollection = {})
-        : trace(std::move(trace)), functionCollection(std::move(functionCollection)) {}
+    explicit Trace(std::vector<Event> trace, std::vector<std::shared_ptr<IFunction<bool>>> functionCollection = {},
+                   ConstantCollection constantCollection = {})
+        : trace(std::move(trace)), functionCollection(std::move(functionCollection)),
+          constantCollection(std::move(constantCollection)) {}
 
     /**
      * Constructor.
@@ -89,11 +96,47 @@ class Trace {
         return true;
     }
 
+    /**
+     * Extracts verdict for given step and event name.
+     *
+     * @param step Step of interest.
+     * @param name Name of event
+     * @return Verdict.
+     */
     Verdict verdictAtTimeStep(size_t step, const std::string &name) { return trace.at(step).getVerdict(name); }
 
+    /**
+     * Assigns domain values to predicate.
+     *
+     * @param step Step of interest.
+     * @param exprName Name of predicate.
+     * @param argValues Relevant domain values.
+     */
     void updateEvent(size_t step, const std::string &exprName, std::vector<DomainValue> &argValues) {
-        argValues.insert(argValues.begin(), DomainValue("time_step", trace.at(step).getTimeStep()));
-        auto func{functionCollection->getFunction(argValues)};
-        trace.at(step).addEventValueFunction(exprName, EventValue<bool>(func));
+        argValues.insert(argValues.begin(),
+                         DomainValue("time_step", trace.at(step).getTimeStep(), true,
+                                     [](std::any val) { return std::to_string(std::any_cast<int>(val)); }));
+        for (size_t idx = 0; idx < argValues.size(); ++idx) {
+            if (constantCollection.contains(argValues[idx].getVariable()))
+                argValues[idx] = DomainValue(argValues[idx].getVariable(),
+                                             constantCollection.getConstant(argValues[idx].getVariable()).getValue(),
+                                             true, [](std::any val) { return std::any_cast<std::string>(val); });
+        }
+        for (const auto &func : functionCollection)
+            if (exprName.substr(0, exprName.find('(')) == func->getName().substr(0, func->getName().find('('))) {
+                trace.at(step).addEventValueFunction(exprName, EventValue<bool>(func->getFunction(argValues)));
+                break;
+            }
+    }
+
+    /**
+     * Add false events to trace at step.
+     *
+     * @param step Step of interest.
+     * @param eventName Name of event which should be updated.
+     */
+    void updateEvent(size_t step, const std::string &eventName) {
+        if (trace.at(step).getEventMap().find(eventName) == trace.at(step).getEventMap().end())
+            trace.at(step).addEventValueFunction(eventName, EventValue<bool>(false));
     }
 };

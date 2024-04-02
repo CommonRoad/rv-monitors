@@ -105,6 +105,8 @@ set(RV_MONITOR_SRC_FILES
         monitors/collections/domain_collection.cpp
         monitors/collections/domain.cpp
         monitors/collections/domain_value.cpp
+        monitors/collections/constant_value.cpp
+        monitors/collections/constant_collection.cpp
         monitors/utils/verdict.cpp)
 
 set(RV_MONITOR_HDR_FILES
@@ -212,6 +214,8 @@ set(RV_MONITOR_HDR_FILES
         monitors/collections/domain_collection.h
         monitors/collections/domain.h
         monitors/collections/domain_value.h
+        monitors/collections/constant_value.h
+        monitors/collections/constant_collection.h
         monitors/utils/verdict.h
         )
 

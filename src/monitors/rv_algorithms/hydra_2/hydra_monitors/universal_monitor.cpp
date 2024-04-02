@@ -14,21 +14,29 @@ UniversalMonitor::UniversalMonitor(Formula formula, const std::shared_ptr<Hydra2
 
 Verdict UniversalMonitor::quantifierStep(size_t parentId, size_t stepNumber, size_t numberCombinations) {
     auto verdict{initializeStepTrue(parentId)};
+    std::vector<std::vector<DomainValue>> violationsTmp;
     if (!verdict.timeStamp.has_value())
         return verdict;
     for (size_t count{0}; count != numberCombinations; count++) { // loop over all possible combinations
         std::shared_ptr<Hydra2Monitor> evalMonitor =
-            nextEvalMonitor(parentId, count); // request monitor for current combination
+            nextEvalMonitor(stepNumber); // request monitor for current combination
 
         Verdict subVerdict = evalMonitor->step(monitorId, stepNumber);
-        if (shortCircuiting)
+        if (shortCircuiting and not storeVariableResults)
             // if a wrong verdict results, then the step evaluation will be stopped immediately
             if (!subVerdict.value) {
                 resetIterators();
                 return subVerdict;
             }
-        verdict = verdict && subVerdict; // all subverdicts have to be true so that a true verdict is returned
+        if (storeVariableResults and !subVerdict.value) {
+            violationsTmp.push_back(currentDomainValues);
+        }
+        verdict = verdict && subVerdict; // all sub-verdicts have to be true so that a true verdict is returned
     }
+
+    if (storeVariableResults and !violationsTmp.empty())
+        violations.insert({stepNumber, violationsTmp});
+
     return verdict;
 }
 

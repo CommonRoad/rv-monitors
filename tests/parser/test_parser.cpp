@@ -1,7 +1,3 @@
-//
-// Created by Sebastian Maierhofer on 12.01.21.
-//
-
 #include "test_parser.h"
 #include "../rv_algorithms/hydra_2/hydra_test_utils.h"
 #include "monitors/formula/formula.h"
@@ -84,9 +80,13 @@ TEST(TestParser, universal) {
 TEST(TestParser, functionDomain) {
     std::string ex_1 = "A b,c in a(x, y). test";
     Formula formula_1 = Parser::parse(ex_1, "Ex1");
-
     std::string ex_parsed_1 = "A b in a(x, y), c in a(x, y). test";
     EXPECT_EQ(formula_1.to_string(), ex_parsed_1);
+
+    std::string ex_2{"A x_o in DSL. in_same_lane(x_ego, x_o)"};
+    Formula formula_2 = Parser::parse(ex_2, "Ex2");
+    std::string ex_parsed_2 = "A x_o in DSL. in_same_lane(x_ego, x_o)";
+    EXPECT_EQ(formula_2.to_string(), ex_parsed_2);
 }
 
 TEST(TestParser, existential) {

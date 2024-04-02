@@ -1,9 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #pragma once
 
 #include "../../../utils/interval.h"
@@ -43,8 +37,9 @@ class NextMonitor : public Hydra2Monitor {
      * Setter for trace.
      *
      * @param trace Trace.
+     * @param domains List of domains.
      */
-    void setTrace(const Trace &tra) override;
+    void setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 
     /**
      * Resets monitor variables to default values.
@@ -71,9 +66,18 @@ class NextMonitor : public Hydra2Monitor {
      */
     std::string to_string() override;
 
+    /**
+     * Sets step number of monitor and sub-monitors.
+     *
+     * @param stepNumber Desired step number.
+     * @param parentId ID of parent monitor.
+     */
+    void setStepNumber(size_t stepNumber, size_t parentId) override;
+
   private:
     std::shared_ptr<Hydra2Monitor> subMonitor; //**< Child monitor. */
     IntervalTemporalOperator interval;         //**< Interval of operator. */
     std::optional<size_t> currentTime;         //**< Previous time step to check whether next verdict lies in interval.
                                                // Initialized after first event has been seen. */
+    std::vector<DomainValue> domainValueArguments; //**< Domain values. */
 };

@@ -1,10 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
-
 #include "test_hydra.h"
 #include "../test_database.h"
 #include "hydra_test_utils.h"
@@ -24,7 +17,7 @@ TEST(TestHydra2, testFormulaType) {
 
 TEST(TestHydra2, specificFormulaTest) {
     auto testDataBase{TestDataBase()};
-    auto testCase = testDataBase.getTestSample("F94_1");
+    auto testCase = testDataBase.getTestSample("F97_1");
     hydraTestUtils::executeHydraEval(testCase.trace, {*testCase.formula}, {testCase.expectedResult}, testCase.domains);
 }
 
@@ -114,7 +107,7 @@ TEST(TestHydra2, testExistentialStepLooping) {
     std::vector<Formula> formulas = {formula};
     std::vector<std::vector<Verdict>> expSolutions{
         {Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true}}};
-    DomainStorage dom1{"D", {"a", "b", "c"}};
+    DomainStorage dom1{"D", {"a", "b", "c"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
     std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1)};
     hydraTestUtils::executeHydraEval(trace, formulas, expSolutions, domains);
 }
@@ -128,7 +121,46 @@ TEST(TestHydra2, testExistentialStepLoopingDynamicDomain) {
     std::vector<Formula> formulas = {formula};
     std::vector<std::vector<Verdict>> expSolutions{
         {Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true}}};
-    DomainStorage dom1{"D", createStringDomain};
+    DomainStorage dom1{"D", createStringDomain, [](const std::any &) { return "name"; },
+                       [](size_t, const std::any &) { return true; }};
+    std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1)};
+    hydraTestUtils::executeHydraEval(trace, formulas, expSolutions, domains);
+}
+
+std::vector<std::any> domain(size_t stepNumber, std::vector<std::vector<std::any>> possibleSets) {
+    switch (stepNumber) {
+    case 0:
+        return possibleSets[0];
+    case 1:
+        return possibleSets[1];
+    case 2:
+        return possibleSets[2];
+    case 3:
+        return possibleSets[3];
+    default:
+        return {};
+    }
+}
+
+TEST(TestHydra2, testExistenceVariableDomainLazyPredicate) {
+    Trace trace = hydraTestUtils::createTraceWithVariable(
+        4,
+        {std::make_shared<Function<bool, size_t, size_t, size_t>>(Function<bool, size_t, size_t, std::size_t>(
+             "equal_to_time_step_with_unused_arg", {"timeStep", "randomValue", "value"},
+             hydraTestUtils::equal_to_time_step_with_unused_arg, hydraTestUtils::threeSizeTArgs)),
+         std::make_shared<Function<bool, size_t, size_t>>(Function<bool, size_t, size_t>(
+             "equals_three", {"timeStep", "val"}, hydraTestUtils::equals_three, hydraTestUtils::twoSizeTArgs))},
+        ConstantCollection({ConstantValue{"x_ego", 0ul}}));
+    Formula formula =
+        Parser::parse("E x_o in D0. equal_to_time_step_with_unused_arg('x_ego', x_o) & equals_three(x_o)");
+    formula.setId("R1");
+    std::vector<Formula> formulas = {formula};
+    std::vector<std::vector<Verdict>> expSolutions{
+        {Verdict{0, false}, Verdict{1, false}, Verdict{2, false}, Verdict{3, true}}};
+    std::vector<std::vector<std::any>> possibleSets{{1ul, 2ul, 3ul, 4ul}, {1ul, 2ul, 3ul}, {0ul}, {3ul}};
+    DomainStorage dom1{"D0", [possibleSets](size_t stepNumber) { return domain(stepNumber, possibleSets); },
+                       [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); },
+                       [](size_t, const std::any &) { return true; }};
     std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1)};
     hydraTestUtils::executeHydraEval(trace, formulas, expSolutions, domains);
 }

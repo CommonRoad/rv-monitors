@@ -18,7 +18,8 @@ std::string BttFsm::to_string() const {
     return res.str();
 }
 
-std::map<std::string, std::vector<Verdict>> BttFsm::evaluate(Trace &trace) {
+std::map<std::string, std::vector<Verdict>>
+BttFsm::evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     // First two states are true and false
     auto currentState = states[2];
     std::map<std::string, std::vector<Verdict>> result;
