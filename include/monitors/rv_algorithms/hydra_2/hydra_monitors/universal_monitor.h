@@ -24,7 +24,7 @@ class UniversalMonitor : public QuantifierMonitor {
                      bool shortCircuiting);
 
     /**
-     * Performs concrete step of universal monitor. The subverdict for each combination has to be true
+     * Performs concrete step of universal monitor. The sub-verdict for each combination has to be true
      * so that the universal monitor returns also a true verdict for the current step number.
      *
      * @param parentId ID of parent monitor.
@@ -46,4 +46,7 @@ class UniversalMonitor : public QuantifierMonitor {
      * @return String representing monitor.
      */
     std::string to_string() override;
+
+  private:
+    bool storeVariableResults{true}; //**< Boolean indicating whether results should be stored. */
 };

@@ -72,7 +72,7 @@ class QuantifierMonitor : public Hydra2Monitor {
      * @param count ID of current combination.
      * @return Monitor.
      */
-    std::shared_ptr<Hydra2Monitor> nextEvalMonitor(size_t parentId, size_t count);
+    std::shared_ptr<Hydra2Monitor> nextEvalMonitor(size_t stepNumber);
 
     /**
      * Extracts combination of domain values.
@@ -97,21 +97,22 @@ class QuantifierMonitor : public Hydra2Monitor {
      *
      * @return Number of combinations.
      */
-    size_t numCombinations() const;
+    [[nodiscard]] size_t numCombinations() const;
 
     /**
      * Checks whether one of the domains of the variables is empty.
      *
      * @return Boolean indicating whether one of the domains is empty.
      */
-    bool checkNonEmptiness() const;
+    [[nodiscard]] bool checkNonEmptiness() const;
 
     /**
      * Setter for trace.
      *
      * @param tra Trace.
+     * @param domains List of domains.
      */
-    void setTrace(const Trace &tra) override;
+    void setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 
     /**
      * Setter for current variable values from higher quantifier scopes.
@@ -143,13 +144,37 @@ class QuantifierMonitor : public Hydra2Monitor {
      */
     static double computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &monitor, size_t numEval);
 
+    /**
+     * Function to extract combination of violating domain values.
+     *
+     * @return Map containing violating domain values per rule and time step.
+     */
+    [[nodiscard]] std::map<size_t, std::vector<std::vector<DomainValue>>> getViolatingDomainValues() const override;
+
+    /**
+     * Extracts unique ID from all currently relevant domain values.
+     *
+     * @return String representing unique ID.
+     */
+    std::string getUniqueID();
+
+    /**
+     * Sets step number of monitor and sub-monitors.
+     *
+     * @param stepNumber Desired step number.
+     * @param parentId ID of parent monitor.
+     */
+    void setStepNumber(size_t stepNumber, size_t parentId) override;
+
   protected:
-    std::shared_ptr<Hydra2Monitor> subMonitor;                //**< Child monitor. */
-    std::vector<std::shared_ptr<Hydra2Monitor>> evalMonitors; //**< Monitors for evaluation. */
+    std::shared_ptr<Hydra2Monitor> subMonitor;                          //**< Child monitor. */
+    std::map<std::string, std::shared_ptr<Hydra2Monitor>> evalMonitors; //**< Monitors for evaluation. */
     bool shortCircuiting; //**< Boolean indicating whether short-circuiting should be used. */
     std::map<std::string, std::shared_ptr<DomainStorage>>
         variableValues;                                 //**< Mapping of name of quantified variables to domains. */
-    Trace trace;                                        //**< Trace. */ todo remove
+    Trace trace;                                        //**< Trace. */
     std::vector<std::vector<std::any>::iterator> iters; //**< Iterators forming the current combination. */
-    std::vector<DomainValue> domainValues;
+    std::vector<DomainValue> domainValues;              //**< Domain values. */
+    std::map<size_t, std::vector<std::vector<DomainValue>>> violations; //**< Violating domain values per time step. */
+    std::vector<DomainValue> currentDomainValues;                       //**< Currently evaluated domain values. */
 };

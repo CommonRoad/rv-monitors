@@ -1,10 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2022 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
-
 #include "test_database.h"
 #include "hydra_2/hydra_test_utils.h"
 #include "monitors/collections/domain.h"
@@ -21,7 +14,7 @@ TestSample::TestSample(const std::string &testName, const std::string &formulaSt
         trace =
             Utils::createTrace(trueAtomics, timeSteps, std::make_shared<Formula>(Parser::parse(formulaStr, testName)));
     else
-        trace = hydraTestUtils::createTraceWithVariable(timeSteps.size(), functions.at(0));
+        trace = hydraTestUtils::createTraceWithVariable(timeSteps.size(), functions);
 }
 
 TestDataBase::TestDataBase() {
@@ -915,7 +908,8 @@ TestDataBase::TestDataBase() {
          createExpectedResult({true, true, false, false, false}),
          {{}, {}, {}, {}, {}},
          {0, 1, 2, 3, 4},
-         {std::make_shared<DomainStorage>(DomainStorage("D", {2ul, 3ul, 4ul}))},
+         {std::make_shared<DomainStorage>(DomainStorage(
+             "D", {2ul, 3ul, 4ul}, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }))},
          {std::make_shared<Function<bool, size_t, size_t>>(
              Function<bool, size_t, size_t>("higher_than_time_step", {"timeStep", "val"},
                                             hydraTestUtils::higher_than_time_step, hydraTestUtils::twoSizeTArgs))}},
@@ -924,19 +918,22 @@ TestDataBase::TestDataBase() {
          createExpectedResult({true, true, false, false}),
          {{"a", "b", "c"}, {"a", "b", "c"}, {"b"}, {"a", "b"}},
          {0, 1, 2, 3},
-         {std::make_shared<DomainStorage>(DomainStorage("D", {"a", "b", "c"}))}},
+         {std::make_shared<DomainStorage>(DomainStorage(
+             "D", {"a", "b", "c"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}},
         {"F85_1",
          "G(A x in D. x)",
          createExpectedResult({true, true, true}),
          {{}, {}, {}},
          {0, 1, 2},
-         {std::make_shared<DomainStorage>(DomainStorage("D", std::vector<std::any>{}))}},
+         {std::make_shared<DomainStorage>(DomainStorage(
+             "D", std::vector<std::any>{}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}},
         {"F86_1",
          "G(A x in D. X(divisible_by_time_step(x)))",
          createExpectedResult({true, true, false, true, false}),
          {{}, {}, {}, {}, {}},
          {0, 1, 2, 3, 4},
-         {std::make_shared<DomainStorage>(DomainStorage("D", {4ul, 8ul, 16ul}))},
+         {std::make_shared<DomainStorage>(DomainStorage(
+             "D", {4ul, 8ul, 16ul}, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }))},
          {std::make_shared<Function<bool, size_t, size_t>>(
              Function<bool, size_t, size_t>("divisible_by_time_step", {"timeStep", "val"},
                                             hydraTestUtils::divisible_by_time_step, hydraTestUtils::twoSizeTArgs))}},
@@ -945,19 +942,23 @@ TestDataBase::TestDataBase() {
          createExpectedResult({true, true, true, true, false}),
          {{"a"}, {}, {}, {"a", "b"}, {"c"}},
          {0, 1, 2, 3, 4},
-         {std::make_shared<DomainStorage>(DomainStorage("D", {"a", "b", "c"}))}},
+         {std::make_shared<DomainStorage>(DomainStorage(
+             "D", {"a", "b", "c"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}},
         {"F88_1",
          "G(A x in D. P(x))",
          createExpectedResult({false, true, false, true}),
          {{"a", "b", "c", "d"}, {"a", "c", "d"}, {"a", "b", "c"}, {}},
          {0, 1, 2, 3},
-         {std::make_shared<DomainStorage>(DomainStorage("D", {"a", "b", "c"}))}},
+         {std::make_shared<DomainStorage>(DomainStorage(
+             "D", {"a", "b", "c"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}},
         {"F89_1",
          "G(E x in D. equal_to_time_step(x))",
          createExpectedResult({false, true, false, true, false, true}),
          {{}, {}, {}, {}, {}, {}},
          {0, 1, 2, 3, 4, 5},
-         {std::make_shared<DomainStorage>(DomainStorage("D", {1ul, 3ul, 5ul, 7ul}))},
+         {std::make_shared<DomainStorage>(
+             DomainStorage("D", {1ul, 3ul, 5ul, 7ul},
+                           [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }))},
          {std::make_shared<Function<bool, size_t, size_t>>(
              Function<bool, size_t, size_t>("equal_to_time_step", {"timeStep", "val"},
                                             hydraTestUtils::equal_to_time_step, hydraTestUtils::twoSizeTArgs))}},
@@ -966,7 +967,9 @@ TestDataBase::TestDataBase() {
          createExpectedResult({false, true, true, true, true, false}),
          {{}, {}, {}, {}, {}, {}},
          {0, 1, 2, 3, 4, 5},
-         {std::make_shared<DomainStorage>(DomainStorage("D", {0ul, 1ul, 2ul, 3ul, 4ul}))},
+         {std::make_shared<DomainStorage>(
+             DomainStorage("D", {0ul, 1ul, 2ul, 3ul, 4ul},
+                           [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }))},
          {std::make_shared<Function<bool, size_t, size_t>>(
              Function<bool, size_t, size_t>("lower_than_time_step", {"timeStep", "val"},
                                             hydraTestUtils::lower_than_time_step, hydraTestUtils::twoSizeTArgs))}},
@@ -975,40 +978,49 @@ TestDataBase::TestDataBase() {
          createExpectedResult({true, false, true, false, true}),
          {{"a", "b"}, {"c"}, {"a", "b", "c"}, {"a"}, {"b", "c"}},
          {0, 1, 2, 3, 4},
-         {std::make_shared<DomainStorage>(DomainStorage("D", {"a", "b", "c"}))}},
+         {std::make_shared<DomainStorage>(DomainStorage(
+             "D", {"a", "b", "c"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}},
         {"F92_1",
          "G(C=2 x in D. x)",
          createExpectedResult({false, true, true, false, false}),
          {{"a"}, {"a", "d"}, {"b", "d"}, {"c"}, {"a", "b", "d"}},
          {0, 1, 2, 3, 4},
-         {std::make_shared<DomainStorage>(DomainStorage("D", {"a", "b", "d"}))}},
+         {std::make_shared<DomainStorage>(DomainStorage(
+             "D", {"a", "b", "d"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}},
         {"F93_1",
          "G(C<=2 x in D. x)",
          createExpectedResult({false, true, true, true}),
          {{"a", "b", "c"}, {}, {"b"}, {"a", "c"}},
          {0, 1, 2, 3},
-         {std::make_shared<DomainStorage>(DomainStorage("D", {"a", "b", "c"}))}},
+         {std::make_shared<DomainStorage>(DomainStorage(
+             "D", {"a", "b", "c"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}},
         {"F94_1",
          "G(Q[0.5, 1.] x in D0. E y in D1. x & y)",
          createExpectedResult({true, false, false, true, false}),
          {{"a", "b", "c", "d"}, {"b", "e"}, {"b", "c"}, {"a", "c", "e", "f"}, {"g"}},
          {0, 1, 2, 3, 4},
-         {std::make_shared<DomainStorage>(DomainStorage("D0", {"a", "b", "c"})),
-          std::make_shared<DomainStorage>(DomainStorage("D1", {"d", "e", "f", "g"}))}},
+         {std::make_shared<DomainStorage>(DomainStorage(
+              "D0", {"a", "b", "c"}, [](const std::any &val) { return std::any_cast<const char *>(val); })),
+          std::make_shared<DomainStorage>(DomainStorage(
+              "D1", {"d", "e", "f", "g"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}},
         {"F95_1",
          "G(E x in D0. x & A y in D1. y)",
          createExpectedResult({true, false, false, true}),
          {{"a", "d", "e", "f"}, {"d", "e", "f"}, {"a", "b", "c", "e", "f"}, {"b", "c", "d", "e", "f"}},
          {0, 1, 2, 3},
-         {std::make_shared<DomainStorage>(DomainStorage("D0", {"a", "b", "c"})),
-          std::make_shared<DomainStorage>(DomainStorage("D1", {"d", "e", "f"}))}},
+         {std::make_shared<DomainStorage>(DomainStorage(
+              "D0", {"a", "b", "c"}, [](const std::any &val) { return std::any_cast<const char *>(val); })),
+          std::make_shared<DomainStorage>(DomainStorage(
+              "D1", {"d", "e", "f"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}},
         {"F96_1",
          "G(A x in D0. E x in D1. equal_to_time_step(x))",
          createExpectedResult({true, true, true, false}),
          {{}, {}, {}, {}},
          {0, 1, 2, 3},
-         {std::make_shared<DomainStorage>(DomainStorage("D0", {7ul, 8ul, 9ul})),
-          std::make_shared<DomainStorage>(DomainStorage("D1", {0ul, 1ul, 2ul}))},
+         {std::make_shared<DomainStorage>(DomainStorage(
+              "D0", {7ul, 8ul, 9ul}, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); })),
+          std::make_shared<DomainStorage>(DomainStorage(
+              "D1", {0ul, 1ul, 2ul}, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }))},
          {std::make_shared<Function<bool, size_t, size_t>>(
              Function<bool, size_t, size_t>("equal_to_time_step", {"timeStep", "val"},
                                             hydraTestUtils::equal_to_time_step, hydraTestUtils::twoSizeTArgs))}},
@@ -1017,25 +1029,43 @@ TestDataBase::TestDataBase() {
          createExpectedResult({true, true, true, false, false, true}),
          {{"a", "b", "c"}, {}, {"a", "b"}, {}, {}, {"d"}},
          {0, 1, 2, 3, 4, 5},
-         {std::make_shared<DomainStorage>(DomainStorage("D", {"a", "b", "d"}))}},
+         {std::make_shared<DomainStorage>(DomainStorage(
+             "D", {"a", "b", "d"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}},
         {"F98_1",
          "G(A x in D. ((a)S(x)))",
          createExpectedResult({false, true, true, true, false}),
          {{"b", "c"}, {"a"}, {"a", "b", "c"}, {"a", "b", "c"}, {"b"}},
          {0, 1, 2, 3, 4},
-         {std::make_shared<DomainStorage>(DomainStorage("D", {"a", "b", "c"}))}},
+         {std::make_shared<DomainStorage>(DomainStorage(
+             "D", {"a", "b", "c"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}},
         {"F99_1",
          "G(C=2 x in D. X(P(X(P(x)))))",
          createExpectedResult({true, false, true, false, false, false}),
          {{"a", "b"}, {"a", "b", "c"}, {"a", "c"}, {}, {"b"}, {"b", "c"}},
          {0, 1, 2, 3, 4, 5},
-         {std::make_shared<DomainStorage>(DomainStorage("D", {"a", "b", "c"}))}},
+         {std::make_shared<DomainStorage>(DomainStorage(
+             "D", {"a", "b", "c"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}},
         {"F100_1",
          "G(A x in D. x)",
          createExpectedResult({true, false, false}),
          {{"a", "b", "c"}, {}, {"a", "c"}},
          {0, 1, 2},
-         {std::make_shared<DomainStorage>(DomainStorage("D", {"a", "b", "c"}))}}};
+         {std::make_shared<DomainStorage>(DomainStorage(
+             "D", {"a", "b", "c"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}},
+        {"F101_1",
+         "G(E x in D. x)",
+         createExpectedResult({true, true, true, false, false, true}),
+         {{"a"}, {"a"}, {"d"}, {}, {}, {"d"}},
+         {0, 1, 2, 3, 4, 5},
+         {std::make_shared<DomainStorage>(DomainStorage(
+             "D", {"a", "b", "d"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}},
+        {"F102_1",
+         "G(E x in D. (P(x) & x))",
+         createExpectedResult({false, true, true, true, false, false}),
+         {{"a", "b", "c"}, {"a"}, {"a", "b", "d"}, {"d"}, {}, {"d"}},
+         {0, 1, 2, 3, 4, 5},
+         {std::make_shared<DomainStorage>(DomainStorage(
+             "D", {"a", "b", "d"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}}};
 }
 
 std::vector<Verdict> TestDataBase::createExpectedResult(const std::vector<std::tuple<size_t, bool>> &baseVerdicts) {

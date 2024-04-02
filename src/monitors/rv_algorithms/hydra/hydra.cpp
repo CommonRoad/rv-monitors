@@ -4,7 +4,8 @@
 #include "monitors/rv_algorithms/hydra/hydra_creation_visitor.h"
 #include <iostream>
 
-std::map<std::string, std::vector<Verdict>> Hydra::evaluate(Trace &trace) {
+std::map<std::string, std::vector<Verdict>>
+Hydra::evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     std::map<std::string, std::vector<Verdict>> result;
     // Empty trace
     if (trace.getTrace().empty()) {

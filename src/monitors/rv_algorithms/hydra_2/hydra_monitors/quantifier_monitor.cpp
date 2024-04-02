@@ -8,20 +8,32 @@ QuantifierMonitor::QuantifierMonitor(Formula formula, std::shared_ptr<Hydra2Moni
       subMonitor(std::move(subMonitor)), shortCircuiting(shortCircuiting), variableValues(variableValues) {
 
     for (auto &[varName, domain] : variableValues)
-        iters.push_back(domain->begin());
+        if (!domain->empty())
+            iters.push_back(domain->begin());
 }
 
-std::shared_ptr<Hydra2Monitor> QuantifierMonitor::nextEvalMonitor(size_t parentId, size_t count) {
-    std::shared_ptr<Hydra2Monitor> evalMonitor;
-    if (traceIdx[parentId] == 0 or count > evalMonitors.size() - 1) { // if there is no monitor for the current
-                                                                      // combination, then a new monitor will be cloned
-        evalMonitor = subMonitor->clone();
-        evalMonitors.push_back(evalMonitor);
-    } else
-        evalMonitor = evalMonitors[count];
+std::string QuantifierMonitor::getUniqueID() {
+    std::string tmp;
+    for (const auto &val : currentDomainValues)
+        tmp += val.getUniqueID();
+    return tmp;
+}
 
-    // todo check if domain values have same "name" for A x. A x. otherwise there could be confusion in sub-monitors
-    evalMonitor->addDomainValues(nextCombination());
+std::shared_ptr<Hydra2Monitor> QuantifierMonitor::nextEvalMonitor(size_t stepNumber) {
+    std::shared_ptr<Hydra2Monitor> evalMonitor;
+    currentDomainValues = nextCombination();
+    if (evalMonitors.find(getUniqueID()) == evalMonitors.end()) // if there is no monitor for the current
+                                                                // combination, then a new monitor will be cloned
+    {
+        evalMonitor = subMonitor->clone();
+        evalMonitors[getUniqueID()] = evalMonitor;
+        evalMonitor->addDomainValues(currentDomainValues);
+        evalMonitor->setStepNumber(stepNumber, monitorId);
+    } else {
+        evalMonitor = evalMonitors[getUniqueID()];
+        evalMonitor->addDomainValues(currentDomainValues);
+    }
+
     shiftCombination();
     return evalMonitor;
 }
@@ -30,8 +42,12 @@ std::vector<DomainValue> QuantifierMonitor::nextCombination() {
     // store for each quantified variable value which is used
     std::vector<DomainValue> vals{domainValues};
     size_t idx{0};
-    for (const auto &[varName, _] : variableValues) {
-        vals.emplace_back(varName, *iters[idx]);
+    for (const auto &[varName, domainStorage] : variableValues) {
+        if (domainStorage->isConstDomain())
+            vals.emplace_back(varName, *iters[idx], domainStorage->isConstDomain(), domainStorage->getIdFunction());
+        else
+            vals.emplace_back(varName, *iters[idx], domainStorage->isConstDomain(), domainStorage->getIdFunction(),
+                              domainStorage->getValidityCondition());
         ++idx;
     }
     return vals;
@@ -52,13 +68,21 @@ void QuantifierMonitor::shiftCombination() {
 void QuantifierMonitor::resetIterators() {
     iters.clear();
     for (auto &[_, domain] : variableValues)
-        iters.push_back(domain->begin());
+        if (!domain->empty())
+            iters.push_back(domain->begin());
 }
 
 size_t QuantifierMonitor::numCombinations() const {
     size_t numCombinations{1};
-    for (const auto &[_, domain] : variableValues)
-        numCombinations *= domain->size();
+    bool nonEmpty{false};
+    for (const auto &[_, domain] : variableValues) {
+        if (!domain->empty() or domain->isConstDomain())
+            numCombinations *= domain->size();
+        if (!domain->empty())
+            nonEmpty = true;
+    }
+    if (!nonEmpty)
+        numCombinations = 0;
     return numCombinations;
 }
 
@@ -69,9 +93,19 @@ bool QuantifierMonitor::checkNonEmptiness() const {
                        });
 }
 
-void QuantifierMonitor::setTrace(const Trace &tra) {
+void QuantifierMonitor::setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     trace = tra;
-    subMonitor->setTrace(tra);
+
+    for (const auto &var : variableValues)
+        for (const auto &dom : domains)
+            if (dom->getName() == var.second->getName()) {
+                variableValues[var.first] = dom;
+                break;
+            }
+    iters.clear();
+    for (auto &[varName, domain] : variableValues)
+        iters.push_back(domain->begin());
+    subMonitor->setTrace(tra, domains);
 }
 
 void QuantifierMonitor::addDomainValues(const std::vector<DomainValue> &vals) { domainValues = vals; }
@@ -81,6 +115,7 @@ void QuantifierMonitor::reset() {
     subMonitor->reset();
     evalMonitors.clear();
     resetIterators();
+    violations.clear();
 }
 
 double QuantifierMonitor::computeCost(const std::shared_ptr<Hydra2Monitor> &monitor, size_t numEval) {
@@ -102,7 +137,7 @@ Verdict QuantifierMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         ++idx;
     }
     auto numberCombinations{numCombinations()};
-    evalMonitors.reserve(numberCombinations);
+
     auto verdict{quantifierStep(parentId, stepNumber, numberCombinations)};
     resetIterators();
     for (const auto &[_, dom] : variableValues)
@@ -132,4 +167,14 @@ Verdict QuantifierMonitor::initializeStepFalse(size_t parentId) {
     if (!checkNonEmptiness()) // if there is an empty domain, then a false verdict will be returned by definition
         return verdict;
     return verdict;
+}
+
+std::map<size_t, std::vector<std::vector<DomainValue>>> QuantifierMonitor::getViolatingDomainValues() const {
+    return {violations};
+}
+void QuantifierMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
+    Hydra2Monitor::setStepNumber(stepNumber, parentId);
+    subMonitor->setStepNumber(stepNumber, parentId);
+    for (const auto &[name, sub] : evalMonitors)
+        sub->setStepNumber(stepNumber, parentId);
 }

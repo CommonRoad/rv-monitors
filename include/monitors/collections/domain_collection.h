@@ -18,14 +18,14 @@ class DomainCollection {
      *
      * @param domain Domain.
      */
-    DomainCollection(const DomainStorage &domain);
+    explicit DomainCollection(const DomainStorage &domain);
 
     /**
      * Third constructor.
      *
      * @param domains Domains.
      */
-    DomainCollection(const std::vector<DomainStorage> &domains);
+    explicit DomainCollection(const std::vector<DomainStorage> &domains);
 
     /**
      * Returns number of stored domains.

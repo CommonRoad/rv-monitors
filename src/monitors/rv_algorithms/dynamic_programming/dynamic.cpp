@@ -122,7 +122,8 @@ void DynamicProgrammingLTL::update(size_t idx, std::vector<bool> &updateVector, 
     }
 }
 
-std::map<std::string, std::vector<Verdict>> DynamicProgrammingLTL::evaluate(Trace &trace) {
+std::map<std::string, std::vector<Verdict>>
+DynamicProgrammingLTL::evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     std::map<std::string, std::vector<Verdict>> result;
     if (!pastEvaluation)
         result[formulas.at(0).getId()] = {Verdict{checkTraceDynamicallyFuture(trace)}};

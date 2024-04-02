@@ -34,7 +34,8 @@ std::string MtFsm::to_string() const {
 
 const std::vector<StateMT_FSM> &MtFsm::getStates() const { return states; }
 
-std::map<std::string, std::vector<Verdict>> MtFsm::evaluate(Trace &trace) {
+std::map<std::string, std::vector<Verdict>>
+MtFsm::evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     // First two states are true and false
     auto currentState = states[2];
     std::map<std::string, std::vector<Verdict>> result;

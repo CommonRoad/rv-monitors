@@ -8,13 +8,14 @@
 
 TEST(TestQuoteMonitor, testQuoteMonitorStandard) {
     Trace trace = hydraTestUtils::createTraceWithVariable(
-        6, std::make_shared<Function<bool, size_t, size_t>>(
+        6, {std::make_shared<Function<bool, size_t, size_t>>(
                Function<bool, size_t, size_t>("higher_than_time_step", {"timeStep", "val"},
-                                              hydraTestUtils::higher_than_time_step, hydraTestUtils::twoSizeTArgs)));
+                                              hydraTestUtils::higher_than_time_step, hydraTestUtils::twoSizeTArgs))});
     Formula formula = Parser::parse("Q[0.2, 0.7] x in D. higher_than_time_step(x)");
     Formula formulaPredicate = Parser::parse("higher_than_time_step(x)");
     formula.setId("R1");
-    DomainStorage dom1{"D", {1ul, 2ul, 3ul, 4ul}};
+    DomainStorage dom1{
+        "D", {1ul, 2ul, 3ul, 4ul}, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }};
 
     auto mon1{std::make_shared<PredicateMonitor>(formulaPredicate, 2, false)};
     mon1->registerParent(1);
@@ -35,12 +36,13 @@ TEST(TestQuoteMonitor, testQuoteMonitorStandard) {
 TEST(TestQuoteMonitor, testWrongIntervalOrder) {
     Trace trace = hydraTestUtils::createTraceWithVariable(
         6,
-        std::make_shared<Function<bool, size_t, size_t>>(Function<bool, size_t, size_t>(
-            "higher_than_zero", {"timeStep", "val"}, hydraTestUtils::higher_than_zero, hydraTestUtils::twoSizeTArgs)));
+        {std::make_shared<Function<bool, size_t, size_t>>(Function<bool, size_t, size_t>(
+            "higher_than_zero", {"timeStep", "val"}, hydraTestUtils::higher_than_zero, hydraTestUtils::twoSizeTArgs))});
     Formula formula = Parser::parse("Q[0.5, 0.3] x in D. higher_than_zero(x)");
     Formula formulaPredicate = Parser::parse("higher_than_zero(x)");
     formula.setId("R1");
-    DomainStorage dom1{"D", {2ul, 4ul, 8ul}};
+    DomainStorage dom1{
+        "D", {2ul, 4ul, 8ul}, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }};
 
     auto mon1{std::make_shared<PredicateMonitor>(formulaPredicate, 2, false)};
     mon1->registerParent(1);

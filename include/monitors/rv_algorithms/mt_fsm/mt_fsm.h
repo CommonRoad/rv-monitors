@@ -38,16 +38,16 @@ class MtFsm : public MonitorInterface {
 
     /**
      * Checks if a trace satisfies a specification by traversing an MT-FSM*.
-     * @param mtFsm
-     * @param trace
-     * @param past True if formula is in PLTLf.
+     * @param trace Trace object
+     * @param domains List of domains. Not used by MtFsm.
      * @return True if satisfied, false otherwise.
      */
-    [[nodiscard]] std::map<std::string, std::vector<Verdict>> evaluate(Trace &trace) override;
+    [[nodiscard]] std::map<std::string, std::vector<Verdict>>
+    evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 
     /**
      * Helper for formulaToMT_FSM().
-     * @param formula
+     * @param formula Formula object.
      * @param states
      * @param past True if formula is in PLTLf.
      */
@@ -55,7 +55,7 @@ class MtFsm : public MonitorInterface {
 
     /**
      * Constructs an MT-FSM* from a given formula.
-     * @param formula
+     * @param formula Formula object.
      * @param past True if formula is in PLTLf.
      * @return MT-FSM*.
      */
@@ -63,14 +63,14 @@ class MtFsm : public MonitorInterface {
 
     /**
      * Checks for a given formula and a set of states if formula returns true for every form it can evolve into.
-     * @param formula
+     * @param formula Formula object.
      * @return
      */
     [[nodiscard]] static bool valid(Formula &formula);
 
     /**
      * Helper for recursion with additional argument.
-     * @param formula
+     * @param formula Formula object.
      * @param states
      * @return True if valid, false otherwise.
      */

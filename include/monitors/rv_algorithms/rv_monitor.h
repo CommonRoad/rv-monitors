@@ -1,9 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #pragma once
 
 #include "monitors/formula/formula.h"
@@ -68,6 +62,7 @@ class RVMonitor {
      * @param configuration List of configuration parameters for the different monitoring algorithms.
      * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
      * satisfaction probability in interval [0, 1].
+     * @param domains List of domains.
      */
     RVMonitor(const Formula &formula, MonitorConfiguration configuration = {},
               const std::map<std::string, std::array<double, 2>> &predicateCosts = {},
@@ -93,6 +88,7 @@ class RVMonitor {
      * @param configuration List of configuration parameters for the different monitoring algorithms.
      * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
      * satisfaction probability in interval [0, 1].
+     * @param domains List of domains.
      */
     RVMonitor(const std::vector<Formula> &formula, MonitorConfiguration configuration,
               const std::map<std::string, std::array<double, 2>> &predicateCosts = {},
@@ -102,16 +98,18 @@ class RVMonitor {
      * Evaluates trace based on temporal logic formula.
      *
      * @param trace Trace of predicates/atomic prepositions.
+     * @param domains List of domains.
      * @return Verdict for each time step of trace.
      */
-    std::map<std::string, std::vector<Verdict>> verify(Trace trace);
+    std::map<std::string, std::vector<Verdict>> verify(Trace trace,
+                                                       const std::vector<std::shared_ptr<DomainStorage>> &domains = {});
 
     /**
      * Getter for execution statistics.
      *
      * @return Execution statistic object.
      */
-    const ExecutionStatistic &getExecutionStatistic() const;
+    [[nodiscard]] const ExecutionStatistic &getExecutionStatistic() const;
 
     /**
      * Creates string representation of activated monitoring algorithm.
@@ -125,6 +123,12 @@ class RVMonitor {
      * @return MonitorConfiguration
      */
     MonitorConfiguration getConfiguration();
+
+    /**
+     * Extracts violating results from first-order monitors.
+     * @return Map containing violating domain values per rule and time step.
+     */
+    [[nodiscard]] std::map<std::string, std::map<size_t, std::vector<std::vector<DomainValue>>>> getMfotlRes() const;
 
   protected:
     std::unique_ptr<MonitorInterface> monitor; //**< Pointer to monitoring algorithm */

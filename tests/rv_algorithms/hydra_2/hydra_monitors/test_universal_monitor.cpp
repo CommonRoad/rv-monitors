@@ -31,14 +31,18 @@ std::vector<std::any> createDomain2(size_t stepNumber) { return {1ul, 2ul, 3ul, 
 std::vector<std::any> createDomain3(size_t stepNumber) { return {1ul, 2ul, 3ul}; }
 
 TEST(TestUniversalMonitor, testUniversalMonitorStandard) {
+
     Trace trace = hydraTestUtils::createTraceWithVariable(
-        4, std::make_shared<Function<bool, size_t, size_t, size_t>>(Function<bool, size_t, size_t, size_t>(
-               "one_higher", {"timeStep", "fstVal", "sndVal"}, one_higher, threeSizeTArgs)));
+        4, {std::make_shared<Function<bool, size_t, size_t, size_t>>(Function<bool, size_t, size_t, size_t>(
+               "one_higher", {"timeStep", "fstVal", "sndVal"}, one_higher, threeSizeTArgs))});
     Formula formula = Parser::parse("A x in D0, y in D1. one_higher(x, y)");
     Formula formulaPredicate = Parser::parse("one_higher(x, y)");
     formula.setId("R1");
-    DomainStorage dom1{"D0", {1ul, 2ul, 3ul, 4ul, 5ul, 6ul}};
-    DomainStorage dom2{"D1", {3ul, 4ul, 5ul}};
+    DomainStorage dom1{"D0", {1ul, 2ul, 3ul, 4ul, 5ul, 6ul}, [](const std::any &val) {
+                           return std::to_string(std::any_cast<size_t>(val));
+                       }};
+    DomainStorage dom2{
+        "D1", {3ul, 4ul, 5ul}, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }};
 
     auto mon1{std::make_shared<PredicateMonitor>(formulaPredicate, 2, false)};
     mon1->registerParent(1);
@@ -51,18 +55,43 @@ TEST(TestUniversalMonitor, testUniversalMonitorStandard) {
     EXPECT_EQ(mon.step(0, 1).value, true);
     EXPECT_EQ(mon.step(0, 2).value, true);
     EXPECT_EQ(mon.step(0, 3).value, false);
-    EXPECT_EQ(mon.step(0, 4).value, false);
+    EXPECT_EQ(mon.step(0, 4).value, false); // trace length == 4 -> false
+
+    std::vector<std::vector<DomainValue>> expectedDomainValues{
+        {{"x", 1ul, true, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }},
+         {"y", 3ul, true, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }}},
+        {{"x", 2ul, true, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }},
+         {"y", 3ul, true, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }}},
+        {{"x", 3ul, true, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }},
+         {"y", 3ul, true, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }}},
+    };
+    auto domRes{mon.getViolatingDomainValues()};
+    EXPECT_EQ(std::any_cast<size_t>(expectedDomainValues.at(0).at(0).getValue()),
+              std::any_cast<size_t>(domRes.at(3).at(0).at(0).getValue()));
+    EXPECT_EQ(std::any_cast<size_t>(expectedDomainValues.at(0).at(1).getValue()),
+              std::any_cast<size_t>(domRes.at(3).at(0).at(1).getValue()));
+    EXPECT_EQ(std::any_cast<size_t>(expectedDomainValues.at(1).at(0).getValue()),
+              std::any_cast<size_t>(domRes.at(3).at(1).at(0).getValue()));
+    EXPECT_EQ(std::any_cast<size_t>(expectedDomainValues.at(1).at(1).getValue()),
+              std::any_cast<size_t>(domRes.at(3).at(1).at(1).getValue()));
+    EXPECT_EQ(std::any_cast<size_t>(expectedDomainValues.at(2).at(0).getValue()),
+              std::any_cast<size_t>(domRes.at(3).at(2).at(0).getValue()));
+    EXPECT_EQ(std::any_cast<size_t>(expectedDomainValues.at(2).at(1).getValue()),
+              std::any_cast<size_t>(domRes.at(3).at(2).at(1).getValue()));
 }
 
 TEST(TestUniversalMonitor, testUniversalMonitorStandardDynamicDomain) {
     Trace trace = hydraTestUtils::createTraceWithVariable(
-        4, std::make_shared<Function<bool, size_t, size_t, size_t>>(Function<bool, size_t, size_t, size_t>(
-               "one_higher", {"timeStep", "fstVal", "sndVal"}, one_higher, threeSizeTArgs)));
+        4, {std::make_shared<Function<bool, size_t, size_t, size_t>>(Function<bool, size_t, size_t, size_t>(
+               "one_higher", {"timeStep", "fstVal", "sndVal"}, one_higher, threeSizeTArgs))});
     Formula formula = Parser::parse("A x in D0, y in D1. one_higher(x, y)");
     Formula formulaPredicate = Parser::parse("one_higher(x, y)");
     formula.setId("R1");
-    DomainStorage dom1{"D0", createDomain2};
-    DomainStorage dom2{"D1", {3ul, 4ul, 5ul}};
+    DomainStorage dom1{"D0", createDomain2,
+                       [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); },
+                       [](size_t, const std::any &) { return true; }};
+    DomainStorage dom2{
+        "D1", {3ul, 4ul, 5ul}, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }};
 
     auto mon1{std::make_shared<PredicateMonitor>(formulaPredicate, 2, false)};
     mon1->registerParent(1);
@@ -80,14 +109,15 @@ TEST(TestUniversalMonitor, testUniversalMonitorStandardDynamicDomain) {
 
 TEST(TestUniversalMonitor, testUniversalMonitorVariableScope) {
     Trace trace = hydraTestUtils::createTraceWithVariable(
-        4, std::make_shared<Function<bool, size_t, int>>(
-               Function<bool, size_t, int>("is_negative", {"timeStep", "val"}, is_negative, is_negativeArgs)));
+        4, {std::make_shared<Function<bool, size_t, int>>(
+               Function<bool, size_t, int>("is_negative", {"timeStep", "val"}, is_negative, is_negativeArgs))});
     Formula formula = Parser::parse("A x in D0. A x in D1. is_negative(x)");
     Formula formulaUniversal = Parser::parse("A x in D1. is_negative(x)");
     Formula formulaPredicate = Parser::parse("is_negative(x)");
     formula.setId("R1");
-    DomainStorage dom1{"D0", {1ul, 2ul, 3ul}};
-    DomainStorage dom2{"D1", {-4, -5, -6}};
+    DomainStorage dom1{
+        "D0", {1ul, 2ul, 3ul}, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }};
+    DomainStorage dom2{"D1", {-4, -5, -6}, [](const std::any &val) { return std::to_string(std::any_cast<int>(val)); }};
 
     auto mon2{std::make_shared<PredicateMonitor>(formulaPredicate, 3, false)};
     mon2->registerParent(2);
@@ -105,14 +135,16 @@ TEST(TestUniversalMonitor, testUniversalMonitorVariableScope) {
 
 TEST(TestUniversalMonitor, testUniversalMonitorVariableScopeDynamicDomain) {
     Trace trace = hydraTestUtils::createTraceWithVariable(
-        4, std::make_shared<Function<bool, size_t, int>>(
-               Function<bool, size_t, int>("is_negative", {"timeStep", "val"}, is_negative, is_negativeArgs)));
+        4, {std::make_shared<Function<bool, size_t, int>>(
+               Function<bool, size_t, int>("is_negative", {"timeStep", "val"}, is_negative, is_negativeArgs))});
     Formula formula = Parser::parse("A x in D0. A x in D1. is_negative(x)");
     Formula formulaUniversal = Parser::parse("A x in D1. is_negative(x)");
     Formula formulaPredicate = Parser::parse("is_negative(x)");
     formula.setId("R1");
-    DomainStorage dom1{"D0", createDomain3};
-    DomainStorage dom2{"D1", {-4, -5, -6}};
+    DomainStorage dom1{"D0", createDomain3,
+                       [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); },
+                       [](size_t, const std::any &) { return true; }};
+    DomainStorage dom2{"D1", {-4, -5, -6}, [](const std::any &val) { return std::to_string(std::any_cast<int>(val)); }};
 
     auto mon2{std::make_shared<PredicateMonitor>(formulaPredicate, 3, false)};
     mon2->registerParent(2);
@@ -130,13 +162,14 @@ TEST(TestUniversalMonitor, testUniversalMonitorVariableScopeDynamicDomain) {
 
 TEST(TestUniversalMonitor, testUniversalMonitorVariableAndConstValues) {
     Trace trace = hydraTestUtils::createTraceWithVariable(
-        5, std::make_shared<Function<bool, size_t, size_t, std::string>>(Function<bool, size_t, size_t, std::string>(
-               "unequal", {"timeStep", "val0", "val1"}, unequal, twoSizeTOneString)));
+        5, {std::make_shared<Function<bool, size_t, size_t, std::string>>(Function<bool, size_t, size_t, std::string>(
+               "unequal", {"timeStep", "val0", "val1"}, unequal, twoSizeTOneString))});
 
     Formula formula = Parser::parse("A x in D. unequal(x, '4')");
     Formula formulaPredicate = Parser::parse("unequal(x, '4')");
     formula.setId("R1");
-    DomainStorage dom1{"D", {1ul, 2ul, 3ul}};
+    DomainStorage dom1{
+        "D", {1ul, 2ul, 3ul}, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }};
 
     auto mon1{std::make_shared<PredicateMonitor>(formulaPredicate, 2, false)};
     mon1->registerParent(1);
@@ -157,7 +190,7 @@ TEST(TestUniversalMonitor, testUniversalMonitorAtomic) {
     Formula formula = Parser::parse("A x in D. x");
     Formula formulaAtomic = Parser::parse("x");
     formula.setId("R1");
-    DomainStorage dom1{"D", {"a", "b", "c"}};
+    DomainStorage dom1{"D", {"a", "b", "c"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
 
     auto mon1{std::make_shared<AtomicMonitor>(formulaAtomic, 2, false)};
     mon1->registerParent(1);
@@ -176,7 +209,8 @@ TEST(TestUniversalMonitor, testUniversalMonitorToString) {
     Formula formula = Parser::parse("A x, y in D. p(x, y, '100')");
     Formula formulaPredicate = Parser::parse("p(x, y, '100')");
     formula.setId("R1");
-    DomainStorage dom1{"D", std::vector<std::any>{}};
+    DomainStorage dom1{"D", std::vector<std::any>{},
+                       [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }};
 
     auto mon1{std::make_shared<PredicateMonitor>(formulaPredicate, 1, false)};
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues{{"x", std::make_shared<DomainStorage>(dom1)},

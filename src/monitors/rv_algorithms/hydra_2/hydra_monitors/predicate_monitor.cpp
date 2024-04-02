@@ -5,8 +5,7 @@
 
 Verdict PredicateMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     if (stepNumber < trace.getLength()) {
-        if (!domainValueArguments.empty())
-            updateTrace(stepNumber);
+        updateTrace(stepNumber);
         return trace.verdictAtTimeStep(stepNumber, name);
     } else
         return {false};
@@ -22,7 +21,8 @@ void PredicateMonitor::updateTrace(size_t stepNumber) {
             }
         for (const auto &val : constArguments)
             if (arg == val) {
-                orderedValues.emplace_back(val, val);
+                orderedValues.emplace_back(val, val, true,
+                                           [](std::any val) { return std::any_cast<const char *>(val); });
                 break;
             }
     }
@@ -32,7 +32,9 @@ void PredicateMonitor::updateTrace(size_t stepNumber) {
 
 std::shared_ptr<Hydra2Monitor> PredicateMonitor::clone() { return std::make_shared<PredicateMonitor>(*this); }
 
-void PredicateMonitor::setTrace(const Trace &tra) { trace = tra; }
+void PredicateMonitor::setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+    trace = tra;
+}
 
 std::string PredicateMonitor::to_string() { return formula.to_string(); }
 

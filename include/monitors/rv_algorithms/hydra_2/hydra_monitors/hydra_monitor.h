@@ -1,9 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #pragma once
 #include "deque"
 #include "monitors/collections/domain_value.h"
@@ -127,8 +121,9 @@ class Hydra2Monitor {
      * Setter for trace.
      *
      * @param tra Trace object.
+     * @param domains List of relevant domains.
      */
-    virtual void setTrace(const Trace &tra) = 0;
+    virtual void setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) = 0;
 
     /**
      * Resets monitor variables to default values.
@@ -153,7 +148,7 @@ class Hydra2Monitor {
      * Getter for ID of formula which is monitored.
      * @return
      */
-    const std::string &getFormulaId() const;
+    [[nodiscard]] const std::string &getFormulaId() const;
 
     /**
      * Sets ID of formula which is monitored.
@@ -167,14 +162,14 @@ class Hydra2Monitor {
      *
      * @return Evaluation cost of monitor in interval [0, 100].
      */
-    double getEvalCost() const;
+    [[nodiscard]] double getEvalCost() const;
 
     /**
      * Getter for satisfaction probability.
      *
      * @return Satisfaction probability of monitor in interval [0, 1].
      */
-    double getSatisfactionProbability() const;
+    [[nodiscard]] double getSatisfactionProbability() const;
 
     /**
      * Clones this monitor.
@@ -190,10 +185,25 @@ class Hydra2Monitor {
      */
     virtual std::string to_string() = 0;
 
+    /**
+     * Function to extract combination of violating domain values.
+     *
+     * @return Map containing violating domain values per rule and time step.
+     */
+    [[nodiscard]] virtual std::map<size_t, std::vector<std::vector<DomainValue>>> getViolatingDomainValues() const;
+
+    /**
+     * Sets step number of monitor.
+     *
+     * @param stepNumber Desired step number.
+     * @param parentId ID of parent monitor.
+     */
+    virtual void setStepNumber(size_t stepNumber, size_t parentId);
+
   protected:
     Formula formula;                     //**< Monitored formula. */
-    std::string formulaId;               //**< Id of formula */
-    size_t monitorId;                    //**< Id of monitor */
+    std::string formulaId;               //**< ID of formula */
+    size_t monitorId;                    //**< ID of monitor */
     std::deque<Verdict> verdictHistory;  //**< History of verdicts belonging to monitor */
     std::map<size_t, size_t> traceIdx;   //**< Index of current trace element (even) */
     bool connectedEval;                  //**< Boolean indicating whether connected evaluation should be performed */

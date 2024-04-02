@@ -13,8 +13,11 @@ std::vector<std::any> createDomain1(size_t stepNumber) {
 
 void TestDomain::SetUp() {
     dom1 = DomainStorage("testDomain1");
-    dom2 = DomainStorage("testDomain2", {"a", "b", "c", "d"});
-    dom3 = DomainStorage("testDomain3", createDomain1);
+    dom2 = DomainStorage("testDomain2", {"a", "b", "c", "d"},
+                         [](const std::any &val) { return std::any_cast<const char *>(val); });
+    dom3 = DomainStorage(
+        "testDomain3", createDomain1, [](const std::any &val) { return std::any_cast<const char *>(val); },
+        [](size_t, const std::any &) { return true; });
 }
 
 TEST_F(TestDomain, constructor) {
@@ -33,14 +36,14 @@ TEST_F(TestDomain, constructor) {
 }
 
 TEST_F(TestDomain, addValues) {
-    dom1.addValue(1.0);
+    dom1.addValues({1.0}, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); });
     EXPECT_EQ(dom1.size(), 1);
     EXPECT_EQ(std::any_cast<double>(dom1.getValues().at(0)), 1.0);
 
-    dom2.addValues({"e", "f"});
-    EXPECT_EQ(dom2.size(), 6);
-    EXPECT_EQ(std::any_cast<const char *>(dom2.getValues().at(4)), "e");
-    EXPECT_EQ(std::any_cast<const char *>(dom2.getValues().at(5)), "f");
+    dom2.addValues({"e", "f"}, [](const std::any &val) { return std::any_cast<const char *>(val); });
+    EXPECT_EQ(dom2.size(), 2);
+    EXPECT_EQ(std::any_cast<const char *>(dom2.getValues().at(0)), "e");
+    EXPECT_EQ(std::any_cast<const char *>(dom2.getValues().at(1)), "f");
 }
 
 TEST_F(TestDomain, dynamicDomain) {

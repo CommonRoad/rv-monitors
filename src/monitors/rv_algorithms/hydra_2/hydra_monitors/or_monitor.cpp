@@ -31,9 +31,9 @@ Verdict OrMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     return verdict;
 }
 
-void OrMonitor::setTrace(const Trace &tra) {
+void OrMonitor::setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     for (const auto &mon : subMonitors)
-        mon->setTrace(tra);
+        mon->setTrace(tra, domains);
 }
 void OrMonitor::reset() {
     Hydra2Monitor::reset();
@@ -77,4 +77,9 @@ double OrMonitor::computeSatisfactionProbability(const std::vector<std::shared_p
 void OrMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
     for (const auto &sub : subMonitors)
         sub->addDomainValues(vals);
+}
+void OrMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
+    Hydra2Monitor::setStepNumber(stepNumber, parentId);
+    for (const auto &sub : subMonitors)
+        sub->setStepNumber(stepNumber, monitorId);
 }
