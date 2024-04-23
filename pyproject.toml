@@ -1,0 +1,72 @@
+[project]
+name = "rv-monitors"
+dynamic = ["version"]
+readme = "README.md"
+requires-python = ">=3.9,<3.13"
+license = {file = "LICENSE"}
+authors = [
+  {email = "sebastian.maierhofer@tum.de"},
+  {name = "Sebastian Maierhofer"}
+]
+description = "Collection of Temporal Logic Runtime Verification Algorithms"
+
+[project.optional-dependencies]
+test = [
+   "pytest~=8.1.1"
+]
+
+[build-system]
+requires = [
+    "scikit-build-core~=0.9.0",
+
+    # nanobind stubs generation is not released yet (revert back to official release when v2.0 is released)
+    # "nanobind~=1.9.2",
+    "nanobind @ git+https://github.com/wjakob/nanobind.git@3a15dcdf486e16e3cd0e1e2242503d5cf43f50f7",
+
+    "setuptools_scm[toml]~=8.0.3"
+]
+build-backend = "scikit_build_core.build"
+
+[tool.setuptools_scm]
+write_to = "src/python/rvm/_version.py"
+
+[tool.scikit-build]
+minimum-version = "0.8"
+
+metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
+sdist.include = ["src/python/rvm/_version.py"]
+
+wheel.packages = [ "src/python/rvm" ]
+build-dir = "build-python/{build_type}-{wheel_tag}"
+
+cmake.version = ">=3.24"
+
+install.components = ["PythonModules"]
+
+editable.rebuild = true
+
+[tool.sphinx-pyproject]
+language = "en"
+
+[tool.cibuildwheel]
+# Skip PyPy
+skip = "pp*"
+archs = ["auto"]
+environment = { PIP_DISABLE_PIP_VERSION_CHECK="1" }
+build-verbosity = 1
+
+# Skip tests on musllinux due to missing wheels
+test-skip = "*i686 *-musllinux*"
+test-extras = ["test"]
+test-command = "python -m pytest {package}/tests/bindings"
+
+[tool.cibuildwheel.linux]
+before-build = "ulimit -n 1024 && yum install java-11-openjdk-headless -y"
+
+# NOTE: cibuildwheel on macOS untested
+[tool.cibuildwheel.macos]
+archs = ["x86_64", "arm64"]
+
+# macOS 10.14 is required for full C++17 support
+# macOS 10.15 is required for directory_iterator
+environment = {MACOSX_DEPLOYMENT_TARGET=10.15}

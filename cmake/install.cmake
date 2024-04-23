@@ -11,19 +11,40 @@ set(export_name ${PROJECT_NAME}_Targets)
 # https://cmake.org/cmake/help/v3.25/command/install.html#targets
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.23.0)
     install(TARGETS rvmonitors_core rvmonitors_parser
-            EXPORT ${export_name}
-            FILE_SET rvmonitors_core_headers DESTINATION include
-            FILE_SET rvmonitors_parser_headers DESTINATION include
-            LIBRARY ARCHIVE RUNTIME)
+        EXPORT ${export_name}
+        FILE_SET rvmonitors_core_headers
+            DESTINATION include
+        FILE_SET rvmonitors_parser_headers
+            DESTINATION include
+        RUNTIME
+            COMPONENT Runtime
+        LIBRARY
+            COMPONENT Runtime
+            NAMELINK_COMPONENT Development
+        ARCHIVE
+            COMPONENT Development
+    )
     install(TARGETS rvmonitors
-            EXPORT ${export_name})
+        EXPORT ${export_name}
+    )
 else()
     install(TARGETS rvmonitors rvmonitors_core rvmonitors_parser
-            EXPORT ${export_name}
-            LIBRARY ARCHIVE RUNTIME)
+        EXPORT ${export_name}
+        RUNTIME
+            COMPONENT Runtime
+        LIBRARY
+            COMPONENT Runtime
+            NAMELINK_COMPONENT Development
+        ARCHIVE
+            COMPONENT Development
+    )
     install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-            FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        COMPONENT Development
+        FILES_MATCHING
+            PATTERN "*.h"
+            PATTERN "*.hpp"
+    )
 endif()
 
 # Define INSTALL_..._FROM_SYSTEM for each dependency depending on whether we're using
@@ -57,16 +78,18 @@ configure_package_config_file(
 write_basic_package_version_file(${rvmonitors_version_file}
         COMPATIBILITY AnyNewerVersion)
 
-install(FILES ${rvmonitors_config_file}
-              ${rvmonitors_version_file}
-        DESTINATION  ${rvmonitors_install_cmakedir})
+install(FILES ${rvmonitors_config_file} ${rvmonitors_version_file}
+    DESTINATION  ${rvmonitors_install_cmakedir}
+    COMPONENT Development
+    )
 
 # Export target configuration (for installation)
 install(EXPORT ${export_name}
-        FILE ${PROJECT_NAME}Targets.cmake
-        NAMESPACE ${PROJECT_NAME}::
-        DESTINATION ${rvmonitors_install_cmakedir}
-        )
+    FILE ${PROJECT_NAME}Targets.cmake
+    NAMESPACE ${PROJECT_NAME}::
+    DESTINATION ${rvmonitors_install_cmakedir}
+    COMPONENT Development
+)
 
 
 # Export is disabled by default because it can cause issues with FetchContent in surprising ways
@@ -93,6 +116,13 @@ foreach(foreign_target antlr4)
         message(VERBOSE "Exporting ${foreign_target} because it is built locally")
         install(TARGETS ${foreign_target}
             EXPORT ${export_name}
-            LIBRARY ARCHIVE RUNTIME)
+            RUNTIME
+                COMPONENT Runtime
+            LIBRARY
+                COMPONENT Runtime
+                NAMELINK_COMPONENT Development
+            ARCHIVE
+                COMPONENT Development
+        )
     endif()
 endforeach()

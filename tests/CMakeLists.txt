@@ -54,7 +54,7 @@ set(RV_MONITOR_TEST_SRC_FILES
         )
 
 # Create executable for test
-if (RVMONITORS_BUILD_TESTS)
+if (${PROJECT_NAME}_BUILD_TESTS)
     add_executable(rvmonitors_test ${RV_MONITOR_TEST_SRC_FILES})
 
     target_compile_features(rvmonitors_test
@@ -98,7 +98,7 @@ target_link_libraries(
 
 # Code coverage
 # NOTE: The CodeCoverage module will already warn if the build type is not Debug
-if (RVMONITORS_BUILD_CODE_COVERAGE)
+if (${PROJECT_NAME}_BUILD_CODE_COVERAGE)
     include(FetchContent)
     FetchContent_Declare(
             bilke_cmake_modules

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20..3.25)
+cmake_minimum_required(VERSION 3.20..3.29)
 
 project(RVMonitors
         LANGUAGES C CXX
@@ -39,25 +39,38 @@ set(CMAKE_MESSAGE_CONTEXT_SHOW ON)
 # TODO: Set this conditionally
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
+
+if(SKBUILD)
+        find_package(Python 3.8 COMPONENTS Interpreter Development.Module REQUIRED)
+
+        execute_process(
+          COMMAND "${Python_EXECUTABLE}" -m nanobind --cmake_dir
+          OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE NB_DIR)
+        list(APPEND CMAKE_PREFIX_PATH "${NB_DIR}")
+        find_package(nanobind CONFIG REQUIRED)
+
+        set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+endif()
+
 include(CMakeDependentOption)
 
-set(RVMONITORS_BUILD_EXTRAS_DEFAULT ON)
-if(NOT RVMonitors_IS_TOP_LEVEL)
-    set(RVMONITORS_BUILD_EXTRAS_DEFAULT OFF)
+set(${PROJECT_NAME}_BUILD_EXTRAS_DEFAULT ON)
+if(NOT ${PROJECT_NAME}_IS_TOP_LEVEL OR SKBUILD)
+    set(${PROJECT_NAME}_BUILD_EXTRAS_DEFAULT OFF)
 endif()
 
 # TODO Move below dependency discovery
 find_package(Doxygen QUIET COMPONENTS dot)
 
-cmake_dependent_option(RVMONITORS_MODEL_BUILD_DOXYGEN
+cmake_dependent_option(${PROJECT_NAME}_MODEL_BUILD_DOXYGEN
         "Build doxygen"
-        ${RVMONITORS_BUILD_EXTRAS_DEFAULT}
+        ${${PROJECT_NAME}_BUILD_EXTRAS_DEFAULT}
         "Doxygen_FOUND;NOT SKBUILD"
         OFF)
 
-cmake_dependent_option(RVMONITORS_BUILD_TESTS
+cmake_dependent_option(${PROJECT_NAME}_BUILD_TESTS
         "Build tests"
-        ${RVMONITORS_BUILD_EXTRAS_DEFAULT}
+        ${${PROJECT_NAME}_BUILD_EXTRAS_DEFAULT}
         "NOT SKBUILD"
         OFF)
 
@@ -69,7 +82,9 @@ cmake_dependent_option(RVMONITORS_BUILD_TESTS
 # then we will use that value (by setting BUILD_SHARED_LIBS to the value of ${PROJECT_NAME}_BUILD_SHARED_LIBS).
 # Otherwise, the default for ${PROJECT_NAME}_BUILD_SHARED_LIBS is taken from BUILD_SHARED_LIBS if it exists.
 
-if(DEFINED BUILD_SHARED_LIBS)
+if(SKBUILD)
+    set(_BUILD_SHARED_LIBS_DEFAULT OFF)
+elseif(DEFINED BUILD_SHARED_LIBS)
     set(_BUILD_SHARED_LIBS_DEFAULT ${BUILD_SHARED_LIBS})
 else()
     set(_BUILD_SHARED_LIBS_DEFAULT ON)
@@ -79,10 +94,10 @@ option(${PROJECT_NAME}_BUILD_SHARED_LIBS "Build ${PROJECT_NAME} as a shared libr
 
 set(BUILD_SHARED_LIBS ${${PROJECT_NAME}_BUILD_SHARED_LIBS})
 
-cmake_dependent_option(RVMONITORS_BUILD_CODE_COVERAGE
+cmake_dependent_option(${PROJECT_NAME}_BUILD_CODE_COVERAGE
         "Build code coverage"
         OFF
-        "RVMONITORS_BUILD_TESTS;NOT SKBUILD"
+        "${PROJECT_NAME}_BUILD_TESTS;NOT SKBUILD"
         OFF)
 
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
@@ -99,12 +114,12 @@ else()
             "process a bit.\n"
             "In case you have all required dependencies installed, you can try "
             "enabling the option\n"
-            "\tRVMONITORS_SYSTEM_PACKAGES_FORCE\n"
+            "\t${PROJECT_NAME}_SYSTEM_PACKAGES_FORCE\n"
             "which will force using find_package for all dependencies.")
 endif()
 
-option(RVMONITORS_SYSTEM_PACKAGES "Try to use system packages for dependencies" ON)
-cmake_dependent_option(RVMONITORS_SYSTEM_PACKAGES_FORCE
+option(${PROJECT_NAME}_SYSTEM_PACKAGES "Try to use system packages for dependencies" ON)
+cmake_dependent_option(${PROJECT_NAME}_SYSTEM_PACKAGES_FORCE
         "For CMake<3.24: Force using system packages for all dependencies"
         OFF
         "NOT CMAKE_SUPPORTS_TRY_FIND_PACKAGE"
@@ -137,7 +152,7 @@ if(CMAKE_SUPPORTS_TRY_FIND_PACKAGE)
     if(SKBUILD_SELF_CONTAINED)
         set(FETCHCONTENT_TRY_FIND_PACKAGE_MODE NEVER)
     endif()
-    if(RVMONITORS_SYSTEM_PACKAGES)
+    if(${PROJECT_NAME}_SYSTEM_PACKAGES)
         set(FETCHCONTENT_TRY_FIND_PACKAGE_MODE OPT_IN)
     else()
         set(FETCHCONTENT_TRY_FIND_PACKAGE_MODE NEVER)
@@ -145,15 +160,15 @@ if(CMAKE_SUPPORTS_TRY_FIND_PACKAGE)
 endif()
 
 # Include Eigen3, Boost filesystem, spdlog, and OpenMP
-if(RVMONITORS_SYSTEM_PACKAGES_FORCE)
+if(${PROJECT_NAME}_SYSTEM_PACKAGES_FORCE)
     # This is the fallback branch in case the CMake version is older than 3.24
     # and the user requested we try to use system packages
     # For CMake > 3.24, fallback is automatic through the FetchContent find_package
     # integration.
 
-    message(WARNING "RVMONITORS_SYSTEM_PACKAGES_FORCE is set - trying to satisfy "
+    message(WARNING "${PROJECT_NAME}_SYSTEM_PACKAGES_FORCE is set - trying to satisfy "
             "all dependencies using installed system packages.\n"
-            "If this fails, consider disabling RVMONITORS_SYSTEM_PACKAGES_FORCE and "
+            "If this fails, consider disabling ${PROJECT_NAME}_SYSTEM_PACKAGES_FORCE and "
             "trying again.")
 
     find_package(GTest)
@@ -173,15 +188,15 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 add_subdirectory(src)
 
 # Doxygen
-if(RVMONITORS_BUILD_DOXYGEN)
+if(${PROJECT_NAME}_BUILD_DOXYGEN)
     include(doxygen)
-endif(RVMONITORS_BUILD_DOXYGEN)
+endif(${PROJECT_NAME}_BUILD_DOXYGEN)
 
 # add unit testing
-if(RVMONITORS_BUILD_TESTS)
+if(${PROJECT_NAME}_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
-endif(RVMONITORS_BUILD_TESTS)
+endif(${PROJECT_NAME}_BUILD_TESTS)
 
 
 include(cmake/install.cmake)
