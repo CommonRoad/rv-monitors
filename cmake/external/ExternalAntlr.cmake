@@ -1,7 +1,7 @@
 include(FetchContent)
 include(utils/FetchContentHelper)
 
-set(ANTLR_VERSION 4.11.1)
+set(ANTLR_VERSION 4.13.1)
 
 set(antlr_jar_name antlr-${ANTLR_VERSION}-complete.jar)
 
@@ -19,7 +19,7 @@ if(ANTLR4_JAR_LOCATION STREQUAL "ANTLR4_JAR_LOCATION-NOTFOUND")
     set(_antlr_jar_destination ${CMAKE_CURRENT_BINARY_DIR}/${antlr_jar_name})
     file(DOWNLOAD https://www.antlr.org/download/${antlr_jar_name}
         ${_antlr_jar_destination}
-        EXPECTED_HASH SHA256=62975e192b4af2622b72b5f0131553ee3cbce97f76dc2a41632dcc55e25473e1
+        EXPECTED_HASH SHA256=bc13a9c57a8dd7d5196888211e5ede657cb64a3ce968608697e4f668251a8487
     )
     set(ANTLR4_JAR_LOCATION ${_antlr_jar_destination} CACHE FILEPATH "Path to antlr4 jar file" FORCE)
 else()
@@ -41,9 +41,9 @@ FetchContent_Declare_Fallback(
     SOURCE_SUBDIR runtime/Cpp
 
     URL https://github.com/antlr/antlr4/archive/refs/tags/${ANTLR_VERSION}.tar.gz
-    URL_HASH SHA256=81f87f03bb83b48da62e4fc8bfdaf447efb9fb3b7f19eb5cbc37f64e171218cf
+    URL_HASH SHA256=da20d487524d7f0a8b13f73a8dc326de7fc2e5775f5a49693c0a4e59c6b1410c
 
-    FIND_PACKAGE_ARGS NAMES antlr4-runtime
+    FIND_PACKAGE_ARGS ${ANTLR_VERSION} NAMES antlr4-runtime
 )
 
 set(ANTLR_BUILD_CPP_TESTS OFF)
@@ -78,7 +78,7 @@ endif()
 
 if(BUILD_SHARED_LIBS AND TARGET antlr4_shared)
     add_library(antlr4 ALIAS antlr4_shared)
-elseif(TARGET antlr4_shared)
+elseif(TARGET antlr4_static)
     add_library(antlr4 ALIAS antlr4_static)
 else()
     message(FATAL_ERROR "antlr4 not available under the usual target names")
