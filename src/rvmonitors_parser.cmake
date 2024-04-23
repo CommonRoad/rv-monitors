@@ -22,6 +22,8 @@ foreach(grammar Log Formula)
         )
     target_sources(rvmonitors_parser PRIVATE ${grammar_src_files})
 
+    set_target_properties(rvmonitors_parser PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
     if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.23.0)
         target_sources(rvmonitors_parser
             INTERFACE

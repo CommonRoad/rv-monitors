@@ -113,9 +113,7 @@ class Trace {
      * @param argValues Relevant domain values.
      */
     void updateEvent(size_t step, const std::string &exprName, std::vector<DomainValue> &argValues) {
-        argValues.insert(argValues.begin(),
-                         DomainValue("time_step", trace.at(step).getTimeStep(), true,
-                                     [](std::any val) { return std::to_string(std::any_cast<int>(val)); }));
+        argValues.insert(argValues.begin(), DomainValue::makeTimeStep(trace.at(step).getTimeStep()));
         for (size_t idx = 0; idx < argValues.size(); ++idx) {
             if (constantCollection.contains(argValues[idx].getVariable()))
                 argValues[idx] = DomainValue(argValues[idx].getVariable(),
