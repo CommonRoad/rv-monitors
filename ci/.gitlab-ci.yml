@@ -123,7 +123,7 @@ build-coverage:
   cache:
     <<: *cache_dependency_archives
   script:
-    - cmake -G "Ninja Multi-Config" -S . -B build -DRVMONITORS_BUILD_CODE_COVERAGE=ON
+    - cmake -G "Ninja Multi-Config" -S . -B build -DRVMonitors_BUILD_CODE_COVERAGE=ON
     - cmake --build build --config Debug --target rvmonitors_test
   needs: []
   artifacts:
@@ -137,12 +137,39 @@ build-nix:
   script:
     - nix --extra-experimental-features "nix-command flakes" --print-build-logs build
 
+build-python:
+  stage: compile
+  image: python:3.12-bullseye
+  script:
+    - DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -y install openjdk-11-jre-headless
+    - python --version
+    - git describe --always
+    - python -m venv venv
+    - echo "/venv" >> .gitignore
+    - source venv/bin/activate
+    - python -m pip install --upgrade pip
+    - python -m pip install build~=1.2.1 pytest~=8.1.1
+    - python -m build
+    - python -m pip install dist/*.whl
+    - python -m pytest tests/bindings
+  needs: []
+  variables:
+    # Necessary so that Git detects all tags
+    GIT_STRATEGY: clone
+    GIT_DEPTH: 0
+    GIT_FETCH_EXTRA_FLAGS: --tags
+  artifacts:
+    paths:
+      - dist/*.tar.gz
+      - dist/*.whl
+    expire_in: 30 minutes
+
 ### create documentation ###
 docs:
   stage: docs
   script:
     - mkdir -p build && cd build
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Debug -DRVMONITORS_BUILD_DOXYGEN=ON  ..
+    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Debug -DRVMonitors_BUILD_DOXYGEN=ON  ..
     - make doc_doxygen ..
   dependencies: []
   artifacts:

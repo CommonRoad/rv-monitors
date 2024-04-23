@@ -286,6 +286,70 @@ target_link_libraries(${LIBRARY_NAME}_eval
         ${LIBRARY_NAME}
         )
 
+if(SKBUILD)
+    set(python_module_name _rvm)
+    nanobind_add_module(${python_module_name} MODULE 
+        bindings/main.cpp
+        bindings/monitors.cpp
+        bindings/monitors.h
+        bindings/domain.cpp
+        bindings/domain.h
+        )
+
+    target_precompile_headers(nanobind-static
+        PUBLIC
+        <nanobind/nanobind.h>
+    )
+
+    nanobind_add_stub(
+        _rvm_stub
+        MODULE _rvm
+        OUTPUT _rvm.pyi
+        PYTHON_PATH $<TARGET_FILE_DIR:${python_module_name}>
+        DEPENDS ${python_module_name}
+        MARKER_FILE py.typed
+        VERBOSE
+    )
+
+    nanobind_add_stub(
+        _rvm_function_stub
+        MODULE _rvm._function
+        OUTPUT _rvm/_function.pyi
+        PYTHON_PATH $<TARGET_FILE_DIR:${python_module_name}>
+        DEPENDS ${python_module_name}
+        VERBOSE
+    )
+
+    install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/_rvm.pyi
+        ${CMAKE_CURRENT_BINARY_DIR}/py.typed
+        DESTINATION rvm
+        COMPONENT PythonModules
+    )
+
+    install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/_rvm/_function.pyi
+        DESTINATION rvm/_rvm
+        COMPONENT PythonModules
+    )
+
+
+    target_link_libraries(${python_module_name} PRIVATE rvmonitors)
+
+    install(TARGETS ${python_module_name}
+            LIBRARY DESTINATION rvm
+            COMPONENT PythonModules
+            )
+
+    add_custom_target(install-python-modules-${python_module_name}
+        ${CMAKE_COMMAND}
+        -DCMAKE_INSTALL_COMPONENT=PythonModules
+        -P "${PROJECT_BINARY_DIR}/cmake_install.cmake"
+        DEPENDS ${python_module_name}
+        )
+endif(SKBUILD)
+
+
 # this adds many warnings to the build. They usually help to find some bugs
 # TODO: Check whether each warning flag is actually supported by the compiler before adding it
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")

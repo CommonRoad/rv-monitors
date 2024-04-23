@@ -15,3 +15,10 @@ rvmonitors_test_coverage
 /evaluation/stats/
 /evaluation/figs/
 /evaluation/fmlas/
+
+/src/python/rvm/_version.py
+
+/build-python
+/.cache
+/.mypy_cache
+/.pytest_cache
