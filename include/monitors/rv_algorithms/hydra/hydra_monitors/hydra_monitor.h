@@ -38,6 +38,11 @@ struct HeadPosHydra {
 class HydraMonitor {
   public:
     /**
+     * Destructor.
+     */
+    virtual ~HydraMonitor() = default;
+
+    /**
      * Base constructor for hydra monitor.
      *
      * @param formula Formula to monitor.

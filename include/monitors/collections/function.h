@@ -74,15 +74,15 @@ template <typename T> class IFunction {
     float costs;                            //**< Costs for evaluation. */
 };
 template <typename T> std::function<T()> IFunction<T>::getFunction(const std::vector<DomainValue> &args) {
-    std::runtime_error("IFunction<T>::getFunction: This call should not happen");
+    throw std::runtime_error("IFunction<T>::getFunction: This call should not happen");
     return {};
 }
 template <typename T> std::function<T()> IFunction<T>::getFunction() {
-    std::runtime_error("IFunction<T>::getFunction: This call should not happen");
+    throw std::runtime_error("IFunction<T>::getFunction: This call should not happen");
     return {};
 }
 template <typename T> T IFunction<T>::evaluateFunction() {
-    std::runtime_error("IFunction<T>::getFunction: This call should not happen");
+    throw std::runtime_error("IFunction<T>::getFunction: This call should not happen");
     return {};
 }
 
