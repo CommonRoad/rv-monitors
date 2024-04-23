@@ -87,6 +87,11 @@ class Hydra2Monitor {
 
   public:
     /**
+     * Destructor.
+     */
+    virtual ~Hydra2Monitor() = default;
+
+    /**
      * Base constructor for hydra monitor.
      *
      * @param formula Formula to monitor.
