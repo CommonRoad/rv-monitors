@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <set>
 #include <string>
 #include <utility>
 
@@ -20,6 +19,11 @@ class Expression {
     std::string symbol;
 
   public:
+    /**
+     * Destructor.
+     */
+    virtual ~Expression() = default;
+
     /**
      * Constructor.
      *

@@ -2,7 +2,7 @@
 
 #include "monitors/expression_tree/expression.h"
 #include <memory>
-#include <stdexcept>
+#include <set>
 
 /**
  * Interface for n-ary expressions.
