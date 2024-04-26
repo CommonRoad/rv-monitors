@@ -35,21 +35,24 @@ set(CMAKE_LINK_LIBRARIES_ONLY_TARGETS ON)
 
 set(CMAKE_MESSAGE_CONTEXT_SHOW ON)
 
+option(RV_MONITOR_BUILD_PYTHON_BINDINGS OFF)
+
 # Compile command database is required for Clang-assisted parsing in Doxygen
 # TODO: Set this conditionally
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
+if (RV_MONITOR_BUILD_PYTHON_BINDINGS)
+    if(SKBUILD)
+            find_package(Python 3.8 COMPONENTS Interpreter Development.Module REQUIRED)
 
-if(SKBUILD)
-        find_package(Python 3.8 COMPONENTS Interpreter Development.Module REQUIRED)
+            execute_process(
+              COMMAND "${Python_EXECUTABLE}" -m nanobind --cmake_dir
+              OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE NB_DIR)
+            list(APPEND CMAKE_PREFIX_PATH "${NB_DIR}")
+            find_package(nanobind CONFIG REQUIRED)
 
-        execute_process(
-          COMMAND "${Python_EXECUTABLE}" -m nanobind --cmake_dir
-          OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE NB_DIR)
-        list(APPEND CMAKE_PREFIX_PATH "${NB_DIR}")
-        find_package(nanobind CONFIG REQUIRED)
-
-        set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+            set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+    endif()
 endif()
 
 include(CMakeDependentOption)
