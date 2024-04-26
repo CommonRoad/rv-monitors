@@ -45,6 +45,9 @@ install.components = ["PythonModules"]
 
 editable.rebuild = true
 
+[tool.scikit-build.cmake.define]
+RV_MONITOR_BUILD_PYTHON_BINDINGS = "ON"
+
 [tool.sphinx-pyproject]
 language = "en"
 
