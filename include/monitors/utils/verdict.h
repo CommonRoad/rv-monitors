@@ -27,8 +27,7 @@ struct Verdict {
     bool value;                      //**< Boolean value of verdict. */
 
     std::string to_string() const {
-        return value ? "true" : "false" +
-            (timeStamp.has_value() ? "[" + std::to_string(timeStamp.value()) + "]" : "");
+        return value ? "true" : "false" + (timeStamp.has_value() ? "[" + std::to_string(timeStamp.value()) + "]" : "");
     }
 
     /**
