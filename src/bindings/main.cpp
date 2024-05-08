@@ -14,6 +14,7 @@
 #include <nanobind/stl/vector.h>
 #include <pyerrors.h>
 
+#include <monitors/collections/constant_collection.h>
 #include <monitors/collections/function.h>
 #include <monitors/formula/formula.h>
 #include <monitors/parser/parser.h>
@@ -51,14 +52,24 @@ NB_MODULE(_rvm, m) {
 
     init_domain(m);
 
+    nb::class_<ConstantValue>(m, "ConstantValue")
+        .def("__init__",
+             [](ConstantValue *v, std::string name, nb::any &value) {
+                 new (v) ConstantValue(std::move(name), dynamic_cast<const nb::object &>(value));
+             })
+        .def_prop_ro("name", &ConstantValue::getName);
+
+    nb::class_<ConstantCollection>(m, "ConstantCollection").def(nb::init<std::vector<ConstantValue>>());
+
     nb::class_<Trace>(m, "Trace", nb::sig("class Trace(Sequence[Event])"))
         .def(nb::init<>())
         .def(
             "__init__",
-            [](Trace *t, std::vector<Event> trace, std::vector<std::shared_ptr<IFunction<bool>>> functionCollection) {
-                new (t) Trace(std::move(trace), std::move(functionCollection));
+            [](Trace *t, std::vector<Event> trace, std::vector<std::shared_ptr<IFunction<bool>>> functionCollection,
+               ConstantCollection constantCollection) {
+                new (t) Trace(std::move(trace), std::move(functionCollection), std::move(constantCollection));
             },
-            nb::arg("trace"), nb::arg("function_collection"))
+            nb::arg("trace"), nb::arg("function_collection") = {}, nb::arg("constantCollection") = ConstantCollection())
         .def_prop_ro("length", &Trace::getLength)
         .def("__len__", &Trace::getLength)
         .def("get_event", &Trace::getEvent)
