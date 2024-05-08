@@ -1,11 +1,21 @@
-from typing import Callable, Optional
 from inspect import signature
+from typing import Callable, Optional
 
-from ._rvm._function import IBoolFunction, Function1, Function2, Function3, Function4, Function5
+from ._rvm._function import (
+    Function1,
+    Function2,
+    Function3,
+    Function4,
+    Function5,
+    IBoolFunction,
+)
 
-def Function(function: Callable[..., bool], name: Optional[str] = None, costs: float = 0.0) -> Callable[..., bool]:
+
+def Function(
+    function: Callable[..., bool], name: Optional[str] = None, costs: float = 0.0
+) -> Callable[..., bool]:
     if name is None:
-        name = getattr(function, '__name__', None)
+        name = getattr(function, "__name__", None)
         if name is None:
             raise ValueError("name is required when passing lambdas")
 
