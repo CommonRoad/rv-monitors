@@ -31,7 +31,7 @@ std::shared_ptr<Hydra2Monitor> QuantifierMonitor::nextEvalMonitor(size_t stepNum
         evalMonitor->setStepNumber(stepNumber, monitorId);
     } else {
         evalMonitor = evalMonitors[getUniqueID()];
-        evalMonitor->addDomainValues(currentDomainValues);
+        evalMonitor->addDomainValues(currentDomainValues); // required (see testExistentialStepLoopingDynamicDomain)
     }
 
     shiftCombination();

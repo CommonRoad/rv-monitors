@@ -38,3 +38,12 @@ std::string FirstOrderOperator::to_string() const {
     }
     return str;
 }
+
+std::set<std::string> FirstOrderOperator::getVariableNames() const {
+    std::set<std::string> names;
+    const auto &vars = getVariables();
+    for (const auto &var : getVariables()) {
+        names.insert(var.getName());
+    }
+    return names;
+}
