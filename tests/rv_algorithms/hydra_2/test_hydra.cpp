@@ -128,6 +128,73 @@ TEST(TestHydra2, testToTree) {
     EXPECT_EQ(tree.getNodeTypes().at(5), "|");
 }
 
+TEST(TestHydra2, testCombinedExistentialQuantifier) {
+    Trace trace = Utils::createTrace({"a", "b", "d"}, {{"a"}, {"a"}, {"a"}, {"a", "b"}, {"a"}, {"b"}},
+                                     std::vector<size_t>{0, 0, 2, 4, 5, 10});
+    std::vector<Formula> formulas = {Parser::parse("G(E x in D. x)"), Parser::parse("G(E x in D. (P(x) & x))")};
+    formulas[0].setId("R1");
+    formulas[1].setId("R2");
+
+    std::vector<std::shared_ptr<DomainStorage>> domains{{std::make_shared<DomainStorage>(
+        DomainStorage("D", {"a", "b", "d"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}};
+
+    auto monitor1{Hydra2({formulas[0]}, true, true, true, false)};
+    auto monitor2{Hydra2({formulas[1]}, true, true, true, false)};
+    auto res1{monitor1.evaluate(trace, domains)};
+    auto res2{monitor2.evaluate(trace, domains)};
+
+    std::vector<std::vector<Verdict>> expSolutions{res1.at("R1"), res2.at("R2")};
+
+    hydraTestUtils::executeHydraEval(trace, formulas, expSolutions, domains);
+}
+
+TEST(TestHydra2, testCombinedUniversalQuantifier) {
+    Trace trace = Utils::createTrace({"a", "b", "d"}, {{"a"}, {"a"}, {"a"}, {"a", "b"}, {"a"}, {"b"}},
+                                     std::vector<size_t>{0, 0, 2, 4, 5, 10});
+    std::vector<Formula> formulas = {Parser::parse("G(A x in D. x)"), Parser::parse("G(A x in D. (P(x) & x))")};
+    formulas[0].setId("R1");
+    formulas[1].setId("R2");
+
+    std::vector<std::shared_ptr<DomainStorage>> domains{{std::make_shared<DomainStorage>(
+        DomainStorage("D", {"a", "b", "d"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}};
+
+    auto monitor1{Hydra2({formulas[0]}, true, true, true, false)};
+    auto monitor2{Hydra2({formulas[1]}, true, true, true, false)};
+    auto res1{monitor1.evaluate(trace, domains)};
+    auto res2{monitor2.evaluate(trace, domains)};
+
+    std::vector<std::vector<Verdict>> expSolutions{res1.at("R1"), res2.at("R2")};
+
+    hydraTestUtils::executeHydraEval(trace, formulas, expSolutions, domains);
+}
+
+TEST(TestHydra2, testCombinedUniversalQuantifierDynamicDomain) {
+    Trace trace = hydraTestUtils::createTraceWithVariable(
+        4, {std::make_shared<Function<bool, size_t, size_t>>(
+                Function<bool, size_t, size_t>("divisible_by_time_step", {"timeStep", "val"},
+                                               hydraTestUtils::divisible_by_time_step, hydraTestUtils::twoSizeTArgs)),
+            std::make_shared<Function<bool, size_t, size_t>>(
+                Function<bool, size_t, size_t>("higher_than_time_step", {"timeStep", "val"},
+                                               hydraTestUtils::higher_than_time_step, hydraTestUtils::twoSizeTArgs))});
+    std::vector<Formula> formulas = {
+        Parser::parse("A x in D. (X(divisible_by_time_step(x)) U higher_than_time_step(x))"),
+        Parser::parse("A x in D. (divisible_by_time_step(x) -> higher_than_time_step(x))")};
+    formulas[0].setId("R1");
+    formulas[1].setId("R2");
+
+    std::vector<std::shared_ptr<DomainStorage>> domains{{std::make_shared<DomainStorage>(DomainStorage(
+        "D", {2ul, 3ul, 4ul}, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }))}};
+
+    auto monitor1{Hydra2({formulas[0]}, true, true, true, false)};
+    auto monitor2{Hydra2({formulas[1]}, true, true, true, false)};
+    auto res1{monitor1.evaluate(trace, domains)};
+    auto res2{monitor2.evaluate(trace, domains)};
+
+    std::vector<std::vector<Verdict>> expSolutions{res1.at("R1"), res2.at("R2")};
+
+    hydraTestUtils::executeHydraEval(trace, formulas, expSolutions, domains);
+}
+
 TEST(TestHydra2, testExistentialStepLooping) {
     Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a", "b", "c"}, {}, {"b"}, {"a", "c"}});
     Formula formula = Parser::parse("G(C<=2 x in D. x)");
@@ -192,6 +259,34 @@ TEST(TestHydra2, testExistenceVariableDomainLazyPredicate) {
     std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1)};
     hydraTestUtils::executeHydraEval(trace, formulas, expSolutions, domains);
 }
+
+// TEST(TestHydra2, testUniversalVariableDomainLazyPredicate) {
+//    Trace trace = hydraTestUtils::createTraceWithVariable(
+//        4,
+//        {std::make_shared<Function<bool, size_t, size_t, size_t>>(Function<bool, size_t, size_t, std::size_t>(
+//             "equal_to_time_step_with_unused_arg", {"timeStep", "randomValue", "value"},
+//             hydraTestUtils::equal_to_time_step_with_unused_arg, hydraTestUtils::threeSizeTArgs)),
+//         std::make_shared<Function<bool, size_t, size_t>>(Function<bool, size_t, size_t>(
+//             "equals_three", {"timeStep", "val"}, hydraTestUtils::equals_three, hydraTestUtils::twoSizeTArgs))},
+//        ConstantCollection({ConstantValue{"x_ego", 0ul}}));
+//    Formula formula1 =
+//        Parser::parse("E x_o in D0. equal_to_time_step_with_unused_arg('x_ego', x_o) & equals_three(x_o)");
+//    formula1.setId("R1");
+//    Formula formula2 =
+//        Parser::parse("E x_o in D0. equal_to_time_step_with_unused_arg('x_ego', x_o) & equals_three(x_o)");
+//    formula2.setId("R2");
+//    std::vector<Formula> formulas{formula1, formula2};
+//    std::vector<std::vector<Verdict>> expSolutions{
+//        {Verdict{0, false}, Verdict{1, false}, Verdict{2, false}, Verdict{3, true}}};
+//    std::vector<std::vector<std::any>> possibleSets{{1ul, 2ul, 3ul, 4ul}, {1ul, 2ul, 3ul}, {0ul}, {3ul}};
+//    DomainStorage dom1{"D0", [possibleSets](size_t stepNumber) { return domain(stepNumber, possibleSets); },
+//                       [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); },
+//                       [](size_t, const std::any &) { return true; }};
+//    std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1)};
+//
+//    auto monitor{Hydra2(formulas, true, true, true, false)};
+//    auto solution{monitor.evaluate(trace, domains)};
+//}
 
 TEST(TestHydra2, testInvalidPredicateCost) {
     Formula formula = Parser::parse("G(P[0, 1](c))", "R1");

@@ -1,22 +1,15 @@
 #include "monitors/expression_tree/unary/first_order/universal_quantifier.h"
 
 UniversalQuantifier::UniversalQuantifier(std::shared_ptr<Expression> &left, std::vector<Variable> &variables)
-    : Unary(universalSymbol, left), FirstOrderOperator(variables)
-// First constructor
-{}
+    : Unary(universalSymbol, left), FirstOrderOperator(variables) {}
 
 UniversalQuantifier::UniversalQuantifier(std::shared_ptr<Expression> &left, Variable &variable)
-    : Unary(universalSymbol, left), FirstOrderOperator(variable)
-// Second constructor
-{}
+    : Unary(universalSymbol, left), FirstOrderOperator(variable) {}
 
 std::string UniversalQuantifier::to_string() const {
     std::string str = getSymbol() + " ";
-
     str += FirstOrderOperator::to_string();
-
     str += getLeft()->to_string();
-
     return str;
 }
 

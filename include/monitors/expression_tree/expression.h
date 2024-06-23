@@ -76,13 +76,6 @@ class Expression {
     virtual std::shared_ptr<Expression> accept(ExpressionVisitor &, Trace &, size_t index) = 0;
 
     /**
-     *
-     *
-     * @param visitor Visitor.
-     * @return
-     */
-
-    /**
      * Accept function for visitor pattern for Hydra2 monitor.
      *
      * @param visitor

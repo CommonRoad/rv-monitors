@@ -38,6 +38,7 @@ void AndMonitor::reset() {
 std::shared_ptr<Hydra2Monitor> AndMonitor::clone() {
     auto clonedMonitor = std::make_shared<AndMonitor>(*this);
     std::vector<std::shared_ptr<Hydra2Monitor>> clonedSubMonitors;
+    clonedSubMonitors.reserve(subMonitors.size());
     for (const auto &mon : subMonitors)
         clonedSubMonitors.push_back(mon->clone());
     clonedMonitor->subMonitors = clonedSubMonitors;
@@ -71,6 +72,7 @@ void AndMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
     for (const auto &sub : subMonitors)
         sub->addDomainValues(vals);
 }
+
 void AndMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
     Hydra2Monitor::setStepNumber(stepNumber, parentId);
     for (const auto &sub : subMonitors)
