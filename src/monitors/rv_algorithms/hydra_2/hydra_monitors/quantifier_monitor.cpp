@@ -178,3 +178,10 @@ void QuantifierMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
     for (const auto &[name, sub] : evalMonitors)
         sub->setStepNumber(stepNumber, parentId);
 }
+
+void QuantifierMonitor::to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) {
+    if (tree.find(monitorId) != tree.end())
+        return;
+    tree.insert({monitorId, {formula.getExpr()->getSymbol(), {subMonitor->getMonitorID()}}});
+    subMonitor->to_tree(tree);
+}

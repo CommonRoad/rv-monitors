@@ -76,3 +76,15 @@ void AndMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
     for (const auto &sub : subMonitors)
         sub->setStepNumber(stepNumber, monitorId);
 }
+
+void AndMonitor::to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) {
+    if (tree.find(monitorId) != tree.end())
+        return;
+    std::vector<size_t> ids;
+    ids.reserve(subMonitors.size());
+    for (const auto &mon : subMonitors) {
+        ids.push_back(mon->getMonitorID());
+        mon->to_tree(tree);
+    }
+    tree.insert({monitorId, {formula.getExpr()->getSymbol(), ids}});
+}

@@ -82,6 +82,13 @@ class UntilMonitor : public Hydra2Monitor {
      */
     void setStepNumber(size_t stepNumber, size_t parentId) override;
 
+    /**
+     * Extracts tree structure for visualization.
+     *
+     * @param tree Mapping of monitor ID to its logical representation and child nodes.
+     */
+    void to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) override;
+
   private:
     /**
      * Executes left and right monitors of until.
