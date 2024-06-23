@@ -166,6 +166,13 @@ class QuantifierMonitor : public Hydra2Monitor {
      */
     void setStepNumber(size_t stepNumber, size_t parentId) override;
 
+    /**
+     * Extracts tree structure for visualization.
+     *
+     * @param tree Mapping of monitor ID to its logical representation and child nodes.
+     */
+    void to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) override;
+
   protected:
     std::shared_ptr<Hydra2Monitor> subMonitor;                          //**< Child monitor. */
     std::map<std::string, std::shared_ptr<Hydra2Monitor>> evalMonitors; //**< Monitors for evaluation. */

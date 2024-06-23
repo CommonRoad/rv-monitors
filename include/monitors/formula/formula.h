@@ -143,7 +143,7 @@ class Formula {
      *
      * @return ID/name of formula.
      */
-    const std::string &getId() const;
+    [[nodiscard]] const std::string &getId() const;
 
     /**
      * Checks if the formula type is compatible with the formulaTypes parameter.
@@ -151,7 +151,7 @@ class Formula {
      * @param formulaType what formula type the formula should be compared with.
      * @return boolean indicating whether compatibility was discovered or not.
      */
-    bool checkCompatibility(MonitoringProperties formulaType) const;
+    [[nodiscard]] bool checkCompatibility(MonitoringProperties formulaType) const;
 
     /**
      * Checks compatibility of formula with respect to given formula types
@@ -159,7 +159,7 @@ class Formula {
      * @param formulaTypes List of formula types the formula should be compared with
      * @return boolean indicating whether compatibility was discovered or not.
      */
-    bool checkCompatibility(std::vector<MonitoringProperties> formulaTypes) const;
+    [[nodiscard]] bool checkCompatibility(std::vector<MonitoringProperties> formulaTypes) const;
 
     /**
      * Checks whether a temporal operator is included by the formula.

@@ -76,6 +76,13 @@ class SinceMonitor : public Hydra2Monitor {
      */
     void setStepNumber(size_t stepNumber, size_t parentId) override;
 
+    /**
+     * Extracts tree structure for visualization.
+     *
+     * @param tree Mapping of monitor ID to its logical representation and child nodes.
+     */
+    void to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) override;
+
   private:
     std::shared_ptr<Hydra2Monitor> subMonitorLeft;  //**< Monitor for specification on left side of since. */
     std::shared_ptr<Hydra2Monitor> subMonitorRight; //**< Monitor for specification on right side of since. */

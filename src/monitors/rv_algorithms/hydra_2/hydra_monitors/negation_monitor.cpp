@@ -27,3 +27,10 @@ void NegationMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
     Hydra2Monitor::setStepNumber(stepNumber, parentId);
     subMonitor->setStepNumber(stepNumber, monitorId);
 }
+
+void NegationMonitor::to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) {
+    if (tree.find(monitorId) != tree.end())
+        return;
+    tree.insert({monitorId, {formula.getExpr()->getSymbol(), {subMonitor->getMonitorID()}}});
+    subMonitor->to_tree(tree);
+}

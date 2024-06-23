@@ -72,6 +72,13 @@ class OrMonitor : public Hydra2Monitor {
      */
     void setStepNumber(size_t stepNumber, size_t parentId) override;
 
+    /**
+     * Extracts tree structure for visualization.
+     *
+     * @param tree Mapping of monitor ID to its logical representation and child nodes.
+     */
+    void to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) override;
+
   private:
     std::vector<std::shared_ptr<Hydra2Monitor>> subMonitors; //**< Child monitors. */
     bool shortCircuiting; //**< Boolean indicating whether short-circuiting should be used. */

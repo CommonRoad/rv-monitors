@@ -70,7 +70,8 @@ class Hydra2Monitor {
     bool traceIdxUnique(size_t idx);
 
     /**
-     * Decrements trace indices for all parent monitors except for the provided ID.
+     * Decrements trace indices for all parent monitors except for the provided ID. Applied when first element of
+     * verdictHistory is updated.
      *
      * @param parentID Parent monitor ID where index should not be decremented.
      */
@@ -204,6 +205,20 @@ class Hydra2Monitor {
      * @param parentId ID of parent monitor.
      */
     virtual void setStepNumber(size_t stepNumber, size_t parentId);
+
+    /**
+     * Extracts tree structure for visualization.
+     *
+     * @param tree Mapping of monitor ID to its logical representation and child nodes.
+     */
+    virtual void to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree);
+
+    /**
+     * Getter for monitor ID.
+     *
+     * @return Monitor ID.
+     */
+    [[nodiscard]] size_t getMonitorID() const;
 
   protected:
     Formula formula;                     //**< Monitored formula. */

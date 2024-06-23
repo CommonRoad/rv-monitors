@@ -451,6 +451,10 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitUntil(Until &opr, Trace &t
         return std::make_shared<Constant>(false);
     }
 
+    // a U a = a
+    if (opr.getRight()->to_string() == opr.getLeft()->to_string())
+        return opr.getRight();
+
     // Idempotence
     if (auto until = std::dynamic_pointer_cast<Until>(opr.getLeft())) {
         if (until->getRight() == opr.getRight()) {
@@ -467,10 +471,14 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitUntil(Until &opr, Trace &t
 
 std::shared_ptr<Expression> HydraRewriteVisitor::visitSince(Since &opr, Trace &trace, size_t index) {
     visitExpression(opr, trace, index);
-    // a U false = false
+    // a S false = false
     if (opr.getRight()->isConstFalse()) {
         return std::make_shared<Constant>(false);
     }
+
+    // a S a = a
+    if (opr.getRight()->to_string() == opr.getLeft()->to_string())
+        return opr.getRight();
 
     // Idempotence
     if (auto since = std::dynamic_pointer_cast<Since>(opr.getLeft())) {
