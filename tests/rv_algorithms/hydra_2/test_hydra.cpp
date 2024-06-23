@@ -100,6 +100,34 @@ TEST(TestHydra2, testCombinedSinceUntilFormulas) {
     hydraTestUtils::executeHydraEval(trace, formulas, expSolutions);
 }
 
+TEST(TestHydra2, testToTree) {
+    std::vector<Formula> formulas = {Parser::parse("G((a)S[0, 4](b))"), Parser::parse("G((a)U[0, 4](b))"),
+                                     Parser::parse("G(((a)U[0, 4](b)) and a)"),
+                                     Parser::parse("G((a)S[0, 4](b) or (a)U[0, 4](b))")};
+    formulas[0].setId("R1");
+    formulas[1].setId("R2");
+    formulas[2].setId("R3");
+    formulas[3].setId("R4");
+    std::vector<size_t> expectedRootIDs{0, 3, 4, 5};
+    auto mon{Hydra2(formulas, true, true, true, false)};
+    auto tree{mon.to_tree()};
+    ASSERT_EQ(tree.getRootIDs().size(), 4) << "Vectors x and y are of unequal length";
+    for (int i = 0; i < tree.getRootIDs().size(); ++i) {
+        EXPECT_EQ(tree.getRootIDs()[i], expectedRootIDs[i]) << "Vectors x and y differ at index " << i;
+    }
+    EXPECT_EQ(tree.getNodeTypes().at(0), "S[0, 4]");
+    EXPECT_EQ(tree.getTree().at(0).size(), 2);
+    EXPECT_EQ(tree.getTree().at(0).at(0), 2);
+    EXPECT_EQ(tree.getTree().at(0).at(1), 1);
+    EXPECT_EQ(tree.getNodeTypes().at(1), "b");
+    EXPECT_EQ(tree.getTree().at(1).size(), 0);
+    EXPECT_EQ(tree.getNodeTypes().at(2), "a");
+    EXPECT_EQ(tree.getNodeTypes().at(3), "U[0, 4]");
+    EXPECT_EQ(tree.getNodeTypes().at(4), "&");
+    EXPECT_EQ(tree.getTree().at(4).size(), 2);
+    EXPECT_EQ(tree.getNodeTypes().at(5), "|");
+}
+
 TEST(TestHydra2, testExistentialStepLooping) {
     Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a", "b", "c"}, {}, {"b"}, {"a", "c"}});
     Formula formula = Parser::parse("G(C<=2 x in D. x)");

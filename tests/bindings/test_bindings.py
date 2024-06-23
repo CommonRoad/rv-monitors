@@ -247,3 +247,24 @@ def test_existence_variable_domain_lazy_predicate():
     assert res[1].value == False
     assert res[2].value == False
     assert res[3].value == True
+
+
+def test_to_tree1():
+    specs = [
+        ("S1", "G((a) S[0, 4] (b))"),
+        (
+            "S2",
+            "G((a) U[0, 4] (b))",
+        ),
+        ("S3", "G((a) U[0, 4] (b) & (a) S[0, 4] (b))"),
+    ]
+
+    formulas = [rvm.Parser.parse(form[1], form[0]) for form in specs]
+    mon = rvm.Hydra2(formulas)
+    tree_vis = mon.to_tree()
+    assert tree_vis.tree[0] == [2, 1]
+    assert tree_vis.tree[1] == []
+    assert tree_vis.nodeTypes[0] == "S[0, 4]"
+    assert tree_vis.nodeTypes[1] == "b"
+    assert tree_vis.nodeTypes[4] == "&"
+    assert tree_vis.rootIDs == [0, 3, 4]

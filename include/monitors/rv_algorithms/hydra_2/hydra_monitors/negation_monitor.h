@@ -68,7 +68,14 @@ class NegationMonitor : public Hydra2Monitor {
      * @param stepNumber Desired step number.
      * @param parentId ID of parent monitor.
      */
-    void setStepNumber(size_t stepNumber, size_t parentId);
+    void setStepNumber(size_t stepNumber, size_t parentId) override;
+
+    /**
+     * Extracts tree structure for visualization.
+     *
+     * @param tree Mapping of monitor ID to its logical representation and child nodes.
+     */
+    void to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) override;
 
   private:
     std::shared_ptr<Hydra2Monitor> subMonitor; //**< Child monitor. */
