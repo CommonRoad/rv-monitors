@@ -7,6 +7,48 @@
 #include <monitors/trace/trace.h>
 
 /**
+ * Tree structure for visualizing Hydra2 monitors.
+ */
+struct TreeVis {
+  private:
+    std::map<size_t, std::string> nodeTypes;    //**< Mapping of monitor node IDs to logical representation. */
+    std::map<size_t, std::vector<size_t>> tree; //**< Mapping of monitor node IDs to its child monitor IDs. */
+    std::vector<size_t> rootIDs;                //**< List of root nodes. */
+
+  public:
+    /**
+     * Constructor.
+     *
+     * @param nodeTypes Mapping of monitor node IDs to logical representation.
+     * @param tree Mapping of monitor node IDs to its child monitor IDs.
+     * @param rootIDs List of root nodes.
+     */
+    TreeVis(const std::map<size_t, std::string> &nodeTypes, const std::map<size_t, std::vector<size_t>> &tree,
+            const std::vector<size_t> &rootIDs);
+
+    /**
+     * Getter for node type mapping.
+     *
+     * @return Mapping of monitor node IDs to logical representation.
+     */
+    [[nodiscard]] const std::map<size_t, std::string> &getNodeTypes() const;
+
+    /**
+     * Getter for tree structure mapping.
+     *
+     * @return Mapping of monitor node IDs to its child monitor IDs.
+     */
+    [[nodiscard]] const std::map<size_t, std::vector<size_t>> &getTree() const;
+
+    /**
+     * Getter for root node IDs.
+     *
+     * @return List of root nodes.
+     */
+    [[nodiscard]] const std::vector<size_t> &getRootIDs() const;
+};
+
+/**
  * Class for monitoring a trace using the Hydra2 MTL monitor.
  */
 class Hydra2 : public MonitorInterface {
@@ -59,6 +101,13 @@ class Hydra2 : public MonitorInterface {
      */
     std::map<std::string, std::map<size_t, std::vector<std::vector<DomainValue>>>>
     getViolatingDomainValues() const override;
+
+    /**
+     * Extracts tree structure for visualization.
+     *
+     * @return Tree structure object.
+     */
+    TreeVis to_tree();
 
   private:
     std::vector<std::shared_ptr<Hydra2Monitor>>

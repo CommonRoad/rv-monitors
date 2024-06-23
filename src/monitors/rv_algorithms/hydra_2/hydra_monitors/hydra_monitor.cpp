@@ -69,11 +69,11 @@ Verdict Hydra2Monitor::step(size_t parentId, size_t stepNumber, bool singleStep)
         if (stepNumber >= traceIdx[parentId] + verdictHistoryPopCounter) {
             verdict = simulateVerdict(parentId, stepNumber);
         } else { // if required step was already performed based on other parent monitor, use already computed verdict
-            verdict = verdictHistory[stepNumber];
+            verdict = verdictHistory.at(traceIdx.at(parentId) - verdictHistoryPopCounter);
         }
     } else if (stepNumber < traceIdx[parentId]) { // required step was already performed based on other parent monitor,
                                                   // use already computed verdict
-        verdict = verdictHistory[stepNumber];
+        verdict = verdictHistory[stepNumber - verdictHistoryPopCounter];
     } else
         verdict = simulateVerdict(parentId, stepNumber);
     return verdict;
@@ -100,9 +100,13 @@ Verdict Hydra2Monitor::simulateVerdict(size_t parentId, size_t stepNumber) {
         } else { // if required step was already performed based on other parent monitor, use already computed verdict
             verdict = verdictHistory[traceIdx[parentId]];
             auto minIdx{getMinTraceIdx()};
-            if (traceIdx[parentId] == minIdx and traceIdxUnique(minIdx)) {
+            if (traceIdx[parentId] == minIdx and
+                traceIdxUnique(
+                    minIdx)) { // if current monitor uses minimum trace index and no other monitor has same trace index
+                               // -> pop head of verdict history and decrement indices of all other monitors
                 verdictHistory.pop_front();
-                decrementTraceIdx(parentId);
+                decrementTraceIdx(parentId); // monitor indices needs to be decremented since we removed element from
+                                             // verdict history otherwise they would point to wrong element
                 ++verdictHistoryPopCounter;
             } else
                 ++traceIdx[parentId];
@@ -122,3 +126,11 @@ double Hydra2Monitor::getSatisfactionProbability() const { return satisfactionPr
 std::map<size_t, std::vector<std::vector<DomainValue>>> Hydra2Monitor::getViolatingDomainValues() const { return {}; }
 
 void Hydra2Monitor::setStepNumber(size_t stepNumber, size_t parentId) { traceIdx[parentId] = stepNumber; }
+
+void Hydra2Monitor::to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) {
+    if (tree.find(monitorId) != tree.end())
+        return;
+    tree.insert({monitorId, {formula.getExpr()->to_string(), {}}});
+}
+
+size_t Hydra2Monitor::getMonitorID() const { return monitorId; }

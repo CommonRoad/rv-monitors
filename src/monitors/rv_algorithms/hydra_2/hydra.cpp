@@ -105,3 +105,29 @@ Hydra2::getViolatingDomainValues() const {
         violations[mon->getFormulaId()] = mon->getViolatingDomainValues();
     return violations;
 }
+
+TreeVis Hydra2::to_tree() {
+    std::vector<size_t> roots;
+    std::map<size_t, std::tuple<std::string, std::vector<size_t>>> treeComplete;
+    for (const auto &mon : monitors) {
+        roots.push_back(mon->getMonitorID());
+        mon->to_tree(treeComplete);
+    }
+    std::map<size_t, std::string> nodeTypes;
+    std::map<size_t, std::vector<size_t>> tree;
+    for (const auto &[key, value] : treeComplete) {
+        nodeTypes.insert({key, std::get<0>(value)});
+        tree.insert({key, std::get<1>(value)});
+    }
+    return {nodeTypes, tree, roots};
+}
+
+const std::map<size_t, std::string> &TreeVis::getNodeTypes() const { return nodeTypes; }
+
+const std::map<size_t, std::vector<size_t>> &TreeVis::getTree() const { return tree; }
+
+const std::vector<size_t> &TreeVis::getRootIDs() const { return rootIDs; }
+
+TreeVis::TreeVis(const std::map<size_t, std::string> &nodeTypes, const std::map<size_t, std::vector<size_t>> &tree,
+                 const std::vector<size_t> &rootIDs)
+    : nodeTypes(nodeTypes), tree(tree), rootIDs(rootIDs) {}

@@ -26,7 +26,7 @@ struct Verdict {
     std::optional<size_t> timeStamp; //**< Time stamp of verdict. */
     bool value;                      //**< Boolean value of verdict. */
 
-    std::string to_string() const {
+    [[nodiscard]] std::string to_string() const {
         return value ? "true" : "false" + (timeStamp.has_value() ? "[" + std::to_string(timeStamp.value()) + "]" : "");
     }
 

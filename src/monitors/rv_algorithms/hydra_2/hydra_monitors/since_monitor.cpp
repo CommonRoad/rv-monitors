@@ -105,3 +105,12 @@ void SinceMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
             Hydra2Monitor::step(parentId, stepNumber - 1);
     }
 }
+
+void SinceMonitor::to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) {
+    if (tree.find(monitorId) != tree.end())
+        return;
+    tree.insert({monitorId,
+                 {formula.getExpr()->getSymbol(), {subMonitorLeft->getMonitorID(), subMonitorRight->getMonitorID()}}});
+    subMonitorLeft->to_tree(tree);
+    subMonitorRight->to_tree(tree);
+}

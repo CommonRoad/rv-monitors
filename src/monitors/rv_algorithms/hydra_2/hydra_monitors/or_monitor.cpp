@@ -1,9 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/or_monitor.h"
 #include <iostream>
 
@@ -82,4 +76,16 @@ void OrMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
     Hydra2Monitor::setStepNumber(stepNumber, parentId);
     for (const auto &sub : subMonitors)
         sub->setStepNumber(stepNumber, monitorId);
+}
+
+void OrMonitor::to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) {
+    if (tree.find(monitorId) != tree.end())
+        return;
+    std::vector<size_t> ids;
+    ids.reserve(subMonitors.size());
+    for (const auto &mon : subMonitors) {
+        ids.push_back(mon->getMonitorID());
+        mon->to_tree(tree);
+    }
+    tree.insert({monitorId, {formula.getExpr()->getSymbol(), ids}});
 }
