@@ -274,5 +274,11 @@ class HydraCreationVisitor2 {
      */
     static void reorder(std::vector<std::shared_ptr<Hydra2Monitor>> &monitors, bool increasing);
 
+    /**
+     * Finds domain for variables.
+     *
+     * @param variables List of variables.
+     * @return Map from variable name to domain.
+     */
     std::map<std::string, std::shared_ptr<DomainStorage>> findDomain(const std::vector<Variable> &variables) const;
 };

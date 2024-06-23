@@ -38,10 +38,33 @@ class ExistentialQuantifier : public Unary, public FirstOrderOperator {
      */
     [[nodiscard]] std::shared_ptr<Expression> clone() override;
 
+    /**
+     * Accept function for visitor pattern for existential quantifier.
+     *
+     * @param visitor Visitor.
+     * @param trace Event.
+     * @param index Current (max) index.
+     *
+     * @return Expression of visit existential quantifier.
+     */
     [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override;
 
+    /**
+     * Accept function for visitor pattern for Hydra2 monitor.
+     *
+     * @param visitor Visitor.
+     * @param parentId ID of parent monitor.
+     * @param connectedEval Boolean indicating whether connected evaluation should be performed.
+     * @return Hydra2 existential quantifier monitor.
+     */
     [[nodiscard]] std::shared_ptr<Hydra2Monitor> accept(HydraCreationVisitor2 &visitor, size_t parentId,
                                                         bool connectedEval) override;
 
+    /**
+     * Accept function for visitor pattern for original Hydra monitor.
+     *
+     * @param visitor Visitor.
+     * @return Hydra existential quantifier monitor.
+     */
     [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override;
 };

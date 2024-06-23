@@ -127,6 +127,7 @@ void UntilMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
     Hydra2Monitor::setStepNumber(stepNumber, parentId);
     subMonitorRight->setStepNumber(stepNumber, monitorId);
     subMonitorLeft->setStepNumber(stepNumber, monitorId);
+    subMonitorBaseTimeStep->setStepNumber(stepNumber, monitorId);
     stepNumberUntil = stepNumber;
 }
 

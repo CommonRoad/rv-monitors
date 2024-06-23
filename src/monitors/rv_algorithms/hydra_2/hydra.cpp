@@ -28,20 +28,15 @@ Hydra2::evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>>
 
 void Hydra2::evalEarlyTermination(Trace &trace, std::map<std::string, std::vector<Verdict>> &result) {
     for (const auto &mon : monitors)
-        result[mon->getFormulaId()].emplace_back(true); // only single verdict required
+        result[mon->getFormulaId()].emplace_back(
+            true); // only single verdict required and use "invalid" time step to indicate early termination
 
-    std::vector<std::string> terminatedMonitors;
     for (size_t i{0}; i < trace.getLength(); ++i) {
-        for (const auto &mon : monitors)
-            if (!std::any_of(terminatedMonitors.begin(), terminatedMonitors.end(),
-                             [mon](const std::string &monId) { return mon->getFormulaId() == monId; })) {
-                auto res{mon->step(0, i)};
-                result[mon->getFormulaId()].at(0) = result[mon->getFormulaId()].at(0).value && res.value;
-                if (!result[mon->getFormulaId()].at(0).value)
-                    terminatedMonitors.push_back(mon->getFormulaId());
-            }
-        if (monitors.size() == terminatedMonitors.size())
-            break;
+        for (const auto &mon : monitors) {
+            result[mon->getFormulaId()].at(0) = result[mon->getFormulaId()].at(0).value and mon->step(0, i).value;
+            if (!result[mon->getFormulaId()].at(0).value)
+                return;
+        }
     }
 }
 
@@ -76,6 +71,7 @@ void Hydra2::createMonitor(const std::vector<Formula> &formulas, bool connectedE
         rwv.rewrite(formulaCopy);
         formulaCopy.setId(form.getId());
 
+        // baseline monitors are kept for each creation run -> connected eval
         monitors.push_back(hcv.createMonitor(formulaCopy, 0, connectedEval));
     }
 }
