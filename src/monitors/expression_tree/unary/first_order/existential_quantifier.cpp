@@ -1,14 +1,10 @@
 #include "monitors/expression_tree/unary/first_order/existential_quantifier.h"
 
 ExistentialQuantifier::ExistentialQuantifier(std::shared_ptr<Expression> &left, std::vector<Variable> &variables)
-    : Unary(existentialSymbol, left), FirstOrderOperator(variables)
-// First constructor
-{}
+    : Unary(existentialSymbol, left), FirstOrderOperator(variables) {}
 
 ExistentialQuantifier::ExistentialQuantifier(std::shared_ptr<Expression> &left, Variable &variable)
-    : Unary(existentialSymbol, left), FirstOrderOperator(variable)
-// Second constructor
-{}
+    : Unary(existentialSymbol, left), FirstOrderOperator(variable) {}
 
 std::string ExistentialQuantifier::to_string() const {
     std::string str = getSymbol() + " ";

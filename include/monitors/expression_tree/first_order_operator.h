@@ -77,11 +77,18 @@ class FirstOrderOperator {
     void removeVariable(std::string variable);
 
     /**
-     * Returns all variables bounded by operator.
+     * Returns all variable objects bounded by operator.
      *
      * @return Bounded variables.
      */
     [[nodiscard]] std::vector<Variable> getVariables() const;
+
+    /**
+     * Returns all variable names bounded by operator.
+     *
+     * @return Bounded variable names.
+     */
+    [[nodiscard]] std::set<std::string> getVariableNames() const;
 
     /**
      * Creates string representation of first order expression.
