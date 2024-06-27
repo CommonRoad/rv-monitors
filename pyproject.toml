@@ -17,12 +17,8 @@ test = [
 
 [build-system]
 requires = [
-    "scikit-build-core~=0.9.0",
-
-    # nanobind stubs generation is not released yet (revert back to official release when v2.0 is released)
-    # "nanobind~=1.9.2",
-    "nanobind @ git+https://github.com/wjakob/nanobind.git@3a15dcdf486e16e3cd0e1e2242503d5cf43f50f7",
-
+    "scikit-build-core~=0.9.6",
+    "nanobind~=2.0.0",
     "setuptools_scm[toml]~=8.0.3"
 ]
 build-backend = "scikit_build_core.build"
