@@ -73,10 +73,10 @@ TEST_F(TestRVMonitors, PerformanceMeasurement) {
 
     monitor.verify(tra);
 
-    EXPECT_EQ(monitor.getExecutionStatistic().getTotalTraceLength(), 3);
+    EXPECT_EQ(monitor.getExecutionStatistic().getTraceLengths().at(0), 0);
+    EXPECT_EQ(monitor.getExecutionStatistic().getTraceLengths().at(1), 3);
     EXPECT_EQ(monitor.getExecutionStatistic().getNumExecutions(), 1);
-    EXPECT_GT(monitor.getExecutionStatistic().getMinTime(), 0.0);
-    EXPECT_GT(monitor.getExecutionStatistic().getMaxTime(), 0.0);
+    EXPECT_GT(monitor.getExecutionStatistic().getCompTimes().at(0), 0.0);
     EXPECT_GT(monitor.getExecutionStatistic().getTotalTime(), 0.0);
 }
 
