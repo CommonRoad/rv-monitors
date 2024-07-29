@@ -27,18 +27,13 @@ build-backend = "scikit_build_core.build"
 write_to = "src/python/rvm/_version.py"
 
 [tool.scikit-build]
-minimum-version = "0.8"
-
+minimum-version = "0.9"
 metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
 sdist.include = ["src/python/rvm/_version.py"]
-
 wheel.packages = [ "src/python/rvm" ]
 build-dir = "build-python/{build_type}-{wheel_tag}"
-
 cmake.version = ">=3.24"
-
 install.components = ["PythonModules"]
-
 editable.rebuild = true
 
 [tool.scikit-build.cmake.define]

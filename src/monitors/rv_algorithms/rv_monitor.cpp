@@ -15,7 +15,7 @@ RVMonitor::verify(Trace trace, const std::vector<std::shared_ptr<DomainStorage>>
 
     auto verdict{monitor->evaluate(trace, domains)};
 
-    if (configuration.performanceMeasurement)
+    if (configuration.performanceMeasurement and trace.getLength() > 0)
         executionStatistic.stop(startTime, trace.getLength());
     return verdict;
 }
