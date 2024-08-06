@@ -4,11 +4,12 @@
 #include "monitors/rv_algorithms/hydra/hydra_creation_visitor.h"
 #include <iostream>
 
-std::map<std::string, std::vector<Verdict>>
-Hydra::evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+std::map<std::string, std::vector<Verdict>> Hydra::evaluate(const std::shared_ptr<Trace> &trace,
+                                                            const std::vector<std::shared_ptr<DomainStorage>> &domains,
+                                                            const std::vector<std::string> &formulaIDs) {
     std::map<std::string, std::vector<Verdict>> result;
     // Empty trace
-    if (trace.getTrace().empty()) {
+    if (trace->getTrace().empty()) {
         std::cout << "Trace is empty" << std::endl;
         result[formulas.at(0).getId()] = {};
         return result;
@@ -17,7 +18,7 @@ Hydra::evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> 
     monitor->reset();
     monitor->setTrace(trace);
 
-    for (size_t i{0}; i < trace.getLength(); ++i)
+    for (size_t i{0}; i < trace->getLength(); ++i)
         result[monitor->getFormulaId()].emplace_back(monitor->concreteStep());
 
     return result;

@@ -24,7 +24,8 @@ Verdict AndMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     return verdict;
 }
 
-void AndMonitor::setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+void AndMonitor::setTrace(const std::shared_ptr<Trace> &tra,
+                          const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     for (const auto &mon : subMonitors)
         mon->setTrace(tra, domains);
 }
@@ -35,13 +36,19 @@ void AndMonitor::reset() {
         mon->reset();
 }
 
-std::shared_ptr<Hydra2Monitor> AndMonitor::clone() {
+std::shared_ptr<Hydra2Monitor> AndMonitor::clone(const std::vector<std::string> &domValNames) {
+    auto tmpCopy{Hydra2Monitor::clone(domValNames)};
+    if (tmpCopy != nullptr)
+        return tmpCopy;
+
     auto clonedMonitor = std::make_shared<AndMonitor>(*this);
     std::vector<std::shared_ptr<Hydra2Monitor>> clonedSubMonitors;
     clonedSubMonitors.reserve(subMonitors.size());
     for (const auto &mon : subMonitors)
-        clonedSubMonitors.push_back(mon->clone());
+        clonedSubMonitors.push_back(mon->clone(domValNames));
     clonedMonitor->subMonitors = clonedSubMonitors;
+
+    allCopies.emplace_back(domValNames, clonedMonitor);
     return clonedMonitor;
 }
 
@@ -69,8 +76,8 @@ double AndMonitor::computeSatisfactionProbability(const std::vector<std::shared_
 }
 
 void AndMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
-    for (const auto &sub : subMonitors)
-        sub->addDomainValues(vals);
+    for (size_t idx{0}; idx < subMonitors.size(); ++idx)
+        subMonitors.at(idx)->addDomainValues(vals);
 }
 
 void AndMonitor::setStepNumber(size_t stepNumber, size_t parentId) {

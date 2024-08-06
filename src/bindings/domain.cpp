@@ -262,6 +262,15 @@ void init_domain(nb::module_ &m) {
         return std::string{str.c_str()};
     };
 
+    nb::class_<ConstantValue>(m, "ConstantValue")
+        .def("__init__",
+             [idFunction = objStrIdFunction](ConstantValue *v, std::string name, nb::any &value) {
+                 new (v) ConstantValue(std::move(name), dynamic_cast<const nb::object &>(value), idFunction);
+             })
+        .def_prop_ro("name", &ConstantValue::getName);
+
+    nb::class_<ConstantCollection>(m, "ConstantCollection").def(nb::init<std::vector<ConstantValue>>());
+
     nb::class_<DomainValue>(m, "DomainValue")
         .def("__init__",
              [idFunction = objStrIdFunction](DomainValue *v, std::string name, const nb::any &value) {

@@ -25,7 +25,8 @@ void init_monitors(nb::module_ &m) {
     nb::class_<MonitorInterface>(m, "MonitorInterface")
         .def("__str__", &MonitorInterface::to_string)
         .def("evaluate", &MonitorInterface::evaluate, nb::arg("trace"),
-             nb::arg("domains") = std::vector<std::shared_ptr<DomainStorage>>{});
+             nb::arg("domains") = std::vector<std::shared_ptr<DomainStorage>>{},
+             nb::arg("formulaIDs") = std::vector<std::string>{});
 
     nb::class_<Hydra, MonitorInterface>(m, "Hydra").def(nb::init<std::vector<Formula>>(), nb::arg("formulas"));
 

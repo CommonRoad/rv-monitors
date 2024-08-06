@@ -14,14 +14,7 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param formula Formula.
      * @param trace Trace.
      */
-    void consumeEvent(Formula &formula, Trace &trace, size_t index);
-
-    /**
-     * Logic for traversing entire expression tree.
-     * @param expr Expression.
-     * @param event Event.
-     */
-    // void visitExpression(Expression &expr, Trace &trace, size_t index);
+    void consumeEvent(Formula &formula, const std::shared_ptr<Trace> &trace, size_t index);
 
     /**
      * Converts op to a shared_ptr.
@@ -29,7 +22,7 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return opr as a shared_ptr.
      */
-    std::shared_ptr<Expression> visitAtomic(Atomic &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitAtomic(Atomic &opr, const std::shared_ptr<Trace> &trace, size_t index) override;
 
     /**
      * Converts op to a shared_ptr.
@@ -37,7 +30,8 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return opr as a shared_ptr.
      */
-    std::shared_ptr<Expression> visitConstant(Constant &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitConstant(Constant &opr, const std::shared_ptr<Trace> &trace,
+                                              size_t index) override;
 
     /**
      * Converts op to a shared_ptr.
@@ -45,7 +39,7 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return opr as a shared_ptr.
      */
-    std::shared_ptr<Expression> visitAnd(And &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitAnd(And &opr, const std::shared_ptr<Trace> &trace, size_t index) override;
 
     /**
      * Converts op to a shared_ptr.
@@ -53,7 +47,7 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return opr as a shared_ptr.
      */
-    std::shared_ptr<Expression> visitOr(Or &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitOr(Or &opr, const std::shared_ptr<Trace> &trace, size_t index) override;
 
     /**
      * Converts op to a shared_ptr.
@@ -61,7 +55,7 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return opr as a shared_ptr.
      */
-    std::shared_ptr<Expression> visitXor(Xor &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitXor(Xor &opr, const std::shared_ptr<Trace> &trace, size_t index) override;
 
     /**
      * Converts op to a shared_ptr.
@@ -69,7 +63,8 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return opr as a shared_ptr.
      */
-    std::shared_ptr<Expression> visitImplication(Implication &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitImplication(Implication &opr, const std::shared_ptr<Trace> &trace,
+                                                 size_t index) override;
 
     /**
      * Converts op to a shared_ptr.
@@ -77,7 +72,8 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return opr as a shared_ptr.
      */
-    std::shared_ptr<Expression> visitEquivalence(Equivalence &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitEquivalence(Equivalence &opr, const std::shared_ptr<Trace> &trace,
+                                                 size_t index) override;
 
     /**
      * Converts op to a shared_ptr.
@@ -85,7 +81,7 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return opr as a shared_ptr.
      */
-    std::shared_ptr<Expression> visitNot(Not &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitNot(Not &opr, const std::shared_ptr<Trace> &trace, size_t index) override;
 
     /**
      * Converts op to a shared_ptr.
@@ -93,7 +89,7 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return opr as a shared_ptr.
      */
-    std::shared_ptr<Expression> visitFuture(Future &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitFuture(Future &opr, const std::shared_ptr<Trace> &trace, size_t index) override;
 
     /**
      * Converts op to a shared_ptr.
@@ -101,7 +97,8 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return opr as a shared_ptr.
      */
-    std::shared_ptr<Expression> visitGlobally(Globally &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitGlobally(Globally &opr, const std::shared_ptr<Trace> &trace,
+                                              size_t index) override;
 
     /**
      * Converts op to a shared_ptr.
@@ -109,7 +106,8 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return opr as a shared_ptr.
      */
-    std::shared_ptr<Expression> visitNextStrong(NextStrong &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitNextStrong(NextStrong &opr, const std::shared_ptr<Trace> &trace,
+                                                size_t index) override;
 
     /**
      * Converts op to a shared_ptr.
@@ -117,7 +115,8 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return opr as a shared_ptr.
      */
-    std::shared_ptr<Expression> visitNextWeak(NextWeak &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitNextWeak(NextWeak &opr, const std::shared_ptr<Trace> &trace,
+                                              size_t index) override;
 
     /**
      * Converts op to a shared_ptr.
@@ -125,7 +124,7 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return opr as a shared_ptr.
      */
-    std::shared_ptr<Expression> visitOnce(Once &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitOnce(Once &opr, const std::shared_ptr<Trace> &trace, size_t index) override;
 
     /**
      * Converts op to a shared_ptr.
@@ -133,7 +132,8 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return opr as a shared_ptr.
      */
-    std::shared_ptr<Expression> visitPreviously(Previously &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitPreviously(Previously &opr, const std::shared_ptr<Trace> &trace,
+                                                size_t index) override;
 
     /**
      * Converts op to a shared_ptr.
@@ -141,7 +141,7 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return opr as a shared_ptr.
      */
-    std::shared_ptr<Expression> visitRelease(Release &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitRelease(Release &opr, const std::shared_ptr<Trace> &trace, size_t index) override;
 
     /**
      * Converts op to a shared_ptr.
@@ -149,7 +149,7 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return opr as a shared_ptr.
      */
-    std::shared_ptr<Expression> visitUntil(Until &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitUntil(Until &opr, const std::shared_ptr<Trace> &trace, size_t index) override;
 
     /**
      * Converts op to a shared_ptr.
@@ -157,7 +157,7 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return opr as a shared_ptr.
      */
-    std::shared_ptr<Expression> visitSince(Since &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitSince(Since &opr, const std::shared_ptr<Trace> &trace, size_t index) override;
 
     /**
      * Converts op to a shared_ptr.
@@ -165,7 +165,8 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return opr as a shared_ptr.
      */
-    std::shared_ptr<Expression> visitHistorically(Historically &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitHistorically(Historically &opr, const std::shared_ptr<Trace> &trace,
+                                                  size_t index) override;
 
     /**
      * Applies event to its child and applies rewriting rules from event consuming algorithm.
@@ -173,20 +174,27 @@ class EventConsumingVisitor : public ExpressionVisitor {
      * @param event Event.
      * @return Expression transformed according to rewriting rules.
      */
-    std::shared_ptr<Expression> visitEventOperator(EventOperator &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitEventOperator(EventOperator &opr, const std::shared_ptr<Trace> &trace,
+                                                   size_t index) override;
 
-    std::shared_ptr<Expression> visitResolvingOperator(ResolvingOperator &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitResolvingOperator(ResolvingOperator &opr, const std::shared_ptr<Trace> &trace,
+                                                       size_t index) override;
 
-    std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitDerivingOperator(DerivingOperator &opr, const std::shared_ptr<Trace> &trace,
+                                                      size_t index) override;
 
-    std::shared_ptr<Expression> visitPredicate(Predicate &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitPredicate(Predicate &opr, const std::shared_ptr<Trace> &trace,
+                                               size_t index) override;
 
-    std::shared_ptr<Expression> visitUniversalQuantifier(UniversalQuantifier &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitUniversalQuantifier(UniversalQuantifier &opr, const std::shared_ptr<Trace> &trace,
+                                                         size_t index) override;
 
-    std::shared_ptr<Expression> visitExistentialQuantifier(ExistentialQuantifier &opr, Trace &trace,
-                                                           size_t index) override;
+    std::shared_ptr<Expression> visitExistentialQuantifier(ExistentialQuantifier &opr,
+                                                           const std::shared_ptr<Trace> &trace, size_t index) override;
 
-    std::shared_ptr<Expression> visitQuoteQuantifier(QuoteQuantifier &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitQuoteQuantifier(QuoteQuantifier &opr, const std::shared_ptr<Trace> &trace,
+                                                     size_t index) override;
 
-    std::shared_ptr<Expression> visitCountingQuantifier(CountingQuantifier &opr, Trace &trace, size_t index) override;
+    std::shared_ptr<Expression> visitCountingQuantifier(CountingQuantifier &opr, const std::shared_ptr<Trace> &trace,
+                                                        size_t index) override;
 };

@@ -36,9 +36,8 @@ class AndMonitor : public Hydra2Monitor {
      * @param trace Trace.
      * @param domains List of domains.
      */
-    void setTrace(const Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
-
-    //  void updateTrace(const std::vector<DomainValue> &ieve) override;
+    void setTrace(const std::shared_ptr<Trace> &trace,
+                  const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 
     /**
      * Resets monitor variables to default values.
@@ -54,9 +53,11 @@ class AndMonitor : public Hydra2Monitor {
 
     /**
      * Clones this monitor.
+     *
+     * @param domValNames List of domain value names.
      * @return New shared_ptr of this monitor.
      */
-    std::shared_ptr<Hydra2Monitor> clone() override;
+    std::shared_ptr<Hydra2Monitor> clone(const std::vector<std::string> &domValNames) override;
 
     /**
      * Creates string representation of monitor.

@@ -162,7 +162,7 @@ TEST(TestParser, ex_log_parse_hydra_syntax) {
                          "@4 p0 p1 p2\n"
                          "@4 p1 p2\n"
                          "@5 p0 p1 p2\n";
-    Trace trace = Parser::parse_log(ex_log);
+    const std::shared_ptr<Trace> trace = Parser::parse_log(ex_log);
 
     // NOTE: This test depends on unordered_map order (fragile)
     // Changed output order does not indicate a defect
@@ -172,7 +172,7 @@ TEST(TestParser, ex_log_parse_hydra_syntax) {
                              "{p2: true; p1: true; p0: true; 4}\n"
                              "{p2: true; p1: true; p0: false; 4}\n"
                              "{p2: true; p1: true; p0: true; 5}\n";
-    EXPECT_EQ(trace.to_string(), log_parsed);
+    EXPECT_EQ(trace->to_string(), log_parsed);
 }
 
 TEST(TestParser, ex_eval_rvm_syntax_static_log) {
@@ -183,7 +183,7 @@ TEST(TestParser, ex_eval_rvm_syntax_static_log) {
         {"q", "r"}, {"p", "r"}, {}, {"p", "q", "r"}, {"q", "r"}, {"p", "q", "r"},
     };
     const std::vector<size_t> time_steps = {0, 0, 1, 4, 4, 5};
-    Trace trace = Utils::createTrace(atomics, log_entries, time_steps);
+    const std::shared_ptr<Trace> trace = Utils::createTrace(atomics, log_entries, time_steps);
 
     Formula formula = Parser::parse(ex_mtl, "Ex1");
     std::string ex_mtl_parsed = "G(((q U[2, 2] r) | p))";
@@ -206,7 +206,7 @@ TEST(TestParser, ex_eval_rvm_syntax) {
                          "@4 q r\n"
                          "@5 p q r\n";
 
-    Trace trace = Parser::parse_log(ex_log);
+    const std::shared_ptr<Trace> trace = Parser::parse_log(ex_log);
 
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{0, true},  Verdict{1, false},
                                      Verdict{4, true},  Verdict{4, false}, Verdict{5, true}};
@@ -223,7 +223,7 @@ TEST(TestParser, ex_eval_hydra_syntax) {
                          "@4 p0 p1 p2\n"
                          "@4 p1 p2\n"
                          "@5 p0 p1 p2\n";
-    Trace trace = Parser::parse_log(ex_log);
+    const std::shared_ptr<Trace> trace = Parser::parse_log(ex_log);
 
     std::vector<Verdict> expSolution{Verdict{0, false}, Verdict{0, true},  Verdict{1, false},
                                      Verdict{4, true},  Verdict{4, false}, Verdict{5, true}};

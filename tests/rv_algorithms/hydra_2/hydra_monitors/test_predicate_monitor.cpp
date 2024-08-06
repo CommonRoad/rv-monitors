@@ -19,14 +19,14 @@ bool a(size_t dummy) {
 
 std::tuple<size_t> aArgs(std::vector<DomainValue> values) { return {std::any_cast<size_t>(values.at(0).getValue())}; }
 
-Trace createTraceWithVariable() {
+const std::shared_ptr<Trace> createTraceWithVariable() {
     std::vector<std::shared_ptr<IFunction<bool>>> test{
         {std::make_shared<Function<bool, size_t>>(Function<bool, size_t>("a", {"size_t"}, a, aArgs))}};
     std::vector<Event> eventList;
     for (size_t timeStepIdx{0}; timeStepIdx < 4; ++timeStepIdx) {
         eventList.emplace_back(timeStepIdx, timeStepIdx == 4 - 1);
     }
-    return Trace(eventList, test);
+    return std::make_shared<Trace>(Trace(eventList, test));
 }
 
 TEST(TestPredicateMonitor, testPredicateEvaluation) {

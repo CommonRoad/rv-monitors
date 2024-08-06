@@ -1,25 +1,20 @@
-//
-// Created by Sebastian Maierhofer and Evald Nexhipi.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
-#include "monitors/rv_algorithms/mtl_event_consuming//mtl_event_consuming.h"
 #include "monitors//rewriting/mtl_rewrite_visitor.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/unary/event_operator.h"
 #include "monitors/expression_tree/unary/temporal/globally.h"
-#include "monitors/rv_algorithms/mtl_event_consuming//mtl_event_consuming_visitor.h"
+#include "monitors/rv_algorithms/mtl_event_consuming/mtl_event_consuming_visitor.h"
 #include <iostream>
 
 MTLEventConsuming::MTLEventConsuming(const std::vector<Formula> &formulas)
     : MonitorInterface(formulas, AlgorithmType::event_consuming_mtl) {}
 
 std::map<std::string, std::vector<Verdict>>
-MTLEventConsuming::evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+MTLEventConsuming::evaluate(const std::shared_ptr<Trace> &trace,
+                            const std::vector<std::shared_ptr<DomainStorage>> &domains,
+                            const std::vector<std::string> &formulaIDs) {
     std::map<std::string, std::vector<Verdict>> result;
     // Empty trace
-    if (trace.getTrace().empty()) {
+    if (trace->getTrace().empty()) {
         std::cout << "Hydra2::evaluate | Trace is empty\n";
         result[formulas.at(0).getId()] = {};
         return result;
@@ -39,7 +34,7 @@ MTLEventConsuming::evaluate(Trace &trace, const std::vector<std::shared_ptr<Doma
     }
     rwv.rewrite(formulaCopy);
 
-    for (size_t i{0}; i < trace.getLength(); ++i) {
+    for (size_t i{0}; i < trace->getLength(); ++i) {
         ecv.consumeEvent(formulaCopy, trace, i);
         rwv.rewrite(formulaCopy);
         if (formulaCopy.to_string() == "false") {

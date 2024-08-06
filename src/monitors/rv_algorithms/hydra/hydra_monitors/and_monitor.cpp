@@ -13,7 +13,7 @@ Verdict AndMonitorHydra::concreteStep() {
     return verdict;
 }
 
-void AndMonitorHydra::setTrace(const Trace &tra) {
+void AndMonitorHydra::setTrace(const std::shared_ptr<Trace> &tra) {
     for (const auto &mon : subMonitors)
         mon->setTrace(tra);
 }

@@ -74,11 +74,13 @@ class Hydra2 : public MonitorInterface {
      *
      * @param trace Trace which should be evaluated.
      * @param domains List of domains.
+     * @param formulaIDs List of formula IDs which should be evaluated.
      * @return List of verdicts for each time step of the trace. If the length of the vector is 1,
      * the runtime verification algorithm can only provide a global verdict for the complete trace.
      */
     std::map<std::string, std::vector<Verdict>>
-    evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
+    evaluate(const std::shared_ptr<Trace> &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains = {},
+             const std::vector<std::string> &formulaIDs = {}) override;
 
     /**
      * Creates string representation for corresponding monitors.
@@ -113,6 +115,7 @@ class Hydra2 : public MonitorInterface {
     std::vector<std::shared_ptr<Hydra2Monitor>>
         monitors; //**< List of monitors corresponding to the formulas which should be evaluated. */
     mutable std::map<std::string, std::array<double, 2>> predicateCosts; //**< Predicate costs. */
+    size_t traceLength{0};                                               //**< Current trace length. */
 
     /**
      * Creates monitors for specified formulas based on provided configuration information.
@@ -136,21 +139,24 @@ class Hydra2 : public MonitorInterface {
      *
      * @param tra Trace object.
      */
-    void setTraceMonitors(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains);
+    void setTraceMonitors(const std::shared_ptr<Trace> &tra,
+                          const std::vector<std::shared_ptr<DomainStorage>> &domains);
 
     /**
      * Evaluate complete trace.
      *
-     * @param trace Trace to be evaluated.
      * @param result Data structure for storing evaluation result.
+     * @param formulaIDs List of formula IDs which should be evaluated
      */
-    void evalCompleteTrace(Trace &trace, std::map<std::string, std::vector<Verdict>> &result);
+    void evalCompleteTrace(std::map<std::string, std::vector<Verdict>> &result,
+                           const std::vector<std::string> &formulaIDs);
 
     /**
      * Evaluates trace until verdict can be provided.
      *
-     * @param trace Trace to be evaluated.
      * @param result Data structure for storing evaluation result.
+     * @param formulaIDs List of formula IDs which should be evaluated
      */
-    void evalEarlyTermination(Trace &trace, std::map<std::string, std::vector<Verdict>> &result);
+    void evalEarlyTermination(std::map<std::string, std::vector<Verdict>> &result,
+                              const std::vector<std::string> &formulaIDs);
 };

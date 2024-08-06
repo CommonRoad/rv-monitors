@@ -11,16 +11,8 @@ class OriginalHydraEvaluationTest(unittest.TestCase):
     def test_eval(self):
         run_experiment("test_experiment")
 
-        self.assertTrue(
-            (
-                Path(__file__).parent.parent / "evaluation/figs/space_complexity.png"
-            ).exists()
-        )
-        self.assertTrue(
-            (
-                Path(__file__).parent.parent / "evaluation/figs/time_complexity.png"
-            ).exists()
-        )
+        self.assertTrue((Path(__file__).parent.parent / "evaluation/figs/space_complexity.png").exists())
+        self.assertTrue((Path(__file__).parent.parent / "evaluation/figs/time_complexity.png").exists())
 
 
 if __name__ == "__main__":

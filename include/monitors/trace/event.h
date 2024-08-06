@@ -77,10 +77,15 @@ class Event {
 
     /**
      * Setter for terminal attribute.
-     * @param terminal
+     * @param terminal Boolean indicating whether event should be terminal or not.
      */
     void setTerminal(bool terminal);
 
+    /**
+     * Creates string representation of event.
+     *
+     * @return String representation.
+     */
     [[nodiscard]] std::string to_string() const;
 
     /**
@@ -89,7 +94,27 @@ class Event {
      */
     [[nodiscard]] size_t getTimeStep() const;
 
+    /**
+     * Getter for verdict.
+     *
+     * @param name Name of verdict of interest.
+     * @return Verdict.
+     */
     Verdict getVerdict(const std::string &name);
 
+    /**
+     * Add event value function to event map.
+     *
+     * @param name Name of event value.
+     * @param func Function representing event (can also be atomic prop.).
+     */
     void addEventValueFunction(const std::string &name, EventValue<bool> func);
+
+    /**
+     * Checks whether event has verdict of provided name.
+     *
+     * @param name Name of predicate/atomic proposition.
+     * @return Boolean indicating whether name is stored in event map.
+     */
+    bool hasVerdict(const std::string &name) { return eventMap.find(name) != eventMap.end(); }
 };

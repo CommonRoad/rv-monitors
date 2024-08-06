@@ -42,7 +42,7 @@ class UntilMonitorHydra : public HydraMonitor {
      *
      * @param trace Trace.
      */
-    void setTrace(const Trace &tra) override;
+    void setTrace(const std::shared_ptr<Trace> &tra) override;
 
     /**
      * Resets monitor variables to default values.

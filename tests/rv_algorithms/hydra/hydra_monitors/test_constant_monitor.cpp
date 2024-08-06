@@ -11,7 +11,7 @@
 #include "monitors/utils/utils.h"
 
 TEST(TestConstantMonitorHydra, testSingleConstant) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("true");
     formula.setId("R1");
     auto mon{ConstantMonitorHydra(formula)};
@@ -21,7 +21,7 @@ TEST(TestConstantMonitorHydra, testSingleConstant) {
 }
 
 TEST(TestConstantMonitorHydra, testConstantToString) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("true");
     formula.setId("R1");
     auto mon{ConstantMonitorHydra(formula)};

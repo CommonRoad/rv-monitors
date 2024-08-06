@@ -117,4 +117,3 @@ if [ "$exit_flag" = true ]; then
 else
     echo "clang-tidy check passed"
 fi
-

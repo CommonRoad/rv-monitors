@@ -27,7 +27,8 @@ std::string CountingQuantifier::to_string() const {
 
 std::shared_ptr<Expression> CountingQuantifier::clone() { return std::make_shared<CountingQuantifier>(*this); }
 
-std::shared_ptr<Expression> CountingQuantifier::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
+std::shared_ptr<Expression> CountingQuantifier::accept(ExpressionVisitor &visitor, const std::shared_ptr<Trace> &trace,
+                                                       size_t index) {
     return visitor.visitCountingQuantifier(*this, trace, index);
 }
 

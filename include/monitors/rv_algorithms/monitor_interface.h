@@ -48,12 +48,14 @@ class MonitorInterface {
      *
      * @param trace Trace which should be evaluated.
      * @param domains Domains for higher-order-based formulas.
+     * @param formulaIDs List of formula IDs which should be evaluated.
      * @return Map of verdicts for each specification/formula at each time step of the trace.
      * If the length of the vector is 1, the runtime verification algorithm can only provide a
      * global verdict for the complete trace.
      */
     virtual std::map<std::string, std::vector<Verdict>>
-    evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) = 0;
+    evaluate(const std::shared_ptr<Trace> &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains = {},
+             const std::vector<std::string> &formulaIDs = {}) = 0;
 
     /**
      * Prints a representation of the monitor.

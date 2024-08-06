@@ -39,7 +39,8 @@ class Predicate : public Expression {
      *
      * @return Expression of visit predicate.
      */
-    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override;
+    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, const std::shared_ptr<Trace> &trace,
+                                                     size_t index) override;
 
     /**
      * Accept function for visitor pattern for Hydra2 monitor.

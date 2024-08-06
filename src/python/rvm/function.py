@@ -11,9 +11,7 @@ from ._rvm._function import (
 )
 
 
-def Function(
-    function: Callable[..., bool], name: Optional[str] = None, costs: float = 0.0
-) -> Callable[..., bool]:
+def Function(function: Callable[..., bool], name: Optional[str] = None, costs: float = 0.0) -> Callable[..., bool]:
     if name is None:
         name = getattr(function, "__name__", None)
         if name is None:

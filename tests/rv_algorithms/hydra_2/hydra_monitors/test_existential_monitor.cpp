@@ -6,7 +6,7 @@
 #include "test_or_monitor.h"
 
 TEST(TestExistentialMonitor, testExistentialMonitorStandard) {
-    Trace trace = hydraTestUtils::createTraceWithVariable(
+    const std::shared_ptr<Trace> trace = hydraTestUtils::createTraceWithVariable(
         4, {std::make_shared<Function<bool, size_t, size_t>>(
                Function<bool, size_t, size_t>("equal_to_time_step", {"timeStep", "value"},
                                               hydraTestUtils::equal_to_time_step, hydraTestUtils::twoSizeTArgs))});

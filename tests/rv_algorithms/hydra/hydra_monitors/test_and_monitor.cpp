@@ -13,7 +13,7 @@
 #include "test_or_monitor.h"
 
 TEST(TestAndMonitorHydra, testSingleAndMonitorFalseEvaluation) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("false & true");
     Formula formulaFalse = Parser::parse("false");
     Formula formulaTrue = Parser::parse("true");
@@ -27,7 +27,7 @@ TEST(TestAndMonitorHydra, testSingleAndMonitorFalseEvaluation) {
 }
 
 TEST(TestAndMonitorHydra, testSingleAndMonitorTrueEvaluation) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("true & true");
     Formula formulaTrue = Parser::parse("true");
     formula.setId("R1");
@@ -40,7 +40,7 @@ TEST(TestAndMonitorHydra, testSingleAndMonitorTrueEvaluation) {
 }
 
 TEST(TestAndMonitorHydra, testToString) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("false & true");
     Formula formulaFalse = Parser::parse("false");
     Formula formulaTrue = Parser::parse("true");
@@ -52,7 +52,7 @@ TEST(TestAndMonitorHydra, testToString) {
 }
 
 TEST(TestAndMonitorHydra, testReset) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("false & true");
     Formula formulaFalse = Parser::parse("false");
     Formula formulaTrue = Parser::parse("true");

@@ -39,9 +39,9 @@ template <typename T> bool isInInterval(const T &value, const T &low, const T &h
  * @param timeSteps Time steps for which predicates should be evaluated.
  * @return Trace.
  */
-[[nodiscard]] Trace createTrace(const std::set<std::string> &atomics,
-                                const std::vector<std::vector<std::string>> &trueAtomics,
-                                const std::vector<size_t> &timeSteps = std::vector<size_t>{});
+[[nodiscard]] std::shared_ptr<Trace> createTrace(const std::set<std::string> &atomics,
+                                                 const std::vector<std::vector<std::string>> &trueAtomics,
+                                                 const std::vector<size_t> &timeSteps = std::vector<size_t>{});
 
 /**
  * Creates a Trace.
@@ -51,9 +51,9 @@ template <typename T> bool isInInterval(const T &value, const T &low, const T &h
  * @param formula Formula for which trace is created.
  * @return Trace.
  */
-[[nodiscard]] Trace createTrace(const std::vector<std::vector<std::string>> &trueAtomics,
-                                const std::vector<size_t> &timeSteps = std::vector<size_t>{},
-                                const std::shared_ptr<Formula> &formula = {});
+[[nodiscard]] std::shared_ptr<Trace> createTrace(const std::vector<std::vector<std::string>> &trueAtomics,
+                                                 const std::vector<size_t> &timeSteps = std::vector<size_t>{},
+                                                 const std::shared_ptr<Formula> &formula = {});
 
 /**
  * Creates a Trace with lazy evaluation of the predicates.
@@ -61,8 +61,9 @@ template <typename T> bool isInInterval(const T &value, const T &low, const T &h
  * @param timeSteps time steps for which predicates should be evaluated
  * @return Trace.
  */
-[[nodiscard]] Trace createLazyTrace(const std::map<std::string, std::function<bool(size_t)>> &atomicsAndFunctions,
-                                    const std::vector<size_t> &timeSteps);
+[[nodiscard]] std::shared_ptr<Trace>
+createLazyTrace(const std::map<std::string, std::function<bool(size_t)>> &atomicsAndFunctions,
+                const std::vector<size_t> &timeSteps);
 
 /**
  * Creates a Trace with lazy evaluation of the predicates.
@@ -70,8 +71,9 @@ template <typename T> bool isInInterval(const T &value, const T &low, const T &h
  * @param timeSteps time steps for which predicates should be evaluated
  * @return Trace.
  */
-[[nodiscard]] Trace createLazyTrace(std::map<std::string, std::function<bool(size_t)>> &&atomicsAndFunctions,
-                                    const std::vector<size_t> &timeSteps);
+[[nodiscard]] std::shared_ptr<Trace>
+createLazyTrace(std::map<std::string, std::function<bool(size_t)>> &&atomicsAndFunctions,
+                const std::vector<size_t> &timeSteps);
 
 /**
  * Creates a string set of all atomics in a formula. Wrapper for getAtomics().
@@ -207,8 +209,8 @@ getTemporalOperatorSubformulas(const std::shared_ptr<Expression> &expr,
  * @param terminal Whether or not the event resulting should be marked as terminal.
  * @return Trace containing only the event defined by the input
  */
-[[nodiscard]] Trace boolVectorToTrace(const std::set<std::string> &atomics, const std::vector<bool> &vector,
-                                      bool terminal);
+[[nodiscard]] std::shared_ptr<Trace> boolVectorToTrace(const std::set<std::string> &atomics,
+                                                       const std::vector<bool> &vector, bool terminal);
 
 /**
  * Creates event mapping from predicates (=names) to values (=bools).

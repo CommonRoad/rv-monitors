@@ -225,7 +225,7 @@ include(./rvmonitors_parser.cmake)
 add_library(rvmonitors_core)
 target_sources(rvmonitors_core PRIVATE ${RV_MONITOR_SRC_FILES})
 
-target_link_libraries(rvmonitors_core PUBLIC rvmonitors_parser)
+target_link_libraries(rvmonitors_core PUBLIC rvmonitors_parser spdlog::spdlog)
 
 
 list(TRANSFORM RV_MONITOR_HDR_FILES PREPEND ${PROJECT_SOURCE_DIR}/include/)

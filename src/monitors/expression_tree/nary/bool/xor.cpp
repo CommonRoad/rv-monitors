@@ -1,6 +1,6 @@
 #include "monitors/expression_tree/nary/bool/xor.h"
 
-std::shared_ptr<Expression> Xor::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
+std::shared_ptr<Expression> Xor::accept(ExpressionVisitor &visitor, const std::shared_ptr<Trace> &trace, size_t index) {
     return visitor.visitXor(*this, trace, index);
 }
 

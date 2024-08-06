@@ -2,7 +2,8 @@
 
 std::shared_ptr<Expression> Future::clone() { return std::make_shared<Future>(*this); }
 
-std::shared_ptr<Expression> Future::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
+std::shared_ptr<Expression> Future::accept(ExpressionVisitor &visitor, const std::shared_ptr<Trace> &trace,
+                                           size_t index) {
     return visitor.visitFuture(*this, trace, index);
 }
 

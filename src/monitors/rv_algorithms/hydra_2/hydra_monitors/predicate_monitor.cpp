@@ -2,17 +2,44 @@
 #include "monitors/expression_tree/atomic/predicate.h"
 #include <cassert>
 #include <iostream>
+#include <spdlog/spdlog.h>
 
 Verdict PredicateMonitor::concreteStep(size_t parentId, size_t stepNumber) {
-    if (stepNumber < trace.getLength()) {
-        updateTrace(stepNumber);
-        return trace.verdictAtTimeStep(stepNumber, name);
+    spdlog::debug("PredicateMonitor::concreteStep: " + name + " - " + std::to_string(parentId) + " - " +
+                  std::to_string(stepNumber));
+    if (stepNumber < trace->getLength()) {
+        trace->updateEvent(stepNumber, name, orderedValues);
+        auto verdict{trace->verdictAtTimeStep(stepNumber, name, domainName)};
+        orderedValues.erase(orderedValues.begin());
+        return verdict;
     } else
         return {false};
 }
 
-void PredicateMonitor::updateTrace(size_t stepNumber) {
-    std::vector<DomainValue> orderedValues;
+std::shared_ptr<Hydra2Monitor> PredicateMonitor::clone(const std::vector<std::string> &domValNames) {
+    auto tmpCopy{Hydra2Monitor::clone(domValNames)};
+    if (tmpCopy != nullptr)
+        return tmpCopy;
+    auto clonedMonitor{std::make_shared<PredicateMonitor>(*this)};
+    clonedMonitor->allCopies.clear();
+    for (const auto &val : domValNames)
+        clonedMonitor->subID += ("_" + val);
+    allCopies.emplace_back(domValNames, clonedMonitor);
+    return clonedMonitor;
+}
+
+void PredicateMonitor::setTrace(const std::shared_ptr<Trace> &tra,
+                                const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+    trace = tra;
+    for (const auto &con : std::dynamic_pointer_cast<Predicate>(this->formula.getExpr())->getConstParameters())
+        constArguments.push_back(tra->getConstantCollection().getConstant(con));
+}
+
+std::string PredicateMonitor::to_string() { return formula.to_string(); }
+
+void PredicateMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
+    domainValueArguments = vals;
+    orderedValues.clear();
     for (const auto &arg : relevantArguments) {
         for (const auto &val : domainValueArguments)
             if (arg == val.getVariable()) {
@@ -20,34 +47,29 @@ void PredicateMonitor::updateTrace(size_t stepNumber) {
                 break;
             }
         for (const auto &val : constArguments)
-            if (arg == val) {
-                orderedValues.emplace_back(val, val, true,
-                                           [](std::any val) { return std::any_cast<const char *>(val); });
+            if (arg == val.getName()) {
+                orderedValues.emplace_back(val.getName(), val.getValue(), true, val.getIdFunction());
                 break;
             }
     }
     assert(orderedValues.size() == (relevantArguments.size()));
-    trace.updateEvent(stepNumber, name, orderedValues);
+    domainName = name.substr(0, name.find('(')) + "(";
+    for (const auto &val : orderedValues)
+        domainName += (val.getUniqueID() + ", ");
+    domainName.pop_back();
+    domainName.pop_back();
+    domainName += ")";
 }
-
-std::shared_ptr<Hydra2Monitor> PredicateMonitor::clone() { return std::make_shared<PredicateMonitor>(*this); }
-
-void PredicateMonitor::setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
-    trace = tra;
-}
-
-std::string PredicateMonitor::to_string() { return formula.to_string(); }
-
-void PredicateMonitor::addDomainValues(const std::vector<DomainValue> &vals) { domainValueArguments = vals; }
 
 PredicateMonitor::PredicateMonitor(Formula formula, size_t monitorId, bool connectedEval, double evalCost,
                                    double satisfactionProbability)
     : Hydra2Monitor(std::move(formula), monitorId, connectedEval, evalCost, satisfactionProbability),
       name(std::dynamic_pointer_cast<Predicate>(this->formula.getExpr())->to_string()),
-      relevantArguments(std::dynamic_pointer_cast<Predicate>(this->formula.getExpr())->getParameters()),
-      constArguments(std::dynamic_pointer_cast<Predicate>(this->formula.getExpr())->getConstParameters()) {}
+      relevantArguments(std::dynamic_pointer_cast<Predicate>(this->formula.getExpr())->getParameters()) {}
 
 void PredicateMonitor::reset() {
     Hydra2Monitor::reset();
     domainValueArguments.clear();
+    orderedValues.clear();
+    constArguments.clear();
 }

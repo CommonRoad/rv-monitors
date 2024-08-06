@@ -70,14 +70,6 @@ class Hydra2Monitor {
     bool traceIdxUnique(size_t idx);
 
     /**
-     * Decrements trace indices for all parent monitors except for the provided ID. Applied when first element of
-     * verdictHistory is updated.
-     *
-     * @param parentID Parent monitor ID where index should not be decremented.
-     */
-    void decrementTraceIdx(size_t parentID);
-
-    /**
      * Executes monitor until desired step number is reached.
      *
      * @param parentId Id of parent monitor.
@@ -129,7 +121,8 @@ class Hydra2Monitor {
      * @param tra Trace object.
      * @param domains List of relevant domains.
      */
-    virtual void setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) = 0;
+    virtual void setTrace(const std::shared_ptr<Trace> &tra,
+                          const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) = 0;
 
     /**
      * Resets monitor variables to default values.
@@ -180,9 +173,10 @@ class Hydra2Monitor {
     /**
      * Clones this monitor.
      *
+     * @param domValNames List of domain value names.
      * @return New shared_ptr of this monitor.
      */
-    virtual std::shared_ptr<Hydra2Monitor> clone() = 0;
+    virtual std::shared_ptr<Hydra2Monitor> clone(const std::vector<std::string> &domValNames);
 
     /**
      * Creates string representation of monitor.
@@ -221,13 +215,15 @@ class Hydra2Monitor {
     [[nodiscard]] size_t getMonitorID() const;
 
   protected:
-    Formula formula;                     //**< Monitored formula. */
-    std::string formulaId;               //**< ID of formula */
-    size_t monitorId;                    //**< ID of monitor */
-    std::deque<Verdict> verdictHistory;  //**< History of verdicts belonging to monitor */
-    std::map<size_t, size_t> traceIdx;   //**< Index of current trace element (even) */
+    Formula formula;                          //**< Monitored formula. */
+    std::string formulaId;                    //**< ID of formula */
+    size_t monitorId;                         //**< ID of monitor */
+    std::string subID;                        //**< Sub ID considering domain values */
+    std::map<size_t, Verdict> verdictHistory; //**< History of verdicts belonging to monitor */
+    std::map<size_t, size_t> traceIdx;        //**< Index of current trace element (even) */
     bool connectedEval;                  //**< Boolean indicating whether connected evaluation should be performed */
     double evalCost{0.0};                //**< Evaluation cost of monitor */
     double satisfactionProbability{1.0}; //**< Satisfaction probability of monitor */
-    size_t verdictHistoryPopCounter{0}; //**< Counter storing how often pop operation was applied on verdict history. */
+    std::vector<std::tuple<std::vector<std::string>, std::shared_ptr<Hydra2Monitor>>>
+        allCopies; /** List of created copies/clones of monitor. */
 };

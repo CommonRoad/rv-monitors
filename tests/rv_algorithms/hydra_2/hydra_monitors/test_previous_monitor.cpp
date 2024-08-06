@@ -5,7 +5,8 @@
 #include "test_or_monitor.h"
 
 TEST(TestPreviousMonitor, testPreviousMonitorEvaluationStandard) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}, {"a"}, {"a"}}, std::vector<size_t>{0, 1, 2, 3});
+    const std::shared_ptr<Trace> trace =
+        Utils::createTrace({"a"}, {{"a"}, {}, {"a"}, {"a"}}, std::vector<size_t>{0, 1, 2, 3});
     Formula formula = Parser::parse("P[0, 4](a)");
     Formula formulaA = Parser::parse("a");
     formula.setId("R1");
@@ -23,7 +24,8 @@ TEST(TestPreviousMonitor, testPreviousMonitorEvaluationStandard) {
 }
 
 TEST(TestPreviousMonitor, testPreviousMonitorEvaluationInterval) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}, {"a"}, {"a"}}, std::vector<size_t>{0, 1, 2, 10});
+    const std::shared_ptr<Trace> trace =
+        Utils::createTrace({"a"}, {{"a"}, {}, {"a"}, {"a"}}, std::vector<size_t>{0, 1, 2, 10});
     Formula formula = Parser::parse("P[0, 4](a)");
     Formula formulaA = Parser::parse("a");
     formula.setId("R1");

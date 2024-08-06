@@ -21,7 +21,8 @@ Verdict PreviousMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     } else // behind trace (no more trace element exist)
         return {false};
 }
-void PreviousMonitor::setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+void PreviousMonitor::setTrace(const std::shared_ptr<Trace> &tra,
+                               const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     subMonitor->setTrace(tra, domains);
 }
 
@@ -31,9 +32,13 @@ void PreviousMonitor::reset() {
     currentVerdict = {};
 }
 
-std::shared_ptr<Hydra2Monitor> PreviousMonitor::clone() {
+std::shared_ptr<Hydra2Monitor> PreviousMonitor::clone(const std::vector<std::string> &domValNames) {
+    auto tmpCopy{Hydra2Monitor::clone(domValNames)};
+    if (tmpCopy != nullptr)
+        return tmpCopy;
     auto clonedMonitor = std::make_shared<PreviousMonitor>(*this);
-    clonedMonitor->subMonitor = subMonitor->clone();
+    clonedMonitor->subMonitor = subMonitor->clone(domValNames);
+    allCopies.emplace_back(domValNames, clonedMonitor);
     return clonedMonitor;
 }
 

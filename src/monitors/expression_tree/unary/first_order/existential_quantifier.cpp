@@ -18,7 +18,8 @@ std::string ExistentialQuantifier::to_string() const {
 
 std::shared_ptr<Expression> ExistentialQuantifier::clone() { return std::make_shared<ExistentialQuantifier>(*this); }
 
-std::shared_ptr<Expression> ExistentialQuantifier::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
+std::shared_ptr<Expression> ExistentialQuantifier::accept(ExpressionVisitor &visitor,
+                                                          const std::shared_ptr<Trace> &trace, size_t index) {
     return visitor.visitExistentialQuantifier(*this, trace, index);
 }
 

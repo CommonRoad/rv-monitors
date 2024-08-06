@@ -28,7 +28,7 @@ Verdict PreviousMonitorHydra::concreteStep() {
         return {false};
 }
 
-void PreviousMonitorHydra::setTrace(const Trace &tra) { subMonitor->setTrace(tra); }
+void PreviousMonitorHydra::setTrace(const std::shared_ptr<Trace> &tra) { subMonitor->setTrace(tra); }
 
 void PreviousMonitorHydra::reset() {
     subMonitor->reset();

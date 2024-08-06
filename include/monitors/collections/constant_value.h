@@ -16,7 +16,7 @@ class ConstantValue {
      * @param name Name of constant.
      * @param value Value of constant.
      */
-    ConstantValue(std::string name, std::any value);
+    ConstantValue(std::string name, std::any value, std::function<std::string(std::any)> idFunction);
 
     /**
      * Getter for constant name.
@@ -32,7 +32,15 @@ class ConstantValue {
      */
     [[nodiscard]] std::any getValue() const;
 
+    /**
+     * Function which returns ID of of constant object.
+     *
+     * @return String representing ID.
+     */
+    const std::function<std::string(std::any)> &getIdFunction() const;
+
   private:
-    std::string name; //**< Name of constant. */
-    std::any value;   //**< Value of constant. */
+    mutable std::string name;                                //**< Name of constant. */
+    mutable std::any value;                                  //**< Value of constant. */
+    mutable std::function<std::string(std::any)> idFunction; //**< ID extraction function. */
 };

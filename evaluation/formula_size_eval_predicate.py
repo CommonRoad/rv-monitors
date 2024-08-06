@@ -95,9 +95,7 @@ def create_specs(size: int, num_atomics: int, seed: int) -> List[Tuple[str, str]
     return formulas
 
 
-def evaluate(
-    approach: str, mon: rvm.Hydra2, df: pd.DataFrame, spec_size: int, trace_length: int
-):
+def evaluate(approach: str, mon: rvm.Hydra2, df: pd.DataFrame, spec_size: int, trace_length: int):
     event_list = make_event_list(trace_length)
     tr = rvm.Trace(
         event_list,

@@ -36,7 +36,7 @@ class ConstantMonitorHydra : public HydraMonitor {
      *
      * @param trace Trace.
      */
-    void setTrace(const Trace &trace) override;
+    void setTrace(const std::shared_ptr<Trace> &trace) override;
 
     /**
      * Resets monitor variables to default values.
@@ -51,6 +51,6 @@ class ConstantMonitorHydra : public HydraMonitor {
     std::string to_string() override;
 
   private:
-    size_t traceIdx{0};         //**< Index of current trace element. */
-    std::optional<Trace> trace; //**< Trace which should be monitored. */
+    size_t traceIdx{0};                          //**< Index of current trace element. */
+    std::optional<std::shared_ptr<Trace>> trace; //**< Trace which should be monitored. */
 };
