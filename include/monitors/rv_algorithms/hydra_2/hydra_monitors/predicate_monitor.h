@@ -35,7 +35,8 @@ class PredicateMonitor : public Hydra2Monitor {
      * @param trace Trace.
      * @param domains List of domains.
      */
-    void setTrace(const Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
+    void setTrace(const std::shared_ptr<Trace> &trace,
+                  const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 
     /**
      * Calls sub-monitors to add domain value.
@@ -51,9 +52,11 @@ class PredicateMonitor : public Hydra2Monitor {
 
     /**
      * Clones this monitor.
+     *
+     * @param domValNames List of domain value names.
      * @return New shared_ptr of this monitor.
      */
-    std::shared_ptr<Hydra2Monitor> clone() override;
+    std::shared_ptr<Hydra2Monitor> clone(const std::vector<std::string> &domValNames) override;
 
     /**
      * Creates string representation of monitor.
@@ -63,16 +66,11 @@ class PredicateMonitor : public Hydra2Monitor {
     std::string to_string() override;
 
   private:
-    Trace trace;                                   //**< Trace which should be monitored. */
+    std::shared_ptr<Trace> trace;                  //**< Trace which should be monitored. */
     std::string name;                              //**< Name of predicate. */
     std::vector<std::string> relevantArguments;    //**< All arguments of predicate. */
-    std::vector<std::string> constArguments;       //**< Constant arguments of predicate. */
+    std::vector<ConstantValue> constArguments;     //**< Constant arguments of predicate. */
     std::vector<DomainValue> domainValueArguments; //**< Domain values. */
-
-    /**
-     * Adds predicate functions with domain values to trace.
-     *
-     * @param stepNumber Step number of trace which needs to be updated.
-     */
-    void updateTrace(size_t stepNumber);
+    std::vector<DomainValue> orderedValues;        //**< List of ordered predicate arguments as domain values. */
+    std::string domainName; //**< Extended predicate name considering instantiated domain values. */
 };

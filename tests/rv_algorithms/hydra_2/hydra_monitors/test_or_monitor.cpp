@@ -1,10 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2022 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
-
 #include "test_or_monitor.h"
 #include "monitors/parser/parser.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/constant_monitor.h"
@@ -13,7 +6,7 @@
 #include "monitors/utils/utils.h"
 
 TEST(TestOrMonitor, testSingleOrMonitor) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("false | true");
     Formula formulaFalse = Parser::parse("false");
     Formula formulaTrue = Parser::parse("true");
@@ -31,7 +24,7 @@ TEST(TestOrMonitor, testSingleOrMonitor) {
 }
 
 TEST(TestOrMonitor, testSingleOrMonitorShortCircuiting1) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("false | true");
     Formula formulaFalse = Parser::parse("false");
     Formula formulaTrue = Parser::parse("true");
@@ -49,7 +42,7 @@ TEST(TestOrMonitor, testSingleOrMonitorShortCircuiting1) {
 }
 
 TEST(TestOrMonitor, testSingleOrMonitorShortCircuiting2) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("false | !(false)");
     Formula formulaFalse = Parser::parse("false");
     Formula formulaNegation = Parser::parse("!(false)");
@@ -69,7 +62,7 @@ TEST(TestOrMonitor, testSingleOrMonitorShortCircuiting2) {
 }
 
 TEST(TestOrMonitor, testSingleOrMonitorShortCircuiting3) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("!(false) | false");
     Formula formulaFalse = Parser::parse("false");
     Formula formulaNegation = Parser::parse("!(false)");
@@ -89,7 +82,7 @@ TEST(TestOrMonitor, testSingleOrMonitorShortCircuiting3) {
 }
 
 TEST(TestOrMonitor, testToString) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("false | true");
     Formula formulaFalse = Parser::parse("false");
     Formula formulaTrue = Parser::parse("true");
@@ -103,7 +96,7 @@ TEST(TestOrMonitor, testToString) {
 }
 
 TEST(TestOrMonitor, testReset) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("false | true");
     Formula formulaFalse = Parser::parse("false");
     Formula formulaTrue = Parser::parse("true");

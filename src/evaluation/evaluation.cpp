@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
 
     Formula formula = Parser::parse(formula_buffer.str(), "Ex1");
 
-    Trace trace = Parser::parse_log(log_buffer.str());
+    auto trace = Parser::parse_log(log_buffer.str());
 
     auto monitor{Hydra2({formula})};
     auto solution_map{monitor.evaluate(trace)};

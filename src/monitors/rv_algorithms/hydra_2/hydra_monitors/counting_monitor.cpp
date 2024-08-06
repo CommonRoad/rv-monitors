@@ -55,10 +55,14 @@ Verdict CountingMonitor::quantifierStep(size_t parentId, size_t stepNumber, size
     return verdict;
 }
 
-std::shared_ptr<Hydra2Monitor> CountingMonitor::clone() {
+std::shared_ptr<Hydra2Monitor> CountingMonitor::clone(const std::vector<std::string> &domValNames) {
+    auto tmpCopy{Hydra2Monitor::clone(domValNames)};
+    if (tmpCopy != nullptr)
+        return tmpCopy;
     auto clonedMonitor = std::make_shared<CountingMonitor>(*this);
-    clonedMonitor->subMonitor = subMonitor->clone();
+    clonedMonitor->subMonitor = subMonitor->clone(domValNames);
     clonedMonitor->resetIterators();
+    allCopies.emplace_back(domValNames, clonedMonitor);
     return clonedMonitor;
 }
 

@@ -112,7 +112,8 @@ class QuantifierMonitor : public Hydra2Monitor {
      * @param tra Trace.
      * @param domains List of domains.
      */
-    void setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
+    void setTrace(const std::shared_ptr<Trace> &tra,
+                  const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 
     /**
      * Setter for current variable values from higher quantifier scopes.
@@ -179,7 +180,7 @@ class QuantifierMonitor : public Hydra2Monitor {
     bool shortCircuiting; //**< Boolean indicating whether short-circuiting should be used. */
     std::map<std::string, std::shared_ptr<DomainStorage>>
         variableValues;                                 //**< Mapping of name of quantified variables to domains. */
-    Trace trace;                                        //**< Trace. */
+    std::shared_ptr<Trace> trace;                       //**< Trace. */
     std::vector<std::vector<std::any>::iterator> iters; //**< Iterators forming the current combination. */
     std::vector<DomainValue> domainValues;              //**< Domain values. */
     std::map<size_t, std::vector<std::vector<DomainValue>>> violations; //**< Violating domain values per time step. */

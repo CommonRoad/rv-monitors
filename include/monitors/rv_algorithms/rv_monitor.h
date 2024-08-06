@@ -101,8 +101,9 @@ class RVMonitor {
      * @param domains List of domains.
      * @return Verdict for each time step of trace.
      */
-    std::map<std::string, std::vector<Verdict>> verify(Trace trace,
-                                                       const std::vector<std::shared_ptr<DomainStorage>> &domains = {});
+    std::map<std::string, std::vector<Verdict>> verify(const std::shared_ptr<Trace> &trace,
+                                                       const std::vector<std::shared_ptr<DomainStorage>> &domains = {},
+                                                       const std::vector<std::string> &formulas = {});
 
     /**
      * Getter for execution statistics.

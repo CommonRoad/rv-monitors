@@ -2,7 +2,7 @@
 
 std::shared_ptr<Expression> Or::clone() { return std::make_shared<Or>(*this); }
 
-std::shared_ptr<Expression> Or::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
+std::shared_ptr<Expression> Or::accept(ExpressionVisitor &visitor, const std::shared_ptr<Trace> &trace, size_t index) {
     return visitor.visitOr(*this, trace, index);
 }
 

@@ -2,7 +2,8 @@
 
 std::shared_ptr<Expression> Until::clone() { return std::make_shared<Until>(*this); }
 
-std::shared_ptr<Expression> Until::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
+std::shared_ptr<Expression> Until::accept(ExpressionVisitor &visitor, const std::shared_ptr<Trace> &trace,
+                                          size_t index) {
     return visitor.visitUntil(*this, trace, index);
 }
 

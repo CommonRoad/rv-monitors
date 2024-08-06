@@ -52,7 +52,7 @@ endif()
 # This information is used in the installed config file.
 include(FetchContent)
 
-foreach(fc_target antlr4-runtime)
+foreach(fc_target antlr4-runtime spdlog)
     FetchContent_GetProperties(${fc_target})
 
     message(DEBUG "check ${fc_target} (variable name: ${fc_target}_SOURCE_DIR)")
@@ -105,7 +105,7 @@ if(_enable_package_export)
 endif()
 
 # Required for export()
-foreach(foreign_target antlr4)
+foreach(foreign_target antlr4 spdlog::spdlog )
     get_target_property(aliased_target ${foreign_target} ALIASED_TARGET)
     if(aliased_target)
         set(foreign_target ${aliased_target})

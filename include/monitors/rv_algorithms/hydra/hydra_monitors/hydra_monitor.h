@@ -61,7 +61,7 @@ class HydraMonitor {
      *
      * @param tra Trace object.
      */
-    virtual void setTrace(const Trace &tra) = 0;
+    virtual void setTrace(const std::shared_ptr<Trace> &tra) = 0;
 
     /**
      * Resets monitor variables to default values.

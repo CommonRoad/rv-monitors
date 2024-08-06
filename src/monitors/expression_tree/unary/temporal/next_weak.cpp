@@ -2,7 +2,8 @@
 
 std::shared_ptr<Expression> NextWeak::clone() { return std::make_shared<NextWeak>(*this); }
 
-std::shared_ptr<Expression> NextWeak::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
+std::shared_ptr<Expression> NextWeak::accept(ExpressionVisitor &visitor, const std::shared_ptr<Trace> &trace,
+                                             size_t index) {
     return visitor.visitNextWeak(*this, trace, index);
 }
 

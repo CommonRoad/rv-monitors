@@ -3,7 +3,7 @@
 #include "monitors/rv_algorithms/hydra/hydra_monitors/predicate_monitor.h"
 #include "test_constant_monitor.h"
 
-Trace createTrace() {
+std::shared_ptr<Trace> createTrace() {
     std::vector<Event> eventList;
     const std::map<std::string, std::function<bool(size_t)>> atomicsAndFunctions{{"a(dummy)", a}};
     for (size_t timeStepIdx{0}; timeStepIdx < 4; ++timeStepIdx) {
@@ -15,7 +15,7 @@ Trace createTrace() {
         eventList.emplace_back(event, timeStepIdx, timeStepIdx == 4 - 1);
         event.clear();
     }
-    return Trace(eventList);
+    return std::make_shared<Trace>(Trace(eventList));
 }
 
 TEST(TestPredicateMonitorHydra, testPredicateEvaluation) {

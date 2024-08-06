@@ -20,5 +20,5 @@ class Parser {
      * @param formula Hydra2-style log string to be parsed.
      * @return Trace object.
      */
-    [[nodiscard]] static Trace parse_log(const std::string &trace);
+    [[nodiscard]] static std::shared_ptr<Trace> parse_log(const std::string &trace);
 };

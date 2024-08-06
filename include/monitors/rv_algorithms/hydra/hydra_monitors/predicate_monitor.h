@@ -27,7 +27,7 @@ class PredicateMonitorHydra : public HydraMonitor {
      *
      * @param tra Trace.
      */
-    void setTrace(const Trace &tra) override;
+    void setTrace(const std::shared_ptr<Trace> &tra) override;
 
     /**
      * Resets monitor variables to default values.
@@ -42,6 +42,6 @@ class PredicateMonitorHydra : public HydraMonitor {
     std::string to_string() override;
 
   private:
-    size_t traceIdx{0};         //**< Index of current trace element. */
-    std::optional<Trace> trace; //**< Trace which should be monitored. */
+    size_t traceIdx{0};                          //**< Index of current trace element. */
+    std::optional<std::shared_ptr<Trace>> trace; //**< Trace which should be monitored. */
 };

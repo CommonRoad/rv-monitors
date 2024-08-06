@@ -34,7 +34,7 @@ class AndMonitorHydra : public HydraMonitor {
      *
      * @param trace Trace.
      */
-    void setTrace(const Trace &trace) override;
+    void setTrace(const std::shared_ptr<Trace> &trace) override;
 
     /**
      * Resets monitor variables to default values.

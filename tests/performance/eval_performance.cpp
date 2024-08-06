@@ -73,7 +73,7 @@ bool f(size_t dummy) {
     return uint_dist2(rng) == 1;
 }
 
-Trace createRandomTrace(const std::set<std::string> &atomics, size_t length) {
+std::shared_ptr<Trace> createRandomTrace(const std::set<std::string> &atomics, size_t length) {
     std::vector<Event> eventList;
     size_t timeStepIdx{0};
     rng.seed(seed_val);
@@ -87,10 +87,10 @@ Trace createRandomTrace(const std::set<std::string> &atomics, size_t length) {
         eventList.emplace_back(event, timeStepIdx, timeStepIdx == length - 1);
         event.clear();
     }
-    return Trace(eventList);
+    return std::make_shared<Trace>(Trace(eventList));
 }
 
-Trace createRandomLazyTrace(size_t length) {
+std::shared_ptr<Trace> createRandomLazyTrace(size_t length) {
     std::vector<Event> eventList;
     size_t timeStepIdx{0};
     const std::map<std::string, std::function<bool(size_t)>> atomicsAndFunctions{
@@ -107,10 +107,10 @@ Trace createRandomLazyTrace(size_t length) {
         eventList.emplace_back(event, timeStepIdx, timeStepIdx == length - 1);
         event.clear();
     }
-    return Trace(eventList);
+    return std::make_shared<Trace>(Trace(eventList));
 }
 
-double evalHydra2Combined(Trace &trace, const std::vector<Formula> &formulas) {
+double evalHydra2Combined(const std::shared_ptr<Trace> &trace, const std::vector<Formula> &formulas) {
     auto monitor{Hydra2(formulas)};
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     monitor.evaluate(trace);
@@ -119,7 +119,7 @@ double evalHydra2Combined(Trace &trace, const std::vector<Formula> &formulas) {
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 }
 
-double evalHydra2SingleConnected(Trace &trace, const std::vector<Formula> &formulas) {
+double evalHydra2SingleConnected(const std::shared_ptr<Trace> &trace, const std::vector<Formula> &formulas) {
     std::vector<Hydra2> monitors;
     monitors.reserve(formulas.size());
     for (const auto &form : formulas)
@@ -133,7 +133,7 @@ double evalHydra2SingleConnected(Trace &trace, const std::vector<Formula> &formu
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 }
 
-double evalHydra2Single(Trace &trace, const std::vector<Formula> &formulas) {
+double evalHydra2Single(const std::shared_ptr<Trace> &trace, const std::vector<Formula> &formulas) {
     std::vector<Hydra2> monitors;
     monitors.reserve(formulas.size());
     for (const auto &form : formulas)
@@ -153,7 +153,7 @@ void executeEval(const std::vector<Formula> &formulas1, size_t numExecutions, si
     std::vector<double> avgCompTimeSingle;
 
     for (size_t i{0}; i < numExecutions; ++i) {
-        Trace trace = createRandomLazyTrace(traceLength);
+        std::shared_ptr<Trace> trace = createRandomLazyTrace(traceLength);
         avgCompTimeCombined.push_back(evalHydra2Combined(trace, formulas1));
         avgCompTimeConnected.push_back(evalHydra2SingleConnected(trace, formulas1));
         avgCompTimeSingle.push_back(evalHydra2Single(trace, formulas1));
@@ -181,7 +181,7 @@ void executeEvalAtomic(const std::vector<Formula> &formulas1, size_t numExecutio
     std::vector<double> avgCompTimeSingle;
 
     for (size_t i{0}; i < numExecutions; ++i) {
-        Trace trace = createRandomTrace({"a", "b", "c", "d", "e", "f", "g", "i", "j"}, traceLength);
+        std::shared_ptr<Trace> trace = createRandomTrace({"a", "b", "c", "d", "e", "f", "g", "i", "j"}, traceLength);
         avgCompTimeCombined.push_back(evalHydra2Combined(trace, formulas1));
         avgCompTimeConnected.push_back(evalHydra2SingleConnected(trace, formulas1));
         avgCompTimeSingle.push_back(evalHydra2Single(trace, formulas1));
@@ -203,7 +203,7 @@ void executeEvalAtomic(const std::vector<Formula> &formulas1, size_t numExecutio
     std::cout << '\n';
 }
 
-void executeEvaluate2(const std::vector<Formula> &formulas1, size_t numExecutions, Trace trace) {
+void executeEvaluate2(const std::vector<Formula> &formulas1, size_t numExecutions, const std::shared_ptr<Trace> trace) {
     std::vector<double> avgCompTimeCombined;
     std::vector<double> avgCompTimeConnected;
     std::vector<double> avgCompTimeSingle;
@@ -230,7 +230,7 @@ void executeEvaluate2(const std::vector<Formula> &formulas1, size_t numExecution
     std::cout << '\n';
 }
 
-double evaluateSingleHydra2(const Formula &formula, Trace &trace) {
+double evaluateSingleHydra2(const Formula &formula, const std::shared_ptr<Trace> &trace) {
     auto monitor{Hydra2({formula})};
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     monitor.evaluate(trace);
@@ -239,7 +239,8 @@ double evaluateSingleHydra2(const Formula &formula, Trace &trace) {
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 }
 
-double executeEvaluateHydra2(const Formula &formulas, size_t numExecutions, Trace &trace, std::ofstream &out) {
+double executeEvaluateHydra2(const Formula &formulas, size_t numExecutions, const std::shared_ptr<Trace> &trace,
+                             std::ofstream &out) {
     std::vector<double> avgCompTime;
     for (size_t i{0}; i < numExecutions; ++i) {
         avgCompTime.push_back(evaluateSingleHydra2(formulas, trace));
@@ -253,7 +254,7 @@ double executeEvaluateHydra2(const Formula &formulas, size_t numExecutions, Trac
     return result;
 }
 
-double evaluateMTLSingle(const Formula &formula, Trace &trace) {
+double evaluateMTLSingle(const Formula &formula, const std::shared_ptr<Trace> &trace) {
     auto monitor{MTLEventConsuming({formula})};
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     monitor.evaluate(trace);
@@ -262,7 +263,8 @@ double evaluateMTLSingle(const Formula &formula, Trace &trace) {
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 }
 
-double executeEvaluateMTL(const Formula &formula, size_t numExecutions, Trace &trace, std::ofstream &out) {
+double executeEvaluateMTL(const Formula &formula, size_t numExecutions, const std::shared_ptr<Trace> &trace,
+                          std::ofstream &out) {
     std::vector<double> avgCompTime;
     for (size_t i{0}; i < numExecutions; ++i) {
         avgCompTime.push_back(evaluateMTLSingle(formula, trace));
@@ -276,7 +278,7 @@ double executeEvaluateMTL(const Formula &formula, size_t numExecutions, Trace &t
     return result;
 }
 
-double evaluateLTLSingle(const Formula &formula, Trace &trace) {
+double evaluateLTLSingle(const Formula &formula, const std::shared_ptr<Trace> &trace) {
     auto monitor{EventConsumingLTL({formula})};
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     monitor.evaluate(trace);
@@ -285,7 +287,8 @@ double evaluateLTLSingle(const Formula &formula, Trace &trace) {
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 }
 
-double executeEvaluateLTL(const Formula &formula, size_t numExecutions, Trace &trace, std::ofstream &out) {
+double executeEvaluateLTL(const Formula &formula, size_t numExecutions, const std::shared_ptr<Trace> &trace,
+                          std::ofstream &out) {
     std::vector<double> avgCompTime;
     for (size_t i{0}; i < numExecutions; ++i) {
         avgCompTime.push_back(evaluateLTLSingle(formula, trace));
@@ -300,7 +303,7 @@ double executeEvaluateLTL(const Formula &formula, size_t numExecutions, Trace &t
     return result;
 }
 
-double evaluateMTFsmSingle(const Formula &formula, Trace &trace) {
+double evaluateMTFsmSingle(const Formula &formula, const std::shared_ptr<Trace> &trace) {
     auto monitor{MtFsm({formula})};
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     monitor.evaluate(trace);
@@ -309,7 +312,8 @@ double evaluateMTFsmSingle(const Formula &formula, Trace &trace) {
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 }
 
-double executeEvaluateMTFsm(const Formula &formula, size_t numExecutions, Trace &trace, std::ofstream &out) {
+double executeEvaluateMTFsm(const Formula &formula, size_t numExecutions, const std::shared_ptr<Trace> &trace,
+                            std::ofstream &out) {
     std::vector<double> avgCompTime;
     for (size_t i{0}; i < numExecutions; ++i) {
         avgCompTime.push_back(evaluateMTFsmSingle(formula, trace));
@@ -323,7 +327,7 @@ double executeEvaluateMTFsm(const Formula &formula, size_t numExecutions, Trace 
     return result;
 }
 
-double evaluateBTTFsmSingle(const Formula &formula, Trace &trace) {
+double evaluateBTTFsmSingle(const Formula &formula, const std::shared_ptr<Trace> &trace) {
     auto monitor{BttFsm({formula})};
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     monitor.evaluate(trace);
@@ -332,7 +336,8 @@ double evaluateBTTFsmSingle(const Formula &formula, Trace &trace) {
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 }
 
-double executeEvaluateBTTFsm(const Formula &formulas, size_t numExecutions, Trace &trace, std::ofstream &out) {
+double executeEvaluateBTTFsm(const Formula &formulas, size_t numExecutions, const std::shared_ptr<Trace> &trace,
+                             std::ofstream &out) {
     std::vector<double> avgCompTime;
     for (size_t i{0}; i < numExecutions; ++i) {
         avgCompTime.push_back(evaluateBTTFsmSingle(formulas, trace));
@@ -346,7 +351,7 @@ double executeEvaluateBTTFsm(const Formula &formulas, size_t numExecutions, Trac
     return result;
 }
 
-double evaluateDynamicLTLSingle(const Formula &formula, Trace &trace) {
+double evaluateDynamicLTLSingle(const Formula &formula, const std::shared_ptr<Trace> &trace) {
     auto monitor{DynamicProgrammingLTL({formula})};
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     monitor.evaluate(trace);
@@ -355,7 +360,8 @@ double evaluateDynamicLTLSingle(const Formula &formula, Trace &trace) {
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 }
 
-double executeEvaluateDynamicLTL(const Formula &formula, size_t numExecutions, Trace &trace, std::ofstream &out) {
+double executeEvaluateDynamicLTL(const Formula &formula, size_t numExecutions, const std::shared_ptr<Trace> &trace,
+                                 std::ofstream &out) {
     std::vector<double> avgCompTime;
     for (size_t i{0}; i < numExecutions; ++i) {
         avgCompTime.push_back(evaluateDynamicLTLSingle(formula, trace));
@@ -374,7 +380,7 @@ void createFormulasAndTracesFromPredicates(std::vector<std::vector<std::shared_p
                                            std::vector<size_t> formulaSizes, std::vector<size_t> traceSizes,
                                            size_t maxPredicateFormulaWeight, size_t maxPredicateTraceWeight,
                                            std::vector<Formula> &generatedFormulas,
-                                           std::vector<Trace> &generatedTraces) {
+                                           std::vector<std::shared_ptr<Trace>> &generatedTraces) {
 
     if (formulaSizes.size() == allPredicates.size() and traceSizes.size() == allPredicates.size()) {
         srand(time(NULL));
@@ -404,8 +410,8 @@ void createFormulasAndTracesFromPredicates(std::vector<std::vector<std::shared_p
     }
 };
 
-void testFormulasOnTraces(std::vector<Formula> &formulas, std::vector<Trace> &traces, size_t numExecutions,
-                          std::ofstream &out) {
+void testFormulasOnTraces(std::vector<Formula> &formulas, std::vector<std::shared_ptr<Trace>> &traces,
+                          size_t numExecutions, std::ofstream &out) {
     if (formulas.size() == traces.size()) {
         size_t iterations = formulas.size();
 
@@ -416,7 +422,7 @@ void testFormulasOnTraces(std::vector<Formula> &formulas, std::vector<Trace> &tr
         /* Uncomment the monitors you'd like to use in the performance evaluation */
         for (size_t iterIndex{0}; iterIndex < iterations; ++iterIndex) {
             out << "Formula[" << iterIndex << "]: " << formulas.at(iterIndex).to_string() << std::endl;
-            out << "Trace Length: " << traces.at(iterIndex).getLength() << std::endl;
+            out << "Trace Length: " << traces.at(iterIndex)->getLength() << std::endl;
             averageResults[0] += executeEvaluateMTL(formulas.at(iterIndex), numExecutions, traces.at(iterIndex), out);
             // averageResults[1] += executeEvaluateMTFsm(formulas.at(iterIndex), numExecutions, traces.at(iterIndex),
             // out); averageResults[2] += executeEvaluateDynamicLTL(formulas.at(iterIndex), numExecutions,
@@ -646,7 +652,7 @@ void test_1(std::ofstream &out) {
 
     ctGenerator.createPredicatesOnDelays({500, 1, 3, 1000, 2, 6, 750, 1, 5, 2000, 1, 4}, allPredicates);
     std::vector<Formula> generatedFormulas{};
-    std::vector<Trace> generatedTraces{};
+    std::vector<std::shared_ptr<Trace>> generatedTraces{};
 
     createFormulasAndTracesFromPredicates(allPredicates, formulaGenerator, traceGenerator, {5, 10, 15, 20},
                                           {10, 10, 10, 10}, 5, 5, generatedFormulas, generatedTraces);
@@ -712,7 +718,7 @@ void test_2(std::ofstream &out) {
 
     ctGenerator.createPredicatesOnDelays({500, 1, 3, 1000, 2, 6, 750, 1, 5}, allPredicates);
     std::vector<Formula> generatedFormulas{};
-    std::vector<Trace> generatedTraces{};
+    std::vector<std::shared_ptr<Trace>> generatedTraces{};
 
     createFormulasAndTracesFromPredicates(allPredicates, formulaGenerator, traceGenerator, {3, 3, 3}, {100, 200, 300},
                                           5, 5, generatedFormulas, generatedTraces);
@@ -781,7 +787,7 @@ void test_3(std::ofstream &out) {
 
     ctGenerator.createPredicatesOnDelays({500, 1, 3, 1000, 2, 6, 750, 1, 5}, allPredicates);
     std::vector<Formula> generatedFormulas{};
-    std::vector<Trace> generatedTraces{};
+    std::vector<std::shared_ptr<Trace>> generatedTraces{};
 
     createFormulasAndTracesFromPredicates(allPredicates, formulaGenerator, traceGenerator, {3, 3, 3}, {100, 200, 300},
                                           5, 5, generatedFormulas, generatedTraces);
@@ -846,7 +852,7 @@ void test_4(std::ofstream &out) {
 
     ctGenerator.createPredicatesOnDelays({500, 1, 3, 1000, 2, 6, 750, 1, 5}, allPredicates);
     std::vector<Formula> generatedFormulas{};
-    std::vector<Trace> generatedTraces{};
+    std::vector<std::shared_ptr<Trace>> generatedTraces{};
 
     createFormulasAndTracesFromPredicates(allPredicates, formulaGenerator, traceGenerator, {5, 10, 15}, {10, 10, 10}, 5,
                                           5, generatedFormulas, generatedTraces);
@@ -916,7 +922,7 @@ void test_5(std::ofstream &out) {
 
     ctGenerator.createPredicatesOnDelays({500, 1, 3, 1000, 2, 6, 750, 1, 5}, allPredicates);
     std::vector<Formula> generatedFormulas{};
-    std::vector<Trace> generatedTraces{};
+    std::vector<std::shared_ptr<Trace>> generatedTraces{};
 
     createFormulasAndTracesFromPredicates(allPredicates, formulaGenerator, traceGenerator, {5, 4, 3}, {10, 30, 50}, 5,
                                           5, generatedFormulas, generatedTraces);
@@ -986,7 +992,7 @@ void test_6(std::ofstream &out) {
 
     ctGenerator.createPredicatesOnDelays({500, 1, 3, 1000, 2, 6, 750, 1, 5}, allPredicates);
     std::vector<Formula> generatedFormulas{};
-    std::vector<Trace> generatedTraces{};
+    std::vector<std::shared_ptr<Trace>> generatedTraces{};
 
     createFormulasAndTracesFromPredicates(allPredicates, formulaGenerator, traceGenerator, {5, 4, 3}, {10, 30, 50}, 5,
                                           5, generatedFormulas, generatedTraces);
@@ -1055,7 +1061,7 @@ void test_7(std::ofstream &out) {
 
     ctGenerator.createPredicatesOnDelays({500, 1, 3, 1000, 2, 6, 750, 1, 5}, allPredicates);
     std::vector<Formula> generatedFormulas{};
-    std::vector<Trace> generatedTraces{};
+    std::vector<std::shared_ptr<Trace>> generatedTraces{};
 
     createFormulasAndTracesFromPredicates(allPredicates, formulaGenerator, traceGenerator, {3, 3, 3}, {100, 200, 300},
                                           5, 5, generatedFormulas, generatedTraces);
@@ -1125,7 +1131,7 @@ void test_8(std::ofstream &out) {
 
     ctGenerator.createPredicatesOnDelays({500, 1, 3, 1000, 2, 6, 750, 1, 5}, allPredicates);
     std::vector<Formula> generatedFormulas{};
-    std::vector<Trace> generatedTraces{};
+    std::vector<std::shared_ptr<Trace>> generatedTraces{};
 
     createFormulasAndTracesFromPredicates(allPredicates, formulaGenerator, traceGenerator, {3, 3, 3}, {100, 200, 300},
                                           5, 5, generatedFormulas, generatedTraces);

@@ -34,7 +34,8 @@ class AtomicMonitor : public Hydra2Monitor {
      * @param trace Trace.
      * @param domains List of domains.
      */
-    void setTrace(const Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
+    void setTrace(const std::shared_ptr<Trace> &trace,
+                  const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 
     /**
      * Adds domain value in other monitors. Not relevant for constant monitor.
@@ -45,9 +46,11 @@ class AtomicMonitor : public Hydra2Monitor {
 
     /**
      * Clones this monitor.
+     *
+     * @param domValNames List of domain value names.
      * @return New shared_ptr of this monitor.
      */
-    std::shared_ptr<Hydra2Monitor> clone() override;
+    std::shared_ptr<Hydra2Monitor> clone(const std::vector<std::string> &domValNames) override;
 
     /**
      * Creates string representation of monitor.
@@ -57,7 +60,7 @@ class AtomicMonitor : public Hydra2Monitor {
     std::string to_string() override;
 
   private:
-    Trace trace;             //**< Trace which should be monitored. */
-    std::string name;        //**< Name of atomic value. */
-    std::string domainValue; //**< Name of domain if atomic is one otherwise empty string. */
+    std::shared_ptr<Trace> trace; //**< Trace which should be monitored. */
+    std::string name;             //**< Name of atomic value. */
+    std::string domainValue;      //**< Name of domain if atomic is one otherwise empty string. */
 };

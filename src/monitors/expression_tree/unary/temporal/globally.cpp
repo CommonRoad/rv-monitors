@@ -2,7 +2,8 @@
 
 std::shared_ptr<Expression> Globally::clone() { return std::make_shared<Globally>(*this); }
 
-std::shared_ptr<Expression> Globally::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
+std::shared_ptr<Expression> Globally::accept(ExpressionVisitor &visitor, const std::shared_ptr<Trace> &trace,
+                                             size_t index) {
     return visitor.visitGlobally(*this, trace, index);
 }
 

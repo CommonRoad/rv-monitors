@@ -38,6 +38,15 @@ cppcheck:
     - job: build-compile-commands
       artifacts: true
 
+pre_commit:
+  image: python:3.11
+  stage: static-test
+  before_script:
+    - pip install pre-commit
+  script:
+    - pre-commit run --all-files --show-diff-on-failure
+  needs: []
+
 .cache-build-dir:
   cache: &cache_dependency_archives
     key: cache-dependency-archives

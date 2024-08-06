@@ -2,7 +2,8 @@
 
 std::shared_ptr<Expression> Implication::clone() { return std::make_shared<Implication>(*this); }
 
-std::shared_ptr<Expression> Implication::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
+std::shared_ptr<Expression> Implication::accept(ExpressionVisitor &visitor, const std::shared_ptr<Trace> &trace,
+                                                size_t index) {
     return visitor.visitImplication(*this, trace, index);
 }
 

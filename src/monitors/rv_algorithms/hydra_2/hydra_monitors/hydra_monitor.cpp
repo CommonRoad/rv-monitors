@@ -13,7 +13,8 @@ Hydra2Monitor::Hydra2Monitor(Formula formula, size_t monitorId, bool connectedEv
 
 void Hydra2Monitor::reset() {
     verdictHistory = {};
-    verdictHistoryPopCounter = 0;
+    //  verdictHistoryPopCounter = 0;
+    allCopies = {};
     for (auto &[_, id] : traceIdx)
         id = 0;
 }
@@ -58,60 +59,55 @@ bool Hydra2Monitor::traceIdxUnique(size_t idx) {
 Verdict Hydra2Monitor::step(size_t parentId, size_t stepNumber, bool singleStep) {
     Verdict verdict{Verdict(false)};
     if (!singleStep and (!connectedEval or traceIdx.size() == 1))
-        if (stepNumber >= (traceIdx[parentId] +
-                           verdictHistoryPopCounter)) { // required step equals stored step, perform next step directly
+        if (stepNumber >= (traceIdx[parentId])) { // required step equals stored step, perform next step directly
             verdict = simulateVerdict(parentId, stepNumber);
         } else // step number is behind head position (e.g., if child of until operator) or specific verdict
                // is directly required (only used by until operator)
             verdict = concreteStep(parentId, stepNumber);
     else if (singleStep) { // step number is behind head position (e.g., if child of until operator) or specific verdict
                            // is directly required (only used by until operator)
-        if (stepNumber >= traceIdx[parentId] + verdictHistoryPopCounter) {
+        if (stepNumber >= traceIdx[parentId]) {
             verdict = simulateVerdict(parentId, stepNumber);
         } else { // if required step was already performed based on other parent monitor, use already computed verdict
-            verdict = verdictHistory.at(traceIdx.at(parentId) - verdictHistoryPopCounter);
+            verdict = verdictHistory.at(traceIdx.at(parentId));
         }
     } else if (stepNumber < traceIdx[parentId]) { // required step was already performed based on other parent monitor,
                                                   // use already computed verdict
-        verdict = verdictHistory[stepNumber - verdictHistoryPopCounter];
+        verdict = verdictHistory.at(stepNumber);
     } else
         verdict = simulateVerdict(parentId, stepNumber);
+    // note: verdict time step can be different from step number if time steps are no equidistant
     return verdict;
-}
-
-void Hydra2Monitor::decrementTraceIdx(size_t parentID) {
-    for (auto &elem : traceIdx)
-        if (elem.first != parentID)
-            --elem.second;
 }
 
 Verdict Hydra2Monitor::simulateVerdict(size_t parentId, size_t stepNumber) {
     auto verdict{Verdict(0, false)};
-    while (stepNumber >= (traceIdx[parentId] + verdictHistoryPopCounter)) {
+    while (stepNumber >= (traceIdx[parentId])) {
         if (!connectedEval or traceIdx.size() == 1) { // since no connected evaluation, perform step directly
-            verdict = concreteStep(parentId, traceIdx[parentId] + verdictHistoryPopCounter);
+            verdict = concreteStep(parentId, traceIdx[parentId]);
             ++traceIdx[parentId];
-        } else if (traceIdx[parentId] ==
-                   getMaxTraceIdx()) { // if requested trace index equals maximum trace index based on all monitor heads
-                                       // based on parent monitors, perform new step and store verdict
-            verdict = concreteStep(parentId, traceIdx[parentId] + verdictHistoryPopCounter);
-            verdictHistory.push_back(verdict);
+        } else if (traceIdx[parentId] == getMaxTraceIdx() or
+                   verdictHistory.find(traceIdx[parentId]) ==
+                       verdictHistory
+                           .end()) { // if requested trace index equals maximum trace index based on all monitor heads
+                                     // based on parent monitors, perform new step and store verdict
+            verdict = concreteStep(parentId, traceIdx[parentId]);
+            verdictHistory.insert({traceIdx[parentId], verdict});
             ++traceIdx[parentId];
         } else { // if required step was already performed based on other parent monitor, use already computed verdict
-            verdict = verdictHistory[traceIdx[parentId]];
+            verdict = verdictHistory.at(traceIdx[parentId]);
             auto minIdx{getMinTraceIdx()};
             if (traceIdx[parentId] == minIdx and
                 traceIdxUnique(
                     minIdx)) { // if current monitor uses minimum trace index and no other monitor has same trace index
                                // -> pop head of verdict history and decrement indices of all other monitors
-                verdictHistory.pop_front();
-                decrementTraceIdx(parentId); // monitor indices needs to be decremented since we removed element from
-                                             // verdict history otherwise they would point to wrong element
-                ++verdictHistoryPopCounter;
+                verdictHistory.erase(verdictHistory.begin());
+                ++traceIdx[parentId];
             } else
                 ++traceIdx[parentId];
         }
     }
+    // note: verdict time step can be different from step number if time steps are no equidistant
     return verdict;
 }
 
@@ -134,3 +130,25 @@ void Hydra2Monitor::to_tree(std::map<size_t, std::tuple<std::string, std::vector
 }
 
 size_t Hydra2Monitor::getMonitorID() const { return monitorId; }
+
+std::shared_ptr<Hydra2Monitor> Hydra2Monitor::clone(const std::vector<std::string> &domValNames) {
+    if (domValNames.empty() and allCopies.empty())
+        return nullptr;
+    if (domValNames.empty() and allCopies.size() == 1 and std::get<0>(allCopies.at(0)).empty())
+        return std::get<1>(allCopies.at(0));
+    for (const auto &copy : allCopies) {
+        if (domValNames.size() != std::get<0>(copy).size())
+            continue;
+        size_t counter{0};
+        for (const auto &val : domValNames) {
+            for (const auto &valCopy : std::get<0>(copy))
+                if (valCopy == val) {
+                    ++counter;
+                    break;
+                }
+        }
+        if (counter == domValNames.size())
+            return std::get<1>(copy);
+    }
+    return nullptr;
+}

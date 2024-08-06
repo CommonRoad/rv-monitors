@@ -7,7 +7,8 @@
 #include "monitors/trace/trace.h"
 
 TEST(TestCountingMonitor, testCountingMonitorStandard) {
-    Trace trace = Utils::createTrace({"a", "b", "c", "d"}, {{"a", "b", "c"}, {}, {"a", "b"}, {"b", "c"}, {"a", "d"}});
+    const std::shared_ptr<Trace> trace =
+        Utils::createTrace({"a", "b", "c", "d"}, {{"a", "b", "c"}, {}, {"a", "b"}, {"b", "c"}, {"a", "d"}});
     Formula formula = Parser::parse("C>=2 x in D. x");
     Formula formulaAtomic = Parser::parse("x");
     formula.setId("R1");

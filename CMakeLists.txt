@@ -174,11 +174,12 @@ if(${PROJECT_NAME}_SYSTEM_PACKAGES_FORCE)
             "If this fails, consider disabling ${PROJECT_NAME}_SYSTEM_PACKAGES_FORCE and "
             "trying again.")
 
+    find_package(spdlog 1.8.0 REQUIRED)
     find_package(GTest)
 else()
     # Normal path: We try to use find_package via FetchContent, otherwise we fall
     # back to normal FetchContent
-
+    include(ExternalSpdlog)
     include(ExternalGoogleTest)
 endif()
 
@@ -203,4 +204,3 @@ endif(${PROJECT_NAME}_BUILD_TESTS)
 
 
 include(cmake/install.cmake)
-

@@ -32,7 +32,7 @@ std::vector<std::any> createDomain3(size_t stepNumber) { return {1ul, 2ul, 3ul};
 
 TEST(TestUniversalMonitor, testUniversalMonitorStandard) {
 
-    Trace trace = hydraTestUtils::createTraceWithVariable(
+    const std::shared_ptr<Trace> trace = hydraTestUtils::createTraceWithVariable(
         4, {std::make_shared<Function<bool, size_t, size_t, size_t>>(Function<bool, size_t, size_t, size_t>(
                "one_higher", {"timeStep", "fstVal", "sndVal"}, one_higher, threeSizeTArgs))});
     Formula formula = Parser::parse("A x in D0, y in D1. one_higher(x, y)");
@@ -81,7 +81,7 @@ TEST(TestUniversalMonitor, testUniversalMonitorStandard) {
 }
 
 TEST(TestUniversalMonitor, testUniversalMonitorStandardDynamicDomain) {
-    Trace trace = hydraTestUtils::createTraceWithVariable(
+    const std::shared_ptr<Trace> trace = hydraTestUtils::createTraceWithVariable(
         4, {std::make_shared<Function<bool, size_t, size_t, size_t>>(Function<bool, size_t, size_t, size_t>(
                "one_higher", {"timeStep", "fstVal", "sndVal"}, one_higher, threeSizeTArgs))});
     Formula formula = Parser::parse("A x in D0, y in D1. one_higher(x, y)");
@@ -108,7 +108,7 @@ TEST(TestUniversalMonitor, testUniversalMonitorStandardDynamicDomain) {
 }
 
 TEST(TestUniversalMonitor, testUniversalMonitorVariableScope) {
-    Trace trace = hydraTestUtils::createTraceWithVariable(
+    const std::shared_ptr<Trace> trace = hydraTestUtils::createTraceWithVariable(
         4, {std::make_shared<Function<bool, size_t, int>>(
                Function<bool, size_t, int>("is_negative", {"timeStep", "val"}, is_negative, is_negativeArgs))});
     Formula formula = Parser::parse("A x in D0. A x in D1. is_negative(x)");
@@ -134,7 +134,7 @@ TEST(TestUniversalMonitor, testUniversalMonitorVariableScope) {
 }
 
 TEST(TestUniversalMonitor, testUniversalMonitorVariableScopeDynamicDomain) {
-    Trace trace = hydraTestUtils::createTraceWithVariable(
+    const std::shared_ptr<Trace> trace = hydraTestUtils::createTraceWithVariable(
         4, {std::make_shared<Function<bool, size_t, int>>(
                Function<bool, size_t, int>("is_negative", {"timeStep", "val"}, is_negative, is_negativeArgs))});
     Formula formula = Parser::parse("A x in D0. A x in D1. is_negative(x)");
@@ -161,7 +161,7 @@ TEST(TestUniversalMonitor, testUniversalMonitorVariableScopeDynamicDomain) {
 }
 
 TEST(TestUniversalMonitor, testUniversalMonitorVariableAndConstValues) {
-    Trace trace = hydraTestUtils::createTraceWithVariable(
+    const std::shared_ptr<Trace> trace = hydraTestUtils::createTraceWithVariable(
         5, {std::make_shared<Function<bool, size_t, size_t, std::string>>(Function<bool, size_t, size_t, std::string>(
                "unequal", {"timeStep", "val0", "val1"}, unequal, twoSizeTOneString))});
 
@@ -185,8 +185,8 @@ TEST(TestUniversalMonitor, testUniversalMonitorVariableAndConstValues) {
 }
 
 TEST(TestUniversalMonitor, testUniversalMonitorAtomic) {
-    Trace trace = Utils::createTrace({"a", "b", "c"}, {{"a", "b", "c"}, {"a", "c"}, {}, {"a", "b", "c"}, {"b"}},
-                                     std::vector<size_t>{0, 1, 2, 3, 4});
+    const std::shared_ptr<Trace> trace = Utils::createTrace(
+        {"a", "b", "c"}, {{"a", "b", "c"}, {"a", "c"}, {}, {"a", "b", "c"}, {"b"}}, std::vector<size_t>{0, 1, 2, 3, 4});
     Formula formula = Parser::parse("A x in D. x");
     Formula formulaAtomic = Parser::parse("x");
     formula.setId("R1");
