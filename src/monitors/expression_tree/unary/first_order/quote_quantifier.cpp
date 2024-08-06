@@ -41,7 +41,8 @@ std::string QuoteQuantifier::to_string() const {
 
 std::shared_ptr<Expression> QuoteQuantifier::clone() { return std::make_shared<QuoteQuantifier>(*this); }
 
-std::shared_ptr<Expression> QuoteQuantifier::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
+std::shared_ptr<Expression> QuoteQuantifier::accept(ExpressionVisitor &visitor, const std::shared_ptr<Trace> &trace,
+                                                    size_t index) {
     return visitor.visitQuoteQuantifier(*this, trace, index);
 }
 

@@ -40,10 +40,12 @@ class MtFsm : public MonitorInterface {
      * Checks if a trace satisfies a specification by traversing an MT-FSM*.
      * @param trace Trace object
      * @param domains List of domains. Not used by MtFsm.
+     * @param formulaIDs List of formula IDs which should be evaluated (not used for this monitor)
      * @return True if satisfied, false otherwise.
      */
     [[nodiscard]] std::map<std::string, std::vector<Verdict>>
-    evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
+    evaluate(const std::shared_ptr<Trace> &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains = {},
+             const std::vector<std::string> &formulaIDs = {}) override;
 
     /**
      * Helper for formulaToMT_FSM().

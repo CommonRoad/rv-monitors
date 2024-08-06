@@ -15,7 +15,8 @@ std::string UniversalQuantifier::to_string() const {
 
 std::shared_ptr<Expression> UniversalQuantifier::clone() { return std::make_shared<UniversalQuantifier>(*this); }
 
-std::shared_ptr<Expression> UniversalQuantifier::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
+std::shared_ptr<Expression> UniversalQuantifier::accept(ExpressionVisitor &visitor, const std::shared_ptr<Trace> &trace,
+                                                        size_t index) {
     return visitor.visitUniversalQuantifier(*this, trace, index);
 }
 

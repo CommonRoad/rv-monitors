@@ -49,7 +49,8 @@ Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         return {headPositionMonitorLeft.timeStep, false};
 }
 
-void SinceMonitor::setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+void SinceMonitor::setTrace(const std::shared_ptr<Trace> &tra,
+                            const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     subMonitorLeft->setTrace(tra, domains);
     subMonitorRight->setTrace(tra, domains);
 }
@@ -67,10 +68,14 @@ void SinceMonitor::reset() {
     endReached = false;
 }
 
-std::shared_ptr<Hydra2Monitor> SinceMonitor::clone() {
+std::shared_ptr<Hydra2Monitor> SinceMonitor::clone(const std::vector<std::string> &domValNames) {
+    auto tmpCopy{Hydra2Monitor::clone(domValNames)};
+    if (tmpCopy != nullptr)
+        return tmpCopy;
     auto clonedMonitor = std::make_shared<SinceMonitor>(*this);
-    clonedMonitor->subMonitorRight = subMonitorRight->clone();
-    clonedMonitor->subMonitorLeft = subMonitorLeft->clone();
+    clonedMonitor->subMonitorRight = subMonitorRight->clone(domValNames);
+    clonedMonitor->subMonitorLeft = subMonitorLeft->clone(domValNames);
+    allCopies.emplace_back(domValNames, clonedMonitor);
     return clonedMonitor;
 }
 

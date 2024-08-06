@@ -6,7 +6,8 @@
 
 std::shared_ptr<Expression> Historically::clone() { return std::make_shared<Historically>(*this); }
 
-std::shared_ptr<Expression> Historically::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
+std::shared_ptr<Expression> Historically::accept(ExpressionVisitor &visitor, const std::shared_ptr<Trace> &trace,
+                                                 size_t index) {
     return visitor.visitHistorically(*this, trace, index);
 }
 

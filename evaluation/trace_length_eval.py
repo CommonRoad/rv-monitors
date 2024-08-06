@@ -75,9 +75,7 @@ def create_trace(length: int, num_atomics: int, seed: int) -> rvm.Trace:
     return rvm.create_trace(atomic_names, actions, time_steps)
 
 
-def evaluate(
-    approach: str, mon: rvm.Hydra2, tr: rvm.Trace, df: pd.DataFrame, trace_length: int
-):
+def evaluate(approach: str, mon: rvm.Hydra2, tr: rvm.Trace, df: pd.DataFrame, trace_length: int):
     elapsed_time = 0
     num_iters = 5
     for ite in range(num_iters):

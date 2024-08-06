@@ -47,7 +47,8 @@ class UntilMonitor : public Hydra2Monitor {
      * @param trace Trace.
      * @param domains List of domains.
      */
-    void setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
+    void setTrace(const std::shared_ptr<Trace> &tra,
+                  const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 
     /**
      * Resets monitor variables to default values.
@@ -63,9 +64,11 @@ class UntilMonitor : public Hydra2Monitor {
 
     /**
      * Clones this monitor.
+     *
+     * @param domValNames List of domain value names.
      * @return New shared_ptr of this monitor.
      */
-    std::shared_ptr<Hydra2Monitor> clone() override;
+    std::shared_ptr<Hydra2Monitor> clone(const std::vector<std::string> &domValNames) override;
 
     /**
      * Creates string representation of monitor.
@@ -90,11 +93,6 @@ class UntilMonitor : public Hydra2Monitor {
     void to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) override;
 
   private:
-    /**
-     * Executes left and right monitors of until.
-     */
-    void stepLeftRightMonitors();
-
     std::shared_ptr<Hydra2Monitor> subMonitorLeft;  //**< Monitor for specification on left side of until. */
     std::shared_ptr<Hydra2Monitor> subMonitorRight; //**< Monitor for specification on right side of until. */
     std::shared_ptr<Hydra2Monitor>
@@ -113,4 +111,9 @@ class UntilMonitor : public Hydra2Monitor {
     bool endReached{false};                        //**< Boolean indicating whether end of trace was reached. */
     size_t stepNumberUntil{0}; //**< Stores real step number because until operator can be before parent step number. */
     std::vector<DomainValue> domainValueArguments; //**< Domain values. */
+
+    /**
+     * Executes left and right monitors of until.
+     */
+    void stepLeftRightMonitors();
 };

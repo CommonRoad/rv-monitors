@@ -18,7 +18,7 @@ We extracted the relevant information in separate readmes depending on the way y
 
 
 ## References
-<a id="1">[1]</a> 
+<a id="1">[1]</a>
 G. Roşu and K. Havelund. “Rewriting-based techniques for runtime verification.”
 In: Automated Software Engineering 12.2 (2005), pp. 151–197.
 

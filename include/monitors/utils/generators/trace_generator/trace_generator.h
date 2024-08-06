@@ -1,9 +1,3 @@
-//
-// Created by Evald Nexhipi.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #pragma once
 
 #include <utility>
@@ -75,7 +69,7 @@ class TraceGenerator {
      * @param length of the trace
      * @return returns a pseudo-random Trace
      */
-    Trace generateTrace(size_t length);
+    std::shared_ptr<Trace> generateTrace(size_t length);
 
   protected:
     /**

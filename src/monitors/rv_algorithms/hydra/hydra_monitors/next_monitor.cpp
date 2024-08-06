@@ -27,7 +27,7 @@ Verdict NextMonitorHydra::concreteStep() {
     } while (true);
 }
 
-void NextMonitorHydra::setTrace(const Trace &tra) { subMonitor->setTrace(tra); }
+void NextMonitorHydra::setTrace(const std::shared_ptr<Trace> &tra) { subMonitor->setTrace(tra); }
 
 void NextMonitorHydra::reset() {
     currentTime = {};

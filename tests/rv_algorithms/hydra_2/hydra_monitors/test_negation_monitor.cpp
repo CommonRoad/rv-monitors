@@ -1,10 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2022 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
-
 #include "monitors/parser/parser.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/constant_monitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/negation_monitor.h"
@@ -12,7 +5,7 @@
 #include "test_or_monitor.h"
 
 TEST(TestNegationMonitor, testNegationMonitorFalseEvaluation) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("!(true)");
     Formula formulaTrue = Parser::parse("true");
     formula.setId("R1");
@@ -27,7 +20,7 @@ TEST(TestNegationMonitor, testNegationMonitorFalseEvaluation) {
 }
 
 TEST(TestNegationMonitor, testNegationMonitorTrueEvaluation) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("!(false)");
     Formula formulaFalse = Parser::parse("false");
     formula.setId("R1");
@@ -42,7 +35,7 @@ TEST(TestNegationMonitor, testNegationMonitorTrueEvaluation) {
 }
 
 TEST(TestNegationMonitor, testToString) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("!(false)");
     Formula formulaFalse = Parser::parse("false");
     formula.setId("R1");
@@ -53,7 +46,7 @@ TEST(TestNegationMonitor, testToString) {
 }
 
 TEST(TestNegationMonitor, testReset) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("!(false)");
     Formula formulaFalse = Parser::parse("false");
     formula.setId("R1");

@@ -27,7 +27,8 @@ Verdict NextMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         return {*currentTime, false};
 }
 
-void NextMonitor::setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+void NextMonitor::setTrace(const std::shared_ptr<Trace> &tra,
+                           const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     subMonitor->setTrace(tra, domains);
 }
 
@@ -37,9 +38,13 @@ void NextMonitor::reset() {
     subMonitor->reset();
 }
 
-std::shared_ptr<Hydra2Monitor> NextMonitor::clone() {
+std::shared_ptr<Hydra2Monitor> NextMonitor::clone(const std::vector<std::string> &domValNames) {
+    auto tmpCopy{Hydra2Monitor::clone(domValNames)};
+    if (tmpCopy != nullptr)
+        return tmpCopy;
     auto clonedMonitor = std::make_shared<NextMonitor>(*this);
-    clonedMonitor->subMonitor = subMonitor->clone();
+    clonedMonitor->subMonitor = subMonitor->clone(domValNames);
+    allCopies.emplace_back(domValNames, clonedMonitor);
     return clonedMonitor;
 }
 
@@ -60,6 +65,7 @@ void NextMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
     domainValueArguments = vals;
     subMonitor->addDomainValues(vals);
 }
+
 void NextMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
     Hydra2Monitor::setStepNumber(stepNumber, parentId);
     subMonitor->setStepNumber(stepNumber, monitorId);

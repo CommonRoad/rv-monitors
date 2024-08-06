@@ -39,7 +39,7 @@ Verdict SinceMonitorHydra::concreteStep() {
     return {positionMonitorF.ts, verd != 0};
 }
 
-void SinceMonitorHydra::setTrace(const Trace &tra) {
+void SinceMonitorHydra::setTrace(const std::shared_ptr<Trace> &tra) {
     subMonitorF->setTrace(tra);
     subMonitorG->setTrace(tra);
 }

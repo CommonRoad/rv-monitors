@@ -36,7 +36,7 @@ void HydraRewriteVisitor::rewrite(Formula &formula) {
     event_map_t map;
     // Dummy eventMap
     Event event(map, 0, false);
-    auto trace = Trace(std::vector<Event>{event});
+    auto trace = std::make_shared<Trace>(Trace(std::vector<Event>{event}));
 
     auto before = Formula::deepCopy(formula.getExpr());
     formula.setExpr(formula.getExpr()->accept(*this, trace, 0));
@@ -46,15 +46,17 @@ void HydraRewriteVisitor::rewrite(Formula &formula) {
     }
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitAtomic(Atomic &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitAtomic(Atomic &opr, const std::shared_ptr<Trace> &trace,
+                                                             size_t index) {
     return std::make_shared<Atomic>(opr);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitConstant(Constant &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitConstant(Constant &opr, const std::shared_ptr<Trace> &trace,
+                                                               size_t index) {
     return std::make_shared<Constant>(opr);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitAnd(And &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitAnd(And &opr, const std::shared_ptr<Trace> &trace, size_t index) {
     visitExpression(opr, trace, index);
 
     // I'm a copy!
@@ -122,7 +124,7 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitAnd(And &opr, Trace &trace
     return std::make_shared<And>(expressions);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitOr(Or &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitOr(Or &opr, const std::shared_ptr<Trace> &trace, size_t index) {
     visitExpression(opr, trace, index);
     auto expressions = opr.getExpressions();
 
@@ -188,7 +190,7 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitOr(Or &opr, Trace &trace, 
     return std::make_shared<Or>(expressions);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitXor(Xor &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitXor(Xor &opr, const std::shared_ptr<Trace> &trace, size_t index) {
     visitExpression(opr, trace, index);
 
     auto expressions = opr.getExpressions();
@@ -229,7 +231,8 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitXor(Xor &opr, Trace &trace
     return std::make_shared<Xor>(newXorSet);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitImplication(Implication &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitImplication(Implication &opr, const std::shared_ptr<Trace> &trace,
+                                                                  size_t index) {
     visitExpression(opr, trace, index);
     // a -> a = true
     if (*opr.getLeft() == *opr.getRight()) {
@@ -260,7 +263,8 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitImplication(Implication &o
     return orExpr;
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitEquivalence(Equivalence &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitEquivalence(Equivalence &opr, const std::shared_ptr<Trace> &trace,
+                                                                  size_t index) {
     // TODO check if same/different formula left and right
     if (opr.getLeft() == opr.getRight()) {
         return std::make_shared<Constant>(true);
@@ -272,7 +276,7 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitEquivalence(Equivalence &o
     return std::make_shared<Xor>(xorSet);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitNot(Not &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitNot(Not &opr, const std::shared_ptr<Trace> &trace, size_t index) {
     visitExpression(opr, trace, index);
     // !true = false
     if (opr.getLeft()->isConstTrue()) {
@@ -288,7 +292,8 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitNot(Not &opr, Trace &trace
     return std::make_shared<Not>(opr);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitFuture(Future &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitFuture(Future &opr, const std::shared_ptr<Trace> &trace,
+                                                             size_t index) {
     visitExpression(opr, trace, index);
     // F(false) = false
     if (opr.getLeft()->isConstFalse()) {
@@ -312,7 +317,8 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitFuture(Future &opr, Trace 
     //   return std::make_shared<Future>(opr);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitGlobally(Globally &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitGlobally(Globally &opr, const std::shared_ptr<Trace> &trace,
+                                                               size_t index) {
     visitExpression(opr, trace, index);
     // G(false) = false
     if (opr.getLeft()->isConstFalse()) {
@@ -347,7 +353,8 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitGlobally(Globally &opr, Tr
     //   return std::make_shared<Globally>(opr.getLeft(), opr.getInterval());
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitHistorically(Historically &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitHistorically(Historically &opr,
+                                                                   const std::shared_ptr<Trace> &trace, size_t index) {
     visitExpression(opr, trace, index);
     // H(false) = false
     if (opr.getLeft()->isConstFalse()) {
@@ -382,7 +389,8 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitHistorically(Historically 
     //   return std::make_shared<Historically>(opr);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitNextStrong(NextStrong &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitNextStrong(NextStrong &opr, const std::shared_ptr<Trace> &trace,
+                                                                 size_t index) {
     visitExpression(opr, trace, index);
     // X(false) = false
     if (opr.getLeft()->isConstFalse()) {
@@ -391,12 +399,14 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitNextStrong(NextStrong &opr
     return std::make_shared<NextStrong>(opr);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitNextWeak(NextWeak &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitNextWeak(NextWeak &opr, const std::shared_ptr<Trace> &trace,
+                                                               size_t index) {
     visitExpression(opr, trace, index);
     return std::make_shared<NextWeak>(opr);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitOnce(Once &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitOnce(Once &opr, const std::shared_ptr<Trace> &trace,
+                                                           size_t index) {
     visitExpression(opr, trace, index);
     // O(false) = false
     if (opr.getLeft()->isConstFalse()) {
@@ -414,12 +424,14 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitOnce(Once &opr, Trace &tra
     // return std::make_shared<Once>(opr.getLeft(), opr.getInterval());
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitPreviously(Previously &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitPreviously(Previously &opr, const std::shared_ptr<Trace> &trace,
+                                                                 size_t index) {
     visitExpression(opr, trace, index);
     return std::make_shared<Previously>(opr);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitRelease(Release &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitRelease(Release &opr, const std::shared_ptr<Trace> &trace,
+                                                              size_t index) {
     visitExpression(opr, trace, index);
     // a R true = true
     if (opr.getRight()->isConstTrue()) {
@@ -444,7 +456,8 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitRelease(Release &opr, Trac
     return std::make_shared<Release>(opr);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitUntil(Until &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitUntil(Until &opr, const std::shared_ptr<Trace> &trace,
+                                                            size_t index) {
     visitExpression(opr, trace, index);
     // a U false = false
     if (opr.getRight()->isConstFalse()) {
@@ -469,7 +482,8 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitUntil(Until &opr, Trace &t
     return std::make_shared<Until>(opr);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitSince(Since &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitSince(Since &opr, const std::shared_ptr<Trace> &trace,
+                                                            size_t index) {
     visitExpression(opr, trace, index);
     // a S false = false
     if (opr.getRight()->isConstFalse()) {
@@ -494,25 +508,28 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitSince(Since &opr, Trace &t
     return std::make_shared<Since>(opr);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitEventOperator(EventOperator &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitEventOperator(EventOperator &opr,
+                                                                    const std::shared_ptr<Trace> &trace, size_t index) {
     return std::make_shared<EventOperator>(opr);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitResolvingOperator(ResolvingOperator &opr, Trace &trace,
-                                                                        size_t index) {
+std::shared_ptr<Expression>
+HydraRewriteVisitor::visitResolvingOperator(ResolvingOperator &opr, const std::shared_ptr<Trace> &trace, size_t index) {
     return std::make_shared<ResolvingOperator>(opr);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitDerivingOperator(DerivingOperator &opr, Trace &trace,
-                                                                       size_t index) {
+std::shared_ptr<Expression>
+HydraRewriteVisitor::visitDerivingOperator(DerivingOperator &opr, const std::shared_ptr<Trace> &trace, size_t index) {
     return std::make_shared<DerivingOperator>(opr);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitPredicate(Predicate &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> HydraRewriteVisitor::visitPredicate(Predicate &opr, const std::shared_ptr<Trace> &trace,
+                                                                size_t index) {
     return std::make_shared<Predicate>(opr);
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitUniversalQuantifier(UniversalQuantifier &opr, Trace &trace,
+std::shared_ptr<Expression> HydraRewriteVisitor::visitUniversalQuantifier(UniversalQuantifier &opr,
+                                                                          const std::shared_ptr<Trace> &trace,
                                                                           size_t index) {
     // A x in D. X(x) <-> X(A x in D. x)  TODO activate his again
     // if (auto rewExpr = swapQuantifierAndTempUnary(std::make_shared<UniversalQuantifier>(opr), trace, index))
@@ -540,7 +557,8 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitUniversalQuantifier(Univer
     return newExpr;
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitExistentialQuantifier(ExistentialQuantifier &opr, Trace &trace,
+std::shared_ptr<Expression> HydraRewriteVisitor::visitExistentialQuantifier(ExistentialQuantifier &opr,
+                                                                            const std::shared_ptr<Trace> &trace,
                                                                             size_t index) {
     // E x in D. X(x) <-> X(E x in D. x)
     if (auto rewExpr = swapQuantifierAndTempUnary(std::make_shared<ExistentialQuantifier>(opr), trace, index))
@@ -570,8 +588,8 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitExistentialQuantifier(Exis
     return newExpr;
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitQuoteQuantifier(QuoteQuantifier &opr, Trace &trace,
-                                                                      size_t index) {
+std::shared_ptr<Expression>
+HydraRewriteVisitor::visitQuoteQuantifier(QuoteQuantifier &opr, const std::shared_ptr<Trace> &trace, size_t index) {
     // Q[0., 0.5] x in D. X(x) <-> X(Q[0., 0.5] x in D. x)
     if (auto rewExpr = swapQuantifierAndTempUnary(std::make_shared<QuoteQuantifier>(opr), trace, index))
         return rewExpr;
@@ -604,7 +622,8 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitQuoteQuantifier(QuoteQuant
     return newExpr;
 }
 
-std::shared_ptr<Expression> HydraRewriteVisitor::visitCountingQuantifier(CountingQuantifier &opr, Trace &trace,
+std::shared_ptr<Expression> HydraRewriteVisitor::visitCountingQuantifier(CountingQuantifier &opr,
+                                                                         const std::shared_ptr<Trace> &trace,
                                                                          size_t index) {
     // C=2 x in D. X(x) <-> X(C=2 x in D. x)
     if (auto rewExpr = swapQuantifierAndTempUnary(std::make_shared<CountingQuantifier>(opr), trace, index))
@@ -641,8 +660,8 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitCountingQuantifier(Countin
 }
 
 std::shared_ptr<Expression>
-HydraRewriteVisitor::swapQuantifierAndTempUnary(const std::shared_ptr<FirstOrderOperator> &oper, Trace &trace,
-                                                size_t index) {
+HydraRewriteVisitor::swapQuantifierAndTempUnary(const std::shared_ptr<FirstOrderOperator> &oper,
+                                                const std::shared_ptr<Trace> &trace, size_t index) {
     if (auto firstOrder = std::dynamic_pointer_cast<Unary>(oper)) {
         if (!std::dynamic_pointer_cast<FirstOrderOperator>(firstOrder->getLeft()))
             if (auto tempUnary = std::dynamic_pointer_cast<Unary>(firstOrder->getLeft())) {

@@ -82,8 +82,9 @@ bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr, e
     return false;
 }
 
-Trace Utils::createTrace(const std::vector<std::vector<std::string>> &trueAtomics, const std::vector<size_t> &timeSteps,
-                         const std::shared_ptr<Formula> &formula) {
+std::shared_ptr<Trace> Utils::createTrace(const std::vector<std::vector<std::string>> &trueAtomics,
+                                          const std::vector<size_t> &timeSteps,
+                                          const std::shared_ptr<Formula> &formula) {
     std::set<std::string> atomics;
     for (const auto &step : trueAtomics)
         for (const auto &elem : step)
@@ -95,8 +96,9 @@ Trace Utils::createTrace(const std::vector<std::vector<std::string>> &trueAtomic
     return createTrace(mergedAtomics, trueAtomics, timeSteps);
 }
 
-Trace Utils::createTrace(const std::set<std::string> &atomics, const std::vector<std::vector<std::string>> &trueAtomics,
-                         const std::vector<size_t> &timeSteps) {
+std::shared_ptr<Trace> Utils::createTrace(const std::set<std::string> &atomics,
+                                          const std::vector<std::vector<std::string>> &trueAtomics,
+                                          const std::vector<size_t> &timeSteps) {
     if (!timeSteps.empty() and trueAtomics.size() != timeSteps.size())
         throw std::runtime_error("Utils::createTrace: Number time steps does not correspond to number of atomics.");
     std::vector<Event> finalTrace;
@@ -117,7 +119,7 @@ Trace Utils::createTrace(const std::set<std::string> &atomics, const std::vector
             finalTrace.emplace_back(std::move(event), timeStepIdx, &trueAtomic == &trueAtomics.back());
         ++timeStepIdx;
     }
-    return Trace{finalTrace};
+    return std::make_shared<Trace>(Trace{finalTrace});
 }
 
 // Wrapper
@@ -283,9 +285,10 @@ Utils::getTemporalOperatorSubformulas(const std::shared_ptr<Expression> &expr,
     return tempOpSubformulas;
 }
 
-Trace Utils::boolVectorToTrace(const std::set<std::string> &atomics, const std::vector<bool> &vector, bool terminal) {
+std::shared_ptr<Trace> Utils::boolVectorToTrace(const std::set<std::string> &atomics, const std::vector<bool> &vector,
+                                                bool terminal) {
     Event event = boolVectorToEvent(atomics, vector, terminal);
-    return Trace{{event}};
+    return std::make_shared<Trace>(Trace{{event}});
 }
 
 // TODO terminal not needed (additional Event constructor)
@@ -373,8 +376,9 @@ std::vector<std::string> Utils::splitString(const std::string &stringOriginal, c
     return exprVector;
 }
 
-Trace Utils::createLazyTrace(const std::map<std::string, std::function<bool(size_t)>> &atomicsAndFunctions,
-                             const std::vector<size_t> &timeSteps) {
+std::shared_ptr<Trace>
+Utils::createLazyTrace(const std::map<std::string, std::function<bool(size_t)>> &atomicsAndFunctions,
+                       const std::vector<size_t> &timeSteps) {
     std::vector<Event> finalTrace;
     size_t length = timeSteps.size();
     finalTrace.reserve(length);
@@ -391,11 +395,11 @@ Trace Utils::createLazyTrace(const std::map<std::string, std::function<bool(size
         }
         finalTrace.emplace_back(std::move(event), idx, idx == length + initialTimeStep - 1);
     }
-    return Trace{std::move(finalTrace)};
+    return std::make_shared<Trace>(Trace{std::move(finalTrace)});
 }
 
-Trace Utils::createLazyTrace(std::map<std::string, std::function<bool(size_t)>> &&atomicsAndFunctions,
-                             const std::vector<size_t> &timeSteps) {
+std::shared_ptr<Trace> Utils::createLazyTrace(std::map<std::string, std::function<bool(size_t)>> &&atomicsAndFunctions,
+                                              const std::vector<size_t> &timeSteps) {
     std::vector<Event> finalTrace;
     size_t length = timeSteps.size();
     finalTrace.reserve(length);
@@ -413,5 +417,5 @@ Trace Utils::createLazyTrace(std::map<std::string, std::function<bool(size_t)>> 
         }
         finalTrace.emplace_back(std::move(event), idx, idx == length + initialTimeStep - 1);
     }
-    return Trace{std::move(finalTrace)};
+    return std::make_shared<Trace>(Trace{std::move(finalTrace)});
 }

@@ -34,7 +34,7 @@ void BasicRewriteVisitor::rewrite(Formula &formula) {
     event_map_t map;
     // Dummy eventMap
     Event event(std::move(map), 0, false);
-    auto trace = Trace(std::vector<Event>{event});
+    auto trace = std::make_shared<Trace>(Trace(std::vector<Event>{event}));
 
     auto before = Formula::deepCopy(formula.getExpr());
     formula.setExpr(formula.getExpr()->accept(*this, trace, 0));
@@ -44,19 +44,22 @@ void BasicRewriteVisitor::rewrite(Formula &formula) {
     }
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitAtomic(Atomic &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitAtomic(Atomic &opr, const std::shared_ptr<Trace> &trace,
+                                                             size_t index) {
     return std::make_shared<Atomic>(opr);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitConstant(Constant &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitConstant(Constant &opr, const std::shared_ptr<Trace> &trace,
+                                                               size_t index) {
     return std::make_shared<Constant>(opr);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitPredicate(Predicate &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitPredicate(Predicate &opr, const std::shared_ptr<Trace> &trace,
+                                                                size_t index) {
     return std::make_shared<Predicate>(opr);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitAnd(And &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitAnd(And &opr, const std::shared_ptr<Trace> &trace, size_t index) {
     visitExpression(opr, trace, index);
 
     // I'm a copy!
@@ -98,7 +101,7 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitAnd(And &opr, Trace &trace
     return std::make_shared<And>(expressions);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitOr(Or &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitOr(Or &opr, const std::shared_ptr<Trace> &trace, size_t index) {
     visitExpression(opr, trace, index);
     auto expressions = opr.getExpressions();
 
@@ -139,7 +142,7 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitOr(Or &opr, Trace &trace, 
     return std::make_shared<Or>(expressions);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitXor(Xor &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitXor(Xor &opr, const std::shared_ptr<Trace> &trace, size_t index) {
     visitExpression(opr, trace, index);
 
     auto expressions = opr.getExpressions();
@@ -179,7 +182,8 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitXor(Xor &opr, Trace &trace
     return std::make_shared<Xor>(newXorSet);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitImplication(Implication &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitImplication(Implication &opr, const std::shared_ptr<Trace> &trace,
+                                                                  size_t index) {
     visitExpression(opr, trace, index);
     // a -> a = true
     if (*opr.getLeft() == *opr.getRight()) {
@@ -203,7 +207,7 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitImplication(Implication &o
     return std::make_shared<Or>(orSet);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitNot(Not &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitNot(Not &opr, const std::shared_ptr<Trace> &trace, size_t index) {
     visitExpression(opr, trace, index);
     // !true = false
     if (opr.getLeft()->isConstTrue()) {
@@ -216,7 +220,8 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitNot(Not &opr, Trace &trace
     return std::make_shared<Not>(opr);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitFuture(Future &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitFuture(Future &opr, const std::shared_ptr<Trace> &trace,
+                                                             size_t index) {
     visitExpression(opr, trace, index);
     // F(false) = false
     if (opr.getLeft()->isConstFalse()) {
@@ -236,7 +241,8 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitFuture(Future &opr, Trace 
     return std::make_shared<Future>(opr);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitGlobally(Globally &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitGlobally(Globally &opr, const std::shared_ptr<Trace> &trace,
+                                                               size_t index) {
     visitExpression(opr, trace, index);
     // G(false) = false
     if (opr.getLeft()->isConstFalse()) {
@@ -260,7 +266,8 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitGlobally(Globally &opr, Tr
     return std::make_shared<Globally>(opr);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitHistorically(Historically &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitHistorically(Historically &opr,
+                                                                   const std::shared_ptr<Trace> &trace, size_t index) {
     visitExpression(opr, trace, index);
     // H(false) = false
     if (opr.getLeft()->isConstFalse()) {
@@ -284,7 +291,8 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitHistorically(Historically 
     return std::make_shared<Historically>(opr);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitNextStrong(NextStrong &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitNextStrong(NextStrong &opr, const std::shared_ptr<Trace> &trace,
+                                                                 size_t index) {
     visitExpression(opr, trace, index);
     // X(false) = false
     if (opr.getLeft()->isConstFalse()) {
@@ -293,12 +301,14 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitNextStrong(NextStrong &opr
     return std::make_shared<NextStrong>(opr);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitNextWeak(NextWeak &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitNextWeak(NextWeak &opr, const std::shared_ptr<Trace> &trace,
+                                                               size_t index) {
     visitExpression(opr, trace, index);
     return std::make_shared<NextWeak>(opr);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitOnce(Once &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitOnce(Once &opr, const std::shared_ptr<Trace> &trace,
+                                                           size_t index) {
     visitExpression(opr, trace, index);
     // O(false) = false
     if (opr.getLeft()->isConstFalse()) {
@@ -312,7 +322,8 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitOnce(Once &opr, Trace &tra
     return std::make_shared<Once>(opr);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitPreviously(Previously &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitPreviously(Previously &opr, const std::shared_ptr<Trace> &trace,
+                                                                 size_t index) {
     visitExpression(opr, trace, index);
     // P(false) = false
     if (opr.getLeft()->isConstFalse()) {
@@ -321,7 +332,8 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitPreviously(Previously &opr
     return std::make_shared<Previously>(opr);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitRelease(Release &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitRelease(Release &opr, const std::shared_ptr<Trace> &trace,
+                                                              size_t index) {
     visitExpression(opr, trace, index);
     // a R true = true
     if (opr.getRight()->isConstTrue()) {
@@ -346,7 +358,8 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitRelease(Release &opr, Trac
     return std::make_shared<Release>(opr);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitUntil(Until &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitUntil(Until &opr, const std::shared_ptr<Trace> &trace,
+                                                            size_t index) {
     visitExpression(opr, trace, index);
     // a U false = false
     if (opr.getRight()->isConstFalse()) {
@@ -367,7 +380,8 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitUntil(Until &opr, Trace &t
     return std::make_shared<Until>(opr);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitSince(Since &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitSince(Since &opr, const std::shared_ptr<Trace> &trace,
+                                                            size_t index) {
     visitExpression(opr, trace, index);
     // a S false = false
     if (opr.getRight()->isConstFalse()) {
@@ -388,21 +402,23 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitSince(Since &opr, Trace &t
     return std::make_shared<Since>(opr);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitEventOperator(EventOperator &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitEventOperator(EventOperator &opr,
+                                                                    const std::shared_ptr<Trace> &trace, size_t index) {
     return std::make_shared<EventOperator>(opr);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitResolvingOperator(ResolvingOperator &opr, Trace &trace,
-                                                                        size_t index) {
+std::shared_ptr<Expression>
+BasicRewriteVisitor::visitResolvingOperator(ResolvingOperator &opr, const std::shared_ptr<Trace> &trace, size_t index) {
     return std::make_shared<ResolvingOperator>(opr);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitDerivingOperator(DerivingOperator &opr, Trace &trace,
-                                                                       size_t index) {
+std::shared_ptr<Expression>
+BasicRewriteVisitor::visitDerivingOperator(DerivingOperator &opr, const std::shared_ptr<Trace> &trace, size_t index) {
     return std::make_shared<DerivingOperator>(opr);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitEquivalence(Equivalence &opr, Trace &trace, size_t index) {
+std::shared_ptr<Expression> BasicRewriteVisitor::visitEquivalence(Equivalence &opr, const std::shared_ptr<Trace> &trace,
+                                                                  size_t index) {
     // TODO check if same/different formula left and right
     if (opr.getLeft() == opr.getRight()) {
         return std::make_shared<Constant>(true);
@@ -414,24 +430,28 @@ std::shared_ptr<Expression> BasicRewriteVisitor::visitEquivalence(Equivalence &o
     return std::make_shared<And>(andSet);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitUniversalQuantifier(UniversalQuantifier &op, Trace &trace,
+std::shared_ptr<Expression> BasicRewriteVisitor::visitUniversalQuantifier(UniversalQuantifier &op,
+                                                                          const std::shared_ptr<Trace> &trace,
                                                                           size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<UniversalQuantifier>(op);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitExistentialQuantifier(ExistentialQuantifier &op, Trace &trace,
+std::shared_ptr<Expression> BasicRewriteVisitor::visitExistentialQuantifier(ExistentialQuantifier &op,
+                                                                            const std::shared_ptr<Trace> &trace,
                                                                             size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<ExistentialQuantifier>(op);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitQuoteQuantifier(QuoteQuantifier &op, Trace &trace, size_t index) {
+std::shared_ptr<Expression>
+BasicRewriteVisitor::visitQuoteQuantifier(QuoteQuantifier &op, const std::shared_ptr<Trace> &trace, size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<QuoteQuantifier>(op);
 }
 
-std::shared_ptr<Expression> BasicRewriteVisitor::visitCountingQuantifier(CountingQuantifier &op, Trace &trace,
+std::shared_ptr<Expression> BasicRewriteVisitor::visitCountingQuantifier(CountingQuantifier &op,
+                                                                         const std::shared_ptr<Trace> &trace,
                                                                          size_t index) {
     visitExpression(op, trace, index);
     return std::make_shared<CountingQuantifier>(op);

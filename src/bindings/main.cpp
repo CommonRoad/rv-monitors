@@ -52,15 +52,6 @@ NB_MODULE(_rvm, m) {
 
     init_domain(m);
 
-    nb::class_<ConstantValue>(m, "ConstantValue")
-        .def("__init__",
-             [](ConstantValue *v, std::string name, nb::any &value) {
-                 new (v) ConstantValue(std::move(name), dynamic_cast<const nb::object &>(value));
-             })
-        .def_prop_ro("name", &ConstantValue::getName);
-
-    nb::class_<ConstantCollection>(m, "ConstantCollection").def(nb::init<std::vector<ConstantValue>>());
-
     nb::class_<Trace>(m, "Trace", nb::sig("class Trace(Sequence[Event])"))
         .def(nb::init<>())
         .def(
@@ -73,8 +64,8 @@ NB_MODULE(_rvm, m) {
         .def_prop_ro("length", &Trace::getLength)
         .def("__len__", &Trace::getLength)
         .def("get_event", &Trace::getEvent)
-        .def("__getitem__", [](Trace &trace, size_t index) { return trace.getEvent(index); })
-        .def("__getitem__", [](const Trace &trace, nb::slice _slice) -> nb::sequence {
+        .def("__getitem__", [](const std::shared_ptr<Trace> &trace, size_t index) { return trace->getEvent(index); })
+        .def("__getitem__", [](const std::shared_ptr<Trace> &trace, nb::slice _slice) -> nb::sequence {
             nb::raise("Trace slicing is not implemented");
         });
 

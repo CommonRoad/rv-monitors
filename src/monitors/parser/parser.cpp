@@ -21,7 +21,7 @@ Formula Parser::parse(const std::string &formula, const std::string &formulaId) 
     return form;
 }
 
-Trace Parser::parse_log(const std::string &log) {
+std::shared_ptr<Trace> Parser::parse_log(const std::string &log) {
     antlr4::ANTLRInputStream input(log);
     LogLexer lexer(&input);
     antlr4::CommonTokenStream tokens(&lexer);
@@ -29,6 +29,6 @@ Trace Parser::parse_log(const std::string &log) {
     LogParser parser(&tokens);
     antlr4::tree::ParseTree *treePointer = parser.log();
     impl::LogVisitor visitor;
-    Trace trace{std::any_cast<Trace>(visitor.visit(treePointer))};
+    std::shared_ptr<Trace> trace{std::make_shared<Trace>(std::any_cast<Trace>(visitor.visit(treePointer)))};
     return trace;
 }

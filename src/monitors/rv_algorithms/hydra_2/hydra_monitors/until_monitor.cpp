@@ -75,7 +75,8 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         return {headPositionMonitorBaseTimeStep.timeStep, false};
 }
 
-void UntilMonitor::setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+void UntilMonitor::setTrace(const std::shared_ptr<Trace> &tra,
+                            const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     subMonitorLeft->setTrace(tra, domains);
     subMonitorRight->setTrace(tra, domains);
     subMonitorBaseTimeStep->setTrace(tra, domains);
@@ -96,11 +97,15 @@ void UntilMonitor::reset() {
     endReached = false;
 }
 
-std::shared_ptr<Hydra2Monitor> UntilMonitor::clone() {
+std::shared_ptr<Hydra2Monitor> UntilMonitor::clone(const std::vector<std::string> &domValNames) {
+    auto tmpCopy{Hydra2Monitor::clone(domValNames)};
+    if (tmpCopy != nullptr)
+        return tmpCopy;
     auto clonedMonitor = std::make_shared<UntilMonitor>(*this);
-    clonedMonitor->subMonitorRight = subMonitorRight->clone();
-    clonedMonitor->subMonitorLeft = subMonitorLeft->clone();
-    clonedMonitor->subMonitorBaseTimeStep = subMonitorBaseTimeStep->clone();
+    clonedMonitor->subMonitorRight = subMonitorRight->clone(domValNames);
+    clonedMonitor->subMonitorLeft = subMonitorLeft->clone(domValNames);
+    clonedMonitor->subMonitorBaseTimeStep = subMonitorBaseTimeStep->clone(domValNames);
+    allCopies.emplace_back(domValNames, clonedMonitor);
     return clonedMonitor;
 }
 
@@ -123,6 +128,7 @@ void UntilMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
     subMonitorLeft->addDomainValues(vals);
     subMonitorBaseTimeStep->addDomainValues(vals);
 }
+
 void UntilMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
     Hydra2Monitor::setStepNumber(stepNumber, parentId);
     subMonitorRight->setStepNumber(stepNumber, monitorId);

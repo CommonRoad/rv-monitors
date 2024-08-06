@@ -5,15 +5,16 @@
 #include "monitors/utils/utils.h"
 
 namespace hydraTestUtils {
-Trace createTraceWithVariable(size_t length, const std::vector<std::shared_ptr<IFunction<bool>>> &function,
-                              const ConstantCollection &constants = {});
+const std::shared_ptr<Trace> createTraceWithVariable(size_t length,
+                                                     const std::vector<std::shared_ptr<IFunction<bool>>> &function,
+                                                     const ConstantCollection &constants = {});
 
-size_t executeHydraEval(Trace trace, const std::vector<Formula> &formulas,
+size_t executeHydraEval(const std::shared_ptr<Trace> &trace, const std::vector<Formula> &formulas,
                         const std::vector<std::vector<Verdict>> &expSolution,
                         const std::vector<std::shared_ptr<DomainStorage>> &domains = {});
 
 size_t evalHydra(const std::vector<Formula> &formulas, const std::vector<std::vector<Verdict>> &expSolution,
-                 Hydra2 &monitor, Trace &trac, const std::string &evaluation,
+                 Hydra2 &monitor, const std::shared_ptr<Trace> &trac, const std::string &evaluation,
                  const std::vector<std::shared_ptr<DomainStorage>> &domains);
 
 bool higher_than_time_step(size_t timeStep, size_t val);

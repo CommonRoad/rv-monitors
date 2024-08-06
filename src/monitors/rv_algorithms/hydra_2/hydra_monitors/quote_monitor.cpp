@@ -52,10 +52,14 @@ Verdict QuoteMonitor::quantifierStep(size_t parentId, size_t stepNumber, size_t 
     return verdict;
 }
 
-std::shared_ptr<Hydra2Monitor> QuoteMonitor::clone() {
+std::shared_ptr<Hydra2Monitor> QuoteMonitor::clone(const std::vector<std::string> &domValNames) {
+    auto tmpCopy{Hydra2Monitor::clone(domValNames)};
+    if (tmpCopy != nullptr)
+        return tmpCopy;
     auto clonedMonitor = std::make_shared<QuoteMonitor>(*this);
-    clonedMonitor->subMonitor = subMonitor->clone();
+    clonedMonitor->subMonitor = subMonitor->clone(domValNames);
     clonedMonitor->resetIterators();
+    allCopies.emplace_back(domValNames, clonedMonitor);
     return clonedMonitor;
 }
 

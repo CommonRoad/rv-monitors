@@ -20,7 +20,8 @@ class Once : public Unary, public TemporalOperator {
 
     [[nodiscard]] std::shared_ptr<Expression> clone() override;
 
-    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override;
+    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, const std::shared_ptr<Trace> &trace,
+                                                     size_t index) override;
 
     [[nodiscard]] std::shared_ptr<Hydra2Monitor> accept(HydraCreationVisitor2 &visitor, size_t parentId,
                                                         bool connectedEval) override;

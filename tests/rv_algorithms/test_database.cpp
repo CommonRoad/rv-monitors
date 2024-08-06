@@ -1131,6 +1131,7 @@ TestDataBase::TestDataBase() {
 
 std::vector<Verdict> TestDataBase::createExpectedResult(const std::vector<std::tuple<size_t, bool>> &baseVerdicts) {
     std::vector<Verdict> newVerdicts;
+    newVerdicts.reserve(baseVerdicts.size());
     for (const auto &base : baseVerdicts)
         newVerdicts.emplace_back(std::get<0>(base), std::get<1>(base));
     return newVerdicts;
@@ -1139,20 +1140,20 @@ std::vector<Verdict> TestDataBase::createExpectedResult(const std::vector<std::t
 std::vector<Verdict> TestDataBase::createExpectedResult(const std::vector<bool> &baseVerdicts) {
     std::vector<Verdict> newVerdicts;
     size_t idx{0};
+    newVerdicts.reserve(baseVerdicts.size());
     for (const auto &base : baseVerdicts)
         newVerdicts.emplace_back(idx++, base);
     return newVerdicts;
 }
 
-std::vector<TestSample>
-TestDataBase::getDatabaseEntries(const std::vector<MonitoringProperties> &supportedFormulaTypes) {
+std::vector<TestSample> TestDataBase::getDatabaseEntries(const std::vector<MonitoringProperties> &supFormulas) {
     std::vector<TestSample> supportedTestCases;
-    bool requiresEquidistantTime{std::any_of(supportedFormulaTypes.begin(), supportedFormulaTypes.end(),
+    bool requiresEquidistantTime{std::any_of(supFormulas.begin(), supFormulas.end(),
                                              [](MonitoringProperties prop) { return prop.equidistantTime; })};
     for (const auto &testCase : testCases) {
         auto trace{testCase.trace};
-        if (testCase.formula->checkCompatibility(supportedFormulaTypes) and
-            (!requiresEquidistantTime or requiresEquidistantTime and trace.isEquidistant()))
+        if (testCase.formula->checkCompatibility(supFormulas) and
+            (!requiresEquidistantTime or requiresEquidistantTime and trace->isEquidistant()))
             supportedTestCases.push_back(testCase);
     }
     return supportedTestCases;

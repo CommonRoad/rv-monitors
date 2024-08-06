@@ -86,6 +86,11 @@ class Trace {
         }
     }
 
+    /**
+     * Checks whether trace is equidistant.
+     *
+     * @return Boolean indicating whether trace is equidistant.
+     */
     bool isEquidistant() {
         size_t expTimeStamp{0};
         for (const Event &event : trace) {
@@ -103,7 +108,17 @@ class Trace {
      * @param name Name of event
      * @return Verdict.
      */
-    Verdict verdictAtTimeStep(size_t step, const std::string &name) { return trace.at(step).getVerdict(name); }
+    Verdict verdictAtTimeStep(size_t step, const std::string &name, const std::string &domName = "") {
+        if (domName.empty())
+            return trace.at(step).getVerdict(name);
+        else if (!trace.at(step).hasVerdict(domName)) {
+            auto verdict{trace.at(step).getVerdict(name)};
+            trace.at(step).getEventMapRef().insert(
+                {domName, EventValue<bool>(verdict.value)}); // store computed events in case trace will be re-used
+            return verdict;
+        } else
+            return trace.at(step).getVerdict(domName);
+    }
 
     /**
      * Assigns domain values to predicate.
@@ -137,4 +152,11 @@ class Trace {
         if (trace.at(step).getEventMap().find(eventName) == trace.at(step).getEventMap().end())
             trace.at(step).addEventValueFunction(eventName, EventValue<bool>(false));
     }
+
+    /**
+     * Getter for constant collection.
+     *
+     * @return Constant collection (container for constants).
+     */
+    [[nodiscard]] ConstantCollection getConstantCollection() const { return constantCollection; }
 };

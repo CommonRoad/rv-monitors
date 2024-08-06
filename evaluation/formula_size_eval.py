@@ -74,9 +74,7 @@ def create_specs(size: int, num_atomics: int, seed: int) -> List[Tuple[str, str]
     return formulas
 
 
-def evaluate(
-    approach: str, mon: rvm.Hydra2, tr: rvm.Trace, df: pd.DataFrame, spec_size: int
-):
+def evaluate(approach: str, mon: rvm.Hydra2, tr: rvm.Trace, df: pd.DataFrame, spec_size: int):
     elapsed_time = 0
     num_iters = 5
     for ite in range(num_iters):

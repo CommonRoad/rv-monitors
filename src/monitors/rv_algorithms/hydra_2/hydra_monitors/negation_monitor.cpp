@@ -4,7 +4,8 @@ Verdict NegationMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     return !subMonitor->step(monitorId, stepNumber);
 }
 
-void NegationMonitor::setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+void NegationMonitor::setTrace(const std::shared_ptr<Trace> &tra,
+                               const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     subMonitor->setTrace(tra, domains);
 }
 
@@ -13,9 +14,13 @@ void NegationMonitor::reset() {
     subMonitor->reset();
 }
 
-std::shared_ptr<Hydra2Monitor> NegationMonitor::clone() {
+std::shared_ptr<Hydra2Monitor> NegationMonitor::clone(const std::vector<std::string> &domValNames) {
+    auto tmpCopy{Hydra2Monitor::clone(domValNames)};
+    if (tmpCopy != nullptr)
+        return tmpCopy;
     auto clonedMonitor = std::make_shared<NegationMonitor>(*this);
-    clonedMonitor->subMonitor = subMonitor->clone();
+    clonedMonitor->subMonitor = subMonitor->clone(domValNames);
+    allCopies.emplace_back(domValNames, clonedMonitor);
     return clonedMonitor;
 }
 

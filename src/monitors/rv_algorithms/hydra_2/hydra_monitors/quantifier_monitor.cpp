@@ -25,13 +25,18 @@ std::shared_ptr<Hydra2Monitor> QuantifierMonitor::nextEvalMonitor(size_t stepNum
     if (evalMonitors.find(getUniqueID()) == evalMonitors.end()) // if there is no monitor for the current
                                                                 // combination, then a new monitor will be cloned
     {
-        evalMonitor = subMonitor->clone();
-        evalMonitors[getUniqueID()] = evalMonitor;
+        std::vector<std::string> domValueNames;
+        domValueNames.reserve(currentDomainValues.size());
+        for (const auto &val : currentDomainValues)
+            domValueNames.push_back(val.getUniqueID());
+        evalMonitor = subMonitor->clone(domValueNames);
         evalMonitor->addDomainValues(currentDomainValues);
+        evalMonitors[getUniqueID()] = evalMonitor;
         evalMonitor->setStepNumber(stepNumber, monitorId);
     } else {
         evalMonitor = evalMonitors[getUniqueID()];
         evalMonitor->addDomainValues(currentDomainValues); // required (see testExistentialStepLoopingDynamicDomain)
+        evalMonitors[getUniqueID()] = evalMonitor;
     }
 
     shiftCombination();
@@ -93,7 +98,8 @@ bool QuantifierMonitor::checkNonEmptiness() const {
                        });
 }
 
-void QuantifierMonitor::setTrace(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+void QuantifierMonitor::setTrace(const std::shared_ptr<Trace> &tra,
+                                 const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     trace = tra;
 
     for (const auto &var : variableValues)
@@ -147,8 +153,8 @@ Verdict QuantifierMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 
 Verdict QuantifierMonitor::initializeStepTrue(size_t parentId) {
     Verdict verdict{true};
-    if (traceIdx[parentId] < trace.getLength())
-        verdict.timeStamp = trace.getEvent(traceIdx[parentId]).getTimeStep();
+    if (traceIdx[parentId] < trace->getLength())
+        verdict.timeStamp = trace->getEvent(traceIdx[parentId]).getTimeStep();
     else
         return Verdict{false};
 
@@ -159,8 +165,8 @@ Verdict QuantifierMonitor::initializeStepTrue(size_t parentId) {
 
 Verdict QuantifierMonitor::initializeStepFalse(size_t parentId) {
     Verdict verdict{false};
-    if (traceIdx[parentId] < trace.getLength())
-        verdict.timeStamp = trace.getEvent(traceIdx[parentId]).getTimeStep();
+    if (traceIdx[parentId] < trace->getLength())
+        verdict.timeStamp = trace->getEvent(traceIdx[parentId]).getTimeStep();
     else
         return Verdict{false};
 

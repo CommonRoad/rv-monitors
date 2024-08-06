@@ -6,7 +6,7 @@
 
 namespace hydraTestUtils {
 size_t executeHydraEval(const std::vector<Formula> &formulas, const std::vector<std::vector<Verdict>> &expSolution,
-                        Trace &trac);
+                        const std::shared_ptr<Trace> &trac);
 bool evalHydra(const std::vector<Formula> &formulas, const std::vector<std::vector<Verdict>> &expSolution,
-               Hydra &monitor, Trace &trace);
+               Hydra &monitor, const std::shared_ptr<Trace> &trace);
 } // namespace hydraTestUtils

@@ -32,7 +32,7 @@ antlrcpp::Any LogVisitor::visitLog(LogParser::LogContext *context) {
         true_atomics.push_back(entry.true_atomics);
     }
 
-    Trace trace = Utils::createTrace(atomics, true_atomics, time_steps);
+    std::shared_ptr<Trace> trace = Utils::createTrace(atomics, true_atomics, time_steps);
 
     return trace;
 }

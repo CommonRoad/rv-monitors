@@ -13,7 +13,7 @@ Verdict OrMonitorHydra::concreteStep() {
     return verdict;
 }
 
-void OrMonitorHydra::setTrace(const Trace &tra) {
+void OrMonitorHydra::setTrace(const std::shared_ptr<Trace> &tra) {
     for (const auto &mon : subMonitors)
         mon->setTrace(tra);
 }
