@@ -34,19 +34,20 @@ std::string MtFsm::to_string() const {
 
 const std::vector<StateMT_FSM> &MtFsm::getStates() const { return states; }
 
-std::map<std::string, std::vector<Verdict>>
-MtFsm::evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+std::map<std::string, std::vector<Verdict>> MtFsm::evaluate(const std::shared_ptr<Trace> &trace,
+                                                            const std::vector<std::shared_ptr<DomainStorage>> &domains,
+                                                            const std::vector<std::string> &formulaIDs) {
     // First two states are true and false
     auto currentState = states[2];
     std::map<std::string, std::vector<Verdict>> result;
 
     if (pastEvaluation)
-        trace.setTerminalEvent(false);
+        trace->setTerminalEvent(false);
 
-    for (size_t i = 0; i < trace.getLength(); ++i) {
+    for (size_t i = 0; i < trace->getLength(); ++i) {
         // If past then access in inverted order
-        size_t eventIndex = pastEvaluation ? trace.getLength() - 1 - i : i;
-        size_t nextState = currentState.nextState(trace.getEvent(eventIndex));
+        size_t eventIndex = pastEvaluation ? trace->getLength() - 1 - i : i;
+        size_t nextState = currentState.nextState(trace->getEvent(eventIndex));
         if (nextState == 0u) {
             result[formulas.at(0).getId()] = {Verdict{false}};
             return result;

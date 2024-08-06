@@ -123,7 +123,9 @@ void DynamicProgrammingLTL::update(size_t idx, std::vector<bool> &updateVector, 
 }
 
 std::map<std::string, std::vector<Verdict>>
-DynamicProgrammingLTL::evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+DynamicProgrammingLTL::evaluate(const std::shared_ptr<Trace> &trace,
+                                const std::vector<std::shared_ptr<DomainStorage>> &domains,
+                                const std::vector<std::string> &formulaIDs) {
     std::map<std::string, std::vector<Verdict>> result;
     if (!pastEvaluation)
         result[formulas.at(0).getId()] = {Verdict{checkTraceDynamicallyFuture(trace)}};
@@ -181,15 +183,15 @@ std::vector<bool> DynamicProgrammingLTL::updateNowPast(Event &event,
     return now;
 }
 
-bool DynamicProgrammingLTL::checkTraceDynamicallyPast(Trace &trace) {
+bool DynamicProgrammingLTL::checkTraceDynamicallyPast(const std::shared_ptr<Trace> &trace) {
     // Empty trace
-    if (trace.getTrace().empty()) {
+    if (trace->getTrace().empty()) {
         return false;
     }
     std::vector<std::shared_ptr<Expression>> subformulae = Utils::subformulasBreadthFirstOrder(formulas.at(0));
-    std::vector<bool> pre = initializePre(trace.getTraceRef()[0], subformulae);
-    for (size_t i = 1; i < trace.getTrace().size(); ++i) {
-        pre = updateNowPast(trace.getTraceRef()[i], subformulae, pre);
+    std::vector<bool> pre = initializePre(trace->getTraceRef()[0], subformulae);
+    for (size_t i = 1; i < trace->getTrace().size(); ++i) {
+        pre = updateNowPast(trace->getTraceRef()[i], subformulae, pre);
         // Only for safety properties!
         if (!pre[0]) {
             // std::cout << "Formula violated in event " << i - 1 << std::endl;
@@ -271,18 +273,18 @@ std::vector<bool> DynamicProgrammingLTL::updateNowFuture(Event &event,
     return now;
 }
 
-bool DynamicProgrammingLTL::checkTraceDynamicallyFuture(Trace &trace) {
+bool DynamicProgrammingLTL::checkTraceDynamicallyFuture(const std::shared_ptr<Trace> &trace) {
     // Empty trace
-    if (trace.getTrace().empty()) {
+    if (trace->getTrace().empty()) {
         return false;
     }
     std::vector<std::shared_ptr<Expression>> subformulas = Utils::subformulasBreadthFirstOrder(formulas.at(0));
-    std::vector<bool> next = initializeNext(trace.getTraceRef()[trace.getLength() - 1], subformulas);
+    std::vector<bool> next = initializeNext(trace->getTraceRef()[trace->getLength() - 1], subformulas);
     if (!next[0]) {
         return false;
     }
-    for (size_t i = trace.getLength() - 2; i < trace.getLength() - 1; --i) {
-        next = updateNowFuture(trace.getTraceRef()[i], subformulas, next);
+    for (size_t i = trace->getLength() - 2; i < trace->getLength() - 1; --i) {
+        next = updateNowFuture(trace->getTraceRef()[i], subformulas, next);
         // Only for safety properties!
         if (!next[0]) {
             return false;

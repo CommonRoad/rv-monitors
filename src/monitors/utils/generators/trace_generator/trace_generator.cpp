@@ -2,7 +2,7 @@
 #include "monitors/expression_tree/atomic/predicate.h"
 #include "monitors/trace/event.h"
 #include <iostream>
-Trace TraceGenerator ::generateTrace(const size_t length) {
+std::shared_ptr<Trace> TraceGenerator ::generateTrace(const size_t length) {
     std::vector<Event> trace;
     double coin;
 
@@ -42,5 +42,5 @@ Trace TraceGenerator ::generateTrace(const size_t length) {
         Event eve(eventMap, i, terminal);
         trace.push_back(eve);
     }
-    return Trace(trace);
+    return std::make_shared<Trace>(Trace(trace));
 }

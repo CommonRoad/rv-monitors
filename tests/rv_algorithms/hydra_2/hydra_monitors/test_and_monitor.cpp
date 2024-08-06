@@ -13,7 +13,7 @@
 #include "test_or_monitor.h"
 
 TEST(TestAndMonitor, testSingleAndMonitorFalseEvaluation) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("false & true");
     Formula formulaFalse = Parser::parse("false");
     Formula formulaTrue = Parser::parse("true");
@@ -31,7 +31,7 @@ TEST(TestAndMonitor, testSingleAndMonitorFalseEvaluation) {
 }
 
 TEST(TestAndMonitor, testSingleAndMonitorTrueEvaluation) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("true & true");
     Formula formulaTrue = Parser::parse("true");
     formula.setId("R1");
@@ -47,7 +47,7 @@ TEST(TestAndMonitor, testSingleAndMonitorTrueEvaluation) {
 }
 
 TEST(TestAndMonitor, testSingleAndMonitorFalseEvaluationShortCircuiting) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("false & true");
     Formula formulaFalse = Parser::parse("false");
     Formula formulaTrue = Parser::parse("true");
@@ -65,7 +65,7 @@ TEST(TestAndMonitor, testSingleAndMonitorFalseEvaluationShortCircuiting) {
 }
 
 TEST(TestAndMonitor, testSingleAndMonitorTrueEvaluationShortCircuiting) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("true & true");
     Formula formulaTrue = Parser::parse("true");
     formula.setId("R1");
@@ -81,7 +81,7 @@ TEST(TestAndMonitor, testSingleAndMonitorTrueEvaluationShortCircuiting) {
 }
 
 TEST(TestAndMonitor, testSingleAndMonitorShortCircuitingForLoop) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("!(false) & false");
     Formula formulaFalse = Parser::parse("false");
     Formula formulaNegation = Parser::parse("!(false)");
@@ -101,7 +101,7 @@ TEST(TestAndMonitor, testSingleAndMonitorShortCircuitingForLoop) {
 }
 
 TEST(TestAndMonitor, testToString) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("false & true");
     Formula formulaFalse = Parser::parse("false");
     Formula formulaTrue = Parser::parse("true");
@@ -115,7 +115,7 @@ TEST(TestAndMonitor, testToString) {
 }
 
 TEST(TestAndMonitor, testReset) {
-    Trace trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a"}, {{"a"}, {}}, std::vector<size_t>{0, 1});
     Formula formula = Parser::parse("false & true");
     Formula formulaFalse = Parser::parse("false");
     Formula formulaTrue = Parser::parse("true");

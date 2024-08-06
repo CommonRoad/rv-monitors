@@ -3,36 +3,47 @@
 #include "monitors/rewriting/hydra_rewrite_visitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_creation_visitor.h"
 #include <iostream>
+#include <spdlog/spdlog.h>
 
-std::map<std::string, std::vector<Verdict>>
-Hydra2::evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+std::map<std::string, std::vector<Verdict>> Hydra2::evaluate(const std::shared_ptr<Trace> &trace,
+                                                             const std::vector<std::shared_ptr<DomainStorage>> &domains,
+                                                             const std::vector<std::string> &formulaIDs) {
     std::map<std::string, std::vector<Verdict>> result;
     // Empty trace
-    if (trace.getTrace().empty()) {
+    if ((trace == nullptr or trace->getTrace().empty()) and traceLength == 0) {
         std::cout << "Hydra2::evaluate | Trace is empty\n";
         for (const auto &mon : monitors)
             result[mon->getFormulaId()] = {};
         return result;
     }
 
-    resetMonitors();
-    setTraceMonitors(trace, domains);
+    if (trace != nullptr and !trace->getTrace().empty()) {
+        resetMonitors();
+        setTraceMonitors(trace, domains);
+    }
 
     if (!earlyTermination)
-        evalCompleteTrace(trace, result);
+        evalCompleteTrace(result, formulaIDs);
     else
-        evalEarlyTermination(trace, result);
+        evalEarlyTermination(result, formulaIDs);
 
     return result;
 }
 
-void Hydra2::evalEarlyTermination(Trace &trace, std::map<std::string, std::vector<Verdict>> &result) {
+void Hydra2::evalEarlyTermination(std::map<std::string, std::vector<Verdict>> &result,
+                                  const std::vector<std::string> &formulaIDs) {
+    std::vector<std::shared_ptr<Hydra2Monitor>> relMonitors;
     for (const auto &mon : monitors)
-        result[mon->getFormulaId()].emplace_back(
-            true); // only single verdict required and use "invalid" time step to indicate early termination
+        if (result.find(mon->getFormulaId()) == result.end() and
+            (formulaIDs.empty() or std::any_of(formulaIDs.begin(), formulaIDs.end(),
+                                               [mon](const std::string &fID) { return fID == mon->getFormulaId(); }))) {
+            result[mon->getFormulaId()].emplace_back(
+                true); // only single verdict required and use "invalid" time step to indicate early termination
+            relMonitors.push_back(mon);
+        }
 
-    for (size_t i{0}; i < trace.getLength(); ++i) {
-        for (const auto &mon : monitors) {
+    for (size_t i{0}; i < traceLength; ++i) {
+        for (const auto &mon : relMonitors) {
             result[mon->getFormulaId()].at(0) = result[mon->getFormulaId()].at(0).value and mon->step(0, i).value;
             if (!result[mon->getFormulaId()].at(0).value)
                 return;
@@ -52,9 +63,11 @@ void Hydra2::resetMonitors() {
         mon->reset();
 }
 
-void Hydra2::setTraceMonitors(const Trace &tra, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+void Hydra2::setTraceMonitors(const std::shared_ptr<Trace> &tra,
+                              const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     for (const auto &mon : monitors)
         mon->setTrace(tra, domains);
+    traceLength = tra->getTrace().size();
 }
 
 void Hydra2::createMonitor(const std::vector<Formula> &formulas, bool connectedEval, bool reordering,
@@ -86,12 +99,23 @@ Hydra2::Hydra2(const std::vector<Formula> &formulas, bool connectedEval, bool re
 
 std::map<std::string, std::array<double, 2>> &Hydra2::getPredicateCost() { return predicateCosts; }
 
-void Hydra2::evalCompleteTrace(Trace &trace, std::map<std::string, std::vector<Verdict>> &result) {
-    for (const auto &mon : this->monitors)
-        result[mon->getFormulaId()].reserve(trace.getLength());
-    for (size_t i{0}; i < trace.getLength(); ++i)
-        for (const auto &mon : this->monitors)
+void Hydra2::evalCompleteTrace(std::map<std::string, std::vector<Verdict>> &result,
+                               const std::vector<std::string> &formulaIDs) {
+    std::vector<std::shared_ptr<Hydra2Monitor>> relMonitors;
+    for (const auto &mon : monitors)
+        if (result.find(mon->getFormulaId()) == result.end() and
+            (formulaIDs.empty() or std::any_of(formulaIDs.begin(), formulaIDs.end(),
+                                               [mon](const std::string &fID) { return fID == mon->getFormulaId(); }))) {
+            result[mon->getFormulaId()].reserve(traceLength);
+            relMonitors.push_back(mon);
+        }
+
+    for (size_t i{0}; i < traceLength; ++i)
+        for (const auto &mon : relMonitors) {
+            spdlog::debug("Monitor evaluation: " + std::to_string(i) + " - " + mon->getFormulaId());
+            mon->addDomainValues({});
             result[mon->getFormulaId()].emplace_back(mon->step(0, i));
+        }
 }
 
 std::map<std::string, std::map<size_t, std::vector<std::vector<DomainValue>>>>

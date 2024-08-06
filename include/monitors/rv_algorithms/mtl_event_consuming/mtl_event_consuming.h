@@ -20,11 +20,13 @@ class MTLEventConsuming : public MonitorInterface {
      *
      * @param trace Trace which should be evaluated.
      * @param domains List of domains. Not used by MTLEventConsuming.
+     * @param formulaIDs List of formula IDs which should be evaluated (not used for this monitor)
      * @return List of verdicts for each time step of the trace. If the length of the vector is 1,
      * the runtime verification algorithm can only provide a global verdict for the complete trace.
      */
     std::map<std::string, std::vector<Verdict>>
-    evaluate(Trace &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
+    evaluate(const std::shared_ptr<Trace> &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains = {},
+             const std::vector<std::string> &formulaIDs = {}) override;
 
     /**
      * to_string() function.

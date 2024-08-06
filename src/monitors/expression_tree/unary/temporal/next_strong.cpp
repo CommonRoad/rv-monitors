@@ -2,7 +2,8 @@
 
 std::shared_ptr<Expression> NextStrong::clone() { return std::make_shared<NextStrong>(*this); }
 
-std::shared_ptr<Expression> NextStrong::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
+std::shared_ptr<Expression> NextStrong::accept(ExpressionVisitor &visitor, const std::shared_ptr<Trace> &trace,
+                                               size_t index) {
     return visitor.visitNextStrong(*this, trace, index);
 }
 

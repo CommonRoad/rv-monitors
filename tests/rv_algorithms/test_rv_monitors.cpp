@@ -3,18 +3,17 @@
 #include "monitors/rv_algorithms/ltl_event_consuming/event_consuming.h"
 
 void TestRVMonitors::SetUp() {
-    trace = std::make_unique<Trace>(Utils::createTrace({"a", "b", "c"}, {{"b"}, {"a"}, {"b"}}));
+    trace = Utils::createTrace({"a", "b", "c"}, {{"b"}, {"a"}, {"b"}});
     formula = std::make_unique<Formula>(Parser::parse("G(b -> (X(a)))"));
     formula->setId("R1");
 }
 
 std::vector<Verdict> TestRVMonitors::executeRVMonitor(AlgorithmType algorithm) {
-    Trace tra{*trace};
     Formula form{*formula};
     auto monitor{RVMonitor({form, MonitorConfiguration(algorithm, false)})};
     std::cout << algorithm;
 
-    return monitor.verify(tra)[form.getId()];
+    return monitor.verify(trace)[form.getId()];
 }
 
 TEST_F(TestRVMonitors, EventConsumingLTL) {
@@ -67,11 +66,10 @@ TEST_F(TestRVMonitors, StringToAlgorithm) {
 }
 
 TEST_F(TestRVMonitors, PerformanceMeasurement) {
-    Trace tra{*trace};
     Formula form{*formula};
     auto monitor{RVMonitor({form, MonitorConfiguration(AlgorithmType::hydra_2_mtl, true)})};
 
-    monitor.verify(tra);
+    monitor.verify(trace);
 
     EXPECT_EQ(monitor.getExecutionStatistic().getTraceLengths().at(0), 0);
     EXPECT_EQ(monitor.getExecutionStatistic().getTraceLengths().at(1), 3);
@@ -80,7 +78,7 @@ TEST_F(TestRVMonitors, PerformanceMeasurement) {
     EXPECT_GT(monitor.getExecutionStatistic().getTotalTime(), 0.0);
 }
 
-void copyMonitor(Trace &tra, AlgorithmType alg) {
+void copyMonitor(const std::shared_ptr<Trace> &tra, AlgorithmType alg) {
     Formula form{Formula(Parser::parse("G(!(a | b) & !c)"))};
     form.setId("R_U1");
     auto conf1{MonitorConfiguration(alg, false)};
@@ -92,12 +90,11 @@ void copyMonitor(Trace &tra, AlgorithmType alg) {
 }
 
 TEST_F(TestRVMonitors, CopyAndAssignmentConstructor) {
-    Trace tra{*trace};
-    copyMonitor(tra, AlgorithmType::hydra_2_mtl);
-    copyMonitor(tra, AlgorithmType::hydra_mtl);
-    copyMonitor(tra, AlgorithmType::event_consuming_ltl);
-    copyMonitor(tra, AlgorithmType::event_consuming_mtl);
-    copyMonitor(tra, AlgorithmType::dynamic_programming_ltl);
-    copyMonitor(tra, AlgorithmType::btt_fsm);
-    copyMonitor(tra, AlgorithmType::mt_fsm);
+    copyMonitor(trace, AlgorithmType::hydra_2_mtl);
+    copyMonitor(trace, AlgorithmType::hydra_mtl);
+    copyMonitor(trace, AlgorithmType::event_consuming_ltl);
+    copyMonitor(trace, AlgorithmType::event_consuming_mtl);
+    copyMonitor(trace, AlgorithmType::dynamic_programming_ltl);
+    copyMonitor(trace, AlgorithmType::btt_fsm);
+    copyMonitor(trace, AlgorithmType::mt_fsm);
 }

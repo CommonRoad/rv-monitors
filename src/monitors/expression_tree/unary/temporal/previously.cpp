@@ -2,7 +2,8 @@
 
 std::shared_ptr<Expression> Previously::clone() { return std::make_shared<Previously>(*this); }
 
-std::shared_ptr<Expression> Previously::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
+std::shared_ptr<Expression> Previously::accept(ExpressionVisitor &visitor, const std::shared_ptr<Trace> &trace,
+                                               size_t index) {
     return visitor.visitPreviously(*this, trace, index);
 }
 

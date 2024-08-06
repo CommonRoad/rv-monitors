@@ -13,8 +13,9 @@
 #include "test_or_monitor.h"
 
 TEST(TestUntilMonitor, testUntilMonitorEvaluation) {
-    Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"a"}, {"b"}, {}, {"a", "b"}, {"a"}, {"a", "b"}, {"a"}, {"b"}},
-                                     std::vector<size_t>{0, 1, 2, 3, 4, 5, 6, 20, 30});
+    const std::shared_ptr<Trace> trace =
+        Utils::createTrace({"a", "b"}, {{"a"}, {"a"}, {"b"}, {}, {"a", "b"}, {"a"}, {"a", "b"}, {"a"}, {"b"}},
+                           std::vector<size_t>{0, 1, 2, 3, 4, 5, 6, 20, 30});
     Formula formula = Parser::parse("a U[0, 4] b");
     Formula formulaA = Parser::parse("a");
     Formula formulaB = Parser::parse("b");

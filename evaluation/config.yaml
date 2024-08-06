@@ -13,6 +13,3 @@ experiment:
     er: 1
     delta: 10
   rv_exec: ["build/Release/rvmonitors_eval", "build/rvmonitors_eval"]
-
-
-

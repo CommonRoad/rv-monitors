@@ -1,12 +1,9 @@
-//
-// Created by sebastian on 11.01.22.
-//
-
 #include "hydra_test_utils.h"
 #include <gtest/gtest.h>
 
 size_t hydraTestUtils::executeHydraEval(const std::vector<Formula> &formulas,
-                                        const std::vector<std::vector<Verdict>> &expSolution, Trace &trace) {
+                                        const std::vector<std::vector<Verdict>> &expSolution,
+                                        const std::shared_ptr<Trace> &trace) {
     auto monitor{Hydra(formulas)};
     bool formulaWrong{evalHydra(formulas, expSolution, monitor, trace)};
     evalHydra(formulas, expSolution, monitor, trace);
@@ -16,7 +13,8 @@ size_t hydraTestUtils::executeHydraEval(const std::vector<Formula> &formulas,
         return 0;
 }
 bool hydraTestUtils::evalHydra(const std::vector<Formula> &formulas,
-                               const std::vector<std::vector<Verdict>> &expSolution, Hydra &monitor, Trace &trace) {
+                               const std::vector<std::vector<Verdict>> &expSolution, Hydra &monitor,
+                               const std::shared_ptr<Trace> &trace) {
     auto solution{monitor.evaluate(trace)};
     bool formulaWrong;
     for (int i{0}; i < formulas.size(); ++i) {

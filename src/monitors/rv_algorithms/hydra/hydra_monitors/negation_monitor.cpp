@@ -8,7 +8,7 @@
 
 Verdict NegationMonitorHydra::concreteStep() { return !subMonitor->concreteStep(); }
 
-void NegationMonitorHydra::setTrace(const Trace &tra) { subMonitor->setTrace(tra); }
+void NegationMonitorHydra::setTrace(const std::shared_ptr<Trace> &tra) { subMonitor->setTrace(tra); }
 
 void NegationMonitorHydra::reset() { subMonitor->reset(); }
 

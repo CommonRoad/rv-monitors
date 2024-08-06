@@ -27,7 +27,7 @@ struct TestSample {
 
     std::string testName;                                //**< Trace which should be monitored. */
     std::shared_ptr<Formula> formula;                    //**< Pointer to formula object. */
-    Trace trace;                                         //**< Trace which should be monitored. */
+    std::shared_ptr<Trace> trace;                        //**< Trace which should be monitored. */
     std::vector<Verdict> expectedResult;                 //**< Expected result per trace element. */
     std::vector<std::shared_ptr<DomainStorage>> domains; //**< Collection of domains. */
 };

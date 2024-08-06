@@ -17,7 +17,8 @@ std::string Predicate::to_string() const {
 
 std::shared_ptr<Expression> Predicate::clone() { return std::make_shared<Predicate>(*this); }
 
-std::shared_ptr<Expression> Predicate::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
+std::shared_ptr<Expression> Predicate::accept(ExpressionVisitor &visitor, const std::shared_ptr<Trace> &trace,
+                                              size_t index) {
     return visitor.visitPredicate(*this, trace, index);
 }
 

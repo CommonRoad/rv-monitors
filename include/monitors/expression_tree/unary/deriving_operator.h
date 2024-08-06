@@ -10,7 +10,7 @@
  */
 class DerivingOperator : public Unary {
   private:
-    Trace trace;
+    const std::shared_ptr<Trace> &trace;
     size_t index;
 
   public:
@@ -19,8 +19,8 @@ class DerivingOperator : public Unary {
      * @param left Expression event should be applied to.
      * @param event Event.
      */
-    explicit DerivingOperator(const std::shared_ptr<Expression> &left, Trace trace, size_t idx)
-        : Unary(trace.getEvent(idx).to_string(), left), trace(std::move(trace)), index(idx) {}
+    explicit DerivingOperator(const std::shared_ptr<Expression> &left, const std::shared_ptr<Trace> &trace, size_t idx)
+        : Unary(trace->getEvent(idx).to_string(), left), trace(trace), index(idx) {}
 
     /**
      * Getter for event.
@@ -30,7 +30,8 @@ class DerivingOperator : public Unary {
 
     [[nodiscard]] std::shared_ptr<Expression> clone() override;
 
-    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, Trace &trace, size_t index) override;
+    [[nodiscard]] std::shared_ptr<Expression> accept(ExpressionVisitor &visitor, const std::shared_ptr<Trace> &trace,
+                                                     size_t index) override;
 
     [[nodiscard]] std::string to_string() const override;
 

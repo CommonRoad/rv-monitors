@@ -17,7 +17,7 @@ bool DomainValue::checkValidity(size_t stepNumber) const { return validityCondit
 
 bool DomainValue::isConst() const { return constVar; }
 
-std::string DomainValue::getUniqueID() const { return variable + idFunction(value); }
+std::string DomainValue::getUniqueID() const { return idFunction(value); }
 
 bool DomainValue::isTimeStep() const { return variable == timeStepVariable; }
 

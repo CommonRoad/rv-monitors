@@ -139,7 +139,7 @@ def test_G1(monitor):
     res = mon.evaluate(trace)[formula.id]
 
     assert len(res) == 1
-    assert res[0] == False
+    assert res[0].value is False
 
 
 @pytest.mark.parametrize("monitor", [rvm.Hydra, rvm.Hydra2])
@@ -152,8 +152,8 @@ def test_G1_hydra(monitor):
     res = mon.evaluate(trace)[formula.id]
 
     assert len(res) == 3
-    assert res[0].value == True
-    assert res[1].value == True
+    assert res[0].value is True
+    assert res[1].value is True
     assert res[2] == rvm.Verdict(2, False)
 
 
@@ -185,11 +185,11 @@ def test_universal_monitor():
     mon = rvm.Hydra2([formula], domains=[dom1, dom2])
     res = mon.evaluate(trace)["R1"]
 
-    assert res[0].value == True
-    assert res[1].value == True
-    assert res[2].value == True
-    assert res[3].value == False
-    assert res[4].value == False
+    assert res[0].value is True
+    assert res[1].value is True
+    assert res[2].value is True
+    assert res[3].value is False
+    assert res[4].value is False
 
 
 def test_universal_monitor_dynamic_domain():
@@ -207,11 +207,11 @@ def test_universal_monitor_dynamic_domain():
     mon = rvm.Hydra2([formula], domains=[dom1, dom2])
     res = mon.evaluate(trace)["R1"]
 
-    assert res[0].value == True
-    assert res[1].value == True
-    assert res[2].value == True
-    assert res[3].value == False
-    assert res[4].value == False
+    assert res[0].value is True
+    assert res[1].value is True
+    assert res[2].value is True
+    assert res[3].value is False
+    assert res[4].value is False
 
 
 def test_existence_variable_domain_lazy_predicate():
@@ -243,10 +243,10 @@ def test_existence_variable_domain_lazy_predicate():
     mon = rvm.Hydra2([formula], domains=[dom1])
     res = mon.evaluate(trace)["R1"]
 
-    assert res[0].value == False
-    assert res[1].value == False
-    assert res[2].value == False
-    assert res[3].value == True
+    assert res[0].value is False
+    assert res[1].value is False
+    assert res[2].value is False
+    assert res[3].value is True
 
 
 def test_to_tree1():

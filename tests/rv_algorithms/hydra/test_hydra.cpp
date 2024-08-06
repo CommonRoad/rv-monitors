@@ -1,10 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
-
 #include "test_hydra.h"
 #include "../test_database.h"
 #include "hydra_test_utils.h"
@@ -35,7 +28,7 @@ TEST(TestHydra, formulaTest) {
         if (std::any_of(excludedTestCases.begin(), excludedTestCases.end(),
                         [testCase](const std::string &name) { return name == testCase.formula->getId(); }))
             continue;
-        Trace tra{testCase.trace};
+        std::shared_ptr<Trace> tra{testCase.trace};
         failures += hydraTestUtils::executeHydraEval({*testCase.formula}, {testCase.expectedResult}, tra);
     }
     std::cout << "Hydra Formula Test: " << std::to_string(failures) << " failing formulas.";

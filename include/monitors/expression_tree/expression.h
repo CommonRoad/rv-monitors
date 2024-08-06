@@ -73,7 +73,7 @@ class Expression {
      * @param event Event.
      * @return Result of visit function of respective expression.
      */
-    virtual std::shared_ptr<Expression> accept(ExpressionVisitor &, Trace &, size_t index) = 0;
+    virtual std::shared_ptr<Expression> accept(ExpressionVisitor &, const std::shared_ptr<Trace> &, size_t index) = 0;
 
     /**
      * Accept function for visitor pattern for Hydra2 monitor.

@@ -38,9 +38,11 @@ class CountingMonitor : public QuantifierMonitor {
 
     /**
      * Clones this monitor.
+     *
+     * @param domValNames List of domain value names.
      * @return New shared_ptr of this monitor.
      */
-    std::shared_ptr<Hydra2Monitor> clone() override;
+    std::shared_ptr<Hydra2Monitor> clone(const std::vector<std::string> &domValNames) override;
 
     /**
      * Creates string representation of monitor.

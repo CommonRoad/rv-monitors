@@ -11,7 +11,8 @@
 #include "test_constant_monitor.h"
 
 TEST(TestAtomicMonitorHydra, testAtomicEvaluation) {
-    Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"b"}, {"a"}, {}}, std::vector<size_t>{0, 1, 2, 3});
+    const std::shared_ptr<Trace> trace =
+        Utils::createTrace({"a", "b"}, {{"a"}, {"b"}, {"a"}, {}}, std::vector<size_t>{0, 1, 2, 3});
     Formula formula = Parser::parse("a");
     formula.setId("R1");
     auto mon{AtomicMonitorHydra(formula)};
@@ -24,7 +25,8 @@ TEST(TestAtomicMonitorHydra, testAtomicEvaluation) {
 }
 
 TEST(TestAtomicMonitorHydra, testToString) {
-    Trace trace = Utils::createTrace({"a", "b"}, {{"a"}, {"b"}, {"a"}, {}}, std::vector<size_t>{0, 1, 2, 3});
+    const std::shared_ptr<Trace> trace =
+        Utils::createTrace({"a", "b"}, {{"a"}, {"b"}, {"a"}, {}}, std::vector<size_t>{0, 1, 2, 3});
     Formula formula = Parser::parse("a");
     formula.setId("R1");
     auto mon{AtomicMonitorHydra(formula)};

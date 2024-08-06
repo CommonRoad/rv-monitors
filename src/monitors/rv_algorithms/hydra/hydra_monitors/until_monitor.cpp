@@ -63,7 +63,7 @@ Verdict UntilMonitorHydra::concreteStep() {
     int verd = static_cast<int>(last_sat && last_sat->first - positionMonitorH.ts >= interval.getStart());
     return {positionMonitorH.ts, verd != 0};
 }
-void UntilMonitorHydra::setTrace(const Trace &tra) {
+void UntilMonitorHydra::setTrace(const std::shared_ptr<Trace> &tra) {
     subMonitorF->setTrace(tra);
     subMonitorG->setTrace(tra);
     subMonitorH->setTrace(tra);

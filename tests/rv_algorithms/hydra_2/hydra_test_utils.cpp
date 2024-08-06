@@ -32,17 +32,17 @@ bool hydraTestUtils::lower_than_time_step(size_t timeStep, size_t val) { return 
 
 bool hydraTestUtils::equals_three(size_t timeStep, size_t val) { return val == 3; }
 
-Trace hydraTestUtils::createTraceWithVariable(size_t length,
-                                              const std::vector<std::shared_ptr<IFunction<bool>>> &function,
-                                              const ConstantCollection &constants) {
+const std::shared_ptr<Trace>
+hydraTestUtils::createTraceWithVariable(size_t length, const std::vector<std::shared_ptr<IFunction<bool>>> &function,
+                                        const ConstantCollection &constants) {
     std::vector<Event> eventList;
     for (size_t timeStepIdx{0}; timeStepIdx < length; ++timeStepIdx) {
         eventList.emplace_back(timeStepIdx, timeStepIdx == length - 1);
     }
-    return Trace(eventList, std::move(function), constants);
+    return std::make_shared<Trace>(Trace(eventList, std::move(function), constants));
 }
 
-size_t hydraTestUtils::executeHydraEval(Trace trace, const std::vector<Formula> &formulas,
+size_t hydraTestUtils::executeHydraEval(const std::shared_ptr<Trace> &trace, const std::vector<Formula> &formulas,
                                         const std::vector<std::vector<Verdict>> &expSolution,
                                         const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     std::array<size_t, 9> numFailures{};
@@ -76,8 +76,8 @@ size_t hydraTestUtils::executeHydraEval(Trace trace, const std::vector<Formula> 
 }
 
 size_t hydraTestUtils::evalHydra(const std::vector<Formula> &formulas,
-                                 const std::vector<std::vector<Verdict>> &expSolution, Hydra2 &monitor, Trace &trace,
-                                 const std::string &evaluation,
+                                 const std::vector<std::vector<Verdict>> &expSolution, Hydra2 &monitor,
+                                 const std::shared_ptr<Trace> &trace, const std::string &evaluation,
                                  const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     size_t failure{0};
     auto solution{monitor.evaluate(trace, domains)};

@@ -25,10 +25,14 @@ Verdict ExistentialMonitor::quantifierStep(size_t parentId, size_t stepNumber, s
     return verdict;
 }
 
-std::shared_ptr<Hydra2Monitor> ExistentialMonitor::clone() {
+std::shared_ptr<Hydra2Monitor> ExistentialMonitor::clone(const std::vector<std::string> &domValNames) {
+    auto tmpCopy{Hydra2Monitor::clone(domValNames)};
+    if (tmpCopy != nullptr)
+        return tmpCopy;
     auto clonedMonitor = std::make_shared<ExistentialMonitor>(*this);
-    clonedMonitor->subMonitor = subMonitor->clone();
+    clonedMonitor->subMonitor = subMonitor->clone(domValNames);
     clonedMonitor->resetIterators();
+    allCopies.emplace_back(domValNames, clonedMonitor);
     return clonedMonitor;
 }
 

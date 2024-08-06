@@ -23,9 +23,7 @@ figs_path = Path(__file__).parent / Path("figs")
 config_path = Path(__file__).parent / Path("config.yaml")
 
 
-def gen_fmla(
-    file_name: str, seed: int, size: int, max_int: int, typ: int, scale: int, aps: int
-):
+def gen_fmla(file_name: str, seed: int, size: int, max_int: int, typ: int, scale: int, aps: int):
     """
     Generates formula. The generated formula is stored in the fmlas directory.
 
@@ -187,9 +185,7 @@ def run_experiment(exp_name: str):
             fmla_path = fmlas_path / f"{file_name}.mdl"
             with open(fmla_path, "r") as fr:
                 fmla_content = fr.read()
-            if fmla_content.__contains__(
-                "[0,0]"
-            ):  # TODO: Remove when bug is fixed for formulas containing [0,0]
+            if fmla_content.__contains__("[0,0]"):  # TODO: Remove when bug is fixed for formulas containing [0,0]
                 with open(fmla_path, "w") as fw:
                     fw.write("G(true)")
             else:

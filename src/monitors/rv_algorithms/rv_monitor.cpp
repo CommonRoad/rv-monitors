@@ -8,15 +8,16 @@
 #include <cassert>
 
 std::map<std::string, std::vector<Verdict>>
-RVMonitor::verify(Trace trace, const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+RVMonitor::verify(const std::shared_ptr<Trace> &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains,
+                  const std::vector<std::string> &formulaIDs) {
     std::chrono::high_resolution_clock::time_point startTime;
     if (configuration.performanceMeasurement)
         startTime = ExecutionStatistic::start();
 
-    auto verdict{monitor->evaluate(trace, domains)};
+    auto verdict{monitor->evaluate(trace, domains, formulaIDs)};
 
-    if (configuration.performanceMeasurement and trace.getLength() > 0)
-        executionStatistic.stop(startTime, trace.getLength());
+    if (configuration.performanceMeasurement and trace->getLength() > 0)
+        executionStatistic.stop(startTime, trace->getLength());
     return verdict;
 }
 

@@ -2,7 +2,8 @@
 
 std::shared_ptr<Expression> Once::clone() { return std::make_shared<Once>(*this); }
 
-std::shared_ptr<Expression> Once::accept(ExpressionVisitor &visitor, Trace &trace, size_t index) {
+std::shared_ptr<Expression> Once::accept(ExpressionVisitor &visitor, const std::shared_ptr<Trace> &trace,
+                                         size_t index) {
     return visitor.visitOnce(*this, trace, index);
 }
 

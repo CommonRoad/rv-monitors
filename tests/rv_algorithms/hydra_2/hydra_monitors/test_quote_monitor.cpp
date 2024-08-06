@@ -7,7 +7,7 @@
 #include "test_or_monitor.h"
 
 TEST(TestQuoteMonitor, testQuoteMonitorStandard) {
-    Trace trace = hydraTestUtils::createTraceWithVariable(
+    const std::shared_ptr<Trace> trace = hydraTestUtils::createTraceWithVariable(
         6, {std::make_shared<Function<bool, size_t, size_t>>(
                Function<bool, size_t, size_t>("higher_than_time_step", {"timeStep", "val"},
                                               hydraTestUtils::higher_than_time_step, hydraTestUtils::twoSizeTArgs))});
@@ -34,7 +34,7 @@ TEST(TestQuoteMonitor, testQuoteMonitorStandard) {
 }
 
 TEST(TestQuoteMonitor, testWrongIntervalOrder) {
-    Trace trace = hydraTestUtils::createTraceWithVariable(
+    const std::shared_ptr<Trace> trace = hydraTestUtils::createTraceWithVariable(
         6,
         {std::make_shared<Function<bool, size_t, size_t>>(Function<bool, size_t, size_t>(
             "higher_than_zero", {"timeStep", "val"}, hydraTestUtils::higher_than_zero, hydraTestUtils::twoSizeTArgs))});

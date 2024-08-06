@@ -1,9 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #pragma once
 
 #include "monitors/formula/formula.h"
@@ -13,7 +7,7 @@
 
 class TestRVMonitors : public testing::Test {
   protected:
-    std::unique_ptr<Trace> trace;
+    std::shared_ptr<Trace> trace;
     std::unique_ptr<Formula> formula;
     std::vector<Verdict> executeRVMonitor(AlgorithmType algorithm);
 
