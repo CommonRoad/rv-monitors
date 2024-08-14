@@ -1,6 +1,7 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/hydra_monitor.h"
 #include <cassert>
 #include <iostream>
+#include <spdlog/spdlog.h>
 #include <utility>
 
 Hydra2Monitor::Hydra2Monitor(Formula formula, size_t monitorId, bool connectedEval, double evalCost,
@@ -57,6 +58,8 @@ bool Hydra2Monitor::traceIdxUnique(size_t idx) {
 }
 
 Verdict Hydra2Monitor::step(size_t parentId, size_t stepNumber, bool singleStep) {
+    spdlog::debug("Hydra2Monitor::step: " + formula.getExpr()->getSymbol() + " - " + std::to_string(monitorId) + " - " +
+                  subID + " - " + std::to_string(parentId) + " - " + std::to_string(stepNumber));
     Verdict verdict{Verdict(false)};
     if (!singleStep and (!connectedEval or traceIdx.size() == 1))
         if (stepNumber >= (traceIdx[parentId])) { // required step equals stored step, perform next step directly
@@ -101,6 +104,9 @@ Verdict Hydra2Monitor::simulateVerdict(size_t parentId, size_t stepNumber) {
                 traceIdxUnique(
                     minIdx)) { // if current monitor uses minimum trace index and no other monitor has same trace index
                                // -> pop head of verdict history and decrement indices of all other monitors
+                spdlog::debug("Hydra2Monitor::simulateVerdict: Erase verdict from history " +
+                              formula.getExpr()->getSymbol() + " - " + std::to_string(parentId) + " - " +
+                              std::to_string(stepNumber));
                 verdictHistory.erase(verdictHistory.begin());
                 ++traceIdx[parentId];
             } else
@@ -140,15 +146,20 @@ std::shared_ptr<Hydra2Monitor> Hydra2Monitor::clone(const std::vector<std::strin
         if (domValNames.size() != std::get<0>(copy).size())
             continue;
         size_t counter{0};
-        for (const auto &val : domValNames) {
-            for (const auto &valCopy : std::get<0>(copy))
-                if (valCopy == val) {
-                    ++counter;
-                    break;
-                }
-        }
+        for (size_t idx{0}; idx < domValNames.size(); ++idx)
+            if (std::get<0>(copy)[idx] == domValNames[idx])
+                ++counter;
         if (counter == domValNames.size())
             return std::get<1>(copy);
     }
     return nullptr;
+}
+
+std::shared_ptr<Hydra2Monitor> Hydra2Monitor::resetClonedMonitor(std::shared_ptr<Hydra2Monitor> clonedMonitor,
+                                                                 const std::vector<std::string> &domValNames) {
+    clonedMonitor->allCopies.clear();
+    for (const auto &val : domValNames)
+        clonedMonitor->subID += ("_" + val);
+    allCopies.emplace_back(domValNames, clonedMonitor);
+    return clonedMonitor;
 }

@@ -47,8 +47,7 @@ std::shared_ptr<Hydra2Monitor> UniversalMonitor::clone(const std::vector<std::st
     auto clonedMonitor = std::make_shared<UniversalMonitor>(*this);
     clonedMonitor->subMonitor = subMonitor->clone(domValNames);
     clonedMonitor->resetIterators();
-    allCopies.emplace_back(domValNames, clonedMonitor);
-    return clonedMonitor;
+    return resetClonedMonitor(clonedMonitor, domValNames);
 }
 
 std::string UniversalMonitor::to_string() { return formula.to_string(); }

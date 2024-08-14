@@ -23,3 +23,5 @@ bool Expression::isConst(bool constant) const {
     }
     return isConstFalse();
 }
+
+std::vector<Variable> Expression::extractVariables() const { return {}; }

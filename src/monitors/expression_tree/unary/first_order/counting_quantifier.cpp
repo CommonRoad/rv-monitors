@@ -42,3 +42,10 @@ std::shared_ptr<HydraMonitor> CountingQuantifier::accept(HydraCreationVisitor &v
 const CountingQuantifier::Operator &CountingQuantifier::getOperator() const { return op; }
 
 size_t CountingQuantifier::getNum() const { return num; }
+
+std::vector<Variable> CountingQuantifier::extractVariables() const {
+    std::vector<Variable> variablesTmp{variables};
+    auto variablesLeft{left->extractVariables()};
+    variablesTmp.insert(variablesTmp.begin(), variablesLeft.begin(), variablesLeft.end());
+    return variablesTmp;
+}

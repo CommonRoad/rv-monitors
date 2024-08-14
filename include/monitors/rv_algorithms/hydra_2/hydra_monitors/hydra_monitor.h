@@ -214,6 +214,16 @@ class Hydra2Monitor {
      */
     [[nodiscard]] size_t getMonitorID() const;
 
+    /**
+     * Resets cloned monitor.
+     *
+     * @param clonedMonitor New cloned monitor.
+     * @param domValNames Domain values for which monitor is created.
+     * @return Updated monitor.
+     */
+    std::shared_ptr<Hydra2Monitor> resetClonedMonitor(std::shared_ptr<Hydra2Monitor> clonedMonitor,
+                                                      const std::vector<std::string> &domValNames);
+
   protected:
     Formula formula;                          //**< Monitored formula. */
     std::string formulaId;                    //**< ID of formula */

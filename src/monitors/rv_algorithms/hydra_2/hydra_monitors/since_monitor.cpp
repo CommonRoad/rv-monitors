@@ -75,8 +75,7 @@ std::shared_ptr<Hydra2Monitor> SinceMonitor::clone(const std::vector<std::string
     auto clonedMonitor = std::make_shared<SinceMonitor>(*this);
     clonedMonitor->subMonitorRight = subMonitorRight->clone(domValNames);
     clonedMonitor->subMonitorLeft = subMonitorLeft->clone(domValNames);
-    allCopies.emplace_back(domValNames, clonedMonitor);
-    return clonedMonitor;
+    return resetClonedMonitor(clonedMonitor, domValNames);
 }
 
 std::string SinceMonitor::to_string() {

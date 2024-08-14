@@ -2,11 +2,8 @@
 #include "monitors/expression_tree/atomic/predicate.h"
 #include <cassert>
 #include <iostream>
-#include <spdlog/spdlog.h>
 
 Verdict PredicateMonitor::concreteStep(size_t parentId, size_t stepNumber) {
-    spdlog::debug("PredicateMonitor::concreteStep: " + name + " - " + std::to_string(parentId) + " - " +
-                  std::to_string(stepNumber));
     if (stepNumber < trace->getLength()) {
         trace->updateEvent(stepNumber, name, orderedValues);
         auto verdict{trace->verdictAtTimeStep(stepNumber, name, domainName)};
@@ -21,11 +18,7 @@ std::shared_ptr<Hydra2Monitor> PredicateMonitor::clone(const std::vector<std::st
     if (tmpCopy != nullptr)
         return tmpCopy;
     auto clonedMonitor{std::make_shared<PredicateMonitor>(*this)};
-    clonedMonitor->allCopies.clear();
-    for (const auto &val : domValNames)
-        clonedMonitor->subID += ("_" + val);
-    allCopies.emplace_back(domValNames, clonedMonitor);
-    return clonedMonitor;
+    return Hydra2Monitor::resetClonedMonitor(clonedMonitor, domValNames);
 }
 
 void PredicateMonitor::setTrace(const std::shared_ptr<Trace> &tra,

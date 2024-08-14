@@ -1,7 +1,7 @@
 #pragma once
 
 #include "monitors/expression_tree/expression.h"
-
+#include "monitors/expression_tree/first_order_operator.h"
 /**
  * Parent class for all binary expressions.
  */
@@ -44,5 +44,17 @@ class Binary : public Expression {
      */
     void setRight(const std::shared_ptr<Expression> &rightExpr);
 
+    /**
+     * Creates string representation of expression.
+     *
+     * @return String representing expression.
+     */
     [[nodiscard]] std::string to_string() const override;
+
+    /**
+     * Extracts domain variables from expression.
+     *
+     * @return List of domain variables.
+     */
+    [[nodiscard]] std::vector<Variable> extractVariables() const override;
 };

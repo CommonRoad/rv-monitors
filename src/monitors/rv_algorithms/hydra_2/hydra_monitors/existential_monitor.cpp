@@ -32,8 +32,7 @@ std::shared_ptr<Hydra2Monitor> ExistentialMonitor::clone(const std::vector<std::
     auto clonedMonitor = std::make_shared<ExistentialMonitor>(*this);
     clonedMonitor->subMonitor = subMonitor->clone(domValNames);
     clonedMonitor->resetIterators();
-    allCopies.emplace_back(domValNames, clonedMonitor);
-    return clonedMonitor;
+    return resetClonedMonitor(clonedMonitor, domValNames);
 }
 
 std::string ExistentialMonitor::to_string() { return formula.to_string(); }

@@ -1,10 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2022 - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
-
 #include "test_formula.h"
 #include "monitors/parser/parser.h"
 #include <iostream>
@@ -36,4 +29,21 @@ TEST(TestFormula, testCheckCompatibility) {
                 << "Error at idx: " + std::to_string(idx);
             ++idx;
         }
+}
+
+TEST(TestFormula, formulaDomainExtraction) {
+    Formula formula{
+        Parser::parse("in_same_lane('x_ego') & A dir1 in DDIR . same_dir('x_ego', dir1) & in_same_lane('x_ego')")};
+    auto variables{formula.getDomains()};
+    EXPECT_EQ(variables.size(), 1);
+    EXPECT_EQ(variables.at(0).getName(), "dir1");
+    EXPECT_EQ(variables.at(0).getDomain().to_string(), "DDIR");
+
+    Formula formula2{Parser::parse(
+        "in_same_lane('x_ego') & A dir1, dir2 in DDIR . same_dir('x_ego', dir1, dir2) & in_same_lane('x_ego')")};
+    auto variables2{formula2.getDomains()};
+    EXPECT_EQ(variables2.size(), 2);
+    EXPECT_EQ(variables2.at(0).getName(), "dir1");
+    EXPECT_EQ(variables2.at(1).getName(), "dir2");
+    EXPECT_EQ(variables2.at(0).getDomain().to_string(), "DDIR");
 }

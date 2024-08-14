@@ -26,3 +26,10 @@ std::shared_ptr<Hydra2Monitor> UniversalQuantifier::accept(HydraCreationVisitor2
 }
 
 std::shared_ptr<HydraMonitor> UniversalQuantifier::accept(HydraCreationVisitor &visitor) { return nullptr; }
+
+std::vector<Variable> UniversalQuantifier::extractVariables() const {
+    std::vector<Variable> variablesTmp{variables};
+    auto variablesLeft{left->extractVariables()};
+    variablesTmp.insert(variablesTmp.begin(), variablesLeft.begin(), variablesLeft.end());
+    return variablesTmp;
+}
