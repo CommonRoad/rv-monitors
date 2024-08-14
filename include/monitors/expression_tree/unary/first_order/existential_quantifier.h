@@ -68,4 +68,11 @@ class ExistentialQuantifier : public Unary, public FirstOrderOperator {
      * @return Hydra existential quantifier monitor.
      */
     [[nodiscard]] std::shared_ptr<HydraMonitor> accept(HydraCreationVisitor &visitor) override;
+
+    /**
+     * Extracts domain variables from expression.
+     *
+     * @return List of domain variables.
+     */
+    [[nodiscard]] std::vector<Variable> extractVariables() const override;
 };

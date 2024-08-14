@@ -58,3 +58,10 @@ const QuoteInterval &QuoteQuantifier::getQuoteInterval() const
 {
     return quoteInterval;
 }
+
+std::vector<Variable> QuoteQuantifier::extractVariables() const {
+    std::vector<Variable> variablesTmp{variables};
+    auto variablesLeft{left->extractVariables()};
+    variablesTmp.insert(variablesTmp.begin(), variablesLeft.begin(), variablesLeft.end());
+    return variablesTmp;
+}

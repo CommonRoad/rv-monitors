@@ -2,6 +2,7 @@
 #include "monitors/expression_tree/nary/bool/xor.h"
 #include "monitors/formula/nff.h"
 #include "monitors/utils/utils.h"
+#include <regex>
 
 void Formula::toNnf() {
     auto before = deepCopy(expr);
@@ -86,6 +87,8 @@ bool Formula::includeTemporalOperator(char tempOp) {
 }
 
 void Formula::setId(const std::string &identifier) { id = identifier; }
+
+std::vector<Variable> Formula::getDomains() const { return expr->extractVariables(); }
 
 bool operator==(const Formula &formula1, const Formula &formula2) {
     return *(formula1.getExpr()) == *(formula2.getExpr());

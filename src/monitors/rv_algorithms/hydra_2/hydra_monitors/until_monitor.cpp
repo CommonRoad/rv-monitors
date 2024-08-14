@@ -105,8 +105,7 @@ std::shared_ptr<Hydra2Monitor> UntilMonitor::clone(const std::vector<std::string
     clonedMonitor->subMonitorRight = subMonitorRight->clone(domValNames);
     clonedMonitor->subMonitorLeft = subMonitorLeft->clone(domValNames);
     clonedMonitor->subMonitorBaseTimeStep = subMonitorBaseTimeStep->clone(domValNames);
-    allCopies.emplace_back(domValNames, clonedMonitor);
-    return clonedMonitor;
+    return resetClonedMonitor(clonedMonitor, domValNames);
 }
 
 std::string UntilMonitor::to_string() {
