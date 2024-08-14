@@ -61,14 +61,21 @@ class CountingQuantifier : public Unary, public FirstOrderOperator {
      *
      * @return Operator type.
      */
-    const Operator &getOperator() const;
+    [[nodiscard]] const Operator &getOperator() const;
 
     /**
      * Returns number.
      *
      * @return Number.
      */
-    size_t getNum() const;
+    [[nodiscard]] size_t getNum() const;
+
+    /**
+     * Extracts domain variables from expression.
+     *
+     * @return List of domain variables.
+     */
+    [[nodiscard]] std::vector<Variable> extractVariables() const override;
 
   private:
     Operator op; //**< Operator type. */

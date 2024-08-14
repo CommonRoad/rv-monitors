@@ -62,8 +62,7 @@ std::shared_ptr<Hydra2Monitor> CountingMonitor::clone(const std::vector<std::str
     auto clonedMonitor = std::make_shared<CountingMonitor>(*this);
     clonedMonitor->subMonitor = subMonitor->clone(domValNames);
     clonedMonitor->resetIterators();
-    allCopies.emplace_back(domValNames, clonedMonitor);
-    return clonedMonitor;
+    return resetClonedMonitor(clonedMonitor, domValNames);
 }
 
 std::string CountingMonitor::to_string() { return formula.to_string(); }

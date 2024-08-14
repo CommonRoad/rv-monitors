@@ -46,8 +46,7 @@ std::shared_ptr<Hydra2Monitor> OrMonitor::clone(const std::vector<std::string> &
     for (const auto &mon : subMonitors)
         clonedSubMonitors.push_back(mon->clone(domValNames));
     clonedMonitor->subMonitors = clonedSubMonitors;
-    allCopies.emplace_back(domValNames, clonedMonitor);
-    return clonedMonitor;
+    return resetClonedMonitor(clonedMonitor, domValNames);
 }
 
 std::string OrMonitor::to_string() {

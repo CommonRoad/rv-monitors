@@ -170,6 +170,13 @@ class Formula {
     bool includeTemporalOperator(char tempOp);
 
     /**
+     * Extracts domain variables from expression.
+     *
+     * @return List of domain variables.
+     */
+    [[nodiscard]] std::vector<Variable> getDomains() const;
+
+    /**
      * Writes formula on existing output stream.
      *
      * @param ost output stream

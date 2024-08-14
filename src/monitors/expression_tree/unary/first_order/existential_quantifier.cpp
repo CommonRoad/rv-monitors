@@ -29,3 +29,10 @@ std::shared_ptr<Hydra2Monitor> ExistentialQuantifier::accept(HydraCreationVisito
 }
 
 std::shared_ptr<HydraMonitor> ExistentialQuantifier::accept(HydraCreationVisitor &visitor) { return nullptr; }
+
+std::vector<Variable> ExistentialQuantifier::extractVariables() const {
+    std::vector<Variable> variablesTmp{variables};
+    auto variablesLeft{left->extractVariables()};
+    variablesTmp.insert(variablesTmp.begin(), variablesLeft.begin(), variablesLeft.end());
+    return variablesTmp;
+}
