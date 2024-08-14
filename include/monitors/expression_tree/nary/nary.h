@@ -5,6 +5,7 @@
 #include <sstream>
 #include <utility>
 
+#include "monitors/expression_tree/first_order_operator.h"
 #include "nary_interface.h"
 
 /**
@@ -88,6 +89,7 @@ template <class SetType, class Actual> class Nary : public NaryInterface {
 
     /**
      * Erase an expression from a set.
+     *
      * @param itr
      * @return Iterator to erased position.
      */
@@ -100,6 +102,7 @@ template <class SetType, class Actual> class Nary : public NaryInterface {
 
     /**
      * Finds an expression and returns an iterator to it.
+     *
      * @param expr
      * @return Iterator to searched expression.
      */
@@ -107,6 +110,7 @@ template <class SetType, class Actual> class Nary : public NaryInterface {
 
     /**
      * Check if expression exists in a set.
+     *
      * @param expr
      * @return True if contained, false otherwise.
      */
@@ -116,6 +120,7 @@ template <class SetType, class Actual> class Nary : public NaryInterface {
 
     /**
      * Setter for expressions.
+     *
      * @param begin
      * @param end
      */
@@ -128,18 +133,21 @@ template <class SetType, class Actual> class Nary : public NaryInterface {
 
     /**
      * Size of an expressions set.
+     *
      * @return size of expressions.
      */
     [[nodiscard]] size_t size() override { return expressions.size(); }
 
     /**
      * Checks if set is empty.
+     *
      * @return True if empty, false otherwise.
      */
     [[nodiscard]] bool empty() override { return expressions.size() == 0; }
 
     /**
      * To_string().
+     *
      * @return String representation of the contained set.
      */
     [[nodiscard]] std::string to_string() const override {
@@ -150,5 +158,19 @@ template <class SetType, class Actual> class Nary : public NaryInterface {
         }
         ret << (*--getExpressions().cend())->to_string() << ")";
         return ret.str();
+    }
+
+    /**
+     * Extracts domain variables from expression.
+     *
+     * @return List of domain variables.
+     */
+    [[nodiscard]] std::vector<Variable> extractVariables() const override {
+        std::vector<Variable> variablesTmp;
+        for (const auto &expr : expressions) {
+            auto variablesExpr{expr->extractVariables()};
+            variablesTmp.insert(variablesTmp.begin(), variablesExpr.begin(), variablesExpr.end());
+        }
+        return variablesTmp;
     }
 };

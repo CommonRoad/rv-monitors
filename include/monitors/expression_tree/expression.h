@@ -60,6 +60,13 @@ class Expression {
     [[nodiscard]] virtual std::string to_string() const;
 
     /**
+     * Extracts domain variables from expression.
+     *
+     * @return List of domain variables.
+     */
+    [[nodiscard]] virtual std::vector<Variable> extractVariables() const;
+
+    /**
      * Clones this expression.
      *
      * @return New shared_ptr of this expression.

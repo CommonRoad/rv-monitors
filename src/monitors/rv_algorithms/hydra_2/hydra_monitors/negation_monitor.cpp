@@ -20,8 +20,7 @@ std::shared_ptr<Hydra2Monitor> NegationMonitor::clone(const std::vector<std::str
         return tmpCopy;
     auto clonedMonitor = std::make_shared<NegationMonitor>(*this);
     clonedMonitor->subMonitor = subMonitor->clone(domValNames);
-    allCopies.emplace_back(domValNames, clonedMonitor);
-    return clonedMonitor;
+    return resetClonedMonitor(clonedMonitor, domValNames);
 }
 
 std::string NegationMonitor::to_string() { return "!(" + subMonitor->to_string() + ")"; }

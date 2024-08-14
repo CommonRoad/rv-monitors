@@ -86,7 +86,14 @@ class QuoteQuantifier : public Unary, public FirstOrderOperator {
      *
      * @return Quote interval.
      */
-    const QuoteInterval &getQuoteInterval() const;
+    [[nodiscard]] const QuoteInterval &getQuoteInterval() const;
+
+    /**
+     * Extracts domain variables from expression.
+     *
+     * @return List of domain variables.
+     */
+    [[nodiscard]] std::vector<Variable> extractVariables() const override;
 
   private:
     QuoteInterval quoteInterval; //**< Quote interval. */
