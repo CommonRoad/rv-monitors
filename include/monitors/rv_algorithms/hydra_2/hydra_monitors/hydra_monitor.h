@@ -194,6 +194,7 @@ class Hydra2Monitor {
 
     /**
      * Sets step number of monitor.
+     * Triggered by quantification monitor to set step number accordingly in case quantified monitor is created later.
      *
      * @param stepNumber Desired step number.
      * @param parentId ID of parent monitor.
