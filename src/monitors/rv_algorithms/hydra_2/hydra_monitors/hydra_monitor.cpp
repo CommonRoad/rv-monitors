@@ -127,7 +127,10 @@ double Hydra2Monitor::getSatisfactionProbability() const { return satisfactionPr
 
 std::map<size_t, std::vector<std::vector<DomainValue>>> Hydra2Monitor::getViolatingDomainValues() const { return {}; }
 
-void Hydra2Monitor::setStepNumber(size_t stepNumber, size_t parentId) { traceIdx[parentId] = stepNumber; }
+void Hydra2Monitor::setStepNumber(size_t stepNumber, size_t parentId) {
+    if (stepNumber > traceIdx[parentId])
+        traceIdx[parentId] = stepNumber;
+}
 
 void Hydra2Monitor::to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) {
     if (tree.find(monitorId) != tree.end())

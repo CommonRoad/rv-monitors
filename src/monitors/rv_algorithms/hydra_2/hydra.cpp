@@ -17,6 +17,7 @@ std::map<std::string, std::vector<Verdict>> Hydra2::evaluate(const std::shared_p
         return result;
     }
 
+    // executed when new trace should be used (pass nullptr trace if trace should be reused)
     if (trace != nullptr and !trace->getTrace().empty()) {
         resetMonitors();
         setTraceMonitors(trace, domains);
@@ -44,6 +45,8 @@ void Hydra2::evalEarlyTermination(std::map<std::string, std::vector<Verdict>> &r
 
     for (size_t i{0}; i < traceLength; ++i) {
         for (const auto &mon : relMonitors) {
+            spdlog::debug("Monitor evaluation: " + std::to_string(i) + " - " + mon->getFormulaId());
+            mon->addDomainValues({}); // triggers adding of domain values, e.g., to predicates
             result[mon->getFormulaId()].at(0) = result[mon->getFormulaId()].at(0).value and mon->step(0, i).value;
             if (!result[mon->getFormulaId()].at(0).value)
                 return;
@@ -113,7 +116,7 @@ void Hydra2::evalCompleteTrace(std::map<std::string, std::vector<Verdict>> &resu
     for (size_t i{0}; i < traceLength; ++i)
         for (const auto &mon : relMonitors) {
             spdlog::debug("Monitor evaluation: " + std::to_string(i) + " - " + mon->getFormulaId());
-            mon->addDomainValues({});
+            mon->addDomainValues({}); // triggers adding of domain values, e.g., to predicates
             result[mon->getFormulaId()].emplace_back(mon->step(0, i));
         }
 }

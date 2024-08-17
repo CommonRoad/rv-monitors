@@ -179,13 +179,14 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
                 formulas.push_back(formulaCopy);
             }
 
-            monitor = std::make_unique<Hydra2>(formulas, configuration.hydraConnectedEvaluation,
-                                               configuration.hydraReordering, configuration.shortCircuiting,
-                                               configuration.earlyTermination, hydra->getDomains(),
+            monitor = std::make_unique<Hydra2>(formulas, other.configuration.hydraConnectedEvaluation,
+                                               other.configuration.hydraReordering, other.configuration.shortCircuiting,
+                                               other.configuration.earlyTermination, hydra->getDomains(),
                                                hydra->getPredicateCost());
         }
         // TODO other algorithms
         executionStatistic = other.executionStatistic;
+        configuration = other.configuration;
     }
     return *this;
 }
