@@ -18,14 +18,16 @@ std::shared_ptr<Hydra2Monitor> PredicateMonitor::clone(const std::vector<std::st
     if (tmpCopy != nullptr)
         return tmpCopy;
     auto clonedMonitor{std::make_shared<PredicateMonitor>(*this)};
-    return Hydra2Monitor::resetClonedMonitor(clonedMonitor, domValNames);
+    return resetClonedMonitor(clonedMonitor, domValNames);
 }
 
 void PredicateMonitor::setTrace(const std::shared_ptr<Trace> &tra,
                                 const std::vector<std::shared_ptr<DomainStorage>> &domains) {
-    trace = tra;
-    for (const auto &con : std::dynamic_pointer_cast<Predicate>(this->formula.getExpr())->getConstParameters())
-        constArguments.push_back(tra->getConstantCollection().getConstant(con));
+    if (trace == nullptr) {
+        trace = tra;
+        for (const auto &con : std::dynamic_pointer_cast<Predicate>(this->formula.getExpr())->getConstParameters())
+            constArguments.push_back(tra->getConstantCollection().getConstant(con));
+    }
 }
 
 std::string PredicateMonitor::to_string() { return formula.to_string(); }
@@ -65,4 +67,5 @@ void PredicateMonitor::reset() {
     domainValueArguments.clear();
     orderedValues.clear();
     constArguments.clear();
+    trace = nullptr;
 }
