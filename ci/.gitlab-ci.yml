@@ -167,6 +167,48 @@ build-python:
       - dist/*.whl
     expire_in: 30 minutes
 
+### tests ###
+test:
+  stage: test
+  script:
+    - cmake --build build --config RelWithDebInfo --target test
+  needs:
+    - job: build-test
+      artifacts: true
+  artifacts:
+    # Upload reports even if tests fail
+    when: always
+    reports:
+      junit: build/test-reports/*.xml
+    expire_in: 30 minutes
+
+run-coverage:
+  stage: test
+  script:
+    - cmake --build build --config RelWithDebInfo --target rvmonitors_coverage
+    - gcovr --version
+    - gcovr
+      -f src/
+      -e build/
+      --print-summary
+      --exclude-unreachable-branches
+      --output coverage.xml
+      --xml
+    - mv build/rvmonitors_coverage coverage-report
+  needs:
+    - job: build-coverage
+      artifacts: true
+  coverage: /^\s*lines:\s*\d+.\d+\%/
+  artifacts:
+    paths:
+      - coverage-report
+    expose_as: 'Coverage Report'
+    expire_in: 30 minutes
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+
 ### create documentation ###
 docs:
   stage: docs
