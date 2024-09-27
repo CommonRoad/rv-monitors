@@ -80,6 +80,8 @@ void OrMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
 
 void OrMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
     Hydra2Monitor::setStepNumber(stepNumber, parentId);
+    if (!Hydra2Monitor::stepNumberValid(stepNumber, parentId))
+        return;
     for (const auto &sub : subMonitors)
         sub->setStepNumber(stepNumber, monitorId);
 }
