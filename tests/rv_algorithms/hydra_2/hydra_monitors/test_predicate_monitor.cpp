@@ -19,14 +19,16 @@ bool a(size_t dummy) {
 
 std::tuple<size_t> aArgs(std::vector<DomainValue> values) { return {std::any_cast<size_t>(values.at(0).getValue())}; }
 
-const std::shared_ptr<Trace> createTraceWithVariable() {
+std::shared_ptr<Trace> createTraceWithVariable() {
     std::vector<std::shared_ptr<IFunction<bool>>> test{
         {std::make_shared<Function<bool, size_t>>(Function<bool, size_t>("a", {"size_t"}, a, aArgs))}};
     std::vector<Event> eventList;
     for (size_t timeStepIdx{0}; timeStepIdx < 4; ++timeStepIdx) {
         eventList.emplace_back(timeStepIdx, timeStepIdx == 4 - 1);
     }
-    return std::make_shared<Trace>(Trace(eventList, test));
+    return std::make_shared<Trace>(
+        Trace(eventList, test,
+              ConstantCollection({ConstantValue{"dummy", "dummy", [](const std::any &val) { return "dummy"; }}})));
 }
 
 TEST(TestPredicateMonitor, testPredicateEvaluation) {
@@ -66,38 +68,47 @@ TEST(TestPredicateMonitor, testPredicateEvaluationWithArguments) {
     mon.addDomainValues({DomainValue("dummy", val, true, [](const std::any &) { return "name"; })});
     EXPECT_EQ(mon.concreteStep(0, 0).value, true);
     mon.reset();
+    mon.setTrace(trace);
     mon.addDomainValues({DomainValue("dummy", val, true, [](const std::any &) { return "name"; })});
     EXPECT_EQ(mon.step(0, 0).value, true);
     mon.reset();
 
     val = 1;
+    mon.setTrace(trace);
     mon.addDomainValues({DomainValue("dummy", val, true, [](const std::any &) { return "name"; })});
     EXPECT_EQ(mon.concreteStep(0, 1).value, false);
     mon.reset();
+    mon.setTrace(trace);
     mon.addDomainValues({DomainValue("dummy", val, true, [](const std::any &) { return "name"; })});
     EXPECT_EQ(mon.step(0, 1).value, false);
     mon.reset();
 
     val = 2;
+    mon.setTrace(trace);
     mon.addDomainValues({DomainValue("dummy", val, true, [](const std::any &) { return "name"; })});
     EXPECT_EQ(mon.concreteStep(0, 2).value, true);
     mon.reset();
+    mon.setTrace(trace);
     mon.addDomainValues({DomainValue("dummy", val, true, [](const std::any &) { return "name"; })});
     EXPECT_EQ(mon.step(0, 2).value, true);
     mon.reset();
 
     val = 3;
+    mon.setTrace(trace);
     mon.addDomainValues({DomainValue("dummy", val, true, [](const std::any &) { return "name"; })});
     EXPECT_EQ(mon.concreteStep(0, 3).value, false);
     mon.reset();
+    mon.setTrace(trace);
     mon.addDomainValues({DomainValue("dummy", val, true, [](const std::any &) { return "name"; })});
     EXPECT_EQ(mon.step(0, 3).value, false);
     mon.reset();
 
     val = 4;
+    mon.setTrace(trace);
     mon.addDomainValues({DomainValue("dummy", val, true, [](const std::any &) { return "name"; })});
     EXPECT_EQ(mon.concreteStep(0, 4).value, false);
     mon.reset();
+    mon.setTrace(trace);
     mon.addDomainValues({DomainValue("dummy", val, true, [](const std::any &) { return "name"; })});
     EXPECT_EQ(mon.step(0, 4).value, false);
     mon.reset();

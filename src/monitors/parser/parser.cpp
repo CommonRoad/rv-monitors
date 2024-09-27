@@ -29,6 +29,5 @@ std::shared_ptr<Trace> Parser::parse_log(const std::string &log) {
     LogParser parser(&tokens);
     antlr4::tree::ParseTree *treePointer = parser.log();
     impl::LogVisitor visitor;
-    std::shared_ptr<Trace> trace{std::make_shared<Trace>(std::any_cast<Trace>(visitor.visit(treePointer)))};
-    return trace;
+    return std::any_cast<std::shared_ptr<Trace>>(visitor.visit(treePointer));
 }
