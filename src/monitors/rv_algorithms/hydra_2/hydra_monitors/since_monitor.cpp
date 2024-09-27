@@ -97,6 +97,8 @@ void SinceMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
     subMonitorLeft->addDomainValues(vals);
 }
 void SinceMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
+    if (!Hydra2Monitor::stepNumberValid(stepNumber, parentId))
+        return;
     if (stepNumber > stepNumberRight) {
         while (!domainValueArguments.at(0).isConst() and
                !domainValueArguments.at(0).checkValidity(stepNumberRight)) { // todo more efficient

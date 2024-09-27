@@ -46,6 +46,16 @@ struct HeadPosHydra2 {
  * Hydra2 monitor interface.
  */
 class Hydra2Monitor {
+  protected:
+    /**
+     * Checks whether step number higher than stored step number.
+     *
+     * @param stepNumber Step number which should be set.
+     * @param parentId ID of calling parent monitor.
+     * @return Boolean indicating whether step number can be updated.
+     */
+    bool stepNumberValid(size_t stepNumber, size_t parentId);
+
   private:
     /**
      * Extracts maximum trace idx of monitor given all parent monitors (required for connected evaluation).
