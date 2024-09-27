@@ -162,8 +162,11 @@ TEST(TestUniversalMonitor, testUniversalMonitorVariableScopeDynamicDomain) {
 
 TEST(TestUniversalMonitor, testUniversalMonitorVariableAndConstValues) {
     const std::shared_ptr<Trace> trace = hydraTestUtils::createTraceWithVariable(
-        5, {std::make_shared<Function<bool, size_t, size_t, std::string>>(Function<bool, size_t, size_t, std::string>(
-               "unequal", {"timeStep", "val0", "val1"}, unequal, twoSizeTOneString))});
+        5,
+        {std::make_shared<Function<bool, size_t, size_t, std::string>>(Function<bool, size_t, size_t, std::string>(
+            "unequal", {"timeStep", "val0", "val1"}, unequal, twoSizeTOneString))},
+        ConstantCollection({ConstantValue{std::string("4"), std::string("4"),
+                                          [](const std::any &val) { return std::any_cast<std::string>(val); }}}));
 
     Formula formula = Parser::parse("A x in D. unequal(x, '4')");
     Formula formulaPredicate = Parser::parse("unequal(x, '4')");
