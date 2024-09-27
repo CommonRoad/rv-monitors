@@ -72,7 +72,7 @@ Verdict Hydra2Monitor::step(size_t parentId, size_t stepNumber, bool singleStep)
         if (stepNumber >= traceIdx[parentId]) {
             verdict = simulateVerdict(parentId, stepNumber);
         } else { // if required step was already performed based on other parent monitor, use already computed verdict
-            verdict = verdictHistory.at(traceIdx.at(parentId));
+            verdict = verdictHistory.at(stepNumber);
         }
     } else if (stepNumber < traceIdx[parentId]) { // required step was already performed based on other parent monitor,
                                                   // use already computed verdict
@@ -165,4 +165,9 @@ std::shared_ptr<Hydra2Monitor> Hydra2Monitor::resetClonedMonitor(std::shared_ptr
         clonedMonitor->subID += ("_" + val);
     allCopies.emplace_back(domValNames, clonedMonitor);
     return clonedMonitor;
+}
+bool Hydra2Monitor::stepNumberValid(size_t stepNumber, size_t parentId) {
+    if (stepNumber < traceIdx[parentId])
+        return false;
+    return true;
 }
