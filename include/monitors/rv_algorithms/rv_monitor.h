@@ -60,12 +60,12 @@ class RVMonitor {
      *
      * @param formula Temporal logic formula.
      * @param configuration List of configuration parameters for the different monitoring algorithms.
-     * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
-     * satisfaction probability in interval [0, 1].
+     * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100],
+     * satisfaction probability in interval [0, 1], and priority >= 0.
      * @param domains List of domains.
      */
     RVMonitor(const Formula &formula, MonitorConfiguration configuration = {},
-              const std::map<std::string, std::array<double, 2>> &predicateCosts = {},
+              const std::map<std::string, std::array<double, 3>> &predicateCosts = {},
               const std::vector<std::shared_ptr<DomainStorage>> &domains = {});
 
     /*
@@ -86,12 +86,12 @@ class RVMonitor {
      *
      * @param formula Temporal logic formula.
      * @param configuration List of configuration parameters for the different monitoring algorithms.
-     * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
-     * satisfaction probability in interval [0, 1].
+     * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100],
+     * satisfaction probability in interval [0, 1], and priority >= 0.
      * @param domains List of domains.
      */
     RVMonitor(const std::vector<Formula> &formula, MonitorConfiguration configuration,
-              const std::map<std::string, std::array<double, 2>> &predicateCosts = {},
+              const std::map<std::string, std::array<double, 3>> &predicateCosts = {},
               const std::vector<std::shared_ptr<DomainStorage>> &domains = {});
 
     /**

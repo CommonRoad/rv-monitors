@@ -15,7 +15,9 @@ TEST(TestNegationMonitor, testNegationMonitorFalseEvaluation) {
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, false);
+    mon.reset();
     EXPECT_EQ(mon.step(0, 0).value, false);
+    mon.reset();
     EXPECT_EQ(mon.step(0, 4).value, true);
 }
 
@@ -30,7 +32,9 @@ TEST(TestNegationMonitor, testNegationMonitorTrueEvaluation) {
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, true);
+    mon.reset();
     EXPECT_EQ(mon.step(0, 0).value, true);
+    mon.reset();
     EXPECT_EQ(mon.step(0, 4).value, true);
 }
 

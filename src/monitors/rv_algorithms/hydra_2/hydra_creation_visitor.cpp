@@ -26,6 +26,7 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/since_monitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/universal_monitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/until_monitor.h"
+#include <cstring>
 #include <numeric>
 #include <utility>
 
@@ -205,7 +206,7 @@ std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitNot(Not &top, size_t 
     }
 }
 
-HydraCreationVisitor2::HydraCreationVisitor2(std::map<std::string, std::array<double, 2>> predicateCosts,
+HydraCreationVisitor2::HydraCreationVisitor2(std::map<std::string, std::array<double, 3>> predicateCosts,
                                              bool reordering, bool shortCircuiting,
                                              const std::vector<std::shared_ptr<DomainStorage>> &domains)
     : reordering(reordering), shortCircuiting(shortCircuiting), predicateCosts(std::move(predicateCosts)),
@@ -222,11 +223,27 @@ void HydraCreationVisitor2::reorder(std::vector<std::shared_ptr<Hydra2Monitor>> 
 
     std::iota(tmp.begin(), tmp.end(), 0);
     if (increasing) { // and-operator
-        for (const auto &mon : monitors)
-            cost.push_back(mon->getSatisfactionProbability() * 10 + static_cast<double>(mon->getEvalCost()));
+        for (const auto &mon : monitors) {
+            double costTmp{mon->getSatisfactionProbability() * 10 + static_cast<double>(mon->getEvalCost())};
+            std::string str{mon->to_string()};
+            str = str.substr(0, str.find('('));
+            if (predicateCosts.find(str) != predicateCosts.end())
+                costTmp += predicateCosts.at(str).at(2);
+            else
+                costTmp += 100;
+            cost.push_back(costTmp);
+        }
     } else { // or-operator
-        for (const auto &mon : monitors)
-            cost.push_back((1 - mon->getSatisfactionProbability()) * 10 + static_cast<double>(mon->getEvalCost()));
+        for (const auto &mon : monitors) {
+            double costTmp{(1 - mon->getSatisfactionProbability()) * 10 + static_cast<double>(mon->getEvalCost())};
+            std::string str{mon->to_string()};
+            str = str.substr(0, str.find('('));
+            if (predicateCosts.find(str) != predicateCosts.end())
+                costTmp += predicateCosts.at(str).at(2);
+            else
+                costTmp += 2;
+            cost.push_back(costTmp);
+        }
     }
     sort(tmp.begin(), tmp.end(), [&](size_t idx1, size_t idx2) { return cost[idx1] < cost[idx2]; });
     auto tmpSubMonitors{monitors};

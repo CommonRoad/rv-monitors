@@ -17,7 +17,7 @@ Verdict ExistentialMonitor::quantifierStep(size_t parentId, size_t stepNumber, s
         std::shared_ptr<Hydra2Monitor> evalMonitor =
             nextEvalMonitor(stepNumber); // request monitor for the current combination
 
-        verdict = evalMonitor->step(monitorId, stepNumber, true);
+        verdict = evalMonitor->step(monitorId, stepNumber);
 
         if (verdict.value) // if a true verdict results, then the step evaluation will be stopped immediately
             break;

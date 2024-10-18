@@ -1,14 +1,14 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/until_monitor.h"
 
 void UntilMonitor::stepLeftRightMonitors() {
-    subVerdictLeft = subMonitorLeft->step(monitorId, stepNumberUntil, true);
+    subVerdictLeft = subMonitorLeft->step(monitorId, stepNumberUntil);
     if (subVerdictLeft->timeStamp)
         headPositionMonitorLeft.update(subVerdictLeft->timeStamp.value());
     else {
         endReached = true;
         ++stepNumberUntil;
     }
-    subVerdictRight = subMonitorRight->step(monitorId, stepNumberUntil, true);
+    subVerdictRight = subMonitorRight->step(monitorId, stepNumberUntil);
     if (subVerdictRight->timeStamp)
         headPositionMonitorRight.update(subVerdictRight->timeStamp.value());
     else
@@ -17,7 +17,7 @@ void UntilMonitor::stepLeftRightMonitors() {
 }
 
 Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
-    subVerdictBaseTimeStep = subMonitorBaseTimeStep->step(monitorId, stepNumber, true);
+    subVerdictBaseTimeStep = subMonitorBaseTimeStep->step(monitorId, stepNumber);
     if (subVerdictBaseTimeStep->timeStamp)
         headPositionMonitorBaseTimeStep.update(subVerdictBaseTimeStep->timeStamp.value());
     else
@@ -35,12 +35,9 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         lastViolation = {};
 
     // if not step was performed yet or last verdicts are behind base time step, execute step for current base step
-    if (!endReached and (stepNumberUntil == 0 or
-                         (subVerdictLeft->timeStamp.has_value() and
-                          subVerdictLeft->timeStamp.value() < headPositionMonitorBaseTimeStep.timeStep) or
-                         (subVerdictRight->timeStamp.has_value() and
-                          subVerdictRight->timeStamp.value() <
-                              headPositionMonitorBaseTimeStep.timeStep))) { // only executed at first call of function
+    if (!endReached and
+        (stepNumberUntil == 0 or stepNumber > traceIdx[parentId])) { // only executed at first call of function
+        stepNumberUntil = stepNumber;
         stepLeftRightMonitors();
     }
 

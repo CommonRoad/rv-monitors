@@ -31,7 +31,7 @@ struct IntervalTemporalOperator {
      *
      * @param start Start of interval.
      */
-    IntervalTemporalOperator(size_t start);
+    explicit IntervalTemporalOperator(size_t start);
 
     /**
      * Constructor defining nothing. Therefore, interval is defautl interval [0, inf].
@@ -43,35 +43,35 @@ struct IntervalTemporalOperator {
      *
      * @param interval Pointer to interval expression.
      */
-    IntervalTemporalOperator(const std::shared_ptr<Interval> &interval);
+    explicit IntervalTemporalOperator(const std::shared_ptr<Interval> &interval);
 
     /**
      * Getter for start of interval.
      *
      * @return Start of interval.
      */
-    size_t getStart() const;
+    [[nodiscard]] size_t getStart() const;
 
     /**
      * Getter for end of interval.
      *
      * @return End of interval.
      */
-    size_t getEnd() const;
+    [[nodiscard]] size_t getEnd() const;
 
     /**
      * Getter for finite indication.
      *
      * @return Boolean indicating whether interval is finite.
      */
-    bool isFinite() const;
+    [[nodiscard]] bool isFinite() const;
 
     /**
      * Getter for empty indication.
      *
      * @return Boolean indicating whether interval is empty.
      */
-    bool isEmpty() const;
+    [[nodiscard]] bool isEmpty() const;
 
   private:
     size_t start;              //**< Start of interval.  */

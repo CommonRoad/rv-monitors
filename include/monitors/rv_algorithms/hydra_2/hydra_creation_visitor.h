@@ -1,9 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
 #pragma once
 
 #include "monitors/utils/interval.h"
@@ -90,12 +84,12 @@ class HydraCreationVisitor2 {
     /**
      * Constructor for Hydra2 monitor.
      *
-     * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
-     * satisfaction probability in interval [0, 1].
+     * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100],
+     * satisfaction probability in interval [0, 1], and priority >= 0.
      * @param reordering Boolean indicating whether the formula should be reordered based on the predicate costs.
      * @param shortCircuiting Boolean indicating whether short-circuiting should be used.
      */
-    HydraCreationVisitor2(std::map<std::string, std::array<double, 2>> predicateCosts, bool reordering = true,
+    HydraCreationVisitor2(std::map<std::string, std::array<double, 3>> predicateCosts, bool reordering = true,
                           bool shortCircuiting = true, const std::vector<std::shared_ptr<DomainStorage>> &domains = {});
 
     /**
@@ -260,9 +254,9 @@ class HydraCreationVisitor2 {
     std::map<std::string, std::shared_ptr<Hydra2Monitor>>
         baseline; //**< Stores unique formula sub-sets which can be shared within monitor. Only relevant for connected
                   // evaluation */
-    mutable std::map<std::string, std::array<double, 2>>
-        predicateCosts; //**< Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
-                        // satisfaction probability in interval [0, 1]. */
+    mutable std::map<std::string, std::array<double, 3>>
+        predicateCosts; //**< Cost assigned to predicates consisting of evaluation cost in interval [0, 100],
+                        // satisfaction probability in interval [0, 1], and priority >= 0. */
     std::vector<std::shared_ptr<DomainStorage>> domains;
 
     /**
@@ -272,7 +266,7 @@ class HydraCreationVisitor2 {
      * @param increasing Boolean indicating whether predicates should be ordered in increasing or decreasing order based
      * on cost value (and-> increasing, or->decreasing).
      */
-    static void reorder(std::vector<std::shared_ptr<Hydra2Monitor>> &monitors, bool increasing);
+    void reorder(std::vector<std::shared_ptr<Hydra2Monitor>> &monitors, bool increasing);
 
     /**
      * Finds domain for variables.

@@ -61,13 +61,13 @@ class Hydra2 : public MonitorInterface {
      * @param shortCircuiting Boolean indicating whether short circuiting should be used.
      * @param earlyTermination Boolean indicating whether the complete trace has to be evaluated or whether the
      * execution can be terminated as soon as a global verdict for a monitor can be provided.
-     * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
-     * satisfaction probability in interval [0, 1].
+     * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100],
+     * satisfaction probability in interval [0, 1], and priority >= 0.
      */
     explicit Hydra2(const std::vector<Formula> &formulas, bool connectedEval = true, bool reordering = true,
                     bool shortCircuiting = true, bool earlyTermination = false,
                     const std::vector<std::shared_ptr<DomainStorage>> &domains = {},
-                    const std::map<std::string, std::array<double, 2>> &predicateCosts = {});
+                    const std::map<std::string, std::array<double, 3>> &predicateCosts = {});
 
     /**
      * Evaluation function for monitor algorithms.
@@ -94,7 +94,7 @@ class Hydra2 : public MonitorInterface {
      *
      * @return Registered predicate costs.
      */
-    std::map<std::string, std::array<double, 2>> &getPredicateCost();
+    std::map<std::string, std::array<double, 3>> &getPredicateCost();
 
     /**
      * Function to extract combination of violating domain values.
@@ -114,7 +114,7 @@ class Hydra2 : public MonitorInterface {
   private:
     std::vector<std::shared_ptr<Hydra2Monitor>>
         monitors; //**< List of monitors corresponding to the formulas which should be evaluated. */
-    mutable std::map<std::string, std::array<double, 2>> predicateCosts; //**< Predicate costs. */
+    mutable std::map<std::string, std::array<double, 3>> predicateCosts; //**< Predicate costs. */
     size_t traceLength{0};                                               //**< Current trace length. */
 
     /**
@@ -124,8 +124,8 @@ class Hydra2 : public MonitorInterface {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @param reordering Boolean indicating whether the formula should be reordered based on the predicate costs.
      * @param shortCircuiting Boolean indicating whether short circuiting should be used.
-     * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100] and
-     * satisfaction probability in interval [0, 1].
+     * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100],
+     * satisfaction probability in interval [0, 1], and priority >= 0.
      */
     void createMonitor(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting);
 

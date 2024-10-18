@@ -37,11 +37,11 @@ void init_monitors(nb::module_ &m) {
 
     nb::class_<Hydra2, MonitorInterface>(m, "Hydra2")
         .def(nb::init<std::vector<Formula>, bool, bool, bool, bool, std::vector<std::shared_ptr<DomainStorage>>,
-                      std::map<std::string, std::array<double, 2>>>(),
+                      std::map<std::string, std::array<double, 3>>>(),
              nb::arg("formulas"), nb::arg("connectedEval") = true, nb::arg("reordering") = true,
              nb::arg("shortCircuiting") = true, nb::arg("earlyTermination") = false,
              nb::arg("domains") = std::vector<std::shared_ptr<DomainStorage>>{},
-             nb::arg("predicateCosts") = std::map<std::string, std::array<double, 2>>{})
+             nb::arg("predicateCosts") = std::map<std::string, std::array<double, 3>>{})
         .def("to_tree", &Hydra2::to_tree);
 
     nb::class_<EventConsumingLTL, MonitorInterface>(m, "EventConsumingLTL")

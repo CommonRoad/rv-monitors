@@ -1,17 +1,18 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/previous_monitor.h"
 
 Verdict PreviousMonitor::concreteStep(size_t parentId, size_t stepNumber) {
-    Verdict subVerdict = subMonitor->step(monitorId, stepNumber);
+    if (traceIdx[parentId] < stepNumber)
+        currentVerdict = subMonitor->step(monitorId, stepNumber - 1); // in case of short-circuiting
 
+    Verdict subVerdict = subMonitor->step(monitorId, stepNumber);
     if (currentVerdict.has_value() and subVerdict.timeStamp.has_value()) {
         Verdict lastSubVerdict = *currentVerdict;
         currentVerdict = subVerdict;
-        if (!interval.isFinite() and
-            interval.getStart() <= subVerdict.timeStamp.value() - lastSubVerdict.timeStamp.value())
-            return {subVerdict.timeStamp.value(), lastSubVerdict.value};
-        else if (interval.isFinite() and
-                 Utils::isInInterval(subVerdict.timeStamp.value() - lastSubVerdict.timeStamp.value(),
-                                     interval.getStart(), interval.getEnd()))
+        if ((!interval.isFinite() and
+             interval.getStart() <= subVerdict.timeStamp.value() - lastSubVerdict.timeStamp.value()) or
+            (interval.isFinite() and
+             Utils::isInInterval(subVerdict.timeStamp.value() - lastSubVerdict.timeStamp.value(), interval.getStart(),
+                                 interval.getEnd())))
             return {subVerdict.timeStamp.value(), lastSubVerdict.value};
         else
             return {subVerdict.timeStamp.value(), false};

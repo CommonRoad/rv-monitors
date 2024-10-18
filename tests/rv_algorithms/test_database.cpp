@@ -1031,6 +1031,20 @@ TestDataBase::TestDataBase() {
          {0, 1, 2, 3, 4, 5},
          {std::make_shared<DomainStorage>(DomainStorage(
              "D", {"a", "b", "d"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}},
+        {"F97_11",
+         "G(O(d) & F(d))",
+         createExpectedResult({false, false, false, false, false, true}),
+         {{"a", "b", "c"}, {}, {"a", "b"}, {}, {}, {"d"}},
+         {0, 1, 2, 3, 4, 5},
+         {std::make_shared<DomainStorage>(DomainStorage(
+             "D", {"a", "b", "d"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}},
+        {"F97_2",
+         "G(E x in D. (O(x) & F(x)))",
+         createExpectedResult({true, true, true, false, false, true, false}),
+         {{"a", "b", "c"}, {}, {"a", "b"}, {}, {}, {"d"}, {}},
+         {0, 1, 2, 3, 4, 5, 6},
+         {std::make_shared<DomainStorage>(DomainStorage(
+             "D", {"a", "b", "d"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}},
         {"F98_1",
          "G(A x in D. ((a)S(x)))",
          createExpectedResult({false, true, true, true, false}),
