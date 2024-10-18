@@ -94,13 +94,13 @@ void Hydra2::createMonitor(const std::vector<Formula> &formulas, bool connectedE
 
 Hydra2::Hydra2(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting,
                bool earlyTermination, const std::vector<std::shared_ptr<DomainStorage>> &domains,
-               const std::map<std::string, std::array<double, 2>> &predicateCosts)
+               const std::map<std::string, std::array<double, 3>> &predicateCosts)
     : MonitorInterface(formulas, AlgorithmType::hydra_2_mtl, true, earlyTermination, domains),
       predicateCosts(predicateCosts) {
     createMonitor(formulas, connectedEval, reordering, shortCircuiting);
 }
 
-std::map<std::string, std::array<double, 2>> &Hydra2::getPredicateCost() { return predicateCosts; }
+std::map<std::string, std::array<double, 3>> &Hydra2::getPredicateCost() { return predicateCosts; }
 
 void Hydra2::evalCompleteTrace(std::map<std::string, std::vector<Verdict>> &result,
                                const std::vector<std::string> &formulaIDs) {

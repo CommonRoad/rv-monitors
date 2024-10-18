@@ -64,30 +64,6 @@ class Hydra2Monitor {
      */
     size_t getMaxTraceIdx();
 
-    /**
-     * Extracts minimum trace idx of monitor given all parent monitors (required for connected evaluation).
-     *
-     * @return Trace index.
-     */
-    size_t getMinTraceIdx();
-
-    /**
-     * Evaluates whether another parent monitor has the same trace index.
-     *
-     * @param idx Trace index which should be used for comparison.
-     * @return Boolean indicating whether another parent monitor is at the same trace index.
-     */
-    bool traceIdxUnique(size_t idx);
-
-    /**
-     * Executes monitor until desired step number is reached.
-     *
-     * @param parentId Id of parent monitor.
-     * @param stepNumber Last step number which should be performed.
-     * @return Verdict of desired step number.
-     */
-    Verdict simulateVerdict(size_t parentId, size_t stepNumber);
-
   public:
     /**
      * Destructor.
@@ -111,10 +87,9 @@ class Hydra2Monitor {
      *
      * @param parentId Id of parent monitor.
      * @param stepNumber Number of step which should be performed.
-     * @param singleStep Boolean indicating whether only one step for provided step number should be executed.
      * @return Boolean verdict.
      */
-    Verdict step(size_t parentId, size_t stepNumber, bool singleStep = false);
+    Verdict step(size_t parentId, size_t stepNumber);
 
     /**
      * Monitor specific step function.

@@ -1,13 +1,5 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2021 Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
-
 #include "test_mtl_event_consuming.h"
 #include "../test_database.h"
-#include "monitors/rv_algorithms/mtl_event_consuming//mtl_event_consuming.h"
 #include "monitors/trace/trace.h"
 
 TEST(TestEventConsumingMTL, specificFormulaTest) {

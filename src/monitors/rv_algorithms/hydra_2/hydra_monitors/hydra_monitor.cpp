@@ -34,86 +34,22 @@ size_t Hydra2Monitor::getMaxTraceIdx() {
             ->second;
 }
 
-size_t Hydra2Monitor::getMinTraceIdx() {
-    if (traceIdx.empty())
-        return 0;
-    else
-        return std::min_element(
-                   traceIdx.begin(), traceIdx.end(),
-                   [](const std::pair<size_t, size_t> &elemA, const std::pair<size_t, size_t> &elemB) -> bool {
-                       return elemA.second < elemB.second;
-                   })
-            ->second;
-}
-
-bool Hydra2Monitor::traceIdxUnique(size_t idx) {
-    size_t counter{0};
-    for (const auto &elem : traceIdx) {
-        if (elem.second == idx)
-            counter++;
-        if (counter > 1)
-            return false;
-    }
-    return true;
-}
-
-Verdict Hydra2Monitor::step(size_t parentId, size_t stepNumber, bool singleStep) {
+Verdict Hydra2Monitor::step(size_t parentId, size_t stepNumber) {
     spdlog::debug("Hydra2Monitor::step: " + formula.getExpr()->getSymbol() + " - " + std::to_string(monitorId) + " - " +
                   subID + " - " + std::to_string(parentId) + " - " + std::to_string(stepNumber));
     Verdict verdict{Verdict(false)};
-    if (!singleStep and (!connectedEval or traceIdx.size() == 1))
-        if (stepNumber >= (traceIdx[parentId])) { // required step equals stored step, perform next step directly
-            verdict = simulateVerdict(parentId, stepNumber);
-        } else // step number is behind head position (e.g., if child of until operator) or specific verdict
-               // is directly required (only used by until operator)
-            verdict = concreteStep(parentId, stepNumber);
-    else if (singleStep) { // step number is behind head position (e.g., if child of until operator) or specific verdict
-                           // is directly required (only used by until operator)
-        if (stepNumber >= traceIdx[parentId]) {
-            verdict = simulateVerdict(parentId, stepNumber);
-        } else { // if required step was already performed based on other parent monitor, use already computed verdict
-            verdict = verdictHistory.at(stepNumber);
-        }
-    } else if (stepNumber < traceIdx[parentId]) { // required step was already performed based on other parent monitor,
-                                                  // use already computed verdict
+    if (traceIdx.size() > 1 and
+        verdictHistory.find(stepNumber) != verdictHistory.end()) { // required step was already performed based on other
+                                                                   // parent monitor, use already computed verdict
         verdict = verdictHistory.at(stepNumber);
-    } else
-        verdict = simulateVerdict(parentId, stepNumber);
-    // note: verdict time step can be different from step number if time steps are no equidistant
-    return verdict;
-}
-
-Verdict Hydra2Monitor::simulateVerdict(size_t parentId, size_t stepNumber) {
-    auto verdict{Verdict(0, false)};
-    while (stepNumber >= (traceIdx[parentId])) {
-        if (!connectedEval or traceIdx.size() == 1) { // since no connected evaluation, perform step directly
-            verdict = concreteStep(parentId, traceIdx[parentId]);
-            ++traceIdx[parentId];
-        } else if (traceIdx[parentId] == getMaxTraceIdx() or
-                   verdictHistory.find(traceIdx[parentId]) ==
-                       verdictHistory
-                           .end()) { // if requested trace index equals maximum trace index based on all monitor heads
-                                     // based on parent monitors, perform new step and store verdict
-            verdict = concreteStep(parentId, traceIdx[parentId]);
-            verdictHistory.insert({traceIdx[parentId], verdict});
-            ++traceIdx[parentId];
-        } else { // if required step was already performed based on other parent monitor, use already computed verdict
-            verdict = verdictHistory.at(traceIdx[parentId]);
-            auto minIdx{getMinTraceIdx()};
-            if (traceIdx[parentId] == minIdx and
-                traceIdxUnique(
-                    minIdx)) { // if current monitor uses minimum trace index and no other monitor has same trace index
-                               // -> pop head of verdict history and decrement indices of all other monitors
-                spdlog::debug("Hydra2Monitor::simulateVerdict: Erase verdict from history " +
-                              formula.getExpr()->getSymbol() + " - " + std::to_string(parentId) + " - " +
-                              std::to_string(stepNumber));
-                verdictHistory.erase(verdictHistory.begin());
-                ++traceIdx[parentId];
-            } else
-                ++traceIdx[parentId];
-        }
+    } else {
+        verdict = concreteStep(parentId, stepNumber);
+        if (traceIdx[parentId] == getMaxTraceIdx())
+            verdictHistory.insert({stepNumber, verdict});
+        ++traceIdx[parentId];
     }
     // note: verdict time step can be different from step number if time steps are no equidistant
+
     return verdict;
 }
 

@@ -5,9 +5,10 @@
 #include "monitors/utils/utils.h"
 
 namespace hydraTestUtils {
-const std::shared_ptr<Trace> createTraceWithVariable(size_t length,
-                                                     const std::vector<std::shared_ptr<IFunction<bool>>> &function,
-                                                     const ConstantCollection &constants = {});
+std::shared_ptr<Trace> createTraceWithVariable(size_t length,
+                                               const std::vector<std::shared_ptr<IFunction<bool>>> &function,
+                                               const ConstantCollection &constants = {},
+                                               std::vector<Event> eventList = {});
 
 size_t executeHydraEval(const std::shared_ptr<Trace> &trace, const std::vector<Formula> &formulas,
                         const std::vector<std::vector<Verdict>> &expSolution,
@@ -34,5 +35,7 @@ bool equals_three(size_t timeStep, size_t val);
 bool divisible_by_time_step(size_t timeStep, size_t val);
 
 bool lower_than_time_step(size_t timeStep, size_t val);
+
+bool raiseIfStepLessThanTwo(size_t timeStep, size_t randomValue);
 
 } // namespace hydraTestUtils

@@ -1,45 +1,54 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/since_monitor.h"
 
 Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
-    subVerdictLeft = subMonitorLeft->step(monitorId, stepNumber);
-    if (subVerdictLeft->timeStamp.has_value())
-        headPositionMonitorLeft.update(subVerdictLeft->timeStamp.value());
-    if (!subVerdictLeft->value)
-        lastViolation = HeadPosHydra2(headPositionMonitorLeft.timeStep, headPositionMonitorLeft.traceIdx);
 
-    if (stepNumber == 0) {
-        subVerdictRight = subMonitorRight->step(monitorId, stepNumberRight);
-        stepNumberRight++;
-        if (subVerdictRight->timeStamp.has_value())
-            headPositionMonitorRight.update(subVerdictRight->timeStamp.value());
-        if (!std::all_of(
-                domainValueArguments.begin(), domainValueArguments.end(),
-                [step = stepNumberRight](const DomainValue &dv) { return dv.isConst() or dv.checkValidity(step); }))
-            endReached = true;
-    }
+    if (stepNumber > traceIdx[parentId] and interval.isFinite() and interval.getEnd() < traceIdx[parentId])
+        traceIdx[parentId] = stepNumber - interval.getEnd();
 
-    // loop until end is reached, right monitor time points equals (is greater) than left monitor's time point, or lower
-    // time bound is violated
-    while (!endReached && headPositionMonitorRight.traceIdx <= headPositionMonitorLeft.traceIdx &&
-           headPositionMonitorLeft.timeStep - headPositionMonitorRight.timeStep >= interval.getStart()) {
-        if (subVerdictRight->value)
-            lastSatisfaction = HeadPosHydra2(headPositionMonitorRight.timeStep, headPositionMonitorRight.traceIdx);
-        subVerdictRight = subMonitorRight->step(monitorId, stepNumberRight);
-        stepNumberRight++;
-        if (subVerdictRight->timeStamp.has_value())
-            headPositionMonitorRight.update(subVerdictRight->timeStamp.value());
-        else {
-            endReached = true;
-            headPositionMonitorRight.traceIdx++;
+    while (traceIdx[parentId] <= stepNumber) {
+
+        subVerdictLeft = subMonitorLeft->step(monitorId, stepNumber);
+        if (subVerdictLeft->timeStamp.has_value())
+            headPositionMonitorLeft.update(subVerdictLeft->timeStamp.value());
+        if (!subVerdictLeft->value)
+            lastViolation = HeadPosHydra2(headPositionMonitorLeft.timeStep, headPositionMonitorLeft.traceIdx);
+
+        if (traceIdx[parentId] == 0) {
+            subVerdictRight = subMonitorRight->step(monitorId, stepNumberRight);
+            stepNumberRight++;
+            if (subVerdictRight->timeStamp.has_value())
+                headPositionMonitorRight.update(subVerdictRight->timeStamp.value());
+            if (!std::all_of(
+                    domainValueArguments.begin(), domainValueArguments.end(),
+                    [step = stepNumberRight](const DomainValue &dv) { return dv.isConst() or dv.checkValidity(step); }))
+                endReached = true;
         }
-        if (!std::all_of(
-                domainValueArguments.begin(), domainValueArguments.end(),
-                [step = stepNumberRight](const DomainValue &dv) { return dv.isConst() or dv.checkValidity(step); })) {
-            endReached = true; // just for completeness, could be removed
-            break;
-        }
-    }
 
+        // loop until end is reached, right monitor time points equals (is greater) than left monitor's time point, or
+        // lower time bound is violated
+        while (!endReached && headPositionMonitorRight.traceIdx <= headPositionMonitorLeft.traceIdx &&
+               headPositionMonitorLeft.timeStep - headPositionMonitorRight.timeStep >= interval.getStart()) {
+            if (subVerdictRight->value)
+                lastSatisfaction = HeadPosHydra2(headPositionMonitorRight.timeStep, headPositionMonitorRight.traceIdx);
+            subVerdictRight = subMonitorRight->step(monitorId, stepNumberRight);
+            stepNumberRight++;
+            if (subVerdictRight->timeStamp.has_value())
+                headPositionMonitorRight.update(subVerdictRight->timeStamp.value());
+            else {
+                endReached = true;
+                headPositionMonitorRight.traceIdx++;
+            }
+            if (!std::all_of(domainValueArguments.begin(), domainValueArguments.end(),
+                             [step = stepNumberRight](const DomainValue &dv) {
+                                 return dv.isConst() or dv.checkValidity(step);
+                             })) {
+                endReached = true; // just for completeness, could be removed
+                break;
+            }
+        }
+        ++traceIdx[parentId];
+    }
+    --traceIdx[parentId];
     // check whether right side of until was satisfied and whether satisfaction is before end of allowed time interval
     if (lastSatisfaction &&
         (!interval.isFinite() or headPositionMonitorLeft.timeStep - lastSatisfaction->timeStep <= interval.getEnd()) &&

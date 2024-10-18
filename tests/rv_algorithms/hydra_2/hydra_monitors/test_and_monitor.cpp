@@ -1,10 +1,3 @@
-//
-// Created by Sebastian Maierhofer.
-// Technical University of Munich - Cyber-Physical Systems Group
-// Copyright (c) 2022 Sebastian Maierhofer - Technical University of Munich. All rights reserved.
-// Credits: BMW Car@TUM
-//
-
 #include "monitors/parser/parser.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/and_monitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/constant_monitor.h"
@@ -26,7 +19,9 @@ TEST(TestAndMonitor, testSingleAndMonitorFalseEvaluation) {
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, false);
+    mon.reset();
     EXPECT_EQ(mon.step(0, 0).value, false);
+    mon.reset();
     EXPECT_EQ(mon.step(0, 4).value, false);
 }
 
@@ -43,6 +38,7 @@ TEST(TestAndMonitor, testSingleAndMonitorTrueEvaluation) {
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, true);
+    mon.reset();
     EXPECT_EQ(mon.step(0, 0).value, true);
 }
 
@@ -60,7 +56,9 @@ TEST(TestAndMonitor, testSingleAndMonitorFalseEvaluationShortCircuiting) {
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, false);
+    mon.reset();
     EXPECT_EQ(mon.step(0, 0).value, false);
+    mon.reset();
     EXPECT_EQ(mon.step(0, 4).value, false);
 }
 
@@ -77,6 +75,7 @@ TEST(TestAndMonitor, testSingleAndMonitorTrueEvaluationShortCircuiting) {
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, true);
+    mon.reset();
     EXPECT_EQ(mon.step(0, 0).value, true);
 }
 
@@ -95,8 +94,11 @@ TEST(TestAndMonitor, testSingleAndMonitorShortCircuitingForLoop) {
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, false);
+    mon.reset();
     EXPECT_EQ(mon.step(0, 0).value, false);
+    mon.reset();
     EXPECT_EQ(mon.step(0, 4).value, false);
+    mon.reset();
     EXPECT_EQ(mon.concreteStep(0, 4).value, false);
 }
 

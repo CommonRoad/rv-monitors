@@ -72,7 +72,7 @@ AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
 }
 
 RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration configuration,
-                     const std::map<std::string, std::array<double, 2>> &predicateCosts,
+                     const std::map<std::string, std::array<double, 3>> &predicateCosts,
                      const std::vector<std::shared_ptr<DomainStorage>> &domains)
     : configuration(configuration) {
     for (const auto &pred : predicateCosts)
@@ -105,7 +105,7 @@ RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration 
 }
 
 RVMonitor::RVMonitor(const Formula &formula, MonitorConfiguration configuration,
-                     const std::map<std::string, std::array<double, 2>> &predicateCosts,
+                     const std::map<std::string, std::array<double, 3>> &predicateCosts,
                      const std::vector<std::shared_ptr<DomainStorage>> &domains)
     : configuration(configuration) {
     for (const auto &pred : predicateCosts)
