@@ -19,7 +19,9 @@ TEST(TestOrMonitor, testSingleOrMonitor) {
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, true);
+    mon.reset();
     EXPECT_EQ(mon.step(0, 0).value, true);
+    mon.reset();
     EXPECT_EQ(mon.step(0, 4).value, false);
 }
 
@@ -37,7 +39,9 @@ TEST(TestOrMonitor, testSingleOrMonitorShortCircuiting1) {
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, true);
+    mon.reset();
     EXPECT_EQ(mon.step(0, 0).value, true);
+    mon.reset();
     EXPECT_EQ(mon.step(0, 4).value, false);
 }
 
@@ -56,8 +60,11 @@ TEST(TestOrMonitor, testSingleOrMonitorShortCircuiting2) {
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, true);
+    mon.reset();
     EXPECT_EQ(mon.step(0, 0).value, true);
+    mon.reset();
     EXPECT_EQ(mon.step(0, 4).value, true);
+    mon.reset();
     EXPECT_EQ(mon.concreteStep(0, 4).value, true);
 }
 
@@ -76,8 +83,11 @@ TEST(TestOrMonitor, testSingleOrMonitorShortCircuiting3) {
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, true);
+    mon.reset();
     EXPECT_EQ(mon.step(0, 0).value, true);
+    mon.reset();
     EXPECT_EQ(mon.step(0, 4).value, true);
+    mon.reset();
     EXPECT_EQ(mon.concreteStep(0, 4).value, true);
 }
 
