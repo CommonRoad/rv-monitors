@@ -261,6 +261,27 @@ TEST(TestHydra2, testExistenceVariableDomainLazyPredicate) {
     hydraTestUtils::executeHydraEval(trace, formulas, expSolutions, domains);
 }
 
+TEST(TestHydra2, testLazyEvaluationComplexPredicate) {
+    auto traceAtomic{Utils::createTrace({"a"}, {{}, {}, {"a"}})};
+    std::vector<Event> eventList{traceAtomic->getEvent(0), traceAtomic->getEvent(1), traceAtomic->getEvent(2)};
+    const std::shared_ptr<Trace> trace = hydraTestUtils::createTraceWithVariable(
+        4,
+        {std::make_shared<Function<bool, size_t, size_t>>(
+            Function<bool, size_t, size_t>("raise_if_step_less_than_two", {"timeStep", "randomValue"},
+                                           hydraTestUtils::raiseIfStepLessThanTwo, hydraTestUtils::twoSizeTArgs))},
+        ConstantCollection({ConstantValue{
+            "2", 2ul, [](const std::any &val) { return std::to_string(std::any_cast<std::size_t>(val)); }}}),
+        eventList);
+
+    Formula formula = Parser::parse("G(a & raise_if_step_less_than_two('2'))");
+    formula.setId("R1");
+    std::vector<Formula> formulas = {formula};
+    std::vector<std::vector<Verdict>> expSolutions{{Verdict{0, false}, Verdict{1, false}, Verdict{2, true}}};
+
+    auto monitor{Hydra2(formulas, true, true, true, false)};
+    hydraTestUtils::evalHydra(formulas, expSolutions, monitor, trace, "ttt", {});
+}
+
 TEST(TestHydra2, testHierachicalEval) {
     const std::shared_ptr<Trace> trace = hydraTestUtils::createTraceWithVariable(
         4,
