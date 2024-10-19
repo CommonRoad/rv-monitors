@@ -105,20 +105,12 @@ void SinceMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
     subMonitorRight->addDomainValues(vals);
     subMonitorLeft->addDomainValues(vals);
 }
+
 void SinceMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
     if (!Hydra2Monitor::stepNumberValid(stepNumber, parentId))
         return;
-    if (stepNumber > stepNumberRight) {
-        while (!domainValueArguments.at(0).isConst() and
-               !domainValueArguments.at(0).checkValidity(stepNumberRight)) { // todo more efficient
-            ++stepNumberRight;
-            Hydra2Monitor::setStepNumber(stepNumberRight, parentId);
-            subMonitorRight->setStepNumber(stepNumberRight, monitorId);
-            subMonitorLeft->setStepNumber(stepNumberRight, monitorId);
-        }
-        if (!domainValueArguments.at(0).isConst() and domainValueArguments.at(0).checkValidity(stepNumber - 1))
-            Hydra2Monitor::step(parentId, stepNumber - 1);
-    }
+    subMonitorRight->setStepNumber(stepNumber, monitorId);
+    subMonitorLeft->setStepNumber(stepNumber, monitorId);
 }
 
 void SinceMonitor::to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) {

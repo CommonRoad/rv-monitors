@@ -17,7 +17,27 @@ void UntilMonitor::stepLeftRightMonitors() {
 }
 
 Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
-    subVerdictBaseTimeStep = subMonitorBaseTimeStep->step(monitorId, stepNumber);
+    subVerdictBaseTimeStep =
+        subMonitorBaseTimeStep->step(monitorId, stepNumber); // required in case of non-equidistant time steps
+    bool reset{false};
+    // reset monitor after short-circuiting
+    if (stepNumberUntil <= stepNumber and stepNumber > traceIdx[parentId]) {
+        subVerdictLeft = {};
+        subVerdictRight = {};
+        lastSatisfaction = {};
+        lastViolation = {};
+        size_t timeStamp;
+        if (subVerdictBaseTimeStep->timeStamp)
+            timeStamp = subVerdictBaseTimeStep->timeStamp.value();
+        else
+            timeStamp = {subMonitorBaseTimeStep->step(monitorId, stepNumber - 1).timeStamp.value()};
+        headPositionMonitorBaseTimeStep = HeadPosHydra2(timeStamp, static_cast<int>(stepNumber - 1));
+        headPositionMonitorRight = HeadPosHydra2(timeStamp, static_cast<int>(stepNumber - 1));
+        headPositionMonitorLeft = HeadPosHydra2(timeStamp, static_cast<int>(stepNumber - 1));
+        stepNumberUntil = stepNumber;
+        reset = true;
+    }
+
     if (subVerdictBaseTimeStep->timeStamp)
         headPositionMonitorBaseTimeStep.update(subVerdictBaseTimeStep->timeStamp.value());
     else
@@ -35,9 +55,7 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         lastViolation = {};
 
     // if not step was performed yet or last verdicts are behind base time step, execute step for current base step
-    if (!endReached and
-        (stepNumberUntil == 0 or stepNumber > traceIdx[parentId])) { // only executed at first call of function
-        stepNumberUntil = stepNumber;
+    if (!endReached and (stepNumberUntil == 0 or reset)) { // only executed at first call of function
         stepLeftRightMonitors();
     }
 
