@@ -50,7 +50,7 @@ void PredicateMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
     assert(orderedValues.size() == (relevantArguments.size()));
     domainName = name.substr(0, name.find('(')) + "(";
     for (const auto &val : orderedValues)
-        domainName += (val.getUniqueID() + ", ");
+        domainName += ("'" + val.getUniqueID() + "'" + ", ");
     domainName.pop_back();
     domainName.pop_back();
     domainName += ")";
