@@ -1,27 +1,31 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/since_monitor.h"
 
 Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
-
-    if (stepNumber > traceIdx[parentId] and interval.isFinite() and interval.getEnd() < traceIdx[parentId])
-        traceIdx[parentId] = stepNumber - interval.getEnd();
+    // propagate trace index and reset variables after short-circuiting or invalid dynamic domain value
+    auto reset{updateTraceIndex(parentId, stepNumber)};
 
     while (traceIdx[parentId] <= stepNumber) {
-
         subVerdictLeft = subMonitorLeft->step(monitorId, stepNumber);
         if (subVerdictLeft->timeStamp.has_value())
             headPositionMonitorLeft.update(subVerdictLeft->timeStamp.value());
         if (!subVerdictLeft->value)
             lastViolation = HeadPosHydra2(headPositionMonitorLeft.timeStep, headPositionMonitorLeft.traceIdx);
 
-        if (traceIdx[parentId] == 0) {
+        if (traceIdx[parentId] == 0 or reset) {
             subVerdictRight = subMonitorRight->step(monitorId, stepNumberRight);
             stepNumberRight++;
             if (subVerdictRight->timeStamp.has_value())
                 headPositionMonitorRight.update(subVerdictRight->timeStamp.value());
-            if (!std::all_of(
-                    domainValueArguments.begin(), domainValueArguments.end(),
-                    [step = stepNumberRight](const DomainValue &dv) { return dv.isConst() or dv.checkValidity(step); }))
+            if (!std::all_of(domainValueArguments.begin(), domainValueArguments.end(),
+                             [step = stepNumberRight](const DomainValue &dv) {
+                                 return dv.isConst() or dv.checkValidity(step);
+                             })) {
+                if (subVerdictRight->value)
+                    lastSatisfaction =
+                        HeadPosHydra2(headPositionMonitorRight.timeStep, headPositionMonitorRight.traceIdx);
                 endReached = true;
+            }
+            reset = false;
         }
 
         // loop until end is reached, right monitor time points equals (is greater) than left monitor's time point, or
@@ -56,6 +60,56 @@ Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         return {headPositionMonitorLeft.timeStep, true};
     else
         return {headPositionMonitorLeft.timeStep, false};
+}
+bool SinceMonitor::updateTraceIndex(size_t parentId, size_t stepNumber) {
+    // reset step number so that interval is covered after short-circuiting
+    bool reset{false};
+    if (interval.isFinite() and ((stepNumber > traceIdx[parentId] and stepNumber > interval.getEnd() and
+                                  stepNumber - interval.getEnd() > traceIdx[parentId]) or
+                                 !std::all_of(domainValueArguments.begin(), domainValueArguments.end(),
+                                              [step = traceIdx[parentId]](const DomainValue &dv) {
+                                                  return dv.isConst() or dv.checkValidity(step);
+                                              }))) {
+        while ((stepNumber > traceIdx[parentId] and stepNumber > interval.getEnd() and
+                stepNumber - interval.getEnd() > traceIdx[parentId]) or
+               (!std::all_of(domainValueArguments.begin(), domainValueArguments.end(),
+                             [step = traceIdx[parentId]](const DomainValue &dv) {
+                                 return dv.isConst() or dv.checkValidity(step);
+                             }) and
+                traceIdx[parentId] <= stepNumber)) {
+            ++traceIdx[parentId];
+            headPositionMonitorLeft.update(traceIdx[parentId]);
+            headPositionMonitorRight.update(traceIdx[parentId]);
+        }
+        lastSatisfaction = {};
+        lastViolation = {};
+        stepNumberRight = traceIdx[parentId];
+        subVerdictRight = {};
+        subVerdictLeft = {};
+        reset = true;
+    }
+    // for infinite intervals, update trace index until valid domain values are reached
+    if (stepNumber > traceIdx[parentId] and !interval.isFinite() and
+        !std::all_of(
+            domainValueArguments.begin(), domainValueArguments.end(),
+            [step = traceIdx[parentId]](const DomainValue &dv) { return dv.isConst() or dv.checkValidity(step); })) {
+        while (stepNumber > traceIdx[parentId] and
+               !std::all_of(domainValueArguments.begin(), domainValueArguments.end(),
+                            [step = traceIdx[parentId]](const DomainValue &dv) {
+                                return dv.isConst() or dv.checkValidity(step);
+                            })) {
+            ++traceIdx[parentId];
+            headPositionMonitorLeft.update(traceIdx[parentId]);
+            headPositionMonitorRight.update(traceIdx[parentId]);
+        }
+        lastSatisfaction = {};
+        lastViolation = {};
+        stepNumberRight = traceIdx[parentId];
+        subVerdictRight = {};
+        subVerdictLeft = {};
+        reset = true;
+    }
+    return reset;
 }
 
 void SinceMonitor::setTrace(const std::shared_ptr<Trace> &tra,
