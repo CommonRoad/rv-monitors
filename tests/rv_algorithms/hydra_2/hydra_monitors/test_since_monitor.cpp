@@ -1,3 +1,5 @@
+#include "../hydra_test_utils.h"
+#include "monitors/collections/domain.h"
 #include "monitors/parser/parser.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/atomic_monitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/constant_monitor.h"
@@ -163,4 +165,84 @@ TEST(TestSinceMonitor, testReset) {
     mon2->registerParent(1);
     auto mon{SinceMonitor(formula, mon1, mon2, operatorInterval, 1, false)};
     EXPECT_NO_THROW(mon.reset());
+}
+
+std::vector<std::any> domain2(size_t stepNumber, std::vector<std::vector<std::any>> possibleSets) {
+    switch (stepNumber) {
+    case 0:
+        return {};
+    case 1:
+        return {};
+    case 2:
+        return possibleSets[2];
+    default:
+        return {};
+    }
+}
+
+bool checkValidityDomain2(size_t stepNumber) {
+    switch (stepNumber) {
+    case 0:
+        return false;
+    case 1:
+        return false;
+    case 2:
+        return true;
+    default:
+        return false;
+    }
+}
+
+TEST(TestSinceMonitor, testLazyEvaluationComplexPredicateInfinteInterval) {
+    auto traceAtomic{Utils::createTrace({"a"}, {{}, {}, {"a"}})};
+    std::vector<Event> eventList{traceAtomic->getEvent(0), traceAtomic->getEvent(1), traceAtomic->getEvent(2)};
+    const std::shared_ptr<Trace> trace = hydraTestUtils::createTraceWithVariable(
+        4,
+        {std::make_shared<Function<bool, size_t, size_t>>(
+            Function<bool, size_t, size_t>("raise_if_step_less_than_two", {"timeStep", "randomValue"},
+                                           hydraTestUtils::raiseIfStepLessThanTwo, hydraTestUtils::twoSizeTArgs))},
+        ConstantCollection({ConstantValue{
+            "2", 2ul, [](const std::any &val) { return std::to_string(std::any_cast<std::size_t>(val)); }}}),
+        eventList);
+    std::vector<std::vector<std::any>> possibleSets{{1ul, 2ul, 3ul, 4ul}, {1ul, 2ul, 3ul}, {0ul}, {3ul}};
+    DomainStorage dom1{"D0", [possibleSets](size_t stepNumber) { return domain2(stepNumber, possibleSets); },
+                       [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); },
+                       [](size_t stepNumber, const std::any &) { return checkValidityDomain2(stepNumber); }};
+
+    Formula formula = Parser::parse("G(a & (E x in D0. ((a) S (raise_if_step_less_than_two(x)))))");
+    formula.setId("R1");
+    std::vector<Formula> formulas = {formula};
+    std::vector<std::vector<Verdict>> expSolutions{{Verdict{0, false}, Verdict{1, false}, Verdict{2, true}}};
+
+    std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1)};
+    auto monitor{Hydra2(formulas, true, true, true, false, domains,
+                        {{"a", {0, 1, 0}}, {"raise_if_step_less_than_two", {100, 0, 1000}}})};
+    hydraTestUtils::evalHydra(formulas, expSolutions, monitor, trace, "ttt", {});
+}
+
+TEST(TestSinceMonitor, testLazyEvaluationComplexPredicateFiniteInterval) {
+    auto traceAtomic{Utils::createTrace({"a"}, {{}, {}, {"a"}})};
+    std::vector<Event> eventList{traceAtomic->getEvent(0), traceAtomic->getEvent(1), traceAtomic->getEvent(2)};
+    const std::shared_ptr<Trace> trace = hydraTestUtils::createTraceWithVariable(
+        4,
+        {std::make_shared<Function<bool, size_t, size_t>>(
+            Function<bool, size_t, size_t>("raise_if_step_less_than_two", {"timeStep", "randomValue"},
+                                           hydraTestUtils::raiseIfStepLessThanTwo, hydraTestUtils::twoSizeTArgs))},
+        ConstantCollection({ConstantValue{
+            "2", 2ul, [](const std::any &val) { return std::to_string(std::any_cast<std::size_t>(val)); }}}),
+        eventList);
+    std::vector<std::vector<std::any>> possibleSets{{1ul, 2ul, 3ul, 4ul}, {1ul, 2ul, 3ul}, {0ul}, {3ul}};
+    DomainStorage dom1{"D0", [possibleSets](size_t stepNumber) { return domain2(stepNumber, possibleSets); },
+                       [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); },
+                       [](size_t stepNumber, const std::any &) { return checkValidityDomain2(stepNumber); }};
+
+    Formula formula = Parser::parse("G(a & (E x in D0. ((a) S[0, 1] (raise_if_step_less_than_two(x)))))");
+    formula.setId("R1");
+    std::vector<Formula> formulas = {formula};
+    std::vector<std::vector<Verdict>> expSolutions{{Verdict{0, false}, Verdict{1, false}, Verdict{2, true}}};
+
+    std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1)};
+    auto monitor{Hydra2(formulas, true, true, true, false, domains,
+                        {{"a", {0, 1, 0}}, {"raise_if_step_less_than_two", {100, 0, 1000}}})};
+    hydraTestUtils::evalHydra(formulas, expSolutions, monitor, trace, "ttt", {});
 }
