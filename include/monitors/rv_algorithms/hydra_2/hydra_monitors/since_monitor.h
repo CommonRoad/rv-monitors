@@ -99,4 +99,13 @@ class SinceMonitor : public Hydra2Monitor {
     size_t stepNumberRight{0}; // Custom step number for right monitor since left monitor is only called once
     bool endReached{false};    //**< Boolean indicating whether end of trace was reached. */
     std::vector<DomainValue> domainValueArguments; //**< Domain values. */
+
+    /**
+     * Propagate trace index and reset variables after short-circuiting or invalid dynamic domain value.
+     *
+     * @param parentId Parent monitor ID.
+     * @param stepNumber Current step number.
+     * @returs Boolean indicating whether reset was performed.
+     */
+    bool updateTraceIndex(size_t parentId, size_t stepNumber);
 };

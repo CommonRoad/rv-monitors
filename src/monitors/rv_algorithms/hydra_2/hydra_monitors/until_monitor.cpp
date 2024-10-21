@@ -17,8 +17,12 @@ void UntilMonitor::stepLeftRightMonitors() {
 }
 
 Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
-    subVerdictBaseTimeStep =
-        subMonitorBaseTimeStep->step(monitorId, stepNumber); // required in case of non-equidistant time steps
+    if (stepNumber > traceIdx[parentId]) {
+        auto subVerdictBaseTimeStepTmp{subMonitorBaseTimeStep->step(monitorId, stepNumber - 1)};
+        if (subVerdictBaseTimeStepTmp.timeStamp)
+            headPositionMonitorBaseTimeStep =
+                HeadPosHydra2(subVerdictBaseTimeStepTmp.timeStamp.value(), static_cast<int>(stepNumber - 1));
+    }
     bool reset{false};
     // reset monitor after short-circuiting
     if (stepNumberUntil <= stepNumber and stepNumber > traceIdx[parentId]) {
@@ -26,18 +30,16 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         subVerdictRight = {};
         lastSatisfaction = {};
         lastViolation = {};
-        size_t timeStamp;
-        if (subVerdictBaseTimeStep->timeStamp)
-            timeStamp = subVerdictBaseTimeStep->timeStamp.value();
-        else
-            timeStamp = {subMonitorBaseTimeStep->step(monitorId, stepNumber - 1).timeStamp.value()};
-        headPositionMonitorBaseTimeStep = HeadPosHydra2(timeStamp, static_cast<int>(stepNumber - 1));
-        headPositionMonitorRight = HeadPosHydra2(timeStamp, static_cast<int>(stepNumber - 1));
-        headPositionMonitorLeft = HeadPosHydra2(timeStamp, static_cast<int>(stepNumber - 1));
+        headPositionMonitorRight =
+            HeadPosHydra2(headPositionMonitorBaseTimeStep.timeStep, static_cast<int>(stepNumber - 1));
+        headPositionMonitorLeft =
+            HeadPosHydra2(headPositionMonitorBaseTimeStep.timeStep, static_cast<int>(stepNumber - 1));
         stepNumberUntil = stepNumber;
         reset = true;
     }
 
+    subVerdictBaseTimeStep =
+        subMonitorBaseTimeStep->step(monitorId, stepNumber); // required in case of non-equidistant time steps
     if (subVerdictBaseTimeStep->timeStamp)
         headPositionMonitorBaseTimeStep.update(subVerdictBaseTimeStep->timeStamp.value());
     else
