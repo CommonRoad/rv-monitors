@@ -11,9 +11,9 @@ A `C++17` implementation of several temporal logic runtime verification algorith
 ### Overview
 We extracted the relevant information in separate readmes depending on the way you want to use the CommonRoad Monitor:
 
-- You want to integrate the RV-Monitor into another CMake project: [C++ Usage](./../docs/cpp.md)
+- You want to integrate the RV-Monitor into another CMake project: [C++ Usage](./docs/cpp.md)
 - You want to set up a development environment for the RV-Monitor itself: [C++ Development](https://gitlab.lrz.de/cps/commonroad/environment-model/-/blob/develop/docs/cpp_dev.md?ref_type=heads)
-- You want to learn about the evaluation of our monitor against Hydra/Vydra inside the CI: [C++ Usage](./../docs/vydra.md)
+- You want to learn about the evaluation of our monitor against Hydra/Vydra inside the CI: [C++ Usage](./docs/vydra.md)
 - You want to generate the docu of the RV-Monitor: [Documentation Generation](https://gitlab.lrz.de/cps/commonroad/environment-model/-/blob/develop/docs/doc.md?ref_type=heads)
 
 
