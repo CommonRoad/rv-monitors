@@ -209,19 +209,43 @@ run-coverage:
         coverage_format: cobertura
         path: coverage.xml
 
-### create documentation ###
-docs:
+.install-python-venv: &install-python-venv
+  - apt-get update && apt-get install -y --no-install-recommends git python3-venv python3-pip openjdk-11-jre-headless
+  - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lrz.de/".insteadOf "git@gitlab.lrz.de:"
+  - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lrz.de".insteadOf "ssh://git@gitlab.lrz.de"
+  - python3 -m pip config set global.disable-pip-version-check true
+  - python3 -m venv test-venv
+  - source test-venv/bin/activate
+  - python3 -m pip install pip-tools
+
+
+pages:
   stage: docs
+  when: manual
+  publish: site
   script:
-    - mkdir -p build && cd build
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Debug -DRVMonitors_BUILD_DOXYGEN=ON  ..
-    - make doc_doxygen ..
-  dependencies: []
+    - *install-python-venv
+    - pip install ".[docs]"
+    - mkdocs build
   artifacts:
     paths:
-      - build/doc_doxygen/html/
-    expose_as: 'Doxygen Documentation'
-    expire_in: 20 minutes
+      - site
+  environment:
+    name: Gitlab Pages
+    url: https://cps.pages.gitlab.lrz.de/commonroad/rv-monitors/
+  needs: []
+
+build_pages:
+  stage: docs
+  script:
+    - *install-python-venv
+    - pip install ".[docs]"
+    - mkdocs build
+  artifacts:
+    paths:
+      - site
+  needs: []
+
 
 ### evaluate rvmonitors ###
 evaluation_hydra_python:
