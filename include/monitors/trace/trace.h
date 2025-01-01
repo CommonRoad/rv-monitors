@@ -6,7 +6,6 @@
 #include "monitors/collections/function.h"
 #include "monitors/utils/verdict.h"
 #include <algorithm>
-#include <map>
 #include <utility>
 #include <vector>
 
@@ -14,7 +13,6 @@
  * Class representing a trace of events.
  */
 class Trace {
-  private:
     std::vector<Event> trace;
     std::vector<std::shared_ptr<IFunction<bool>>> functionCollection;
     ConstantCollection constantCollection;
@@ -23,6 +21,8 @@ class Trace {
     /**
      * Constructor.
      * @param trace
+     * @param functionCollection Collection of functions.
+     * @param constantCollection Collection of constants.
      */
     explicit Trace(std::vector<Event> trace, std::vector<std::shared_ptr<IFunction<bool>>> functionCollection = {},
                    ConstantCollection constantCollection = {})
@@ -30,8 +30,7 @@ class Trace {
           constantCollection(std::move(constantCollection)) {}
 
     /**
-     * Constructor.
-     * @param trace
+     * Default constructor.
      */
     Trace() = default;
 
@@ -159,4 +158,34 @@ class Trace {
      * @return Constant collection (container for constants).
      */
     [[nodiscard]] ConstantCollection getConstantCollection() const { return constantCollection; }
+
+    /**
+     * Clean trace by removing all entries containing any of the provided tokens.
+     *
+     * @param keep Tokens representing predicates to remove.
+     * @param initialTimeStep Time step from which to start cleaning.
+     */
+    void cleanTrace(const std::vector<std::string> &keep, size_t initialTimeStep) {
+        for (auto &event : trace) {
+            if (event.getTimeStep() < initialTimeStep)
+                continue;
+            event.clean(keep);
+        }
+    }
+
+    /**
+     * Removes everything before and after provided step numbers.
+     * @param begin Begin of the trace.
+     * @param end End of the trace.
+     * @param extension Number of time steps to add.
+     */
+    void removeAndExtend(size_t begin, size_t end, size_t extension) {
+        trace.erase(std::remove_if(trace.begin(), trace.end(),
+                                   [begin, end](const Event &event) {
+                                       return event.getTimeStep() < begin || event.getTimeStep() > end;
+                                   }),
+                    trace.end());
+        for (size_t idx{end + 1}; idx < end + extension + 1; ++idx)
+            trace.emplace_back(idx, idx == end + extension - 1);
+    }
 };

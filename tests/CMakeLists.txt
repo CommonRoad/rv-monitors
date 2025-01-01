@@ -42,6 +42,7 @@ set(RV_MONITOR_TEST_SRC_FILES
         rewriting/test_basic_rewrite_visitor.cpp
         rewriting/test_rewrite_visitor.cpp
         utils/test_lazy_bool.cpp
+        utils/test_trace.cpp
         utils/generators/formula_generator/test_formula_generator.cpp
         utils/generators/formula_generator/test_formula_generator.cpp
         utils/generators/trace_generator/test_trace_generator.cpp
