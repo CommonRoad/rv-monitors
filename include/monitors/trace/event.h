@@ -117,4 +117,20 @@ class Event {
      * @return Boolean indicating whether name is stored in event map.
      */
     bool hasVerdict(const std::string &name) { return eventMap.find(name) != eventMap.end(); }
+
+    /**
+     * Clean event map by removing all entries containing any of the provided tokens.
+     *
+     * @param keep Tokens representing predicates to remove.
+     */
+    void clean(std::vector<std::string> keep) {
+        std::vector<std::string> toDelete;
+        for (const auto &key : eventMap)
+            if (std::find_if(keep.begin(), keep.end(), [key](const std::string &token) {
+                    return key.first.find(token) != std::string::npos;
+                }) != keep.end())
+                toDelete.push_back(key.first);
+        for (const auto &key : toDelete)
+            eventMap.erase(key);
+    }
 };
