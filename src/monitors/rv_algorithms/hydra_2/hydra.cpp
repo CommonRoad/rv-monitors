@@ -39,7 +39,9 @@ void Hydra2::evalEarlyTermination(std::map<std::string, std::vector<Verdict>> &r
             (formulaIDs.empty() or std::any_of(formulaIDs.begin(), formulaIDs.end(),
                                                [mon](const std::string &fID) { return fID == mon->getFormulaId(); }))) {
             result[mon->getFormulaId()].emplace_back(
-                true); // only single verdict required and use "invalid" time step to indicate early termination
+                0, true); // initially, we had only single verdict and uses "invalid" time step to indicate early
+                          // termination; however, for better interpretation of result, we provide time stamp where
+                          // specification is violated
             relMonitors.push_back(mon);
         }
 
@@ -47,7 +49,7 @@ void Hydra2::evalEarlyTermination(std::map<std::string, std::vector<Verdict>> &r
         for (const auto &mon : relMonitors) {
             spdlog::debug("Monitor evaluation: " + std::to_string(i) + " - " + mon->getFormulaId());
             mon->addDomainValues({}); // triggers adding of domain values, e.g., to predicates
-            result[mon->getFormulaId()].at(0) = result[mon->getFormulaId()].at(0).value and mon->step(0, i).value;
+            result[mon->getFormulaId()].at(0) = mon->step(0, i);
             if (!result[mon->getFormulaId()].at(0).value)
                 return;
         }
