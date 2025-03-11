@@ -14,7 +14,7 @@ template <typename T> class EventValue {
     std::function<T()> valueFetcher{};
 
   public:
-    EventValue() : initialized(true){};
+    EventValue() : initialized(true) {};
 
     /**
      * Initialize non-lazy.

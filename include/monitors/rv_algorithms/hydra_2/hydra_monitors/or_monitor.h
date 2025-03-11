@@ -20,7 +20,7 @@ class OrMonitor : public Hydra2Monitor {
               bool connectedEval, bool shortCircuiting)
         : Hydra2Monitor(std::move(formula), monitorId, connectedEval, computeEvaluationCost(subMonitors),
                         computeSatisfactionProbability(subMonitors)),
-          subMonitors(subMonitors), shortCircuiting(shortCircuiting){};
+          subMonitors(subMonitors), shortCircuiting(shortCircuiting) {};
 
     /**
      * Performs concrete step of or-monitor.

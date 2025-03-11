@@ -16,7 +16,7 @@ class AtomicMonitor : public Hydra2Monitor {
      */
     AtomicMonitor(const Formula &formula, size_t monitorId, bool connectedEval)
         : Hydra2Monitor(formula, monitorId, connectedEval),
-          name(std::dynamic_pointer_cast<Atomic>(this->formula.getExpr())->to_string()){};
+          name(std::dynamic_pointer_cast<Atomic>(this->formula.getExpr())->to_string()) {};
 
     /**
      * Performs concrete step of atomic monitor. It evaluates the trace element of the concrete step. Returns false if

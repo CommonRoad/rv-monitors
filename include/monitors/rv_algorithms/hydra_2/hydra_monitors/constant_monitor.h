@@ -18,7 +18,7 @@ class ConstantMonitor : public Hydra2Monitor {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      */
     ConstantMonitor(Formula formula, size_t monitorId, bool connectedEval)
-        : Hydra2Monitor(std::move(formula), monitorId, connectedEval){};
+        : Hydra2Monitor(std::move(formula), monitorId, connectedEval) {};
 
     /**
      * Performs concrete step of constant monitor. It evaluates the trace element of the concrete step. Returns false if

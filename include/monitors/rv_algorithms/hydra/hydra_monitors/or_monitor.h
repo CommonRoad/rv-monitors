@@ -14,7 +14,7 @@ class OrMonitorHydra : public HydraMonitor {
      * @param subMonitors Child monitors.
      */
     OrMonitorHydra(Formula formula, std::vector<std::shared_ptr<HydraMonitor>> subMonitors)
-        : HydraMonitor(std::move(formula)), subMonitors(std::move(subMonitors)){};
+        : HydraMonitor(std::move(formula)), subMonitors(std::move(subMonitors)) {};
 
     /**
      * Performs concrete step of or-monitor.

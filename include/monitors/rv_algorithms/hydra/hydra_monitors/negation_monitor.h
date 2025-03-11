@@ -11,7 +11,7 @@ class NegationMonitorHydra : public HydraMonitor {
      * @param subMonitor Child monitor.
      */
     NegationMonitorHydra(Formula formula, std::shared_ptr<HydraMonitor> subMonitor)
-        : HydraMonitor(std::move(formula)), subMonitor(std::move(subMonitor)){};
+        : HydraMonitor(std::move(formula)), subMonitor(std::move(subMonitor)) {};
 
     /**
      * Performs concrete step of negation operator monitor.
