@@ -22,7 +22,7 @@ class NextMonitor : public Hydra2Monitor {
                 size_t monitorId, bool connectedEval)
         : Hydra2Monitor(formula, monitorId, connectedEval, subMonitor->getEvalCost(),
                         subMonitor->getSatisfactionProbability()),
-          subMonitor(std::move(subMonitor)), interval(interval){};
+          subMonitor(std::move(subMonitor)), interval(interval) {};
 
     /**
      * Performs concrete step of next operator monitor.

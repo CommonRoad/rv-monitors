@@ -22,7 +22,7 @@ class UntilMonitorHydra : public HydraMonitor {
                       std::shared_ptr<HydraMonitor> subMonitorG, IntervalTemporalOperator interval)
         : HydraMonitor(formula), subMonitorF(std::move(subMonitorF)), subMonitorG(std::move(subMonitorG)),
           subMonitorH(std::make_shared<ConstantMonitorHydra>(Formula(std::make_shared<Constant>(true)))),
-          interval(interval){};
+          interval(interval) {};
 
     /**
      * Performs concrete step of until-monitor.

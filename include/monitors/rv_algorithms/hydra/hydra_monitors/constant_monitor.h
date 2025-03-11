@@ -15,7 +15,7 @@ class ConstantMonitorHydra : public HydraMonitor {
      *
      * @param formula Formula to be monitored.
      */
-    ConstantMonitorHydra(Formula formula) : HydraMonitor(std::move(formula)){};
+    ConstantMonitorHydra(Formula formula) : HydraMonitor(std::move(formula)) {};
 
     /**
      * Performs concrete step of constant monitor. It evaluates the trace element of the concrete step. Returns false if

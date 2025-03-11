@@ -12,7 +12,7 @@ class PredicateMonitorHydra : public HydraMonitor {
      *
      * @param formula Formula to be monitored.
      */
-    PredicateMonitorHydra(Formula formula) : HydraMonitor(std::move(formula)){};
+    PredicateMonitorHydra(Formula formula) : HydraMonitor(std::move(formula)) {};
 
     /**
      * Performs concrete step of predicate monitor. It evaluates the trace element of the concrete step. Returns false

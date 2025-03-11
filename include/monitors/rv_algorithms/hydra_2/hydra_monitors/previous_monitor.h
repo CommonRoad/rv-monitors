@@ -22,7 +22,7 @@ class PreviousMonitor : public Hydra2Monitor {
                     IntervalTemporalOperator interval, size_t monitorId, bool connectedEval)
         : Hydra2Monitor(formula, monitorId, connectedEval, subMonitor->getEvalCost(),
                         subMonitor->getSatisfactionProbability()),
-          subMonitor(std::move(subMonitor)), interval(interval){};
+          subMonitor(std::move(subMonitor)), interval(interval) {};
 
     /**
      * Performs concrete step of previous operator monitor.

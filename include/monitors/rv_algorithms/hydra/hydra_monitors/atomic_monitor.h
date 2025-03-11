@@ -12,7 +12,7 @@ class AtomicMonitorHydra : public HydraMonitor {
      *
      * @param formula Formula to be monitored.
      */
-    AtomicMonitorHydra(Formula formula) : HydraMonitor(std::move(formula)){};
+    AtomicMonitorHydra(Formula formula) : HydraMonitor(std::move(formula)) {};
 
     /**
      * Performs concrete step of atomic monitor. It evaluates the trace element of the concrete step. Returns false if
