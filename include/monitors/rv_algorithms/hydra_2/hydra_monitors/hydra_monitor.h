@@ -21,7 +21,7 @@ struct HeadPosHydra2 {
      * @param timeStep Time step of monitor head position.
      * @param traceIdx Trace index of monitor head position.
      */
-    HeadPosHydra2(size_t timeStep, int traceIdx) : timeStep(timeStep), traceIdx(traceIdx){};
+    HeadPosHydra2(size_t timeStep, int traceIdx) : timeStep(timeStep), traceIdx(traceIdx) {};
 
     /**
      * Sets new time step and increments index by one.
