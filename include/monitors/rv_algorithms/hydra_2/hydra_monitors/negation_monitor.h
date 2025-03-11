@@ -18,7 +18,7 @@ class NegationMonitor : public Hydra2Monitor {
     NegationMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId, bool connectedEval)
         : Hydra2Monitor(std::move(formula), monitorId, connectedEval, subMonitor->getEvalCost(),
                         1 - subMonitor->getSatisfactionProbability()),
-          subMonitor(std::move(subMonitor)){};
+          subMonitor(std::move(subMonitor)) {};
 
     /**
      * Performs concrete step of negation operator monitor.

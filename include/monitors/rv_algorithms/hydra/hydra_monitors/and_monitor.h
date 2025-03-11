@@ -14,7 +14,7 @@ class AndMonitorHydra : public HydraMonitor {
      * @param subMonitors Child monitors.
      */
     AndMonitorHydra(Formula formula, std::vector<std::shared_ptr<HydraMonitor>> subMonitors)
-        : HydraMonitor(std::move(formula)), subMonitors(std::move(subMonitors)){};
+        : HydraMonitor(std::move(formula)), subMonitors(std::move(subMonitors)) {};
 
     /**
      * Performs concrete step of and-monitor.

@@ -19,7 +19,7 @@ class SinceMonitorHydra : public HydraMonitor {
     SinceMonitorHydra(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitorF,
                       std::shared_ptr<HydraMonitor> subMonitorG, IntervalTemporalOperator interval)
         : HydraMonitor(formula), subMonitorF(std::move(subMonitorF)), subMonitorG(std::move(subMonitorG)),
-          interval(interval){};
+          interval(interval) {};
 
     /**
      * Performs concrete step of since-monitor.

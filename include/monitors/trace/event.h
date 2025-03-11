@@ -2,6 +2,7 @@
 
 #include "monitors/trace/event_value.h"
 #include "monitors/utils/verdict.h"
+#include <algorithm>
 #include <sstream>
 #include <unordered_map>
 

@@ -97,8 +97,7 @@ NB_MODULE(_rvm, m) {
             nb::is_operator())
         .def(
             "__and__", [](const Verdict &lhs, const Verdict &rhs) { return lhs && rhs; }, nb::is_operator())
-        .def(
-            "__or__", [](const Verdict &lhs, const Verdict &rhs) { return lhs || rhs; }, nb::is_operator());
+        .def("__or__", [](const Verdict &lhs, const Verdict &rhs) { return lhs || rhs; }, nb::is_operator());
 
     nb::class_<Parser>(m, "Parser")
         .def_static("parse", &Parser::parse, nb::arg("formula"), nb::arg("id") = "")

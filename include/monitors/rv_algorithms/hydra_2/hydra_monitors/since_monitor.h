@@ -24,7 +24,7 @@ class SinceMonitor : public Hydra2Monitor {
         : Hydra2Monitor(formula, monitorId, connectedEval,
                         (subMonitorG->getEvalCost() + subMonitorF->getEvalCost()) / 2,
                         (subMonitorG->getSatisfactionProbability() + subMonitorG->getSatisfactionProbability()) / 2),
-          subMonitorLeft(std::move(subMonitorF)), subMonitorRight(std::move(subMonitorG)), interval(interval){};
+          subMonitorLeft(std::move(subMonitorF)), subMonitorRight(std::move(subMonitorG)), interval(interval) {};
 
     /**
      * Performs concrete step of since-monitor.

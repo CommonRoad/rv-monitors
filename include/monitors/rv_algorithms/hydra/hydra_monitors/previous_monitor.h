@@ -18,7 +18,7 @@ class PreviousMonitorHydra : public HydraMonitor {
      */
     PreviousMonitorHydra(const Formula &formula, std::shared_ptr<HydraMonitor> subMonitor,
                          IntervalTemporalOperator interval)
-        : HydraMonitor(formula), subMonitor(std::move(subMonitor)), interval(interval){};
+        : HydraMonitor(formula), subMonitor(std::move(subMonitor)), interval(interval) {};
 
     /**
      * Performs concrete step of previous operator monitor.

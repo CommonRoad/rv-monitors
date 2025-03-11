@@ -30,7 +30,7 @@ class UntilMonitor : public Hydra2Monitor {
           subMonitorLeft(std::move(subMonitorLeft)), subMonitorRight(std::move(subMonitorRight)),
           subMonitorBaseTimeStep(
               std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(true)), 0, connectedEval)),
-          interval(interval){};
+          interval(interval) {};
 
     /**
      * Performs concrete step of until-monitor.
