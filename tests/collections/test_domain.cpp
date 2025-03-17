@@ -11,35 +11,12 @@ std::vector<std::any> createDomain1(size_t stepNumber) {
     }
 }
 
-std::vector<std::any> createDomain2Func(size_t integerVal) {
-    switch (integerVal) {
-    case 0:
-        return {"a", "b"};
-    case 1:
-        return {"c", "d", "e"};
-    default:
-        return {"f"};
-    }
-}
-
-std::tuple<size_t> createDomain2Arguments(const std::vector<DomainValue> &args) {
-    size_t val1{std::any_cast<size_t>(args.at(0).getValue())};
-    return {val1};
-}
-
 void TestDomain::SetUp() {
     dom1 = DomainStorage("testDomain1");
     dom2 = DomainStorage("testDomain2", {"a", "b", "c", "d"},
                          [](const std::any &val) { return std::any_cast<const char *>(val); });
     dom3 = DomainStorage(
         "testDomain3", createDomain1, [](const std::any &val) { return std::any_cast<const char *>(val); },
-        [](size_t, const std::any &) { return true; });
-
-    auto functionDom4{Function<std::vector<std::any>, size_t>("testname", {"bool", "size_t"}, createDomain2Func,
-                                                              createDomain2Arguments)};
-
-    dom4 = DomainStorage2(
-        "testDomain3", functionDom4, [](const std::any &val) { return std::any_cast<const char *>(val); },
         [](size_t, const std::any &) { return true; });
 }
 
