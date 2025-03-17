@@ -104,7 +104,6 @@ set(RV_MONITOR_SRC_FILES
         monitors/utils/interval.cpp monitors/utils/interval.cpp
         monitors/collections/domain_collection.cpp
         monitors/collections/domain.cpp
-        monitors/collections/domain2.cpp
         monitors/collections/domain_value.cpp
         monitors/collections/constant_value.cpp
         monitors/collections/constant_collection.cpp
@@ -214,7 +213,6 @@ set(RV_MONITOR_HDR_FILES
         monitors/utils/interval.h monitors/utils/interval.h
         monitors/collections/domain_collection.h
         monitors/collections/domain.h
-        monitors/collections/domain2.h
         monitors/collections/domain_value.h
         monitors/collections/constant_value.h
         monitors/collections/constant_collection.h
