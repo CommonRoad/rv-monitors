@@ -73,8 +73,7 @@ void QuantifierMonitor::shiftCombination() {
 void QuantifierMonitor::resetIterators() {
     iters.clear();
     for (auto &[_, domain] : variableValues)
-        if (!domain->empty())
-            iters.push_back(domain->begin());
+        iters.push_back(domain->begin());
 }
 
 size_t QuantifierMonitor::numCombinations() const {
@@ -139,7 +138,7 @@ double QuantifierMonitor::computeSatisfactionProbability(const std::shared_ptr<H
 Verdict QuantifierMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     size_t idx{0};
     for (const auto &[_, dom] : variableValues) {
-        iters[idx] = dom->updateDynamicDomain(stepNumber);
+        iters[idx] = dom->updateDynamicDomain(stepNumber, domainValues, trace->getConstantCollection());
         ++idx;
     }
     auto numberCombinations{numCombinations()};
@@ -147,7 +146,7 @@ Verdict QuantifierMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     auto verdict{quantifierStep(parentId, stepNumber, numberCombinations)};
     resetIterators();
     for (const auto &[_, dom] : variableValues)
-        dom->updateDynamicDomain(stepNumber);
+        dom->updateDynamicDomain(stepNumber, domainValues, trace->getConstantCollection());
     return verdict;
 }
 

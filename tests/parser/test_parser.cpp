@@ -66,15 +66,18 @@ TEST(TestParser, interval) {
 TEST(TestParser, universal) {
     std::string ex_1 = "A x, y in D. p(x, y)";
     Formula formula_1 = Parser::parse(ex_1, "Ex1");
-
     std::string ex_parsed_1 = "A x in D, y in D. p(x, y)";
     EXPECT_EQ(formula_1.to_string(), ex_parsed_1);
 
     std::string ex_2 = "A x0, x1 in D0, y0, y1, y2 in D2. p(x0, x1, y0, y1, y2)";
     Formula formula_2 = Parser::parse(ex_2, "Ex2");
-
     std::string ex_parsed_2 = "A x0 in D0, x1 in D0, y0 in D2, y1 in D2, y2 in D2. p(x0, x1, y0, y1, y2)";
     EXPECT_EQ(formula_2.to_string(), ex_parsed_2);
+
+    std::string ex_3 = "A b, c in D . A x, y in is_same_lane(b, c). p(x, y)";
+    Formula formula_3 = Parser::parse(ex_3, "Ex3");
+    std::string ex_parsed_3 = "A b in D, c in D. A x in is_same_lane(b, c), y in is_same_lane(b, c). p(x, y)";
+    EXPECT_EQ(formula_3.to_string(), ex_parsed_3);
 }
 
 TEST(TestParser, functionDomain) {

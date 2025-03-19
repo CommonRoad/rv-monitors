@@ -1,6 +1,6 @@
 #include "test_domain.h"
 
-std::vector<std::any> createDomain1(size_t stepNumber) {
+std::vector<std::any> createDomain1Func(size_t stepNumber) {
     switch (stepNumber) {
     case 0:
         return {"a", "b"};
@@ -15,8 +15,13 @@ void TestDomain::SetUp() {
     dom1 = DomainStorage("testDomain1");
     dom2 = DomainStorage("testDomain2", {"a", "b", "c", "d"},
                          [](const std::any &val) { return std::any_cast<const char *>(val); });
+
+    auto functionDom3{std::make_shared<Function<std::vector<std::any>, size_t>>(Function<std::vector<std::any>, size_t>(
+        "testname", {"stepNumber"}, createDomain1Func, [](const std::vector<DomainValue> &args) {
+            return std::tuple<size_t>{std::any_cast<size_t>(args.at(0).getValue())};
+        }))};
     dom3 = DomainStorage(
-        "testDomain3", createDomain1, [](const std::any &val) { return std::any_cast<const char *>(val); },
+        "testDomain3", functionDom3, [](const std::any &val) { return std::any_cast<const char *>(val); },
         [](size_t, const std::any &) { return true; });
 }
 
