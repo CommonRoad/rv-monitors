@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../utils/utils.h"
 #include "hydra_monitors/hydra_monitor.h"
 #include "monitors/formula/formula.h"
 #include "monitors/rv_algorithms/monitor_interface.h"
@@ -58,7 +57,7 @@ class Hydra2 : public MonitorInterface {
      * @param formulas List of formulas which should be monitored.
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @param reordering Boolean indicating whether the formula should be reordered based on the predicate costs.
-     * @param shortCircuiting Boolean indicating whether short circuiting should be used.
+     * @param shortCircuiting Boolean indicating whether short-circuiting should be used.
      * @param earlyTermination Boolean indicating whether the complete trace has to be evaluated or whether the
      * execution can be terminated as soon as a global verdict for a monitor can be provided.
      * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100],
@@ -123,9 +122,7 @@ class Hydra2 : public MonitorInterface {
      * @param formulas List of formulas which should be monitored.
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @param reordering Boolean indicating whether the formula should be reordered based on the predicate costs.
-     * @param shortCircuiting Boolean indicating whether short circuiting should be used.
-     * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100],
-     * satisfaction probability in interval [0, 1], and priority >= 0.
+     * @param shortCircuiting Boolean indicating whether short-circuiting should be used.
      */
     void createMonitor(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting);
 
@@ -138,6 +135,7 @@ class Hydra2 : public MonitorInterface {
      * Setter for trace.
      *
      * @param tra Trace object.
+     * @param domains List of domains.
      */
     void setTraceMonitors(const std::shared_ptr<Trace> &tra,
                           const std::vector<std::shared_ptr<DomainStorage>> &domains);

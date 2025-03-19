@@ -3,7 +3,6 @@
 #include "string"
 #include "vector"
 #include <any>
-#include <functional>
 
 class DomainStorage {
   public:
@@ -15,9 +14,10 @@ class DomainStorage {
      * @param idFunction Function to extract unique ID of domain value.
      * @param validityCondition Boolean functions which checks whether dynamic domain value is valid at step number.
      */
-    DomainStorage(std::string name, std::function<std::vector<std::any>(size_t)> dynamicDomainStorageFunction,
+    DomainStorage(std::string name, std::shared_ptr<IFunction<std::vector<std::any>>> dynamicDomainStorageFunction,
                   const std::function<std::string(std::any)> &idFunction,
                   std::function<bool(size_t, std::any)> validityCondition);
+
     /**
      * Constructor with name and values as arguments.
      *
@@ -78,7 +78,7 @@ class DomainStorage {
     /**
      * Adds values to domain. Deletes previously added values.
      *
-     * @param values Values.
+     * @param vals Values.
      * @param func ID function for values.
      */
     void addValues(const std::vector<std::any> &vals, const std::function<std::string(std::any)> &func);
@@ -94,9 +94,12 @@ class DomainStorage {
      * Updates dynamic domain by calling registered domain function.
      *
      * @param stepNumber Step number of interest.
+     * @param domVals Additional arguments for domain function from parent domains.
+     * @param constants List of constant values.
      * @return Iterator to beginning.
      */
-    std::vector<std::any>::iterator updateDynamicDomain(size_t stepNumber);
+    std::vector<std::any>::iterator updateDynamicDomain(size_t stepNumber, const std::vector<DomainValue> &domVals = {},
+                                                        ConstantCollection constants = {});
 
     /**
      * Resets dynamic domain.
@@ -127,7 +130,7 @@ class DomainStorage {
   private:
     mutable std::string name;     //**< Name of DomainStorage. */
     std::vector<std::any> values; //**< Values of DomainStorage. */
-    mutable std::function<std::vector<std::any>(size_t)>
+    mutable std::shared_ptr<IFunction<std::vector<std::any>>>
         dynamicDomainStorageFunction;      //**< Function for dynamic domain. */
     mutable bool constDomainStorage{true}; //**< Boolean indicating whether domain is const or dynamic. */
     mutable std::optional<std::function<bool(size_t, std::any)>>

@@ -322,12 +322,17 @@ void init_domain(nb::module_ &m) {
                                             const std::function<nb::list(size_t)> &dynamicDomainStorageFunction) {
                 auto convertedFunction = [ddsf = dynamicDomainStorageFunction](size_t index) -> std::vector<std::any> {
                     auto valueList = ddsf(index);
-
                     return convertAny(valueList);
                 };
 
+                auto functionDom{
+                    std::make_shared<Function<std::vector<std::any>, size_t>>(Function<std::vector<std::any>, size_t>(
+                        name, {"stepNumber"}, convertedFunction, [](const std::vector<DomainValue> &args) {
+                            return std::tuple<size_t>{std::any_cast<size_t>(args.at(0).getValue())};
+                        }))};
+
                 auto alwaysValid = [](size_t timeStep, std::any value) { return true; };
-                new (ds) DomainStorage(std::move(name), convertedFunction, idFunction, alwaysValid);
+                new (ds) DomainStorage(std::move(name), functionDom, idFunction, alwaysValid);
             },
             nb::arg("name"), nb::arg("dynamic_domain_storage_function"))
         .def("__len__", &DomainStorage::size)

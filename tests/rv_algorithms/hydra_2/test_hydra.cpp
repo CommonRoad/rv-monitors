@@ -209,6 +209,10 @@ TEST(TestHydra2, testExistentialStepLooping) {
 
 std::vector<std::any> createStringDomain(size_t stepNumber) { return {"a", "b", "c"}; }
 
+std::tuple<size_t> createDomain2Arguments(const std::vector<DomainValue> &args) {
+    return {std::any_cast<size_t>(args.at(0).getValue())};
+}
+
 TEST(TestHydra2, testExistentialStepLoopingDynamicDomain) {
     const std::shared_ptr<Trace> trace = Utils::createTrace({"a", "b", "c"}, {{"a", "b", "c"}, {}, {"b"}, {"a", "c"}});
     Formula formula = Parser::parse("G(C<=2 x in D. x)");
@@ -216,7 +220,9 @@ TEST(TestHydra2, testExistentialStepLoopingDynamicDomain) {
     std::vector<Formula> formulas = {formula};
     std::vector<std::vector<Verdict>> expSolutions{
         {Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true}}};
-    DomainStorage dom1{"D", createStringDomain, [](const std::any &) { return "name"; },
+    auto functionDom{std::make_shared<Function<std::vector<std::any>, size_t>>(Function<std::vector<std::any>, size_t>(
+        "testname", {"stepNumber"}, createStringDomain, createDomain2Arguments))};
+    DomainStorage dom1{"D", functionDom, [](const std::any &) { return "name"; },
                        [](size_t, const std::any &) { return true; }};
     std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1)};
     hydraTestUtils::executeHydraEval(trace, formulas, expSolutions, domains);
@@ -254,7 +260,10 @@ TEST(TestHydra2, testExistenceVariableDomainLazyPredicate) {
     std::vector<std::vector<Verdict>> expSolutions{
         {Verdict{0, false}, Verdict{1, false}, Verdict{2, false}, Verdict{3, true}}};
     std::vector<std::vector<std::any>> possibleSets{{1ul, 2ul, 3ul, 4ul}, {1ul, 2ul, 3ul}, {0ul}, {3ul}};
-    DomainStorage dom1{"D0", [possibleSets](size_t stepNumber) { return domain(stepNumber, possibleSets); },
+    auto functionDom{std::make_shared<Function<std::vector<std::any>, size_t>>(Function<std::vector<std::any>, size_t>(
+        "testname", {"stepNumber"}, [possibleSets](size_t stepNumber) { return domain(stepNumber, possibleSets); },
+        createDomain2Arguments))};
+    DomainStorage dom1{"D0", functionDom,
                        [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); },
                        [](size_t, const std::any &) { return true; }};
     std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1)};
@@ -301,7 +310,10 @@ TEST(TestHydra2, testHierachicalEval) {
     std::vector<std::vector<Verdict>> expSolutions{
         {Verdict{0, false}, Verdict{1, false}, Verdict{2, false}, Verdict{3, true}}};
     std::vector<std::vector<std::any>> possibleSets{{1ul, 2ul, 3ul, 4ul}, {1ul, 2ul, 3ul}, {0ul}, {3ul}};
-    DomainStorage dom1{"D0", [possibleSets](size_t stepNumber) { return domain(stepNumber, possibleSets); },
+    auto functionDom{std::make_shared<Function<std::vector<std::any>, size_t>>(Function<std::vector<std::any>, size_t>(
+        "testname", {"stepNumber"}, [possibleSets](size_t stepNumber) { return domain(stepNumber, possibleSets); },
+        createDomain2Arguments))};
+    DomainStorage dom1{"D0", functionDom,
                        [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); },
                        [](size_t, const std::any &) { return true; }};
     std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1)};

@@ -1,7 +1,7 @@
 #include "monitors/collections/domain.h"
 #include <utility>
 
-DomainStorage::DomainStorage(std::string name) : name(std::move(name)), constDomainStorage(true) {}
+DomainStorage::DomainStorage(std::string name) : name(std::move(name)) {}
 
 std::string DomainStorage::getName() const { return name; }
 
@@ -25,15 +25,35 @@ size_t DomainStorage::size() const { return values.size(); }
 bool DomainStorage::empty() const { return values.empty(); }
 
 DomainStorage::DomainStorage(std::string name,
-                             std::function<std::vector<std::any>(size_t)> dynamicDomainStorageFunction,
+                             std::shared_ptr<IFunction<std::vector<std::any>>> dynamicDomainStorageFunction,
                              const std::function<std::string(std::any)> &idFunction,
                              std::function<bool(size_t, std::any)> validityCondition)
     : name(std::move(name)), dynamicDomainStorageFunction(std::move(dynamicDomainStorageFunction)),
       constDomainStorage(false), validityCondition(std::move(validityCondition)), idFunction(idFunction) {}
 
-std::vector<std::any>::iterator DomainStorage::updateDynamicDomain(size_t stepNumber) {
-    if (!constDomainStorage)
-        values = dynamicDomainStorageFunction(stepNumber);
+std::vector<std::any>::iterator DomainStorage::updateDynamicDomain(size_t stepNumber,
+                                                                   const std::vector<DomainValue> &domVals,
+                                                                   ConstantCollection constants) {
+    if (!constDomainStorage) {
+        std::vector<DomainValue> args;
+        for (const auto &arg : dynamicDomainStorageFunction->getArgumentNames()) {
+            if (arg == "stepNumber") {
+                args.emplace_back("stepNumber", stepNumber, true,
+                                  [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); });
+                continue;
+            }
+            for (const auto &val : domVals)
+                if (arg == val.getVariable()) {
+                    args.push_back(val);
+                    break;
+                }
+            if (constants.contains(arg)) {
+                auto val{constants.getConstant(arg)};
+                args.emplace_back(val.getName(), val.getValue(), true, val.getIdFunction());
+            }
+        }
+        values = dynamicDomainStorageFunction->getFunction(args)();
+    }
     return begin();
 }
 
