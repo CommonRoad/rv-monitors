@@ -16,7 +16,7 @@ class ConstantCollection {
     /**
      * Third constructor.
      *
-     * @param domains List of constants.
+     * @param constants List of constants.
      */
     explicit ConstantCollection(const std::vector<ConstantValue> &constants);
 

@@ -1,7 +1,6 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/predicate_monitor.h"
 #include "monitors/expression_tree/atomic/predicate.h"
 #include <cassert>
-#include <iostream>
 
 Verdict PredicateMonitor::concreteStep(size_t parentId, size_t stepNumber) {
     if (stepNumber < trace->getLength()) {
@@ -9,8 +8,8 @@ Verdict PredicateMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         auto verdict{trace->verdictAtTimeStep(stepNumber, name, domainName)};
         orderedValues.erase(orderedValues.begin());
         return verdict;
-    } else
-        return {false};
+    }
+    return {false};
 }
 
 std::shared_ptr<Hydra2Monitor> PredicateMonitor::clone(const std::vector<std::string> &domValNames) {

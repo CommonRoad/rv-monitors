@@ -1,7 +1,6 @@
 #pragma once
 
 #include "monitors/collections/domain_value.h"
-#include <any>
 #include <functional>
 #include <memory>
 #include <stdexcept>
