@@ -2,7 +2,6 @@
 #include "monitors/expression_tree/unary/temporal/globally.h"
 #include "monitors/rewriting/hydra_rewrite_visitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_creation_visitor.h"
-#include <iostream>
 #include <spdlog/spdlog.h>
 
 std::map<std::string, std::vector<Verdict>> Hydra2::evaluate(const std::shared_ptr<Trace> &trace,
@@ -11,7 +10,7 @@ std::map<std::string, std::vector<Verdict>> Hydra2::evaluate(const std::shared_p
     std::map<std::string, std::vector<Verdict>> result;
     // Empty trace
     if ((trace == nullptr or trace->getTrace().empty()) and traceLength == 0) {
-        std::cout << "Hydra2::evaluate | Trace is empty\n";
+        spdlog::debug("Hydra2::evaluate | Trace is empty\n");
         for (const auto &mon : monitors)
             result[mon->getFormulaId()] = {};
         return result;

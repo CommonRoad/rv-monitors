@@ -14,9 +14,9 @@ class QuantifierMonitor : public Hydra2Monitor {
      * @param formula Formula to be monitored.
      * @param subMonitor Child monitor.
      * @param monitorId ID of monitor.
-     * @param domains Collection of domains.
+     * @param variableValues Mapping of name of quantified variables to domains.
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
-     * @param shortCircuiting Boolean indicating whether short circuiting should be used.
+     * @param shortCircuiting Boolean indicating whether short-circuiting should be used.
      * @param cost Evaluation cost assigned to monitor.
      * @param satisfactionProbability Satisfaction probability of monitor.
      */
@@ -68,8 +68,7 @@ class QuantifierMonitor : public Hydra2Monitor {
     /**
      * Returns next monitor for evaluation.
      *
-     * @param parentId ID of parent monitor.
-     * @param count ID of current combination.
+     * @param stepNumber Current step number.
      * @return Monitor.
      */
     std::shared_ptr<Hydra2Monitor> nextEvalMonitor(size_t stepNumber);
@@ -118,7 +117,7 @@ class QuantifierMonitor : public Hydra2Monitor {
     /**
      * Setter for current variable values from higher quantifier scopes.
      *
-     * @param values Variable values.
+     * @param vals Variable values.
      */
     void addDomainValues(const std::vector<DomainValue> &vals) override;
 

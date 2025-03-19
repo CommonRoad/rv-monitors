@@ -205,7 +205,13 @@ TEST(TestSinceMonitor, testLazyEvaluationComplexPredicateInfinteInterval) {
             "2", 2ul, [](const std::any &val) { return std::to_string(std::any_cast<std::size_t>(val)); }}}),
         eventList);
     std::vector<std::vector<std::any>> possibleSets{{1ul, 2ul, 3ul, 4ul}, {1ul, 2ul, 3ul}, {0ul}, {3ul}};
-    DomainStorage dom1{"D0", [possibleSets](size_t stepNumber) { return domain2(stepNumber, possibleSets); },
+
+    auto functionDom{std::make_shared<Function<std::vector<std::any>, size_t>>(Function<std::vector<std::any>, size_t>(
+        "testname", {"stepNumber"}, [possibleSets](size_t stepNumber) { return domain2(stepNumber, possibleSets); },
+        [](const std::vector<DomainValue> &args) {
+            return std::tuple<size_t>{std::any_cast<size_t>(args.at(0).getValue())};
+        }))};
+    DomainStorage dom1{"D0", functionDom,
                        [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); },
                        [](size_t stepNumber, const std::any &) { return checkValidityDomain2(stepNumber); }};
 
@@ -232,7 +238,12 @@ TEST(TestSinceMonitor, testLazyEvaluationComplexPredicateFiniteInterval) {
             "2", 2ul, [](const std::any &val) { return std::to_string(std::any_cast<std::size_t>(val)); }}}),
         eventList);
     std::vector<std::vector<std::any>> possibleSets{{1ul, 2ul, 3ul, 4ul}, {1ul, 2ul, 3ul}, {0ul}, {3ul}};
-    DomainStorage dom1{"D0", [possibleSets](size_t stepNumber) { return domain2(stepNumber, possibleSets); },
+    auto functionDom{std::make_shared<Function<std::vector<std::any>, size_t>>(Function<std::vector<std::any>, size_t>(
+        "testname", {"stepNumber"}, [possibleSets](size_t stepNumber) { return domain2(stepNumber, possibleSets); },
+        [](const std::vector<DomainValue> &args) {
+            return std::tuple<size_t>{std::any_cast<size_t>(args.at(0).getValue())};
+        }))};
+    DomainStorage dom1{"D0", functionDom,
                        [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); },
                        [](size_t stepNumber, const std::any &) { return checkValidityDomain2(stepNumber); }};
 
