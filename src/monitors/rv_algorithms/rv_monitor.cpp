@@ -191,7 +191,7 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
     return *this;
 }
 
-std::string RVMonitor::to_string() { return monitor->to_string(); }
+std::string RVMonitor::to_string() const { return monitor->to_string(); }
 
 MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool measurement, bool hydraConnectedEvaluation,
                                            bool hydraReordering, bool shortCircuiting, bool earlyTermination)
@@ -201,7 +201,7 @@ MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool measure
 MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool measurement)
     : algorithm(algorithm), performanceMeasurement(measurement) {}
 
-MonitorConfiguration RVMonitor::getConfiguration() { return configuration; }
+MonitorConfiguration RVMonitor::getConfiguration() const { return configuration; }
 
 std::map<std::string, std::map<size_t, std::vector<std::vector<DomainValue>>>> RVMonitor::getMfotlRes() const {
     return monitor->getViolatingDomainValues();
