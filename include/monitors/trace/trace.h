@@ -92,7 +92,7 @@ class Trace {
         // Build the CSV content
         std::string csv = "Time Step";
         for (const auto &predicate : predicates) {
-            csv += "," + predicate;
+            csv += ";" + predicate;
         }
         csv += "\n";
 
@@ -101,7 +101,9 @@ class Trace {
             for (const auto &predicate : predicates) {
                 const auto &eventMap = event.getEventMap();
                 if (auto it = eventMap.find(predicate); it != eventMap.end())
-                    csv += "," + std::string(it->second.to_string());
+                    csv += ";" + std::string(it->second.to_string());
+                else
+                    csv += ";Not initialized";
             }
             csv += "\n";
         }
