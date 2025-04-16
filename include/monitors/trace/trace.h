@@ -72,6 +72,44 @@ class Trace {
     }
 
     /**
+     * Converts trace to CSV format.
+     *
+     * @return String in csv style.
+     */
+    [[nodiscard]] std::string to_csv() const {
+        if (trace.empty()) {
+            return "";
+        }
+
+        // Collect all unique predicate names
+        std::set<std::string> predicates;
+        for (const auto &event : trace) {
+            for (const auto &entry : event.getEventMap()) {
+                predicates.insert(entry.first);
+            }
+        }
+
+        // Build the CSV content
+        std::string csv = "Time Step";
+        for (const auto &predicate : predicates) {
+            csv += "," + predicate;
+        }
+        csv += "\n";
+
+        for (const auto &event : trace) {
+            csv += std::to_string(event.getTimeStep());
+            for (const auto &predicate : predicates) {
+                const auto &eventMap = event.getEventMap();
+                if (auto it = eventMap.find(predicate); it != eventMap.end())
+                    csv += "," + std::string(it->second.to_string());
+            }
+            csv += "\n";
+        }
+
+        return csv;
+    }
+
+    /**
      * Sets the terminal flag according to last.
      * @param last If last is true then the last event is terminal.
      */
