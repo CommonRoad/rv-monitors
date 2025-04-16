@@ -117,13 +117,13 @@ class RVMonitor {
      *
      * @return String representation of activated monitoring algorithm.
      */
-    std::string to_string();
+    std::string to_string() const;
 
     /**
      * Getter for configuration
      * @return MonitorConfiguration
      */
-    MonitorConfiguration getConfiguration();
+    MonitorConfiguration getConfiguration() const;
 
     /**
      * Extracts violating results from first-order monitors.
