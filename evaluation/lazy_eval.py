@@ -49,4 +49,3 @@ predicate_cost_2 = {
 formulas = [rvm.Parser.parse(form[1], form[0]) for form in specs]
 evaluate(rvm.Hydra2(formulas, predicateCosts=predicate_cost_1), 50)
 evaluate(rvm.Hydra2(formulas, predicateCosts=predicate_cost_2), 50)
-
