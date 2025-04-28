@@ -84,11 +84,11 @@ def evaluate(approach: str, mon: rvm.Hydra2, tr: rvm.Trace, df: pd.DataFrame, sp
     df.loc[len(df)] = [approach, spec_size, elapsed_time / num_iters]
 
 
-def eval_and_fig(name: str, num_atomics: int, trace_length: int):
+def eval_and_fig(name: str, num_atomics: int, trace_length: int, max_formula_size: int):
     seed = 2
     df = pd.DataFrame(columns=["Approach", "Formula Size", "Computation Time [s]"])
     trace = create_trace(trace_length, num_atomics, seed)
-    for spec_size in range(2, 51, 2):
+    for spec_size in range(2, max_formula_size + 1, 2):
         print(spec_size)
         specs = create_specs(spec_size, num_atomics, seed)
         formulas = [rvm.Parser.parse(form[1], form[0]) for form in specs]
@@ -121,4 +121,4 @@ def eval_and_fig(name: str, num_atomics: int, trace_length: int):
     plt.savefig(f"./{name}.svg")
 
 
-eval_and_fig("formula_size_atomic", 4, 1000)
+eval_and_fig("formula_size_atomic", 4, 1000, 90)

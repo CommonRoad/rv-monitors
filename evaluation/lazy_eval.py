@@ -37,15 +37,16 @@ def evaluate(mon: rvm.Hydra2, trace_length: int):
 
 
 predicate_cost_1 = {
-    "low_comp_time": [1.0, 1.0],
-    "high_comp_time": [100.0, 0.0],
+    "low_comp_time": [1.0, 1.0, 0.0],
+    "high_comp_time": [100.0, 0.0, 0.0],
 }
 
 predicate_cost_2 = {
-    "low_comp_time": [100.0, 0.0],
-    "high_comp_time": [1.0, 1.0],
+    "low_comp_time": [100.0, 0.0, 0.0],
+    "high_comp_time": [1.0, 1.0, 0.0],
 }
 
 formulas = [rvm.Parser.parse(form[1], form[0]) for form in specs]
 evaluate(rvm.Hydra2(formulas, predicateCosts=predicate_cost_1), 50)
 evaluate(rvm.Hydra2(formulas, predicateCosts=predicate_cost_2), 50)
+

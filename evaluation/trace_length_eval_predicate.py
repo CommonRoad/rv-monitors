@@ -132,7 +132,7 @@ def evaluate(approach: str, mon: rvm.Hydra2, df: pd.DataFrame, trace_length: int
 
 
 def eval_and_fig(spec: List[Tuple[str, str]], name: str, num_atomics: int):
-    trace_lengths = range(200, 2200, 200)
+    trace_lengths = range(200, 5200, 200)
     x_axis_text = "Trace Length [x100]"
 
     df = pd.DataFrame(columns=["Approach", x_axis_text, "Comp. Time [s]"])

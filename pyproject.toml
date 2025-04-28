@@ -11,6 +11,14 @@ authors = [
 description = "Collection of Temporal Logic Runtime Verification Algorithms"
 
 [project.optional-dependencies]
+eval = [
+    "matplotlib>=3.8.0",
+    "seaborn>=0.13.2",
+    "networkx>=3.2.1",
+    "pandas>=2.2.3",
+    "psutil",
+    "pyyaml>=6.0.2"
+]
 test = [
    "pytest~=8.1.1"
 ]
