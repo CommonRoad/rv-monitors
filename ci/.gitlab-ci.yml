@@ -273,7 +273,7 @@ evaluation_hydra_python:
     - chmod +x /builds/cps/commonroad/rv-monitors/evaluation/exec/gen_fmla
     - chmod +x /builds/cps/commonroad/rv-monitors/evaluation/exec/gen_log
     - pip install -r ./evaluation/requirements.txt
-    - pip install pytest
+    - pip install pytest psutil matplotlib pyyaml
     - pytest ./tests/test_org_hydra_eval.py
   needs:
     - job: build-evaluation
