@@ -179,8 +179,8 @@ if(${PROJECT_NAME}_SYSTEM_PACKAGES_FORCE)
 else()
     # Normal path: We try to use find_package via FetchContent, otherwise we fall
     # back to normal FetchContent
-    include(ExternalSpdlog)
-    include(ExternalGoogleTest)
+    include(external/ExternalSpdlog)
+    include(external/ExternalGoogleTest)
 endif()
 
 include(ExternalAntlr)
