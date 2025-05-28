@@ -22,10 +22,11 @@ std::map<std::string, std::vector<Verdict>> Hydra2::evaluate(const std::shared_p
         setTraceMonitors(trace, domains);
     }
 
-    if (!earlyTermination)
+    if (formulaEvaluationMode == globally) {
         evalCompleteTrace(result, formulaIDs);
-    else
+    } else {
         evalEarlyTermination(result, formulaIDs);
+    }
 
     return result;
 }
@@ -49,8 +50,12 @@ void Hydra2::evalEarlyTermination(std::map<std::string, std::vector<Verdict>> &r
             spdlog::debug("Monitor evaluation: " + std::to_string(i) + " - " + mon->getFormulaId());
             mon->addDomainValues({}); // triggers adding of domain values, e.g., to predicates
             result[mon->getFormulaId()].at(0) = mon->step(0, i);
-            if (!result[mon->getFormulaId()].at(0).value)
+            // In globally_early_termination mode, we terminate as soon as the formula is not satisfied at any time step
+            // In initial_step mode, we can always terminate after looking at the first time step
+            if ((formulaEvaluationMode == globally_early_termination && !result[mon->getFormulaId()].at(0).value) ||
+                formulaEvaluationMode == initial_step) {
                 return;
+            }
         }
     }
 }
@@ -82,8 +87,13 @@ void Hydra2::createMonitor(const std::vector<Formula> &formulas, bool connectedE
         if (form.getId().empty())
             throw std::logic_error("Formula has no valid unique ID.");
         auto formulaCopy{form.deepCopy()};
-        if (auto globally = std::dynamic_pointer_cast<Globally>(formulaCopy.getExpr()))
-            formulaCopy = Formula(globally->getLeft());
+        // If we are running in initial_step mode, we do not want to strip any operators,
+        // since we evaluate the formula as-is
+        if (formulaEvaluationMode != initial_step) {
+            if (auto globally = std::dynamic_pointer_cast<Globally>(formulaCopy.getExpr())) {
+                formulaCopy = Formula(globally->getLeft());
+            }
+        }
         HydraRewriteVisitor rwv;
         rwv.rewrite(formulaCopy);
         formulaCopy.setId(form.getId());
@@ -94,10 +104,22 @@ void Hydra2::createMonitor(const std::vector<Formula> &formulas, bool connectedE
 }
 
 Hydra2::Hydra2(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting,
-               bool earlyTermination, const std::vector<std::shared_ptr<DomainStorage>> &domains,
+               FormulaEvaluationMode formulaEvaluationMode, const std::vector<std::shared_ptr<DomainStorage>> &domains,
                const std::map<std::string, std::array<double, 3>> &predicateCosts)
-    : MonitorInterface(formulas, AlgorithmType::hydra_2_mtl, true, earlyTermination, domains),
-      predicateCosts(predicateCosts) {
+    : MonitorInterface(formulas, hydra_2_mtl, false, formulaEvaluationMode, domains), predicateCosts(predicateCosts) {
+    // Check if formulas are compatible with the monitor
+    for (const auto &formula : this->formulas) {
+        // If we are running in initial_step mode, we need to check whether the monitor could handle the formula, if
+        // we make it into a safety property by adding an outer Globally operator.
+        const auto &globally_formula =
+            formulaEvaluationMode != initial_step ? formula : Formula(std::make_shared<Globally>(formula.getExpr()));
+        if (!std::any_of(supportedFormulaTypes.at(hydra_2_mtl).begin(), supportedFormulaTypes.at(hydra_2_mtl).end(),
+                         [globally_formula](MonitoringProperties formulaType) {
+                             return globally_formula.checkCompatibility(formulaType);
+                         })) {
+            throw std::logic_error("Formula is not supported by monitor: " + formula.to_string());
+        }
+    }
     createMonitor(formulas, connectedEval, reordering, shortCircuiting);
 }
 

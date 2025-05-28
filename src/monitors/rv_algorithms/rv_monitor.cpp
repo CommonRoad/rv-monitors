@@ -96,7 +96,7 @@ RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration 
     case hydra_2_mtl:
         monitor = std::make_unique<Hydra2>(formulas, configuration.hydraConnectedEvaluation,
                                            configuration.hydraReordering, configuration.shortCircuiting,
-                                           configuration.earlyTermination, domains, predicateCosts);
+                                           configuration.formulaEvaluationMode, domains, predicateCosts);
         break;
     case event_consuming_mtl:
         monitor = std::make_unique<MTLEventConsuming>(formulas);
@@ -129,7 +129,7 @@ RVMonitor::RVMonitor(const Formula &formula, MonitorConfiguration configuration,
     case hydra_2_mtl:
         monitor = std::make_unique<Hydra2>(std::vector<Formula>{formula}, configuration.hydraConnectedEvaluation,
                                            configuration.hydraReordering, configuration.shortCircuiting,
-                                           configuration.earlyTermination, domains, predicateCosts);
+                                           configuration.formulaEvaluationMode, domains, predicateCosts);
         break;
     case event_consuming_mtl:
         monitor = std::make_unique<MTLEventConsuming>(std::vector<Formula>{formula});
@@ -161,7 +161,7 @@ RVMonitor::RVMonitor(const RVMonitor &obj) : configuration(obj.configuration) {
         }
         monitor =
             std::make_unique<Hydra2>(formulas, configuration.hydraConnectedEvaluation, configuration.hydraReordering,
-                                     configuration.shortCircuiting, configuration.earlyTermination,
+                                     configuration.shortCircuiting, configuration.formulaEvaluationMode,
                                      hydra2->getDomains(), hydra2->getPredicateCost());
     }
     executionStatistic = obj.executionStatistic;
@@ -181,7 +181,7 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
 
             monitor = std::make_unique<Hydra2>(formulas, other.configuration.hydraConnectedEvaluation,
                                                other.configuration.hydraReordering, other.configuration.shortCircuiting,
-                                               other.configuration.earlyTermination, hydra->getDomains(),
+                                               other.configuration.formulaEvaluationMode, hydra->getDomains(),
                                                hydra->getPredicateCost());
         }
         // TODO other algorithms
@@ -194,9 +194,11 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
 std::string RVMonitor::to_string() const { return monitor->to_string(); }
 
 MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool measurement, bool hydraConnectedEvaluation,
-                                           bool hydraReordering, bool shortCircuiting, bool earlyTermination)
+                                           bool hydraReordering, bool shortCircuiting,
+                                           FormulaEvaluationMode formulaEvaluationMode)
     : algorithm(algorithm), performanceMeasurement(measurement), hydraConnectedEvaluation(hydraConnectedEvaluation),
-      hydraReordering(hydraReordering), shortCircuiting(shortCircuiting), earlyTermination(earlyTermination) {}
+      hydraReordering(hydraReordering), shortCircuiting(shortCircuiting), formulaEvaluationMode(formulaEvaluationMode) {
+}
 
 MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool measurement)
     : algorithm(algorithm), performanceMeasurement(measurement) {}

@@ -58,13 +58,13 @@ class Hydra2 : public MonitorInterface {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @param reordering Boolean indicating whether the formula should be reordered based on the predicate costs.
      * @param shortCircuiting Boolean indicating whether short-circuiting should be used.
-     * @param earlyTermination Boolean indicating whether the complete trace has to be evaluated or whether the
-     * execution can be terminated as soon as a global verdict for a monitor can be provided.
+     * @param formulaEvaluationMode formulaEvaluationMode Indicates how to evaluate the formula.
      * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100],
      * satisfaction probability in interval [0, 1], and priority >= 0.
      */
     explicit Hydra2(const std::vector<Formula> &formulas, bool connectedEval = true, bool reordering = true,
-                    bool shortCircuiting = true, bool earlyTermination = false,
+                    bool shortCircuiting = true,
+                    FormulaEvaluationMode formulaEvaluationMode = FormulaEvaluationMode::globally,
                     const std::vector<std::shared_ptr<DomainStorage>> &domains = {},
                     const std::map<std::string, std::array<double, 3>> &predicateCosts = {});
 

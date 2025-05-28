@@ -12,6 +12,14 @@ enum AlgorithmType {
     event_consuming_mtl
 };
 
+enum FormulaEvaluationMode {
+    globally,                   /**< Assume an implicit top-level globally and evaluate each time step individually.
+                                 * Provides a verdict for all time steps. */
+    globally_early_termination, /**< Assume an implicit top-level globally and short circuit the evaluation if possible.
+                                 * Only provides a verdict for the initial time step. */
+    initial_step,               /**< Evaluate the formula as-is and provide a verdict for the initial time step. */
+};
+
 /**
  * Interface for runtime verification algorithms/monitors.
  */
@@ -24,11 +32,11 @@ class MonitorInterface {
      * @param algorithm Name of algorithm.
      * @param formulaCompatibilityCheck Boolean which activates check whether formula provided to monitor is evaluated
      * for monitor compatibility.
-     * @param earlyTermination Boolean indicating whether the complete trace has to be evaluated or whether the
-     * execution can be terminated as soon as a global verdict for a monitor can be provided.
+     * @param formulaEvaluationMode Indicates how to evaluate the formula.
      */
     MonitorInterface(Formula formula, AlgorithmType algorithm, bool formulaCompatibilityCheck = true,
-                     bool earlyTermination = false, const std::vector<std::shared_ptr<DomainStorage>> &domains = {});
+                     FormulaEvaluationMode formulaEvaluationMode = globally,
+                     const std::vector<std::shared_ptr<DomainStorage>> &domains = {});
 
     /**
      * Constructor for monitor based on several formulas.
@@ -37,11 +45,11 @@ class MonitorInterface {
      * @param algorithm Name of algorithm.
      * @param formulaCompatibilityCheck Boolean which activates check whether formula provided to monitor is evaluated
      * for monitor compatibility.
-     * @param earlyTermination Boolean indicating whether the complete trace has to be evaluated or whether the
-     * execution can be terminated as soon as a global verdict for a monitor can be provided.
+     * @param formulaEvaluationMode Indicates how to evaluate the formula.
      */
     MonitorInterface(std::vector<Formula> formulas, AlgorithmType algorithm, bool formulaCompatibilityCheck = true,
-                     bool earlyTermination = false, const std::vector<std::shared_ptr<DomainStorage>> &domains = {});
+                     FormulaEvaluationMode formulaEvaluationMode = globally,
+                     const std::vector<std::shared_ptr<DomainStorage>> &domains = {});
 
     /**
      * Evaluation function for monitor algorithms.
@@ -87,12 +95,11 @@ class MonitorInterface {
     getViolatingDomainValues() const;
 
   protected:
-    std::vector<Formula> formulas; //**< Temporal logic formulas which are evaluated by monitor */
-    AlgorithmType algorithm;       //**< Name of algorithm. */
-    bool earlyTermination; //**< Boolean indicating whether the complete trace has to be evaluated or whether the
-    // execution can be terminated as soon as a global verdict for a monitor can be provided. */
-    std::vector<std::shared_ptr<DomainStorage>> domains; //**< List of domains. */
+    std::vector<Formula> formulas;                       /**< Temporal logic formulas which are evaluated by monitor */
+    AlgorithmType algorithm;                             /**< Name of algorithm. */
+    FormulaEvaluationMode formulaEvaluationMode;         /**< Indicates how to evaluate the formula. */
+    std::vector<std::shared_ptr<DomainStorage>> domains; /**< List of domains. */
 };
 
 extern const std::map<AlgorithmType, std::vector<MonitoringProperties>>
-    supportedFormulaTypes; //**< Map of supported formula types to algorithm. */
+    supportedFormulaTypes; /**< Map of supported formula types to algorithm. */

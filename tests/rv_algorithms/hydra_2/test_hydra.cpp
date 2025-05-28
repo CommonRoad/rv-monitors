@@ -2,6 +2,7 @@
 #include "../test_database.h"
 #include "hydra_test_utils.h"
 #include "monitors/collections/domain.h"
+#include "monitors/expression_tree/unary/temporal/globally.h"
 #include "monitors/parser/parser.h"
 
 TEST(TestHydra2, testFormulaType) {
@@ -47,7 +48,7 @@ TEST(TestHydra2, formulaTestEarlyTermination) {
         if (std::any_of(excludedTestCases.begin(), excludedTestCases.end(),
                         [testCase](const std::string &name) { return name == testCase.formula->getId(); }))
             continue;
-        auto monitor{Hydra2({*testCase.formula}, false, false, false, true, testCase.domains)};
+        auto monitor{Hydra2({*testCase.formula}, false, false, false, globally_early_termination, testCase.domains)};
         auto trace{testCase.trace};
         EXPECT_TRUE(TestDataBase::mergeResult(monitor.evaluate(trace).at(testCase.formula->getId())) ==
                     TestDataBase::mergeResult(testCase.expectedResult))
@@ -57,6 +58,67 @@ TEST(TestHydra2, formulaTestEarlyTermination) {
             failures++;
     }
     std::cout << "Hydra Formula Test Early Termination: " << std::to_string(failures) << "/"
+              << std::to_string(testCases.size()) << " failing formulas.";
+}
+
+TEST(TestHydra2, formulaTestInitialStepEvaluationWithGlobally) {
+    std::vector<std::string> excludedTestCases{"F1_1", "F49_1"}; // F1_1 does not provide a trace
+    size_t failures{0};
+    auto testDataBase{TestDataBase()};
+    auto testCases{testDataBase.getDatabaseEntries(supportedFormulaTypes.at(hydra_2_mtl))};
+    for (const auto &testCase : testCases) {
+        if (std::any_of(excludedTestCases.begin(), excludedTestCases.end(),
+                        [testCase](const std::string &name) { return name == testCase.formula->getId(); })) {
+            continue;
+        }
+        auto monitor{Hydra2({*testCase.formula}, false, false, false, initial_step, testCase.domains)};
+        auto trace{testCase.trace};
+        auto actual = monitor.evaluate(trace).at(testCase.formula->getId());
+        auto expected = TestDataBase::mergeResult(testCase.expectedResult).value;
+        EXPECT_EQ(actual.at(0).value, expected)
+            << "Hydra Formula Test Initial Step Evaluation with Globally " << testCase.formula->getId() << " failed.";
+        if (actual.at(0).value != expected) {
+            failures++;
+        }
+    }
+    std::cout << "Hydra Formula Test Initial Step Evaluation with Globally: " << std::to_string(failures) << "/"
+              << std::to_string(testCases.size()) << " failing formulas.";
+}
+
+TEST(TestHydra2, formulaTestInitialStepEvaluationWithoutGlobally) {
+    std::vector<std::string> excludedTestCases{"F1_1", "F49_1"}; // F1_1 does not provide a trace
+    size_t failures{0};
+    auto testDataBase{TestDataBase()};
+    auto testCases{testDataBase.getDatabaseEntries(supportedFormulaTypes.at(AlgorithmType::hydra_2_mtl))};
+    for (const auto &testCase : testCases) {
+        if (std::any_of(excludedTestCases.begin(), excludedTestCases.end(),
+                        [testCase](const std::string &name) { return name == testCase.formula->getId(); })) {
+            continue;
+        }
+        auto globally = std::dynamic_pointer_cast<Globally>(testCase.formula->getExpr());
+        if (!globally) {
+            // This should never happen, since we only select formulas supported by the Hydra monitor, i.e., ones that
+            // start with globally
+            ASSERT_TRUE(false) << "Hydra Formula Test Initial Step Evaluation without Globally "
+                               << testCase.formula->getId() << ": Formula does not start with globally.";
+        }
+        auto monitor{Hydra2({Formula(globally->getLeft(), testCase.formula->getId())}, false, false, false,
+                            FormulaEvaluationMode::initial_step, testCase.domains)};
+        auto trace{testCase.trace};
+        auto actual = monitor.evaluate(trace).at(testCase.formula->getId());
+
+        auto expected = std::find_if(testCase.expectedResult.begin(), testCase.expectedResult.end(),
+                                     [](const auto &verdict) { return verdict.timeStamp == 0; });
+        EXPECT_TRUE(expected != testCase.expectedResult.end())
+            << "Hydra Formula Test Initial Step Evaluation without Globally " << testCase.formula->getId()
+            << ": No expected verdict for initial step.";
+        EXPECT_EQ(actual.at(0).value, expected->value) << "Hydra Formula Test Initial Step Evaluation without Globally "
+                                                       << testCase.formula->getId() << " failed.";
+        if (actual.at(0).value != expected->value) {
+            failures++;
+        }
+    }
+    std::cout << "Hydra Formula Test Initial Step Evaluation without Globally: " << std::to_string(failures) << "/"
               << std::to_string(testCases.size()) << " failing formulas.";
 }
 
@@ -109,7 +171,7 @@ TEST(TestHydra2, testToTree) {
     formulas[2].setId("R3");
     formulas[3].setId("R4");
     std::vector<size_t> expectedRootIDs{0, 3, 4, 5};
-    auto mon{Hydra2(formulas, true, true, true, false)};
+    auto mon{Hydra2(formulas, true, true, true, globally)};
     auto tree{mon.to_tree()};
     ASSERT_EQ(tree.getRootIDs().size(), 4) << "Vectors x and y are of unequal length";
     for (int i = 0; i < tree.getRootIDs().size(); ++i) {
@@ -138,8 +200,8 @@ TEST(TestHydra2, testCombinedExistentialQuantifier) {
     std::vector<std::shared_ptr<DomainStorage>> domains{{std::make_shared<DomainStorage>(
         DomainStorage("D", {"a", "b", "d"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}};
 
-    auto monitor1{Hydra2({formulas[0]}, true, true, true, false)};
-    auto monitor2{Hydra2({formulas[1]}, true, true, true, false)};
+    auto monitor1{Hydra2({formulas[0]}, true, true, true, globally)};
+    auto monitor2{Hydra2({formulas[1]}, true, true, true, globally)};
     auto res1{monitor1.evaluate(trace, domains)};
     auto res2{monitor2.evaluate(trace, domains)};
 
@@ -158,8 +220,8 @@ TEST(TestHydra2, testCombinedUniversalQuantifier) {
     std::vector<std::shared_ptr<DomainStorage>> domains{{std::make_shared<DomainStorage>(
         DomainStorage("D", {"a", "b", "d"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))}};
 
-    auto monitor1{Hydra2({formulas[0]}, true, true, true, false)};
-    auto monitor2{Hydra2({formulas[1]}, true, true, true, false)};
+    auto monitor1{Hydra2({formulas[0]}, true, true, true, globally)};
+    auto monitor2{Hydra2({formulas[1]}, true, true, true, globally)};
     auto res1{monitor1.evaluate(trace, domains)};
     auto res2{monitor2.evaluate(trace, domains)};
 
@@ -185,8 +247,8 @@ TEST(TestHydra2, testCombinedUniversalQuantifierDynamicDomain) {
     std::vector<std::shared_ptr<DomainStorage>> domains{{std::make_shared<DomainStorage>(DomainStorage(
         "D", {2ul, 3ul, 4ul}, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }))}};
 
-    auto monitor1{Hydra2({formulas[0]}, true, true, true, false)};
-    auto monitor2{Hydra2({formulas[1]}, true, true, true, false)};
+    auto monitor1{Hydra2({formulas[0]}, true, true, true, globally)};
+    auto monitor2{Hydra2({formulas[1]}, true, true, true, globally)};
     auto res1{monitor1.evaluate(trace, domains)};
     auto res2{monitor2.evaluate(trace, domains)};
 
@@ -287,7 +349,7 @@ TEST(TestHydra2, testLazyEvaluationComplexPredicate) {
     std::vector<Formula> formulas = {formula};
     std::vector<std::vector<Verdict>> expSolutions{{Verdict{0, false}, Verdict{1, false}, Verdict{2, true}}};
 
-    auto monitor{Hydra2(formulas, true, true, true, false)};
+    auto monitor{Hydra2(formulas, true, true, true, globally)};
     hydraTestUtils::evalHydra(formulas, expSolutions, monitor, trace, "ttt", {});
 }
 
@@ -317,7 +379,7 @@ TEST(TestHydra2, testHierachicalEval) {
                        [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); },
                        [](size_t, const std::any &) { return true; }};
     std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1)};
-    auto monitor{Hydra2(formulas, true, true, true, false)};
+    auto monitor{Hydra2(formulas, true, true, true, globally)};
     auto solution{monitor.evaluate(trace, domains, {"R1"})};
     EXPECT_EQ(solution["R1"].at(0).value, expSolutions.at(0).at(0).value);
     EXPECT_EQ(solution["R1"].at(1).value, expSolutions.at(0).at(1).value);
@@ -329,7 +391,7 @@ TEST(TestHydra2, testHierachicalEval) {
     EXPECT_EQ(solution2["R2"].at(2).value, false);
     EXPECT_EQ(solution2["R2"].at(3).value, true);
 
-    auto monitor2{Hydra2(formulas, true, true, true, false)};
+    auto monitor2{Hydra2(formulas, true, true, true, globally)};
     auto solution21{monitor2.evaluate(trace, domains, {"R1"})};
     EXPECT_EQ(solution21["R1"].at(0).value, expSolutions.at(0).at(0).value);
     EXPECT_EQ(solution21["R1"].at(1).value, expSolutions.at(0).at(1).value);
@@ -342,6 +404,6 @@ TEST(TestHydra2, testInvalidPredicateCost) {
 #ifdef NDEBUG
     GTEST_SKIP() << "assertions are disabled";
 #endif
-    EXPECT_DEATH(Hydra2({formula}, false, false, false, false, {}, {{"test", {1, 2}}}),
+    EXPECT_DEATH(Hydra2({formula}, false, false, false, globally, {}, {{"test", {1, 2}}}),
                  "Invalid predicate costs/probabilities");
 }
