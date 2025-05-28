@@ -221,7 +221,7 @@ TEST(TestSinceMonitor, testLazyEvaluationComplexPredicateInfinteInterval) {
     std::vector<std::vector<Verdict>> expSolutions{{Verdict{0, false}, Verdict{1, false}, Verdict{2, true}}};
 
     std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1)};
-    auto monitor{Hydra2(formulas, true, true, true, false, domains,
+    auto monitor{Hydra2(formulas, true, true, true, globally, domains,
                         {{"a", {0, 1, 0}}, {"raise_if_step_less_than_two", {100, 0, 1000}}})};
     hydraTestUtils::evalHydra(formulas, expSolutions, monitor, trace, "ttt", {});
 }
@@ -253,7 +253,7 @@ TEST(TestSinceMonitor, testLazyEvaluationComplexPredicateFiniteInterval) {
     std::vector<std::vector<Verdict>> expSolutions{{Verdict{0, false}, Verdict{1, false}, Verdict{2, true}}};
 
     std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(dom1)};
-    auto monitor{Hydra2(formulas, true, true, true, false, domains,
+    auto monitor{Hydra2(formulas, true, true, true, FormulaEvaluationMode::globally, domains,
                         {{"a", {0, 1, 0}}, {"raise_if_step_less_than_two", {100, 0, 1000}}})};
     hydraTestUtils::evalHydra(formulas, expSolutions, monitor, trace, "ttt", {});
 }
