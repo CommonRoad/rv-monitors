@@ -3,8 +3,10 @@
 #include <utility>
 
 MonitorInterface::MonitorInterface(Formula formula, AlgorithmType algorithm, bool formulaCompatibilityCheck,
-                                   bool earlyTermination, const std::vector<std::shared_ptr<DomainStorage>> &domains)
-    : formulas({std::move(formula)}), algorithm(algorithm), earlyTermination(earlyTermination), domains(domains) {
+                                   FormulaEvaluationMode formulaEvaluationMode,
+                                   const std::vector<std::shared_ptr<DomainStorage>> &domains)
+    : formulas({std::move(formula)}), algorithm(algorithm), formulaEvaluationMode(formulaEvaluationMode),
+      domains(domains) {
     if (formulaCompatibilityCheck and
         !std::any_of(supportedFormulaTypes.at(this->algorithm).begin(), supportedFormulaTypes.at(this->algorithm).end(),
                      [formula](MonitoringProperties formulaType) { return formula.checkCompatibility(formulaType); }))
@@ -12,9 +14,10 @@ MonitorInterface::MonitorInterface(Formula formula, AlgorithmType algorithm, boo
 }
 
 MonitorInterface::MonitorInterface(std::vector<Formula> formulas, AlgorithmType algorithm,
-                                   bool formulaCompatibilityCheck, bool earlyTermination,
+                                   bool formulaCompatibilityCheck, FormulaEvaluationMode formulaEvaluationMode,
                                    const std::vector<std::shared_ptr<DomainStorage>> &domains)
-    : formulas(std::move(formulas)), algorithm(algorithm), earlyTermination(earlyTermination), domains(domains) {
+    : formulas(std::move(formulas)), algorithm(algorithm), formulaEvaluationMode(formulaEvaluationMode),
+      domains(domains) {
     if (formulaCompatibilityCheck)
         for (const auto &formula : this->formulas)
             if (!std::any_of(

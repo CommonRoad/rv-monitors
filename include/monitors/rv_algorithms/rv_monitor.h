@@ -23,11 +23,10 @@ struct MonitorConfiguration {
      * @param hydraConnectedEvaluation Indicates whether HYDRA monitor should perform connected evaluation
      * @param hydraReordering Indicates whether HYDRA monitor should perform reordering
      * @param shortCircuiting Indicates whether monitor should perform short circuiting
-     * @param earlyTermination Indicates whether the complete trace has to be evaluated or whether the
-     * execution can be terminated as soon as a global verdict for a monitor can be provided
+     * @param formulaEvaluationMode Indicates how to evaluate the formula
      */
     MonitorConfiguration(AlgorithmType algorithm, bool measurement, bool hydraConnectedEvaluation, bool hydraReordering,
-                         bool shortCircuiting, bool earlyTermination);
+                         bool shortCircuiting, FormulaEvaluationMode formulaEvaluationMode);
 
     /**
      * Constructor defining only algorithm type, past evaluation, and performance evaluation.
@@ -48,9 +47,7 @@ struct MonitorConfiguration {
     bool hydraConnectedEvaluation{true}; /**< Indicates whether HYDRA monitor should perform connected evaluation */
     bool hydraReordering{true};          /**< Indicates whether HYDRA monitor should perform reordering */
     bool shortCircuiting{true};          /**< Indicates whether monitor should perform short circuiting */
-    bool earlyTermination{
-        false}; /**< Indicates whether the complete trace has to be evaluated or whether the
-                 * execution can be terminated as soon as a global verdict for a monitor can be provided. */
+    FormulaEvaluationMode formulaEvaluationMode{globally}; /**< Indicates how to evaluate the formula */
 };
 
 class RVMonitor {

@@ -22,6 +22,11 @@
 namespace nb = nanobind;
 
 void init_monitors(nb::module_ &m) {
+    nb::enum_<FormulaEvaluationMode>(m, "FormulaEvaluationMode")
+        .value("globally", globally)
+        .value("globally_early_termination", globally_early_termination)
+        .value("initial_step", initial_step);
+
     nb::class_<MonitorInterface>(m, "MonitorInterface")
         .def("__str__", &MonitorInterface::to_string)
         .def("evaluate", &MonitorInterface::evaluate, nb::arg("trace"),
@@ -36,10 +41,10 @@ void init_monitors(nb::module_ &m) {
         .def_prop_ro("rootIDs", &TreeVis::getRootIDs);
 
     nb::class_<Hydra2, MonitorInterface>(m, "Hydra2")
-        .def(nb::init<std::vector<Formula>, bool, bool, bool, bool, std::vector<std::shared_ptr<DomainStorage>>,
-                      std::map<std::string, std::array<double, 3>>>(),
+        .def(nb::init<std::vector<Formula>, bool, bool, bool, FormulaEvaluationMode,
+                      std::vector<std::shared_ptr<DomainStorage>>, std::map<std::string, std::array<double, 3>>>(),
              nb::arg("formulas"), nb::arg("connectedEval") = true, nb::arg("reordering") = true,
-             nb::arg("shortCircuiting") = true, nb::arg("earlyTermination") = false,
+             nb::arg("shortCircuiting") = true, nb::arg("evaluationMode") = globally,
              nb::arg("domains") = std::vector<std::shared_ptr<DomainStorage>>{},
              nb::arg("predicateCosts") = std::map<std::string, std::array<double, 3>>{})
         .def("to_tree", &Hydra2::to_tree);
