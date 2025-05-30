@@ -1,20 +1,21 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/existential_monitor.h"
 
 ExistentialMonitor::ExistentialMonitor(const Formula &formula, const std::shared_ptr<Hydra2Monitor> &subMonitor,
-                                       size_t monitorId,
+                                       const size_t monitorId,
                                        std::map<std::string, std::shared_ptr<DomainStorage>> variableValues,
-                                       bool connectedEval, bool shortCircuiting)
+                                       const bool connectedEval, const bool shortCircuiting)
     : QuantifierMonitor(formula, subMonitor, monitorId, variableValues, connectedEval, shortCircuiting, 0.0, 0.0) {
     evalCost = computeCost(subMonitor, numCombinations());
     satisfactionProbability = computeSatisfactionProbability(subMonitor, numCombinations());
 }
 
-Verdict ExistentialMonitor::quantifierStep(size_t parentId, size_t stepNumber, size_t numberCombinations) {
+Verdict ExistentialMonitor::quantifierStep(const size_t parentId, const size_t stepNumber,
+                                           const size_t numberCombinations) {
     auto verdict{initializeStepFalse(parentId)};
     if (!verdict.timeStamp.has_value())
         return verdict;
     for (size_t count{0}; count != numberCombinations; count++) { // loop over all possible combinations
-        std::shared_ptr<Hydra2Monitor> evalMonitor =
+        const std::shared_ptr<Hydra2Monitor> evalMonitor =
             nextEvalMonitor(stepNumber); // request monitor for the current combination
 
         verdict = evalMonitor->step(monitorId, stepNumber);
@@ -26,10 +27,9 @@ Verdict ExistentialMonitor::quantifierStep(size_t parentId, size_t stepNumber, s
 }
 
 std::shared_ptr<Hydra2Monitor> ExistentialMonitor::clone(const std::vector<std::string> &domValNames) {
-    auto tmpCopy{Hydra2Monitor::clone(domValNames)};
-    if (tmpCopy != nullptr)
+    if (auto tmpCopy{Hydra2Monitor::clone(domValNames)}; tmpCopy != nullptr)
         return tmpCopy;
-    auto clonedMonitor = std::make_shared<ExistentialMonitor>(*this);
+    const auto clonedMonitor = std::make_shared<ExistentialMonitor>(*this);
     clonedMonitor->subMonitor = subMonitor->clone(domValNames);
     clonedMonitor->resetIterators();
     return resetClonedMonitor(clonedMonitor, domValNames);

@@ -1,6 +1,12 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/since_monitor.h"
 
-Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
+bool SinceMonitor::checkTimeStepValidity(size_t concreteStep) {
+    return !std::all_of(
+        domainValueArguments.begin(), domainValueArguments.end(),
+        [step = concreteStep](const DomainValue &dv) { return dv.isConst() or dv.checkValidity(step); });
+}
+
+Verdict SinceMonitor::concreteStep(const size_t parentId, const size_t stepNumber) {
     // propagate trace index and reset variables after short-circuiting or invalid dynamic domain value
     auto reset{updateTraceIndex(parentId, stepNumber)};
 
@@ -16,10 +22,7 @@ Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
             stepNumberRight++;
             if (subVerdictRight->timeStamp.has_value())
                 headPositionMonitorRight.update(subVerdictRight->timeStamp.value());
-            if (!std::all_of(domainValueArguments.begin(), domainValueArguments.end(),
-                             [step = stepNumberRight](const DomainValue &dv) {
-                                 return dv.isConst() or dv.checkValidity(step);
-                             })) {
+            if (timeStepsTrace.size() <= stepNumberRight) {
                 if (subVerdictRight->value)
                     lastSatisfaction =
                         HeadPosHydra2(headPositionMonitorRight.timeStep, headPositionMonitorRight.traceIdx);
@@ -28,9 +31,19 @@ Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
             reset = false;
         }
 
+        // if-clause needed otherwise call of predicate with non-existing domain value possible if while loop is entered
+        if (timeStepsTrace.size() <= stepNumberRight) {
+            endReached = true;
+            if (subVerdictRight->value)
+                lastSatisfaction = HeadPosHydra2(headPositionMonitorRight.timeStep, headPositionMonitorRight.traceIdx);
+            headPositionMonitorRight.traceIdx++;
+        }
+
         // loop until end is reached, right monitor time points equals (is greater) than left monitor's time point, or
         // lower time bound is violated
-        while (!endReached && headPositionMonitorRight.traceIdx <= headPositionMonitorLeft.traceIdx &&
+        while (timeStepsTrace.size() > stepNumberRight and
+               !checkTimeStepValidity(timeStepsTrace.at(stepNumberRight)) and !endReached &&
+               headPositionMonitorRight.traceIdx <= headPositionMonitorLeft.traceIdx &&
                headPositionMonitorLeft.timeStep - headPositionMonitorRight.timeStep >= interval.getStart()) {
             if (subVerdictRight->value)
                 lastSatisfaction = HeadPosHydra2(headPositionMonitorRight.timeStep, headPositionMonitorRight.traceIdx);
@@ -42,13 +55,6 @@ Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
                 endReached = true;
                 headPositionMonitorRight.traceIdx++;
             }
-            if (!std::all_of(domainValueArguments.begin(), domainValueArguments.end(),
-                             [step = stepNumberRight](const DomainValue &dv) {
-                                 return dv.isConst() or dv.checkValidity(step);
-                             })) {
-                endReached = true; // just for completeness, could be removed
-                break;
-            }
         }
         ++traceIdx[parentId];
     }
@@ -58,25 +64,17 @@ Verdict SinceMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         (!interval.isFinite() or headPositionMonitorLeft.timeStep - lastSatisfaction->timeStep <= interval.getEnd()) &&
         (!lastViolation || lastSatisfaction->traceIdx >= lastViolation->traceIdx))
         return {headPositionMonitorLeft.timeStep, true};
-    else
-        return {headPositionMonitorLeft.timeStep, false};
+    return {headPositionMonitorLeft.timeStep, false};
 }
-bool SinceMonitor::updateTraceIndex(size_t parentId, size_t stepNumber) {
+bool SinceMonitor::updateTraceIndex(const size_t parentId, const size_t stepNumber) {
     // reset step number so that interval is covered after short-circuiting
     bool reset{false};
     if (interval.isFinite() and ((stepNumber > traceIdx[parentId] and stepNumber > interval.getEnd() and
                                   stepNumber - interval.getEnd() > traceIdx[parentId]) or
-                                 !std::all_of(domainValueArguments.begin(), domainValueArguments.end(),
-                                              [step = traceIdx[parentId]](const DomainValue &dv) {
-                                                  return dv.isConst() or dv.checkValidity(step);
-                                              }))) {
+                                 checkTimeStepValidity(traceIdx[parentId]))) {
         while ((stepNumber > traceIdx[parentId] and stepNumber > interval.getEnd() and
                 stepNumber - interval.getEnd() > traceIdx[parentId]) or
-               (!std::all_of(domainValueArguments.begin(), domainValueArguments.end(),
-                             [step = traceIdx[parentId]](const DomainValue &dv) {
-                                 return dv.isConst() or dv.checkValidity(step);
-                             }) and
-                traceIdx[parentId] <= stepNumber)) {
+               (checkTimeStepValidity(traceIdx[parentId]) and traceIdx[parentId] <= stepNumber)) {
             ++traceIdx[parentId];
             headPositionMonitorLeft.update(traceIdx[parentId]);
             headPositionMonitorRight.update(traceIdx[parentId]);
@@ -89,15 +87,8 @@ bool SinceMonitor::updateTraceIndex(size_t parentId, size_t stepNumber) {
         reset = true;
     }
     // for infinite intervals, update trace index until valid domain values are reached
-    if (stepNumber > traceIdx[parentId] and !interval.isFinite() and
-        !std::all_of(
-            domainValueArguments.begin(), domainValueArguments.end(),
-            [step = traceIdx[parentId]](const DomainValue &dv) { return dv.isConst() or dv.checkValidity(step); })) {
-        while (stepNumber > traceIdx[parentId] and
-               !std::all_of(domainValueArguments.begin(), domainValueArguments.end(),
-                            [step = traceIdx[parentId]](const DomainValue &dv) {
-                                return dv.isConst() or dv.checkValidity(step);
-                            })) {
+    if (stepNumber > traceIdx[parentId] and !interval.isFinite() and checkTimeStepValidity(traceIdx[parentId])) {
+        while (stepNumber > traceIdx[parentId] and checkTimeStepValidity(traceIdx[parentId])) {
             ++traceIdx[parentId];
             headPositionMonitorLeft.update(traceIdx[parentId]);
             headPositionMonitorRight.update(traceIdx[parentId]);
@@ -116,6 +107,9 @@ void SinceMonitor::setTrace(const std::shared_ptr<Trace> &tra,
                             const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     subMonitorLeft->setTrace(tra, domains);
     subMonitorRight->setTrace(tra, domains);
+    timeStepsTrace = {};
+    for (const auto &event : tra->getTrace())
+        timeStepsTrace.push_back(event.getTimeStep());
 }
 void SinceMonitor::reset() {
     Hydra2Monitor::reset();
@@ -129,13 +123,13 @@ void SinceMonitor::reset() {
     headPositionMonitorLeft.reset();
     stepNumberRight = 0;
     endReached = false;
+    timeStepsTrace = {};
 }
 
 std::shared_ptr<Hydra2Monitor> SinceMonitor::clone(const std::vector<std::string> &domValNames) {
-    auto tmpCopy{Hydra2Monitor::clone(domValNames)};
-    if (tmpCopy != nullptr)
+    if (auto tmpCopy{Hydra2Monitor::clone(domValNames)}; tmpCopy != nullptr)
         return tmpCopy;
-    auto clonedMonitor = std::make_shared<SinceMonitor>(*this);
+    const auto clonedMonitor = std::make_shared<SinceMonitor>(*this);
     clonedMonitor->subMonitorRight = subMonitorRight->clone(domValNames);
     clonedMonitor->subMonitorLeft = subMonitorLeft->clone(domValNames);
     return resetClonedMonitor(clonedMonitor, domValNames);
@@ -160,8 +154,8 @@ void SinceMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
     subMonitorLeft->addDomainValues(vals);
 }
 
-void SinceMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
-    if (!Hydra2Monitor::stepNumberValid(stepNumber, parentId))
+void SinceMonitor::setStepNumber(const size_t stepNumber, const size_t parentId) {
+    if (!stepNumberValid(stepNumber, parentId))
         return;
     subMonitorRight->setStepNumber(stepNumber, monitorId);
     subMonitorLeft->setStepNumber(stepNumber, monitorId);

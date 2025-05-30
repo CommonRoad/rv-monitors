@@ -18,9 +18,17 @@ size_t evalHydra(const std::vector<Formula> &formulas, const std::vector<std::ve
                  Hydra2 &monitor, const std::shared_ptr<Trace> &trac, const std::string &evaluation,
                  const std::vector<std::shared_ptr<DomainStorage>> &domains);
 
+std::vector<std::any> createStringDomain3(size_t stepNumber);
+
+std::tuple<size_t> createDomain3Arguments(const std::vector<DomainValue> &args);
+
+bool test_domain(size_t timeStep, const std::string &val);
+
 bool higher_than_time_step(size_t timeStep, size_t val);
 
 std::tuple<size_t, size_t> twoSizeTArgs(std::vector<DomainValue> values);
+
+std::tuple<size_t, std::string> sizeTStringArgs(const std::vector<DomainValue> &values);
 
 std::tuple<size_t, size_t, size_t> threeSizeTArgs(std::vector<DomainValue> values);
 

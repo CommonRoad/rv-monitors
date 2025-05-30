@@ -3,18 +3,15 @@
 #include "monitors/formula/formula.h"
 #include "monitors/rv_algorithms/btt_fsm/btt_fsm.h"
 #include "monitors/rv_algorithms/dynamic_programming/dynamic.h"
-#include "monitors/rv_algorithms/ltl_event_consuming/event_consuming.h"
 #include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
 #include "monitors/trace/trace.h"
 #include "monitors/utils/execution_statistic.h"
-#include <iostream>
 #include <vector>
 
 /**
  * List of configuration parameters for the different monitoring algorithms.
  */
 struct MonitorConfiguration {
-  public:
     /**
      * Constructor defining all configuration variables.
      *
@@ -22,7 +19,7 @@ struct MonitorConfiguration {
      * @param measurement Indicates whether evaluation with time measurement should be performed
      * @param hydraConnectedEvaluation Indicates whether HYDRA monitor should perform connected evaluation
      * @param hydraReordering Indicates whether HYDRA monitor should perform reordering
-     * @param shortCircuiting Indicates whether monitor should perform short circuiting
+     * @param shortCircuiting Indicates whether monitor should perform short-circuiting
      * @param formulaEvaluationMode Indicates how to evaluate the formula
      */
     MonitorConfiguration(AlgorithmType algorithm, bool measurement, bool hydraConnectedEvaluation, bool hydraReordering,
@@ -46,7 +43,7 @@ struct MonitorConfiguration {
     bool performanceMeasurement{false};  /**< Indicates whether evaluation with time measurement should be performed */
     bool hydraConnectedEvaluation{true}; /**< Indicates whether HYDRA monitor should perform connected evaluation */
     bool hydraReordering{true};          /**< Indicates whether HYDRA monitor should perform reordering */
-    bool shortCircuiting{true};          /**< Indicates whether monitor should perform short circuiting */
+    bool shortCircuiting{true};          /**< Indicates whether monitor should perform short-circuiting */
     FormulaEvaluationMode formulaEvaluationMode{globally}; /**< Indicates how to evaluate the formula */
 };
 
@@ -96,6 +93,7 @@ class RVMonitor {
      *
      * @param trace Trace of predicates/atomic prepositions.
      * @param domains List of domains.
+     * @param formulas List of formulas which should be evaluated.
      * @return Verdict for each time step of trace.
      */
     std::map<std::string, std::vector<Verdict>> verify(const std::shared_ptr<Trace> &trace,
@@ -114,13 +112,13 @@ class RVMonitor {
      *
      * @return String representation of activated monitoring algorithm.
      */
-    std::string to_string() const;
+    [[nodiscard]] std::string to_string() const;
 
     /**
      * Getter for configuration
      * @return MonitorConfiguration
      */
-    MonitorConfiguration getConfiguration() const;
+    [[nodiscard]] MonitorConfiguration getConfiguration() const;
 
     /**
      * Extracts violating results from first-order monitors.

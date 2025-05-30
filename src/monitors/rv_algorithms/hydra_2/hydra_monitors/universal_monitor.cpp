@@ -2,23 +2,25 @@
 
 #include <utility>
 
-UniversalMonitor::UniversalMonitor(Formula formula, const std::shared_ptr<Hydra2Monitor> &subMonitor, size_t monitorId,
+UniversalMonitor::UniversalMonitor(Formula formula, const std::shared_ptr<Hydra2Monitor> &subMonitor,
+                                   const size_t monitorId,
                                    std::map<std::string, std::shared_ptr<DomainStorage>> variableValues,
-                                   bool connectedEval, bool shortCircuiting)
+                                   const bool connectedEval, const bool shortCircuiting)
     : QuantifierMonitor(std::move(formula), subMonitor, monitorId, variableValues, connectedEval, shortCircuiting, 0.0,
                         0.0) {
-    auto numberCombinations{numCombinations()};
+    const auto numberCombinations{numCombinations()};
     evalCost = computeCost(subMonitor, numberCombinations);
     satisfactionProbability = computeSatisfactionProbability(subMonitor, numberCombinations);
 }
 
-Verdict UniversalMonitor::quantifierStep(size_t parentId, size_t stepNumber, size_t numberCombinations) {
+Verdict UniversalMonitor::quantifierStep(const size_t parentId, const size_t stepNumber,
+                                         const size_t numberCombinations) {
     auto verdict{initializeStepTrue(parentId)};
     std::vector<std::vector<DomainValue>> violationsTmp;
     if (!verdict.timeStamp.has_value())
         return verdict;
     for (size_t count{0}; count != numberCombinations; count++) { // loop over all possible combinations
-        std::shared_ptr<Hydra2Monitor> evalMonitor =
+        const std::shared_ptr<Hydra2Monitor> evalMonitor =
             nextEvalMonitor(stepNumber); // request monitor for current combination
 
         Verdict subVerdict = evalMonitor->step(monitorId, stepNumber);
@@ -35,16 +37,15 @@ Verdict UniversalMonitor::quantifierStep(size_t parentId, size_t stepNumber, siz
     }
 
     if (storeVariableResults and !violationsTmp.empty())
-        violations.insert({stepNumber, violationsTmp});
+        violations.insert({verdict.timeStamp.value(), violationsTmp});
 
     return verdict;
 }
 
 std::shared_ptr<Hydra2Monitor> UniversalMonitor::clone(const std::vector<std::string> &domValNames) {
-    auto tmpCopy{Hydra2Monitor::clone(domValNames)};
-    if (tmpCopy != nullptr)
+    if (auto tmpCopy{Hydra2Monitor::clone(domValNames)}; tmpCopy != nullptr)
         return tmpCopy;
-    auto clonedMonitor = std::make_shared<UniversalMonitor>(*this);
+    const auto clonedMonitor = std::make_shared<UniversalMonitor>(*this);
     clonedMonitor->subMonitor = subMonitor->clone(domValNames);
     clonedMonitor->resetIterators();
     return resetClonedMonitor(clonedMonitor, domValNames);

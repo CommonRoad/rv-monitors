@@ -18,13 +18,12 @@ Verdict NextMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         currentTime = subVerdict.timeStamp;
         if (!interval.isFinite() and interval.getStart() <= lastTime)
             return {lastTime, subVerdict.value};
-        else if (interval.isFinite() and
-                 Utils::isInInterval(subVerdict.timeStamp.value() - lastTime, interval.getStart(), interval.getEnd()))
+        if (interval.isFinite() and
+            Utils::isInInterval(subVerdict.timeStamp.value() - lastTime, interval.getStart(), interval.getEnd()))
             return {lastTime, subVerdict.value};
-        else
-            return {lastTime, false};
-    } else // last event in trace
-        return {*currentTime, false};
+        return {lastTime, false};
+    } // last event in trace
+    return {*currentTime, false};
 }
 
 void NextMonitor::setTrace(const std::shared_ptr<Trace> &tra,
@@ -39,10 +38,9 @@ void NextMonitor::reset() {
 }
 
 std::shared_ptr<Hydra2Monitor> NextMonitor::clone(const std::vector<std::string> &domValNames) {
-    auto tmpCopy{Hydra2Monitor::clone(domValNames)};
-    if (tmpCopy != nullptr)
+    if (auto tmpCopy{Hydra2Monitor::clone(domValNames)}; tmpCopy != nullptr)
         return tmpCopy;
-    auto clonedMonitor = std::make_shared<NextMonitor>(*this);
+    const auto clonedMonitor = std::make_shared<NextMonitor>(*this);
     clonedMonitor->subMonitor = subMonitor->clone(domValNames);
     return resetClonedMonitor(clonedMonitor, domValNames);
 }
