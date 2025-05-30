@@ -51,24 +51,28 @@ std::ostream &operator<<(std::ostream &stream, const AlgorithmType &algorithm) {
 AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
     if (algorithmString == "dynamic-programming-ltl") {
         return dynamic_programming_ltl;
-    } else if (algorithmString == "event-consuming-ltl") {
-        return event_consuming_ltl;
-    } else if (algorithmString == "hydra-mtl") {
-        return hydra_mtl;
-    } else if (algorithmString == "hydra_2-mtl") {
-        return hydra_2_mtl;
-    } else if (algorithmString == "mt-fsm*") {
-        return mt_fsm;
-    } else if (algorithmString == "btt-fsm*") {
-        return btt_fsm;
-    } else if (algorithmString == "event-consuming-mtl") {
-        return event_consuming_mtl;
-    } else {
-        throw std::runtime_error(
-            "Algorithm::stringToAlgorithm Command line argument " + algorithmString +
-            " is not a valid algorithm.\n Options are: dynamic-programming-ltl, event-consuming-ltl, "
-            "event-consuming-mtl, mt-fsm*, btt-fsm*");
     }
+    if (algorithmString == "event-consuming-ltl") {
+        return event_consuming_ltl;
+    }
+    if (algorithmString == "hydra-mtl") {
+        return hydra_mtl;
+    }
+    if (algorithmString == "hydra_2-mtl") {
+        return hydra_2_mtl;
+    }
+    if (algorithmString == "mt-fsm*") {
+        return mt_fsm;
+    }
+    if (algorithmString == "btt-fsm*") {
+        return btt_fsm;
+    }
+    if (algorithmString == "event-consuming-mtl") {
+        return event_consuming_mtl;
+    }
+    throw std::runtime_error("Algorithm::stringToAlgorithm Command line argument " + algorithmString +
+                             " is not a valid algorithm.\n Options are: dynamic-programming-ltl, event-consuming-ltl, "
+                             "event-consuming-mtl, mt-fsm*, btt-fsm*");
 }
 
 RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration configuration,
@@ -169,7 +173,7 @@ RVMonitor::RVMonitor(const RVMonitor &obj) : configuration(obj.configuration) {
 
 RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
     if (this != &other) { // prevent self-assignment
-        if (auto *dynLTL = dynamic_cast<DynamicProgrammingLTL *>(other.monitor.get()))
+        if (const auto *dynLTL = dynamic_cast<DynamicProgrammingLTL *>(other.monitor.get()))
             monitor = std::make_unique<DynamicProgrammingLTL>(dynLTL->getFormulas(), dynLTL->isPastEvaluation());
         else if (auto *hydra = dynamic_cast<Hydra2 *>(other.monitor.get())) {
             std::vector<Formula> formulas;
@@ -193,14 +197,15 @@ RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
 
 std::string RVMonitor::to_string() const { return monitor->to_string(); }
 
-MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool measurement, bool hydraConnectedEvaluation,
-                                           bool hydraReordering, bool shortCircuiting,
-                                           FormulaEvaluationMode formulaEvaluationMode)
+MonitorConfiguration::MonitorConfiguration(const AlgorithmType algorithm, const bool measurement,
+                                           const bool hydraConnectedEvaluation, const bool hydraReordering,
+                                           const bool shortCircuiting,
+                                           const FormulaEvaluationMode formulaEvaluationMode)
     : algorithm(algorithm), performanceMeasurement(measurement), hydraConnectedEvaluation(hydraConnectedEvaluation),
       hydraReordering(hydraReordering), shortCircuiting(shortCircuiting), formulaEvaluationMode(formulaEvaluationMode) {
 }
 
-MonitorConfiguration::MonitorConfiguration(AlgorithmType algorithm, bool measurement)
+MonitorConfiguration::MonitorConfiguration(const AlgorithmType algorithm, const bool measurement)
     : algorithm(algorithm), performanceMeasurement(measurement) {}
 
 MonitorConfiguration RVMonitor::getConfiguration() const { return configuration; }

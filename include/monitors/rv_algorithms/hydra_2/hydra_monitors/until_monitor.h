@@ -44,7 +44,7 @@ class UntilMonitor : public Hydra2Monitor {
     /**
      * Setter for trace.
      *
-     * @param trace Trace.
+     * @param tra Trace.
      * @param domains List of domains.
      */
     void setTrace(const std::shared_ptr<Trace> &tra,
@@ -111,6 +111,7 @@ class UntilMonitor : public Hydra2Monitor {
     bool endReached{false};                        //**< Boolean indicating whether end of trace was reached. */
     size_t stepNumberUntil{0}; //**< Stores real step number because until operator can be before parent step number. */
     std::vector<DomainValue> domainValueArguments; //**< Domain values. */
+    std::vector<size_t> timeStepsTrace;            //**< Time steps of trace. */
 
     /**
      * Executes left and right monitors of until.

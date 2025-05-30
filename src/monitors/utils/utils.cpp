@@ -28,23 +28,23 @@
 
 bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr, event_map_t &eventMap) {
     // Atomic
-    if (auto atomicExpr = std::dynamic_pointer_cast<Atomic>(expr)) {
+    if (const auto atomicExpr = std::dynamic_pointer_cast<Atomic>(expr)) {
         return eventMap.at(atomicExpr->to_string());
     }
     // Predicate
-    if (auto predicateExpr = std::dynamic_pointer_cast<Predicate>(expr)) {
+    if (const auto predicateExpr = std::dynamic_pointer_cast<Predicate>(expr)) {
         return eventMap.at(predicateExpr->to_string());
     }
     // Constant
-    if (auto constantExpr = std::dynamic_pointer_cast<Constant>(expr)) {
+    if (const auto constantExpr = std::dynamic_pointer_cast<Constant>(expr)) {
         return constantExpr->getValue();
     }
     // Not
-    if (auto notExpr = std::dynamic_pointer_cast<Not>(expr)) {
+    if (const auto notExpr = std::dynamic_pointer_cast<Not>(expr)) {
         return not evaluateBooleanExpression(notExpr->getLeft(), eventMap);
     }
     // And
-    if (auto andExpr = std::dynamic_pointer_cast<And>(expr)) {
+    if (const auto andExpr = std::dynamic_pointer_cast<And>(expr)) {
         auto res = true;
         for (const auto &childExpr : *andExpr) {
             res and_eq evaluateBooleanExpression(childExpr, eventMap);
@@ -57,7 +57,7 @@ bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr, e
     }
 
     // Or
-    if (auto orExpr = std::dynamic_pointer_cast<Or>(expr)) {
+    if (const auto orExpr = std::dynamic_pointer_cast<Or>(expr)) {
         auto res = false;
         for (const auto &childExpr : *orExpr) {
             res or_eq evaluateBooleanExpression(childExpr, eventMap);
@@ -71,7 +71,7 @@ bool Utils::evaluateBooleanExpression(const std::shared_ptr<Expression> &expr, e
     }
 
     // Xor
-    if (auto xorExpr = std::dynamic_pointer_cast<Xor>(expr)) {
+    if (const auto xorExpr = std::dynamic_pointer_cast<Xor>(expr)) {
         auto res = evaluateBooleanExpression(*xorExpr->begin(), eventMap);
         for (auto itr = ++xorExpr->begin(); itr != xorExpr->end(); ++itr) {
             res xor_eq static_cast<int>(evaluateBooleanExpression(*itr, eventMap));

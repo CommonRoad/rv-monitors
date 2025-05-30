@@ -257,11 +257,32 @@ TEST(TestHydra2, testCombinedUniversalQuantifierDynamicDomain) {
     hydraTestUtils::executeHydraEval(trace, formulas, expSolutions, domains);
 }
 
+TEST(TestHydra2, testFutureOnceLazy) {
+    const std::shared_ptr<Trace> trace = hydraTestUtils::createTraceWithVariable(
+        6, {std::make_shared<Function<bool, size_t, std::string>>(Function<bool, size_t, std::string>(
+               "test_domain", {"timeStep", "val"}, hydraTestUtils::test_domain, hydraTestUtils::sizeTStringArgs))});
+    std::vector formulas = {Parser::parse("E x in D. (O(test_domain(x)) & F(test_domain(x)))")};
+    formulas[0].setId("R1");
+
+    auto functionDom{std::make_shared<Function<std::vector<std::any>, size_t>>(Function<std::vector<std::any>, size_t>(
+        "testname", {"stepNumber"}, hydraTestUtils::createStringDomain3, hydraTestUtils::createDomain3Arguments))};
+    DomainStorage dom1{"D", functionDom, [](const std::any &val) { return std::any_cast<std::string>(val); },
+                       [](size_t, const std::any &) { return true; }};
+    std::vector domains{std::make_shared<DomainStorage>(dom1)};
+
+    auto monitor1{Hydra2({formulas[0]}, true, true, true, FormulaEvaluationMode::globally)};
+    const auto res1{monitor1.evaluate(trace, domains)};
+    const std::vector<std::vector<Verdict>> expSolutions{
+        {{0, true}, {1, true}, {2, true}, {3, false}, {4, false}, {5, true}}};
+
+    hydraTestUtils::executeHydraEval(trace, formulas, expSolutions, domains);
+}
+
 TEST(TestHydra2, testExistentialStepLooping) {
     const std::shared_ptr<Trace> trace = Utils::createTrace({"a", "b", "c"}, {{"a", "b", "c"}, {}, {"b"}, {"a", "c"}});
     Formula formula = Parser::parse("G(C<=2 x in D. x)");
     formula.setId("R1");
-    std::vector<Formula> formulas = {formula};
+    const std::vector<Formula> formulas = {formula};
     std::vector<std::vector<Verdict>> expSolutions{
         {Verdict{0, false}, Verdict{1, true}, Verdict{2, true}, Verdict{3, true}}};
     DomainStorage dom1{"D", {"a", "b", "c"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
@@ -334,7 +355,7 @@ TEST(TestHydra2, testExistenceVariableDomainLazyPredicate) {
 
 TEST(TestHydra2, testLazyEvaluationComplexPredicate) {
     auto traceAtomic{Utils::createTrace({"a"}, {{}, {}, {"a"}})};
-    std::vector<Event> eventList{traceAtomic->getEvent(0), traceAtomic->getEvent(1), traceAtomic->getEvent(2)};
+    const std::vector<Event> eventList{traceAtomic->getEvent(0), traceAtomic->getEvent(1), traceAtomic->getEvent(2)};
     const std::shared_ptr<Trace> trace = hydraTestUtils::createTraceWithVariable(
         4,
         {std::make_shared<Function<bool, size_t, size_t>>(
