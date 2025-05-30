@@ -59,6 +59,7 @@ class Hydra2 : public MonitorInterface {
      * @param reordering Boolean indicating whether the formula should be reordered based on the predicate costs.
      * @param shortCircuiting Boolean indicating whether short-circuiting should be used.
      * @param formulaEvaluationMode formulaEvaluationMode Indicates how to evaluate the formula.
+     * @param domains List of domains.
      * @param predicateCosts Cost assigned to predicates consisting of evaluation cost in interval [0, 100],
      * satisfaction probability in interval [0, 1], and priority >= 0.
      */
@@ -93,7 +94,7 @@ class Hydra2 : public MonitorInterface {
      *
      * @return Registered predicate costs.
      */
-    std::map<std::string, std::array<double, 3>> &getPredicateCost();
+    std::map<std::string, std::array<double, 3>> &getPredicateCost() const;
 
     /**
      * Function to extract combination of violating domain values.
@@ -129,7 +130,7 @@ class Hydra2 : public MonitorInterface {
     /**
      * Resets monitor variables to default values.
      */
-    void resetMonitors();
+    void resetMonitors() const;
 
     /**
      * Setter for trace.

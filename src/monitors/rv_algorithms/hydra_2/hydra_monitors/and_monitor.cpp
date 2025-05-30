@@ -1,21 +1,18 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/and_monitor.h"
-#include <iostream>
 
-Verdict AndMonitor::concreteStep(size_t parentId, size_t stepNumber) {
+Verdict AndMonitor::concreteStep(size_t parentId, const size_t stepNumber) {
     Verdict verdict{subMonitors.at(0)->step(monitorId, stepNumber)};
     if (shortCircuiting) {
         if (!verdict.value) {
             if (!verdict.timeStamp.has_value()) // happens when we are behind last trace element with submonitor
                 return {false};
-            else
-                return {verdict.timeStamp.value(), false};
+            return {verdict.timeStamp.value(), false};
         }
         for (size_t i{1}; i < subMonitors.size(); ++i) // verdict of first monitor is evaluated above
             if (!subMonitors.at(i)->step(monitorId, stepNumber).value) {
                 if (!verdict.timeStamp.has_value())
                     return {false};
-                else
-                    return {verdict.timeStamp.value(), false};
+                return {verdict.timeStamp.value(), false};
             }
     } else {
         for (size_t i{1}; i < subMonitors.size(); ++i)
@@ -37,11 +34,10 @@ void AndMonitor::reset() {
 }
 
 std::shared_ptr<Hydra2Monitor> AndMonitor::clone(const std::vector<std::string> &domValNames) {
-    auto tmpCopy{Hydra2Monitor::clone(domValNames)};
-    if (tmpCopy != nullptr)
+    if (auto tmpCopy{Hydra2Monitor::clone(domValNames)}; tmpCopy != nullptr)
         return tmpCopy;
 
-    auto clonedMonitor = std::make_shared<AndMonitor>(*this);
+    const auto clonedMonitor = std::make_shared<AndMonitor>(*this);
     std::vector<std::shared_ptr<Hydra2Monitor>> clonedSubMonitors;
     clonedSubMonitors.reserve(subMonitors.size());
     for (const auto &mon : subMonitors)
@@ -79,9 +75,9 @@ void AndMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
         subMonitors.at(idx)->addDomainValues(vals);
 }
 
-void AndMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
+void AndMonitor::setStepNumber(const size_t stepNumber, const size_t parentId) {
     Hydra2Monitor::setStepNumber(stepNumber, parentId);
-    if (!Hydra2Monitor::stepNumberValid(stepNumber, parentId))
+    if (!stepNumberValid(stepNumber, parentId))
         return;
     for (const auto &sub : subMonitors)
         sub->setStepNumber(stepNumber, monitorId);

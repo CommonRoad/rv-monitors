@@ -3,7 +3,6 @@
 #include "monitors/trace/event_value.h"
 #include "monitors/utils/verdict.h"
 #include <algorithm>
-#include <sstream>
 #include <unordered_map>
 
 class Predicate;
@@ -16,7 +15,6 @@ using event_map_t = std::unordered_map<std::string, EventValue<bool>>;
  * Event of a trace.
  */
 class Event {
-  private:
     event_map_t eventMap;
     size_t timeStep;
     bool terminal;
@@ -25,12 +23,18 @@ class Event {
     /**
      * Constructor.
      * @param event Map from predicates to LazyBool.
-     * @param terminal True if event is terminal, false other wise.
+     * @param time Time step of event.
+     * @param terminal True if event is terminal, false otherwise.
      */
-    explicit Event(event_map_t event, size_t time, bool terminal) noexcept
+    explicit Event(event_map_t event, const size_t time, const bool terminal) noexcept
         : eventMap(std::move(event)), timeStep(time), terminal(terminal) {}
 
-    explicit Event(size_t time, bool terminal) noexcept : timeStep(time), terminal(terminal) {}
+    /**
+     *
+     * @param time Time step of event.
+     * @param terminal True if event is terminal, false otherwise.
+     */
+    explicit Event(const size_t time, const bool terminal) noexcept : timeStep(time), terminal(terminal) {}
 
     Event(const Event &) = default;
     Event &operator=(const Event &) = default;

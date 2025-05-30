@@ -33,6 +33,7 @@ class MonitorInterface {
      * @param formulaCompatibilityCheck Boolean which activates check whether formula provided to monitor is evaluated
      * for monitor compatibility.
      * @param formulaEvaluationMode Indicates how to evaluate the formula.
+     * @param domains Domains for higher-order-based formulas.
      */
     MonitorInterface(Formula formula, AlgorithmType algorithm, bool formulaCompatibilityCheck = true,
                      FormulaEvaluationMode formulaEvaluationMode = globally,
@@ -41,11 +42,12 @@ class MonitorInterface {
     /**
      * Constructor for monitor based on several formulas.
      *
-     * @param formula List of formulas.
+     * @param formulas List of formulas.
      * @param algorithm Name of algorithm.
      * @param formulaCompatibilityCheck Boolean which activates check whether formula provided to monitor is evaluated
      * for monitor compatibility.
      * @param formulaEvaluationMode Indicates how to evaluate the formula.
+     * @param domains Domains for higher-order-based formulas.
      */
     MonitorInterface(std::vector<Formula> formulas, AlgorithmType algorithm, bool formulaCompatibilityCheck = true,
                      FormulaEvaluationMode formulaEvaluationMode = globally,

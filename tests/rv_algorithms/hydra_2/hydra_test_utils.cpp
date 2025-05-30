@@ -18,10 +18,43 @@ bool hydraTestUtils::equal_to_time_step_with_unused_arg(size_t timeStep, size_t 
     return timeStep == value;
 }
 
+std::vector<std::any> hydraTestUtils::createStringDomain3(const size_t stepNumber) {
+    if (stepNumber < 6)
+        return {std::string("a"), std::string("b"), std::string("d")};
+    throw std::runtime_error("Invalid step number");
+}
+
+std::tuple<size_t> hydraTestUtils::createDomain3Arguments(const std::vector<DomainValue> &args) {
+    return {std::any_cast<size_t>(args.at(0).getValue())};
+}
+
 bool hydraTestUtils::raiseIfStepLessThanTwo(size_t timeStep, size_t randomValue) {
     if (timeStep < 2)
         throw std::runtime_error("Time step is less than 2");
     return true;
+}
+
+bool hydraTestUtils::test_domain(const size_t timeStep, const std::string &val) {
+    switch (timeStep) {
+    case 0:
+        return val == "a" or val == "b" or val == "c";
+    case 1:
+        return false;
+    case 2:
+        return val == "a" or val == "b";
+    case 3:
+        return false;
+    case 4:
+        return false;
+    case 5:
+        return val == "d";
+    default:
+        return false;
+    }
+}
+
+std::tuple<size_t, std::string> hydraTestUtils::sizeTStringArgs(const std::vector<DomainValue> &values) {
+    return {std::any_cast<size_t>(values.at(0).getValue()), std::any_cast<std::string>(values.at(1).getValue())};
 }
 
 bool hydraTestUtils::higher_than_zero(size_t timeStep, size_t val) { return val > 0; }

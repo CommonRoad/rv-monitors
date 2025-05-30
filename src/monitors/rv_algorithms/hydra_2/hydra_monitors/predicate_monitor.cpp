@@ -2,21 +2,24 @@
 #include "monitors/expression_tree/atomic/predicate.h"
 #include <cassert>
 
-Verdict PredicateMonitor::concreteStep(size_t parentId, size_t stepNumber) {
+Verdict PredicateMonitor::concreteStep(size_t parentId, const size_t stepNumber) {
     if (stepNumber < trace->getLength()) {
-        trace->updateEvent(stepNumber, name, orderedValues);
-        auto verdict{trace->verdictAtTimeStep(stepNumber, name, domainName)};
-        orderedValues.erase(orderedValues.begin());
+        auto verdict{Verdict(false)};
+        if (!trace->getTraceRef().at(stepNumber).hasVerdict(domainName)) {
+            trace->updateEvent(stepNumber, name, orderedValues);
+            verdict = trace->verdictAtTimeStep(stepNumber, name, domainName);
+            orderedValues.erase(orderedValues.begin());
+        } else
+            verdict = trace->verdictAtTimeStep(stepNumber, name, domainName);
         return verdict;
     }
     return {false};
 }
 
 std::shared_ptr<Hydra2Monitor> PredicateMonitor::clone(const std::vector<std::string> &domValNames) {
-    auto tmpCopy{Hydra2Monitor::clone(domValNames)};
-    if (tmpCopy != nullptr)
+    if (auto tmpCopy{Hydra2Monitor::clone(domValNames)}; tmpCopy != nullptr)
         return tmpCopy;
-    auto clonedMonitor{std::make_shared<PredicateMonitor>(*this)};
+    const auto clonedMonitor{std::make_shared<PredicateMonitor>(*this)};
     return resetClonedMonitor(clonedMonitor, domValNames);
 }
 
@@ -46,17 +49,17 @@ void PredicateMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
                 break;
             }
     }
-    assert(orderedValues.size() == (relevantArguments.size()));
+    assert(orderedValues.size() == relevantArguments.size());
     domainName = name.substr(0, name.find('(')) + "(";
     for (const auto &val : orderedValues)
-        domainName += ("'" + val.getUniqueID() + "'" + ", ");
+        domainName += "'" + val.getUniqueID() + "'" + ", ";
     domainName.pop_back();
     domainName.pop_back();
     domainName += ")";
 }
 
-PredicateMonitor::PredicateMonitor(Formula formula, size_t monitorId, bool connectedEval, double evalCost,
-                                   double satisfactionProbability)
+PredicateMonitor::PredicateMonitor(Formula formula, const size_t monitorId, const bool connectedEval,
+                                   const double evalCost, const double satisfactionProbability)
     : Hydra2Monitor(std::move(formula), monitorId, connectedEval, evalCost, satisfactionProbability),
       name(std::dynamic_pointer_cast<Predicate>(this->formula.getExpr())->to_string()),
       relevantArguments(std::dynamic_pointer_cast<Predicate>(this->formula.getExpr())->getParameters()) {}

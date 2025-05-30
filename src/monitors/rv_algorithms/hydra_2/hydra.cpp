@@ -67,7 +67,7 @@ std::string Hydra2::to_string() const {
     return str;
 }
 
-void Hydra2::resetMonitors() {
+void Hydra2::resetMonitors() const {
     for (const auto &mon : monitors)
         mon->reset();
 }
@@ -79,10 +79,9 @@ void Hydra2::setTraceMonitors(const std::shared_ptr<Trace> &tra,
     traceLength = tra->getTrace().size();
 }
 
-void Hydra2::createMonitor(const std::vector<Formula> &formulas, bool connectedEval, bool reordering,
-                           bool shortCircuiting) {
-    HydraCreationVisitor2 hcv{HydraCreationVisitor2(predicateCosts, reordering, shortCircuiting,
-                                                    std::vector<std::shared_ptr<DomainStorage>>(domains))};
+void Hydra2::createMonitor(const std::vector<Formula> &formulas, const bool connectedEval, const bool reordering,
+                           const bool shortCircuiting) {
+    auto hcv{HydraCreationVisitor2(predicateCosts, reordering, shortCircuiting, std::vector(domains))};
     for (const auto &form : formulas) {
         if (form.getId().empty())
             throw std::logic_error("Formula has no valid unique ID.");
@@ -90,7 +89,7 @@ void Hydra2::createMonitor(const std::vector<Formula> &formulas, bool connectedE
         // If we are running in initial_step mode, we do not want to strip any operators,
         // since we evaluate the formula as-is
         if (formulaEvaluationMode != initial_step) {
-            if (auto globally = std::dynamic_pointer_cast<Globally>(formulaCopy.getExpr())) {
+            if (const auto globally = std::dynamic_pointer_cast<Globally>(formulaCopy.getExpr())) {
                 formulaCopy = Formula(globally->getLeft());
             }
         }
@@ -103,8 +102,9 @@ void Hydra2::createMonitor(const std::vector<Formula> &formulas, bool connectedE
     }
 }
 
-Hydra2::Hydra2(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting,
-               FormulaEvaluationMode formulaEvaluationMode, const std::vector<std::shared_ptr<DomainStorage>> &domains,
+Hydra2::Hydra2(const std::vector<Formula> &formulas, const bool connectedEval, const bool reordering,
+               const bool shortCircuiting, const FormulaEvaluationMode formulaEvaluationMode,
+               const std::vector<std::shared_ptr<DomainStorage>> &domains,
                const std::map<std::string, std::array<double, 3>> &predicateCosts)
     : MonitorInterface(formulas, hydra_2_mtl, false, formulaEvaluationMode, domains), predicateCosts(predicateCosts) {
     // Check if formulas are compatible with the monitor
@@ -123,7 +123,7 @@ Hydra2::Hydra2(const std::vector<Formula> &formulas, bool connectedEval, bool re
     createMonitor(formulas, connectedEval, reordering, shortCircuiting);
 }
 
-std::map<std::string, std::array<double, 3>> &Hydra2::getPredicateCost() { return predicateCosts; }
+std::map<std::string, std::array<double, 3>> &Hydra2::getPredicateCost() const { return predicateCosts; }
 
 void Hydra2::evalCompleteTrace(std::map<std::string, std::vector<Verdict>> &result,
                                const std::vector<std::string> &formulaIDs) {
