@@ -270,8 +270,8 @@ evaluation_hydra_python:
   stage: evaluation
   image: python:3.10
   script:
-    - chmod +x /builds/cps/commonroad/rv-monitors/evaluation/exec/gen_fmla
-    - chmod +x /builds/cps/commonroad/rv-monitors/evaluation/exec/gen_log
+    - chmod +x /builds/cps/commonroad/rv-monitors/scripts/exec/gen_fmla
+    - chmod +x /builds/cps/commonroad/rv-monitors/scripts/exec/gen_log
     - pip install pytest psutil matplotlib pyyaml
     - pytest ./tests/test_org_hydra_eval.py
   needs:

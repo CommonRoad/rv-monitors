@@ -1,14 +1,13 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/hydra_monitor.h"
 #include <cassert>
-#include <iostream>
 #include <spdlog/spdlog.h>
 #include <utility>
 
-Hydra2Monitor::Hydra2Monitor(Formula formula, size_t monitorId, bool connectedEval, double evalCost,
-                             double satisfactionProbability)
-    : formula(std::move(formula)), monitorId((monitorId)), connectedEval(connectedEval), evalCost(evalCost),
+Hydra2Monitor::Hydra2Monitor(Formula formula, const size_t monitorId, const bool connectedEval, const double evalCost,
+                             const double satisfactionProbability)
+    : formula(std::move(formula)), monitorId(monitorId), connectedEval(connectedEval), evalCost(evalCost),
       satisfactionProbability(satisfactionProbability) {
-    assert((evalCost >= 0 and evalCost <= 100 and satisfactionProbability >= 0 and satisfactionProbability <= 1) &&
+    assert(evalCost >= 0 and evalCost <= 100 and satisfactionProbability >= 0 and satisfactionProbability <= 1 &&
            "Invalid predicate costs/probabilities Hydra2 Monitor.");
 }
 
@@ -20,24 +19,22 @@ void Hydra2Monitor::reset() {
         id = 0;
 }
 
-void Hydra2Monitor::registerParent(size_t parentId) { traceIdx[parentId] = 0; }
+void Hydra2Monitor::registerParent(const size_t parentId) { traceIdx[parentId] = 0; }
 
 size_t Hydra2Monitor::getMaxTraceIdx() {
     if (traceIdx.empty())
         return 0;
-    else
-        return std::max_element(
-                   traceIdx.begin(), traceIdx.end(),
-                   [](const std::pair<size_t, size_t> &elemA, const std::pair<size_t, size_t> &elemB) -> bool {
-                       return elemA.second < elemB.second;
-                   })
-            ->second;
+    return std::max_element(traceIdx.begin(), traceIdx.end(),
+                            [](const std::pair<size_t, size_t> &elemA, const std::pair<size_t, size_t> &elemB) -> bool {
+                                return elemA.second < elemB.second;
+                            })
+        ->second;
 }
 
-Verdict Hydra2Monitor::step(size_t parentId, size_t stepNumber) {
+Verdict Hydra2Monitor::step(const size_t parentId, size_t stepNumber) {
     spdlog::debug("Hydra2Monitor::step: " + formula.getExpr()->getSymbol() + " - " + std::to_string(monitorId) + " - " +
                   subID + " - " + std::to_string(parentId) + " - " + std::to_string(stepNumber));
-    Verdict verdict{Verdict(false)};
+    auto verdict{Verdict(false)};
     if (traceIdx.size() > 1 and
         verdictHistory.find(stepNumber) != verdictHistory.end()) { // required step was already performed based on other
                                                                    // parent monitor, use already computed verdict
@@ -63,7 +60,7 @@ double Hydra2Monitor::getSatisfactionProbability() const { return satisfactionPr
 
 std::map<size_t, std::vector<std::vector<DomainValue>>> Hydra2Monitor::getViolatingDomainValues() const { return {}; }
 
-void Hydra2Monitor::setStepNumber(size_t stepNumber, size_t parentId) {
+void Hydra2Monitor::setStepNumber(const size_t stepNumber, const size_t parentId) {
     if (stepNumber > traceIdx[parentId])
         traceIdx[parentId] = stepNumber;
 }
@@ -98,11 +95,11 @@ std::shared_ptr<Hydra2Monitor> Hydra2Monitor::resetClonedMonitor(std::shared_ptr
                                                                  const std::vector<std::string> &domValNames) {
     clonedMonitor->allCopies.clear();
     for (const auto &val : domValNames)
-        clonedMonitor->subID += ("_" + val);
+        clonedMonitor->subID += "_" + val;
     allCopies.emplace_back(domValNames, clonedMonitor);
     return clonedMonitor;
 }
-bool Hydra2Monitor::stepNumberValid(size_t stepNumber, size_t parentId) {
+bool Hydra2Monitor::stepNumberValid(const size_t stepNumber, const size_t parentId) {
     if (stepNumber < traceIdx[parentId])
         return false;
     return true;

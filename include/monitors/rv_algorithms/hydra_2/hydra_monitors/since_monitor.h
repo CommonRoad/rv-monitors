@@ -7,7 +7,7 @@
 /**
  * Hydra2 monitor for representing since operator.
  */
-class SinceMonitor : public Hydra2Monitor {
+class SinceMonitor final : public Hydra2Monitor {
   public:
     /**
      *
@@ -18,13 +18,13 @@ class SinceMonitor : public Hydra2Monitor {
      * @param monitorId ID of monitor.
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      */
-    SinceMonitor(const Formula &formula, std::shared_ptr<Hydra2Monitor> subMonitorF,
-                 std::shared_ptr<Hydra2Monitor> subMonitorG, IntervalTemporalOperator interval, size_t monitorId,
-                 bool connectedEval)
-        : Hydra2Monitor(formula, monitorId, connectedEval,
-                        (subMonitorG->getEvalCost() + subMonitorF->getEvalCost()) / 2,
-                        (subMonitorG->getSatisfactionProbability() + subMonitorG->getSatisfactionProbability()) / 2),
-          subMonitorLeft(std::move(subMonitorF)), subMonitorRight(std::move(subMonitorG)), interval(interval) {};
+    SinceMonitor(const Formula &formula, std::shared_ptr<Hydra2Monitor> subMonitorLeft,
+                 std::shared_ptr<Hydra2Monitor> subMonitorRight, const IntervalTemporalOperator &interval,
+                 const size_t monitorId, const bool connectedEval)
+        : Hydra2Monitor(
+              formula, monitorId, connectedEval, (subMonitorRight->getEvalCost() + subMonitorLeft->getEvalCost()) / 2,
+              (subMonitorRight->getSatisfactionProbability() + subMonitorRight->getSatisfactionProbability()) / 2),
+          subMonitorLeft(std::move(subMonitorLeft)), subMonitorRight(std::move(subMonitorRight)), interval(interval) {}
 
     /**
      * Performs concrete step of since-monitor.
@@ -38,7 +38,7 @@ class SinceMonitor : public Hydra2Monitor {
     /**
      * Setter for trace.
      *
-     * @param trace Trace.
+     * @param tra Trace.
      * @param domains List of domains.
      */
     void setTrace(const std::shared_ptr<Trace> &tra,
@@ -99,6 +99,7 @@ class SinceMonitor : public Hydra2Monitor {
     size_t stepNumberRight{0}; // Custom step number for right monitor since left monitor is only called once
     bool endReached{false};    //**< Boolean indicating whether end of trace was reached. */
     std::vector<DomainValue> domainValueArguments; //**< Domain values. */
+    std::vector<size_t> timeStepsTrace;            //**< Time steps of trace. */
 
     /**
      * Propagate trace index and reset variables after short-circuiting or invalid dynamic domain value.
@@ -108,4 +109,12 @@ class SinceMonitor : public Hydra2Monitor {
      * @returs Boolean indicating whether reset was performed.
      */
     bool updateTraceIndex(size_t parentId, size_t stepNumber);
+
+    /**
+     * Checks whether time step is valid.
+     *
+     * @param concreteStep Time step to check.
+     * @return Boolean indicating whether time step is valid.
+     */
+    bool checkTimeStepValidity(size_t concreteStep);
 };

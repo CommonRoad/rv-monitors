@@ -16,10 +16,10 @@ void UntilMonitor::stepLeftRightMonitors() {
     ++stepNumberUntil;
 }
 
-Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
+Verdict UntilMonitor::concreteStep(const size_t parentId, const size_t stepNumber) {
     if (stepNumber > traceIdx[parentId]) {
-        auto subVerdictBaseTimeStepTmp{subMonitorBaseTimeStep->step(monitorId, stepNumber - 1)};
-        if (subVerdictBaseTimeStepTmp.timeStamp)
+        if (const auto subVerdictBaseTimeStepTmp{subMonitorBaseTimeStep->step(monitorId, stepNumber - 1)};
+            subVerdictBaseTimeStepTmp.timeStamp)
             headPositionMonitorBaseTimeStep =
                 HeadPosHydra2(subVerdictBaseTimeStepTmp.timeStamp.value(), static_cast<int>(stepNumber - 1));
     }
@@ -74,9 +74,11 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         if (!subVerdictLeft->value) {
             lastViolation = HeadPosHydra2(headPositionMonitorLeft.timeStep, headPositionMonitorLeft.traceIdx);
         }
-        if (!std::all_of(
-                domainValueArguments.begin(), domainValueArguments.end(),
-                [step = stepNumberUntil](const DomainValue &dv) { return dv.isConst() or dv.checkValidity(step); })) {
+        if (timeStepsTrace.size() <= stepNumberUntil or
+            !std::all_of(domainValueArguments.begin(), domainValueArguments.end(),
+                         [step = timeStepsTrace.at(stepNumberUntil)](const DomainValue &dv) {
+                             return dv.isConst() or dv.checkValidity(step);
+                         })) {
             endReached = true; // just for completeness, could be removed
             break;
         }
@@ -88,8 +90,7 @@ Verdict UntilMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         lastSatisfaction->timeStep - headPositionMonitorBaseTimeStep.timeStep >= interval.getStart() &&
         lastSatisfaction->timeStep >= headPositionMonitorBaseTimeStep.timeStep)
         return {headPositionMonitorBaseTimeStep.timeStep, true};
-    else
-        return {headPositionMonitorBaseTimeStep.timeStep, false};
+    return {headPositionMonitorBaseTimeStep.timeStep, false};
 }
 
 void UntilMonitor::setTrace(const std::shared_ptr<Trace> &tra,
@@ -97,7 +98,11 @@ void UntilMonitor::setTrace(const std::shared_ptr<Trace> &tra,
     subMonitorLeft->setTrace(tra, domains);
     subMonitorRight->setTrace(tra, domains);
     subMonitorBaseTimeStep->setTrace(tra, domains);
+    timeStepsTrace = {};
+    for (const auto &event : tra->getTrace())
+        timeStepsTrace.push_back(event.getTimeStep());
 }
+
 void UntilMonitor::reset() {
     Hydra2Monitor::reset();
     subMonitorRight->reset();
@@ -112,13 +117,13 @@ void UntilMonitor::reset() {
     headPositionMonitorBaseTimeStep.reset();
     stepNumberUntil = 0;
     endReached = false;
+    timeStepsTrace = {};
 }
 
 std::shared_ptr<Hydra2Monitor> UntilMonitor::clone(const std::vector<std::string> &domValNames) {
-    auto tmpCopy{Hydra2Monitor::clone(domValNames)};
-    if (tmpCopy != nullptr)
+    if (auto tmpCopy{Hydra2Monitor::clone(domValNames)}; tmpCopy != nullptr)
         return tmpCopy;
-    auto clonedMonitor = std::make_shared<UntilMonitor>(*this);
+    const auto clonedMonitor = std::make_shared<UntilMonitor>(*this);
     clonedMonitor->subMonitorRight = subMonitorRight->clone(domValNames);
     clonedMonitor->subMonitorLeft = subMonitorLeft->clone(domValNames);
     clonedMonitor->subMonitorBaseTimeStep = subMonitorBaseTimeStep->clone(domValNames);
@@ -145,9 +150,9 @@ void UntilMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
     subMonitorBaseTimeStep->addDomainValues(vals);
 }
 
-void UntilMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
+void UntilMonitor::setStepNumber(const size_t stepNumber, const size_t parentId) {
     Hydra2Monitor::setStepNumber(stepNumber, parentId);
-    if (!Hydra2Monitor::stepNumberValid(stepNumber, parentId))
+    if (!stepNumberValid(stepNumber, parentId))
         return;
     subMonitorRight->setStepNumber(stepNumber, monitorId);
     subMonitorLeft->setStepNumber(stepNumber, monitorId);

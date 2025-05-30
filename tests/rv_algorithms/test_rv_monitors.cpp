@@ -8,7 +8,7 @@ void TestRVMonitors::SetUp() {
     formula->setId("R1");
 }
 
-std::vector<Verdict> TestRVMonitors::executeRVMonitor(AlgorithmType algorithm) {
+std::vector<Verdict> TestRVMonitors::executeRVMonitor(const AlgorithmType algorithm) {
     Formula form{*formula};
     auto monitor{RVMonitor({form, MonitorConfiguration(algorithm, false)})};
     std::cout << algorithm;
@@ -19,13 +19,13 @@ std::vector<Verdict> TestRVMonitors::executeRVMonitor(AlgorithmType algorithm) {
 TEST_F(TestRVMonitors, EventConsumingLTL) {
     testing::internal::CaptureStdout();
     EXPECT_FALSE(executeRVMonitor(AlgorithmType::event_consuming_ltl).at(0).value);
-    auto consoleOutputAlgorithmType{testing::internal::GetCapturedStdout()};
+    const auto consoleOutputAlgorithmType{testing::internal::GetCapturedStdout()};
     EXPECT_EQ(consoleOutputAlgorithmType, "EventConsuming-LTL");
 }
 
 TEST_F(TestRVMonitors, HydraMTL) {
     testing::internal::CaptureStdout();
-    std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, false}};
+    const std::vector<Verdict> expSolution{Verdict{0, true}, Verdict{1, true}, Verdict{2, false}};
     auto solution{executeRVMonitor(AlgorithmType::hydra_2_mtl)};
     for (size_t i{0}; i < expSolution.size(); ++i)
         EXPECT_TRUE(expSolution[i] == solution[i]) << "Mismatch at time step: " << i;
