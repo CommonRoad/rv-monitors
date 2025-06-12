@@ -19,7 +19,7 @@ TEST(TestExistentialMonitor, testExistentialMonitorStandard) {
     auto mon1{std::make_shared<PredicateMonitor>(formulaPredicate, 2, false)};
     mon1->registerParent(1);
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues{{"x", std::make_shared<DomainStorage>(dom)}};
-    auto mon{ExistentialMonitor(formula, mon1, 1, variableValues, false, false)};
+    auto mon{ExistentialMonitor(formula, mon1, 1, variableValues, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.step(0, 0).value, true);
@@ -42,6 +42,6 @@ TEST(TestExistentialMonitor, testExistentialMonitorToString) {
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues{{"x", std::make_shared<DomainStorage>(dom1)},
                                                                          {"y", std::make_shared<DomainStorage>(dom1)},
                                                                          {"z", std::make_shared<DomainStorage>(dom2)}};
-    auto mon{ExistentialMonitor(formula, mon1, 0, variableValues, false, false)};
+    auto mon{ExistentialMonitor(formula, mon1, 0, variableValues, false)};
     EXPECT_EQ(mon.to_string(), "E x in D0, y in D0, z in D1. p('120', '280', x, y, z)");
 }

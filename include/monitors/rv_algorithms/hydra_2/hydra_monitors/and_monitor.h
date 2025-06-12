@@ -4,7 +4,7 @@
 /**
  * Hydra2 monitor representing and-operator.
  */
-class AndMonitor : public Hydra2Monitor {
+class AndMonitor final : public Hydra2Monitor {
   public:
     /**
      * Constructor of and-monitor.
@@ -12,14 +12,13 @@ class AndMonitor : public Hydra2Monitor {
      * @param formula Formula to be monitored.
      * @param subMonitors Child monitors.
      * @param monitorId ID of monitor.
-     * @param connectedEval Boolean indicating whether connected evaluation should be used.
-     * @param shortCircuiting Boolean indicating whether short circuiting should be used.
+     * @param shortCircuiting Boolean indicating whether short-circuiting should be used.
      */
-    AndMonitor(Formula formula, const std::vector<std::shared_ptr<Hydra2Monitor>> &subMonitors, size_t monitorId,
-               bool connectedEval, bool shortCircuiting)
-        : Hydra2Monitor(std::move(formula), monitorId, connectedEval, computeCost(subMonitors),
+    AndMonitor(Formula formula, const std::vector<std::shared_ptr<Hydra2Monitor>> &subMonitors, const size_t monitorId,
+               const bool shortCircuiting)
+        : Hydra2Monitor(std::move(formula), monitorId, computeCost(subMonitors),
                         computeSatisfactionProbability(subMonitors)),
-          subMonitors(subMonitors), shortCircuiting(shortCircuiting) {};
+          subMonitors(subMonitors), shortCircuiting(shortCircuiting) {}
 
     /**
      * Performs concrete step of and-monitor.

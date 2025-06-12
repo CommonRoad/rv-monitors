@@ -7,7 +7,7 @@
 /**
  * Hydra2 monitor representing counting monitor.
  */
-class CountingMonitor : public QuantifierMonitor {
+class CountingMonitor final : public QuantifierMonitor {
   public:
     /**
      * Constructor.
@@ -15,16 +15,14 @@ class CountingMonitor : public QuantifierMonitor {
      * @param formula Formula to be monitored.
      * @param subMonitor Child monitor.
      * @param monitorId ID of monitor.
-     * @param variables Variables used by quantifier.
-     * @param domains Collection of domains.
-     * @param cop Counting operator type.
-     * @param num Number of operator.
-     * @param connectedEval Boolean indicating whether connected evaluation should be used.
-     * @param shortCircuiting Boolean indicating whether short circuiting should be used.
+     * @param variableValues Variables used by quantifier.
+     * @param opr Counting operator type.
+     * @param num Number how many sub-monitors must be true.
+     * @param shortCircuiting Boolean indicating whether short-circuiting should be used.
      */
     CountingMonitor(Formula formula, const std::shared_ptr<Hydra2Monitor> &subMonitor, size_t monitorId,
                     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues,
-                    CountingQuantifier::Operator cop, size_t num, bool connectedEval, bool shortCircuiting);
+                    CountingQuantifier::Operator opr, size_t num, bool shortCircuiting);
 
     /**
      * Performs concrete step of counting monitor.
@@ -54,4 +52,22 @@ class CountingMonitor : public QuantifierMonitor {
   private:
     CountingQuantifier::Operator op; //**< Operator type. */
     size_t num;                      //**< Number of operator. */
+
+    /**
+     * Computes satisfaction probability over provided monitor.
+     *
+     * @param monitor Monitor which should be used for universal satisfaction probability computation.
+     * @param numEval Number of sub-monitors.
+     * @return Satisfaction probability of universal monitor in interval [0, 1].
+     */
+    double computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &monitor, size_t numEval) override;
+
+    /**
+     * Function to compute n choose k (binomial coefficient)
+     *
+     * @param n Number of clauses.
+     * @param k Number of true clauses.
+     * @return Binomial coefficient
+     */
+    static unsigned long long binomialCoefficient(size_t n, size_t k);
 };
