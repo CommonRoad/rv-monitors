@@ -57,10 +57,11 @@ std::string AndMonitor::to_string() {
 }
 
 double AndMonitor::computeCost(const std::vector<std::shared_ptr<Hydra2Monitor>> &monitors) {
-    double cost{monitors.at(0)->getEvalCost()};
-    for (size_t idx{0}; idx < monitors.size(); ++idx)
-        cost += monitors.at(idx)->getEvalCost() * (1 - monitors.at(idx)->getSatisfactionProbability());
-    return cost / static_cast<double>(monitors.size()); // normalize value
+    // accumulate the costs of each monitor in the vector
+    double cost{0.0};
+    for (const auto &mon : monitors)
+        cost += mon->getEvalCost();
+    return cost;
 }
 
 double AndMonitor::computeSatisfactionProbability(const std::vector<std::shared_ptr<Hydra2Monitor>> &monitors) {

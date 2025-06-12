@@ -14,14 +14,14 @@ struct Verdict {
      * @param timeStamp Time stamp of verdict.
      * @param value Boolean value of verdict.
      */
-    Verdict(size_t timeStamp, bool value) : timeStamp(timeStamp), value(value) {}
+    Verdict(size_t timeStamp, const bool value) : timeStamp(timeStamp), value(value) {}
 
     /**
      *  Constructor.
      *
      * @param value Boolean value of verdict.
      */
-    Verdict(bool value) : value(value) {}
+    Verdict(const bool value) : value(value) {}
 
     std::optional<size_t> timeStamp; //**< Time stamp of verdict. */
     bool value;                      //**< Boolean value of verdict. */

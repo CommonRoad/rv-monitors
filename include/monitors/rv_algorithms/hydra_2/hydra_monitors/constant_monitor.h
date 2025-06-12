@@ -2,23 +2,20 @@
 
 #include "hydra_monitor.h"
 #include <memory>
-#include <optional>
 #include <utility>
 
 /**
  * Hydra2 monitor representing Constant (true/false).
  */
-class ConstantMonitor : public Hydra2Monitor {
+class ConstantMonitor final : public Hydra2Monitor {
   public:
     /**
      * Constructor.
      *
      * @param formula Formula to be monitored.
      * @param monitorId ID of monitor.
-     * @param connectedEval Boolean indicating whether connected evaluation should be used.
      */
-    ConstantMonitor(Formula formula, size_t monitorId, bool connectedEval)
-        : Hydra2Monitor(std::move(formula), monitorId, connectedEval) {};
+    ConstantMonitor(Formula formula, const size_t monitorId) : Hydra2Monitor(std::move(formula), monitorId) {}
 
     /**
      * Performs concrete step of constant monitor. It evaluates the trace element of the concrete step. Returns false if
@@ -33,10 +30,10 @@ class ConstantMonitor : public Hydra2Monitor {
     /**
      * Setter for trace.
      *
-     * @param trace Trace.
+     * @param tra Trace.
      * @param domains List of domains.
      */
-    void setTrace(const std::shared_ptr<Trace> &trace,
+    void setTrace(const std::shared_ptr<Trace> &tra,
                   const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 
     /**

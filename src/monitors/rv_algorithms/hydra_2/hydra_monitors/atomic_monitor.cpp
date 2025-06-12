@@ -1,14 +1,14 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/atomic_monitor.h"
 
-Verdict AtomicMonitor::concreteStep(size_t parentId, size_t stepNumber) {
+Verdict AtomicMonitor::concreteStep(size_t parentId, const size_t stepNumber) {
     if (stepNumber < trace->getLength()) {
         if (!domainValue.empty()) {
             trace->updateEvent(stepNumber, domainValue);
             return trace->verdictAtTimeStep(stepNumber, domainValue);
-        } else
-            return trace->verdictAtTimeStep(stepNumber, name);
-    } else
-        return {false};
+        }
+        return trace->verdictAtTimeStep(stepNumber, name);
+    }
+    return {false};
 }
 
 void AtomicMonitor::setTrace(const std::shared_ptr<Trace> &tra,
@@ -25,8 +25,7 @@ void AtomicMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
 }
 
 std::shared_ptr<Hydra2Monitor> AtomicMonitor::clone(const std::vector<std::string> &domValNames) {
-    auto tmpCopy{Hydra2Monitor::clone(domValNames)};
-    if (tmpCopy != nullptr)
+    if (auto tmpCopy{Hydra2Monitor::clone(domValNames)}; tmpCopy != nullptr)
         return tmpCopy;
     auto clonedMonitor{std::make_shared<AtomicMonitor>(*this)};
     allCopies.emplace_back(domValNames, clonedMonitor);

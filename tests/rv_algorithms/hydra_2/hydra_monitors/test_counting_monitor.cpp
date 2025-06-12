@@ -14,12 +14,11 @@ TEST(TestCountingMonitor, testCountingMonitorStandard) {
     formula.setId("R1");
     DomainStorage dom1{"D", {"a", "b", "c"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
 
-    auto mon1{std::make_shared<AtomicMonitor>(formulaAtomic, 2, false)};
+    auto mon1{std::make_shared<AtomicMonitor>(formulaAtomic, 2)};
     mon1->registerParent(1);
     CountingQuantifier *quantifier = dynamic_cast<CountingQuantifier *>(formula.getExpr().get());
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues{{"x", std::make_shared<DomainStorage>(dom1)}};
-    auto mon{CountingMonitor(formula, mon1, 1, variableValues, quantifier->getOperator(), quantifier->getNum(), false,
-                             false)};
+    auto mon{CountingMonitor(formula, mon1, 1, variableValues, quantifier->getOperator(), quantifier->getNum(), false)};
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.step(0, 0).value, true);
@@ -38,7 +37,6 @@ TEST(TestCountingMonitor, testCountingMonitorToString) {
     auto mon1{std::make_shared<PredicateMonitor>(formulaPredicate, 1, false)};
     CountingQuantifier *quantifier = dynamic_cast<CountingQuantifier *>(formula.getExpr().get());
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues;
-    auto mon{CountingMonitor(formula, mon1, 0, variableValues, quantifier->getOperator(), quantifier->getNum(), false,
-                             false)};
+    auto mon{CountingMonitor(formula, mon1, 0, variableValues, quantifier->getOperator(), quantifier->getNum(), false)};
     EXPECT_EQ(mon.to_string(), "C=4 x in D, y in D, z in D. p(x, y, z)");
 }

@@ -1,10 +1,12 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/existential_monitor.h"
 
+#include <cmath>
+
 ExistentialMonitor::ExistentialMonitor(const Formula &formula, const std::shared_ptr<Hydra2Monitor> &subMonitor,
                                        const size_t monitorId,
                                        std::map<std::string, std::shared_ptr<DomainStorage>> variableValues,
-                                       const bool connectedEval, const bool shortCircuiting)
-    : QuantifierMonitor(formula, subMonitor, monitorId, variableValues, connectedEval, shortCircuiting, 0.0, 0.0) {
+                                       const bool shortCircuiting)
+    : QuantifierMonitor(formula, subMonitor, monitorId, variableValues, shortCircuiting, 0.0, 0.0) {
     evalCost = computeCost(subMonitor, numCombinations());
     satisfactionProbability = computeSatisfactionProbability(subMonitor, numCombinations());
 }
@@ -36,3 +38,8 @@ std::shared_ptr<Hydra2Monitor> ExistentialMonitor::clone(const std::vector<std::
 }
 
 std::string ExistentialMonitor::to_string() { return formula.to_string(); }
+
+double ExistentialMonitor::computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &monitor,
+                                                          const size_t numEval) {
+    return 1 - std::pow(1 - monitor->getSatisfactionProbability(), numEval);
+}

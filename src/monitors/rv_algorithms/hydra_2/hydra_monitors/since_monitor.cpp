@@ -1,5 +1,7 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/since_monitor.h"
 
+#include <cmath>
+
 bool SinceMonitor::checkTimeStepValidity(size_t concreteStep) {
     return !std::all_of(
         domainValueArguments.begin(), domainValueArguments.end(),
@@ -66,6 +68,24 @@ Verdict SinceMonitor::concreteStep(const size_t parentId, const size_t stepNumbe
         return {headPositionMonitorLeft.timeStep, true};
     return {headPositionMonitorLeft.timeStep, false};
 }
+
+double SinceMonitor::computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &left,
+                                                    const std::shared_ptr<Hydra2Monitor> &right,
+                                                    const IntervalTemporalOperator &iv) {
+    size_t end{0};
+    if (iv.isFinite() and !iv.isEmpty())
+        end = iv.getEnd();
+    else
+        end = 100; // todo provide value as parameter
+    double probability{0.0};
+    for (size_t i{iv.getStart()}; i <= end; ++i) {
+        probability += right->getSatisfactionProbability() *
+                       std::pow(1 - right->getSatisfactionProbability(), i - iv.getStart()) *
+                       std::pow(left->getSatisfactionProbability(), i);
+    }
+    return probability;
+}
+
 bool SinceMonitor::updateTraceIndex(const size_t parentId, const size_t stepNumber) {
     // reset step number so that interval is covered after short-circuiting
     bool reset{false};

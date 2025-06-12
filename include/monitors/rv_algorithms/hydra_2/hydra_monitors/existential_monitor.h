@@ -1,13 +1,12 @@
 #pragma once
 
-#include "monitors/collections/domain_value.h"
 #include "monitors/utils/utils.h"
 #include "quantifier_monitor.h"
 
 /**
  * Hydra2 monitor representing existential monitor.
  */
-class ExistentialMonitor : public QuantifierMonitor {
+class ExistentialMonitor final : public QuantifierMonitor {
   public:
     /**
      * Constructor.
@@ -15,17 +14,14 @@ class ExistentialMonitor : public QuantifierMonitor {
      * @param formula Formula to be monitored.
      * @param subMonitor Child monitor.
      * @param monitorId ID of monitor.
-     * @param variables Variables used by quantifier.
-     * @param domains Collection of domains.
-     * @param connectedEval Boolean indicating whether connected evaluation should be used.
-     * @param shortCircuiting Boolean indicating whether short circuiting should be used.
+     * @param variableValues Variables used by quantifier.
+     * @param shortCircuiting Boolean indicating whether short-circuiting should be used.
      */
     ExistentialMonitor(const Formula &formula, const std::shared_ptr<Hydra2Monitor> &subMonitor, size_t monitorId,
-                       std::map<std::string, std::shared_ptr<DomainStorage>> variableValues, bool connectedEval,
-                       bool shortCircuiting);
+                       std::map<std::string, std::shared_ptr<DomainStorage>> variableValues, bool shortCircuiting);
 
     /**
-     * Performs concrete step of existential monitor. One of the subverdicts has to be true
+     * Performs concrete step of existential monitor. One of the sub-verdicts has to be true
      * so that the existential monitor returns also a true verdict for the current step number.
      *
      * @param parentId ID of parent monitor.
@@ -49,4 +45,14 @@ class ExistentialMonitor : public QuantifierMonitor {
      * @return String representing monitor.
      */
     std::string to_string() override;
+
+  private:
+    /**
+     * Computes satisfaction probability over provided monitor.
+     *
+     * @param monitor Monitor which should be used for universal satisfaction probability computation.
+     * @param numEval Number of sub-monitors.
+     * @return Satisfaction probability of universal monitor in interval [0, 1].
+     */
+    double computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &monitor, size_t numEval) override;
 };

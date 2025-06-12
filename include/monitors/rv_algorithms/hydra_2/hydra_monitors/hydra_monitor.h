@@ -1,5 +1,4 @@
 #pragma once
-#include "deque"
 #include "monitors/collections/domain_value.h"
 #include "monitors/utils/utils.h"
 
@@ -75,12 +74,10 @@ class Hydra2Monitor {
      *
      * @param formula Formula to monitor.
      * @param monitorId ID of monitor.
-     * @param connectedEval Boolean whether connected evaluation should be performed.
      * @param evalCost Evaluation cost assigned to monitor.
      * @param satisfactionProbability Satisfaction probability of monitor.
      */
-    Hydra2Monitor(Formula formula, size_t monitorId, bool connectedEval = true, double evalCost = 0,
-                  double satisfactionProbability = 1.0);
+    Hydra2Monitor(Formula formula, size_t monitorId, double evalCost = 0, double satisfactionProbability = 1.0);
 
     /**
      * General step function of hydra monitor.
@@ -217,9 +214,8 @@ class Hydra2Monitor {
     std::string subID;                        //**< Sub ID considering domain values */
     std::map<size_t, Verdict> verdictHistory; //**< History of verdicts belonging to monitor */
     std::map<size_t, size_t> traceIdx;        //**< Index of current trace element (even) */
-    bool connectedEval;                  //**< Boolean indicating whether connected evaluation should be performed */
-    double evalCost{0.0};                //**< Evaluation cost of monitor */
-    double satisfactionProbability{1.0}; //**< Satisfaction probability of monitor */
+    double evalCost{0.0};                     //**< Evaluation cost of monitor */
+    double satisfactionProbability{1.0};      //**< Satisfaction probability of monitor */
     std::vector<std::tuple<std::vector<std::string>, std::shared_ptr<Hydra2Monitor>>>
         allCopies; /** List of created copies/clones of monitor. */
 };

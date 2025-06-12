@@ -15,14 +15,13 @@ class QuantifierMonitor : public Hydra2Monitor {
      * @param subMonitor Child monitor.
      * @param monitorId ID of monitor.
      * @param variableValues Mapping of name of quantified variables to domains.
-     * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @param shortCircuiting Boolean indicating whether short-circuiting should be used.
      * @param cost Evaluation cost assigned to monitor.
      * @param satisfactionProbability Satisfaction probability of monitor.
      */
     QuantifierMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
-                      std::map<std::string, std::shared_ptr<DomainStorage>> &variableValues, bool connectedEval,
-                      bool shortCircuiting, double cost, double satisfactionProbability);
+                      std::map<std::string, std::shared_ptr<DomainStorage>> &variableValues, bool shortCircuiting,
+                      double cost, double satisfactionProbability);
 
     /**
      * Performs concrete step of quantifier monitor. If the current step is not covered by the trace or
@@ -128,23 +127,6 @@ class QuantifierMonitor : public Hydra2Monitor {
     void reset() override;
 
     /**
-     * Computes normalized cost over provided monitor.
-     *
-     * @param monitor Monitor which should be used for universal evaluation cost computation.
-     * @param numEval Number of evaluations.
-     * @return Normalized evaluation cost of universal monitor in interval [0, 100].
-     */
-    static double computeCost(const std::shared_ptr<Hydra2Monitor> &monitor, size_t numEval);
-
-    /**
-     * Computes satisfaction probability over provided monitor.
-     *
-     * @param monitor Monitor which should be used for universal satisfaction probability computation.
-     * @return Satisfaction probability of universal monitor in interval [0, 1].
-     */
-    static double computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &monitor, size_t numEval);
-
-    /**
      * Function to extract combination of violating domain values.
      *
      * @return Map containing violating domain values per rule and time step.
@@ -156,7 +138,7 @@ class QuantifierMonitor : public Hydra2Monitor {
      *
      * @return String representing unique ID.
      */
-    std::string getUniqueID();
+    [[nodiscard]] std::string getUniqueID() const;
 
     /**
      * Sets step number of monitor and sub-monitors.
@@ -184,4 +166,22 @@ class QuantifierMonitor : public Hydra2Monitor {
     std::vector<DomainValue> domainValues;              //**< Domain values. */
     std::map<size_t, std::vector<std::vector<DomainValue>>> violations; //**< Violating domain values per time step. */
     std::vector<DomainValue> currentDomainValues;                       //**< Currently evaluated domain values. */
+
+    /**
+     * Computes normalized cost over provided monitor.
+     *
+     * @param monitor Monitor which should be used for universal evaluation cost computation.
+     * @param numEval Number of evaluations.
+     * @return Normalized evaluation cost of universal monitor in interval [0, 100].
+     */
+    static double computeCost(const std::shared_ptr<Hydra2Monitor> &monitor, size_t numEval);
+
+    /**
+     * Computes satisfaction probability over provided monitor.
+     *
+     * @param monitor Monitor which should be used for universal satisfaction probability computation.
+     * @param numEval Number of sub-monitors.
+     * @return Satisfaction probability of universal monitor in interval [0, 1].
+     */
+    virtual double computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &monitor, size_t numEval) = 0;
 };

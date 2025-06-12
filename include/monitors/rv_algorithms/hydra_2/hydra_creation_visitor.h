@@ -100,7 +100,7 @@ class HydraCreationVisitor2 {
      * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @return Created monitor.
      */
-    std::shared_ptr<Hydra2Monitor> createMonitor(Formula &formula, size_t parentId, bool connectedEval);
+    std::shared_ptr<Hydra2Monitor> createMonitor(const Formula &formula, size_t parentId, bool connectedEval);
 
     /**
      * Visitor for creating Hydra2 Atomic Monitor.
@@ -266,7 +266,7 @@ class HydraCreationVisitor2 {
      * @param increasing Boolean indicating whether predicates should be ordered in increasing or decreasing order based
      * on cost value (and-> increasing, or->decreasing).
      */
-    void reorder(std::vector<std::shared_ptr<Hydra2Monitor>> &monitors, bool increasing);
+    void reorder(std::vector<std::shared_ptr<Hydra2Monitor>> &monitors, bool increasing) const;
 
     /**
      * Finds domain for variables.

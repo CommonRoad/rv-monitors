@@ -5,7 +5,7 @@
 /**
  * Monitor representing negation Hydra2 operator.
  */
-class NegationMonitor : public Hydra2Monitor {
+class NegationMonitor final : public Hydra2Monitor {
   public:
     /**
      * Constructor
@@ -13,12 +13,11 @@ class NegationMonitor : public Hydra2Monitor {
      * @param formula Formula to be monitored.
      * @param subMonitor Child monitor.
      * @param monitorId ID of monitor.
-     * @param connectedEval Boolean indicating whether connected evaluation should be used.
      */
-    NegationMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId, bool connectedEval)
-        : Hydra2Monitor(std::move(formula), monitorId, connectedEval, subMonitor->getEvalCost(),
+    NegationMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, const size_t monitorId)
+        : Hydra2Monitor(std::move(formula), monitorId, subMonitor->getEvalCost(),
                         1 - subMonitor->getSatisfactionProbability()),
-          subMonitor(std::move(subMonitor)) {};
+          subMonitor(std::move(subMonitor)) {}
 
     /**
      * Performs concrete step of negation operator monitor.
@@ -32,10 +31,10 @@ class NegationMonitor : public Hydra2Monitor {
     /**
      * Setter for trace.
      *
-     * @param trace Trace.
+     * @param tra Trace.
      * @param domains List of domains.
      */
-    void setTrace(const std::shared_ptr<Trace> &trace,
+    void setTrace(const std::shared_ptr<Trace> &tra,
                   const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 
     /**

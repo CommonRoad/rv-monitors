@@ -5,19 +5,17 @@
 /**
  * Hydra2 monitor representing predicate.
  */
-class PredicateMonitor : public Hydra2Monitor {
+class PredicateMonitor final : public Hydra2Monitor {
   public:
     /**
      * Constructor.
      *
      * @param formula Formula to be monitored.
      * @param monitorId ID of monitor.
-     * @param connectedEval Boolean indicating whether connected evaluation should be used.
      * @param evalCost Evaluation cost assigned to monitor.
      * @param satisfactionProbability Satisfaction probability of monitor.
      */
-    PredicateMonitor(Formula formula, size_t monitorId, bool connectedEval, double evalCost = 0.0,
-                     double satisfactionProbability = 1.0);
+    PredicateMonitor(Formula formula, size_t monitorId, double evalCost = 0.0, double satisfactionProbability = 1.0);
 
     /**
      * Performs concrete step of predicate monitor. It evaluates the trace element of the concrete step. Returns false
