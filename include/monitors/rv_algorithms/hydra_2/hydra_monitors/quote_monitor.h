@@ -6,7 +6,7 @@
 /**
  * Hydra2 monitor representing quote monitor.
  */
-class QuoteMonitor : public QuantifierMonitor {
+class QuoteMonitor final : public QuantifierMonitor {
   public:
     /**
      * Constructor.
@@ -14,16 +14,14 @@ class QuoteMonitor : public QuantifierMonitor {
      * @param formula Formula to be monitored.
      * @param subMonitor Child monitor.
      * @param monitorId ID of monitor.
-     * @param variables Variables used by quantifier.
-     * @param domains Collection of domains.
+     * @param variableValues
      * @param minQuote Minimum quote.
      * @param maxQuote Maximum quote.
-     * @param connectedEval Boolean indicating whether connected evaluation should be used.
-     * @param shortCircuiting Boolean indicating whether short circuiting should be used.
+     * @param shortCircuiting Boolean indicating whether short-circuiting should be used.
      */
     QuoteMonitor(Formula formula, const std::shared_ptr<Hydra2Monitor> &subMonitor, size_t monitorId,
                  std::map<std::string, std::shared_ptr<DomainStorage>> variableValues, float minQuote, float maxQuote,
-                 bool connectedEval, bool shortCircuiting);
+                 bool shortCircuiting);
 
     /**
      * Computes the ratio of true subverdicts and number of combinations.
@@ -31,7 +29,7 @@ class QuoteMonitor : public QuantifierMonitor {
      * @param trueVerdicts Number of true subverdict
      * @return Ratio.
      */
-    float computeRatio(size_t trueVerdicts);
+    [[nodiscard]] float computeRatio(size_t trueVerdicts) const;
 
     /**
      * Performs concrete step of quote monitor. The ratio of true subverdicts and number of combinations
@@ -54,7 +52,7 @@ class QuoteMonitor : public QuantifierMonitor {
 
     /**
      * Creates string representation of monitor.
-     *
+
      * @return String representation monitor.
      */
     std::string to_string() override;
@@ -62,4 +60,22 @@ class QuoteMonitor : public QuantifierMonitor {
   private:
     float minQuote; //**< Minimum quote. */
     float maxQuote; //**< Maximum quote. */
+
+    /**
+     * Computes satisfaction probability over provided monitor.
+     *
+     * @param monitor Monitor which should be used for universal satisfaction probability computation.
+     * @param numEval Number of sub-monitors.
+     * @return Satisfaction probability of universal monitor in interval [0, 1].
+     */
+    double computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &monitor, size_t numEval) override;
+
+    /**
+     * Function to compute n choose k (binomial coefficient)
+     *
+     * @param n Number of clauses.
+     * @param k Number of true clauses.
+     * @return Binomial coefficient.
+     */
+    static unsigned long long binomialCoefficient(size_t n, size_t k);
 };

@@ -63,7 +63,7 @@ TEST(TestUniversalMonitor, testUniversalMonitorStandard) {
     mon1->registerParent(1);
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues{{"x", std::make_shared<DomainStorage>(dom1)},
                                                                          {"y", std::make_shared<DomainStorage>(dom2)}};
-    auto mon{UniversalMonitor(formula, mon1, 1, variableValues, false, false)};
+    auto mon{UniversalMonitor(formula, mon1, 1, variableValues, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.step(0, 0).value, true);
@@ -116,7 +116,7 @@ TEST(TestUniversalMonitor, testUniversalMonitorStandardDynamicDomain) {
     mon1->registerParent(1);
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues{{"x", std::make_shared<DomainStorage>(dom1)},
                                                                          {"y", std::make_shared<DomainStorage>(dom2)}};
-    auto mon{UniversalMonitor(formula, mon1, 1, variableValues, false, false)};
+    auto mon{UniversalMonitor(formula, mon1, 1, variableValues, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.step(0, 0).value, true);
@@ -143,9 +143,9 @@ TEST(TestUniversalMonitor, testUniversalMonitorVariableScope) {
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues1{{"x", std::make_shared<DomainStorage>(dom1)}};
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues2{{"x", std::make_shared<DomainStorage>(dom2)}};
 
-    auto mon1{std::make_shared<UniversalMonitor>(formulaUniversal, mon2, 2, variableValues1, false, false)};
+    auto mon1{std::make_shared<UniversalMonitor>(formulaUniversal, mon2, 2, variableValues1, false)};
     mon1->registerParent(1);
-    auto mon{UniversalMonitor(formula, mon1, 1, variableValues2, false, false)};
+    auto mon{UniversalMonitor(formula, mon1, 1, variableValues2, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.step(0, 0).value, true);
@@ -175,9 +175,9 @@ TEST(TestUniversalMonitor, testUniversalMonitorDynamicDomainWithArgumentsTrue) {
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues1{{"x", std::make_shared<DomainStorage>(dom1)}};
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues2{{"y", std::make_shared<DomainStorage>(dom2)}};
 
-    auto mon1{std::make_shared<UniversalMonitor>(formulaUniversal, mon2, 2, variableValues2, false, false)};
+    auto mon1{std::make_shared<UniversalMonitor>(formulaUniversal, mon2, 2, variableValues2, false)};
     mon1->registerParent(1);
-    auto mon{UniversalMonitor(formula, mon1, 1, variableValues1, false, false)};
+    auto mon{UniversalMonitor(formula, mon1, 1, variableValues1, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
     mon.addDomainValues({}); // triggers adding of domain values, e.g., to predicates
@@ -208,9 +208,9 @@ TEST(TestUniversalMonitor, testUniversalMonitorDynamicDomainWithArgumentsFalse) 
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues1{{"x", std::make_shared<DomainStorage>(dom1)}};
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues2{{"y", std::make_shared<DomainStorage>(dom2)}};
 
-    auto mon1{std::make_shared<UniversalMonitor>(formulaUniversal, mon2, 2, variableValues2, false, false)};
+    auto mon1{std::make_shared<UniversalMonitor>(formulaUniversal, mon2, 2, variableValues2, false)};
     mon1->registerParent(1);
-    auto mon{UniversalMonitor(formula, mon1, 1, variableValues1, false, false)};
+    auto mon{UniversalMonitor(formula, mon1, 1, variableValues1, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
     mon.addDomainValues({}); // triggers adding of domain values, e.g., to predicates
@@ -240,9 +240,9 @@ TEST(TestUniversalMonitor, testUniversalMonitorVariableScopeDynamicDomain) {
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues1{{"x", std::make_shared<DomainStorage>(dom1)}};
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues2{{"x", std::make_shared<DomainStorage>(dom2)}};
 
-    auto mon1{std::make_shared<UniversalMonitor>(formulaUniversal, mon2, 2, variableValues1, false, false)};
+    auto mon1{std::make_shared<UniversalMonitor>(formulaUniversal, mon2, 2, variableValues1, false)};
     mon1->registerParent(1);
-    auto mon{UniversalMonitor(formula, mon1, 1, variableValues2, false, false)};
+    auto mon{UniversalMonitor(formula, mon1, 1, variableValues2, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.step(0, 0).value, true);
@@ -266,7 +266,7 @@ TEST(TestUniversalMonitor, testUniversalMonitorVariableAndConstValues) {
     auto mon1{std::make_shared<PredicateMonitor>(formulaPredicate, 2, false)};
     mon1->registerParent(1);
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues{{"x", std::make_shared<DomainStorage>(dom1)}};
-    auto mon{UniversalMonitor(formula, mon1, 1, variableValues, false, true)};
+    auto mon{UniversalMonitor(formula, mon1, 1, variableValues, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.step(0, 0).value, true);
@@ -284,10 +284,10 @@ TEST(TestUniversalMonitor, testUniversalMonitorAtomic) {
     formula.setId("R1");
     DomainStorage dom1{"D", {"a", "b", "c"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
 
-    auto mon1{std::make_shared<AtomicMonitor>(formulaAtomic, 2, false)};
+    auto mon1{std::make_shared<AtomicMonitor>(formulaAtomic, 2)};
     mon1->registerParent(1);
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues{{"x", std::make_shared<DomainStorage>(dom1)}};
-    auto mon{UniversalMonitor(formula, mon1, 1, variableValues, false, true)};
+    auto mon{UniversalMonitor(formula, mon1, 1, variableValues, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.step(0, 0).value, true);
@@ -307,6 +307,6 @@ TEST(TestUniversalMonitor, testUniversalMonitorToString) {
     auto mon1{std::make_shared<PredicateMonitor>(formulaPredicate, 1, false)};
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues{{"x", std::make_shared<DomainStorage>(dom1)},
                                                                          {"y", std::make_shared<DomainStorage>(dom1)}};
-    auto mon{UniversalMonitor(formula, mon1, 0, variableValues, false, false)};
+    auto mon{UniversalMonitor(formula, mon1, 0, variableValues, false)};
     EXPECT_EQ(mon.to_string(), "A x in D, y in D. p(x, y, '100')");
 }

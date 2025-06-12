@@ -10,7 +10,7 @@
 /**
  * Hydra2 monitor for representing until operator.
  */
-class UntilMonitor : public Hydra2Monitor {
+class UntilMonitor final : public Hydra2Monitor {
   public:
     /**
      *
@@ -19,18 +19,16 @@ class UntilMonitor : public Hydra2Monitor {
      * @param subMonitorRight Monitor from right side of until operator.
      * @param interval  Interval of operator.
      * @param monitorId ID of monitor.
-     * @param connectedEval Boolean indicating whether connected evaluation should be used.
      */
     UntilMonitor(const Formula &formula, std::shared_ptr<Hydra2Monitor> subMonitorLeft,
-                 std::shared_ptr<Hydra2Monitor> subMonitorRight, IntervalTemporalOperator interval, size_t monitorId,
-                 bool connectedEval)
-        : Hydra2Monitor(
-              formula, monitorId, connectedEval, (subMonitorRight->getEvalCost() + subMonitorLeft->getEvalCost()) / 2,
-              (subMonitorRight->getSatisfactionProbability() + subMonitorRight->getSatisfactionProbability()) / 2),
+                 std::shared_ptr<Hydra2Monitor> subMonitorRight, const IntervalTemporalOperator &interval,
+                 const size_t monitorId)
+        : Hydra2Monitor(formula, monitorId, subMonitorRight->getEvalCost() + subMonitorLeft->getEvalCost(),
+                        computeSatisfactionProbability(subMonitorLeft, subMonitorRight, interval)),
           subMonitorLeft(std::move(subMonitorLeft)), subMonitorRight(std::move(subMonitorRight)),
-          subMonitorBaseTimeStep(
-              std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(true)), 0, connectedEval)),
-          interval(interval) {};
+          subMonitorBaseTimeStep(std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(true)), 0)),
+          interval(interval), headPositionMonitorLeft(), headPositionMonitorRight(), headPositionMonitorBaseTimeStep() {
+    }
 
     /**
      * Performs concrete step of until-monitor.
@@ -117,4 +115,16 @@ class UntilMonitor : public Hydra2Monitor {
      * Executes left and right monitors of until.
      */
     void stepLeftRightMonitors();
+
+    /**
+     * Computes satisfaction probability of until monitor based on left and right monitors.
+     *
+     * @param left Left monitor of until operator.
+     * @param right Right monitor of until operator.
+     * @param iv Interval of operator.
+     * @return Satisfaction probability of until operator.
+     */
+    [[nodiscard]] static double computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &left,
+                                                               const std::shared_ptr<Hydra2Monitor> &right,
+                                                               const IntervalTemporalOperator &iv);
 };

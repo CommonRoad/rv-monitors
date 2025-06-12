@@ -5,7 +5,7 @@
 /**
  * Hydra2 monitor representing or-operator.
  */
-class OrMonitor : public Hydra2Monitor {
+class OrMonitor final : public Hydra2Monitor {
   public:
     /**
      * Constructor of or-monitor.
@@ -13,14 +13,13 @@ class OrMonitor : public Hydra2Monitor {
      * @param formula Formula to be monitored.
      * @param subMonitors Child monitors.
      * @param monitorId ID of monitor.
-     * @param connectedEval Boolean indicating whether connected evaluation should be used.
-     * @param shortCircuiting Boolean indicating whether short circuiting should be used.
+     * @param shortCircuiting Boolean indicating whether short-circuiting should be used.
      */
-    OrMonitor(Formula formula, const std::vector<std::shared_ptr<Hydra2Monitor>> &subMonitors, size_t monitorId,
-              bool connectedEval, bool shortCircuiting)
-        : Hydra2Monitor(std::move(formula), monitorId, connectedEval, computeEvaluationCost(subMonitors),
+    OrMonitor(Formula formula, const std::vector<std::shared_ptr<Hydra2Monitor>> &subMonitors, const size_t monitorId,
+              const bool shortCircuiting)
+        : Hydra2Monitor(std::move(formula), monitorId, computeEvaluationCost(subMonitors),
                         computeSatisfactionProbability(subMonitors)),
-          subMonitors(subMonitors), shortCircuiting(shortCircuiting) {};
+          subMonitors(subMonitors), shortCircuiting(shortCircuiting) {}
 
     /**
      * Performs concrete step of or-monitor.
@@ -34,10 +33,10 @@ class OrMonitor : public Hydra2Monitor {
     /**
      * Setter for trace.
      *
-     * @param trace Trace.
+     * @param tra Trace.
      * @param domains List of domains.
      */
-    void setTrace(const std::shared_ptr<Trace> &trace,
+    void setTrace(const std::shared_ptr<Trace> &tra,
                   const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 
     /**

@@ -7,7 +7,7 @@
 /**
  * Hydra2 monitor representing (strong) previous operator.
  */
-class PreviousMonitor : public Hydra2Monitor {
+class PreviousMonitor final : public Hydra2Monitor {
   public:
     /**
      * Constructor.
@@ -16,13 +16,11 @@ class PreviousMonitor : public Hydra2Monitor {
      * @param subMonitor Child monitor.
      * @param interval  Interval of operator.
      * @param monitorId ID of monitor.
-     * @param connectedEval Boolean indicating whether connected evaluation should be used.
      */
     PreviousMonitor(const Formula &formula, std::shared_ptr<Hydra2Monitor> subMonitor,
-                    IntervalTemporalOperator interval, size_t monitorId, bool connectedEval)
-        : Hydra2Monitor(formula, monitorId, connectedEval, subMonitor->getEvalCost(),
-                        subMonitor->getSatisfactionProbability()),
-          subMonitor(std::move(subMonitor)), interval(interval) {};
+                    const IntervalTemporalOperator &interval, const size_t monitorId)
+        : Hydra2Monitor(formula, monitorId, subMonitor->getEvalCost(), subMonitor->getSatisfactionProbability()),
+          subMonitor(std::move(subMonitor)), interval(interval) {}
 
     /**
      * Performs concrete step of previous operator monitor.
@@ -36,7 +34,7 @@ class PreviousMonitor : public Hydra2Monitor {
     /**
      * Setter for trace.
      *
-     * @param trace Trace.
+     * @param tra Trace.
      * @param domains List of domains.
      */
     void setTrace(const std::shared_ptr<Trace> &tra,

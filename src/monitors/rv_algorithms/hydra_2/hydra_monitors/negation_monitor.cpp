@@ -1,6 +1,6 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/negation_monitor.h"
 
-Verdict NegationMonitor::concreteStep(size_t parentId, size_t stepNumber) {
+Verdict NegationMonitor::concreteStep(size_t parentId, const size_t stepNumber) {
     return !subMonitor->step(monitorId, stepNumber);
 }
 
@@ -15,10 +15,9 @@ void NegationMonitor::reset() {
 }
 
 std::shared_ptr<Hydra2Monitor> NegationMonitor::clone(const std::vector<std::string> &domValNames) {
-    auto tmpCopy{Hydra2Monitor::clone(domValNames)};
-    if (tmpCopy != nullptr)
+    if (auto tmpCopy{Hydra2Monitor::clone(domValNames)}; tmpCopy != nullptr)
         return tmpCopy;
-    auto clonedMonitor = std::make_shared<NegationMonitor>(*this);
+    const auto clonedMonitor = std::make_shared<NegationMonitor>(*this);
     clonedMonitor->subMonitor = subMonitor->clone(domValNames);
     return resetClonedMonitor(clonedMonitor, domValNames);
 }
@@ -27,9 +26,9 @@ std::string NegationMonitor::to_string() { return "!(" + subMonitor->to_string()
 
 void NegationMonitor::addDomainValues(const std::vector<DomainValue> &vals) { subMonitor->addDomainValues(vals); }
 
-void NegationMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
+void NegationMonitor::setStepNumber(const size_t stepNumber, const size_t parentId) {
     Hydra2Monitor::setStepNumber(stepNumber, parentId);
-    if (!Hydra2Monitor::stepNumberValid(stepNumber, parentId))
+    if (!stepNumberValid(stepNumber, parentId))
         return;
     subMonitor->setStepNumber(stepNumber, monitorId);
 }

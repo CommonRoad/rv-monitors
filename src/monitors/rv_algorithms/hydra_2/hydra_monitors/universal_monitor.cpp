@@ -1,13 +1,13 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/universal_monitor.h"
 
+#include <cmath>
 #include <utility>
 
 UniversalMonitor::UniversalMonitor(Formula formula, const std::shared_ptr<Hydra2Monitor> &subMonitor,
                                    const size_t monitorId,
                                    std::map<std::string, std::shared_ptr<DomainStorage>> variableValues,
-                                   const bool connectedEval, const bool shortCircuiting)
-    : QuantifierMonitor(std::move(formula), subMonitor, monitorId, variableValues, connectedEval, shortCircuiting, 0.0,
-                        0.0) {
+                                   const bool shortCircuiting)
+    : QuantifierMonitor(std::move(formula), subMonitor, monitorId, variableValues, shortCircuiting, 0.0, 0.0) {
     const auto numberCombinations{numCombinations()};
     evalCost = computeCost(subMonitor, numberCombinations);
     satisfactionProbability = computeSatisfactionProbability(subMonitor, numberCombinations);
@@ -52,3 +52,8 @@ std::shared_ptr<Hydra2Monitor> UniversalMonitor::clone(const std::vector<std::st
 }
 
 std::string UniversalMonitor::to_string() { return formula.to_string(); }
+
+double UniversalMonitor::computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &monitor,
+                                                        const size_t numEval) {
+    return std::pow(monitor->getSatisfactionProbability(), numEval);
+}

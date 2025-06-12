@@ -5,18 +5,17 @@
 /**
  * Hydra2 monitor representing atomic proposition.
  */
-class AtomicMonitor : public Hydra2Monitor {
+class AtomicMonitor final : public Hydra2Monitor {
   public:
     /**
      * Constructor.
      *
      * @param formula Formula to be monitored.
      * @param monitorId ID of monitor.
-     * @param connectedEval Boolean indicating whether connected evaluation should be used.
      */
-    AtomicMonitor(const Formula &formula, size_t monitorId, bool connectedEval)
-        : Hydra2Monitor(formula, monitorId, connectedEval),
-          name(std::dynamic_pointer_cast<Atomic>(this->formula.getExpr())->to_string()) {};
+    AtomicMonitor(const Formula &formula, const size_t monitorId)
+        : Hydra2Monitor(formula, monitorId),
+          name(std::dynamic_pointer_cast<Atomic>(this->formula.getExpr())->to_string()) {}
 
     /**
      * Performs concrete step of atomic monitor. It evaluates the trace element of the concrete step. Returns false if
@@ -31,10 +30,10 @@ class AtomicMonitor : public Hydra2Monitor {
     /**
      * Setter for trace.
      *
-     * @param trace Trace.
+     * @param tra Trace.
      * @param domains List of domains.
      */
-    void setTrace(const std::shared_ptr<Trace> &trace,
+    void setTrace(const std::shared_ptr<Trace> &tra,
                   const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 
     /**
