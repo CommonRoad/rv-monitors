@@ -9,9 +9,9 @@ TEST(TestNegationMonitor, testNegationMonitorFalseEvaluation) {
     Formula formula = Parser::parse("!(true)");
     Formula formulaTrue = Parser::parse("true");
     formula.setId("R1");
-    auto mon1{std::make_shared<ConstantMonitor>(formulaTrue, 2, false)};
+    auto mon1{std::make_shared<ConstantMonitor>(formulaTrue, 2)};
     mon1->registerParent(1);
-    auto mon{NegationMonitor(formula, mon1, 1, false)};
+    auto mon{NegationMonitor(formula, mon1, 1)};
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, false);
@@ -26,9 +26,9 @@ TEST(TestNegationMonitor, testNegationMonitorTrueEvaluation) {
     Formula formula = Parser::parse("!(false)");
     Formula formulaFalse = Parser::parse("false");
     formula.setId("R1");
-    auto mon1{std::make_shared<ConstantMonitor>(formulaFalse, 2, false)};
+    auto mon1{std::make_shared<ConstantMonitor>(formulaFalse, 2)};
     mon1->registerParent(1);
-    auto mon{NegationMonitor(formula, mon1, 1, false)};
+    auto mon{NegationMonitor(formula, mon1, 1)};
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, true);
@@ -43,9 +43,9 @@ TEST(TestNegationMonitor, testToString) {
     Formula formula = Parser::parse("!(false)");
     Formula formulaFalse = Parser::parse("false");
     formula.setId("R1");
-    auto mon1{std::make_shared<ConstantMonitor>(formulaFalse, 2, false)};
+    auto mon1{std::make_shared<ConstantMonitor>(formulaFalse, 2)};
     mon1->registerParent(1);
-    auto mon{NegationMonitor(formula, mon1, 1, false)};
+    auto mon{NegationMonitor(formula, mon1, 1)};
     EXPECT_EQ(mon.to_string(), "!(false)");
 }
 
@@ -54,8 +54,8 @@ TEST(TestNegationMonitor, testReset) {
     Formula formula = Parser::parse("!(false)");
     Formula formulaFalse = Parser::parse("false");
     formula.setId("R1");
-    auto mon1{std::make_shared<ConstantMonitor>(formulaFalse, 2, false)};
+    auto mon1{std::make_shared<ConstantMonitor>(formulaFalse, 2)};
     mon1->registerParent(1);
-    auto mon{NegationMonitor(formula, mon1, 1, false)};
+    auto mon{NegationMonitor(formula, mon1, 1)};
     EXPECT_NO_THROW(mon.reset());
 }

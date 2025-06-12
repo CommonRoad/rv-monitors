@@ -11,9 +11,9 @@ TEST(TestNextMonitor, testNextMonitorEvaluationStandard) {
     Formula formulaA = Parser::parse("a");
     formula.setId("R1");
     auto operatorInterval{IntervalTemporalOperator(0, 4)};
-    auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2, true)};
+    auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2)};
     mon1->registerParent(1);
-    auto mon{NextMonitor(formula, mon1, operatorInterval, 1, true)};
+    auto mon{NextMonitor(formula, mon1, operatorInterval, 1)};
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, false);
@@ -30,9 +30,9 @@ TEST(TestNextMonitor, testNextMonitorEvaluationInterval) {
     Formula formulaA = Parser::parse("a");
     formula.setId("R1");
     auto operatorInterval{IntervalTemporalOperator(0, 4)};
-    auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2, false)};
+    auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2)};
     mon1->registerParent(1);
-    auto mon{NextMonitor(formula, mon1, operatorInterval, 1, false)};
+    auto mon{NextMonitor(formula, mon1, operatorInterval, 1)};
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, false);
@@ -47,27 +47,27 @@ TEST(TestNextMonitor, testToString) {
     Formula formulaA = Parser::parse("a");
     formula.setId("R1");
     auto operatorInterval{IntervalTemporalOperator(0, 4)};
-    auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2, false)};
+    auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2)};
     mon1->registerParent(1);
-    auto mon{NextMonitor(formula, mon1, operatorInterval, 1, false)};
+    auto mon{NextMonitor(formula, mon1, operatorInterval, 1)};
     EXPECT_EQ(mon.to_string(), "X[0, 4](a)");
 
     formula = Parser::parse("X[0, inf](a)");
     formulaA = Parser::parse("a");
     formula.setId("R1");
     operatorInterval = IntervalTemporalOperator(0);
-    mon1 = std::make_shared<AtomicMonitor>(formulaA, 2, false);
+    mon1 = std::make_shared<AtomicMonitor>(formulaA, 2);
     mon1->registerParent(1);
-    mon = NextMonitor(formula, mon1, operatorInterval, 1, false);
+    mon = NextMonitor(formula, mon1, operatorInterval, 1);
     EXPECT_EQ(mon.to_string(), "X[0, inf](a)");
 
     formula = Parser::parse("X(a)");
     formulaA = Parser::parse("a");
     formula.setId("R1");
     operatorInterval = IntervalTemporalOperator();
-    mon1 = std::make_shared<AtomicMonitor>(formulaA, 2, false);
+    mon1 = std::make_shared<AtomicMonitor>(formulaA, 2);
     mon1->registerParent(1);
-    mon = NextMonitor(formula, mon1, operatorInterval, 1, false);
+    mon = NextMonitor(formula, mon1, operatorInterval, 1);
     EXPECT_EQ(mon.to_string(), "X(a)");
 }
 
@@ -76,8 +76,8 @@ TEST(TestNextMonitor, testReset) {
     Formula formulaA = Parser::parse("a");
     formula.setId("R1");
     auto operatorInterval{IntervalTemporalOperator(0, 4)};
-    auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2, false)};
+    auto mon1{std::make_shared<AtomicMonitor>(formulaA, 2)};
     mon1->registerParent(1);
-    auto mon{NextMonitor(formula, mon1, operatorInterval, 1, false)};
+    auto mon{NextMonitor(formula, mon1, operatorInterval, 1)};
     EXPECT_NO_THROW(mon.reset());
 }

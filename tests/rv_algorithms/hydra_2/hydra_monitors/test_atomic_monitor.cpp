@@ -8,7 +8,7 @@ TEST(TestAtomicMonitor, testAtomicEvaluation) {
         Utils::createTrace({"a", "b"}, {{"a"}, {"b"}, {"a"}, {}}, std::vector<size_t>{0, 1, 2, 3});
     Formula formula = Parser::parse("a");
     formula.setId("R1");
-    auto mon{AtomicMonitor(formula, 1, false)};
+    auto mon{AtomicMonitor(formula, 1)};
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.concreteStep(0, 0).value, true);
@@ -28,6 +28,6 @@ TEST(TestAtomicMonitor, testToString) {
         Utils::createTrace({"a", "b"}, {{"a"}, {"b"}, {"a"}, {}}, std::vector<size_t>{0, 1, 2, 3});
     Formula formula = Parser::parse("a");
     formula.setId("R1");
-    auto mon{AtomicMonitor(formula, 0, false)};
+    auto mon{AtomicMonitor(formula, 0)};
     EXPECT_EQ(mon.to_string(), "a");
 }

@@ -109,7 +109,7 @@ class Hydra2 : public MonitorInterface {
      *
      * @return Tree structure object.
      */
-    TreeVis to_tree();
+    TreeVis to_tree() const;
 
   private:
     std::vector<std::shared_ptr<Hydra2Monitor>>
@@ -148,7 +148,7 @@ class Hydra2 : public MonitorInterface {
      * @param formulaIDs List of formula IDs which should be evaluated
      */
     void evalCompleteTrace(std::map<std::string, std::vector<Verdict>> &result,
-                           const std::vector<std::string> &formulaIDs);
+                           const std::vector<std::string> &formulaIDs) const;
 
     /**
      * Evaluates trace until verdict can be provided.
@@ -157,5 +157,5 @@ class Hydra2 : public MonitorInterface {
      * @param formulaIDs List of formula IDs which should be evaluated
      */
     void evalEarlyTermination(std::map<std::string, std::vector<Verdict>> &result,
-                              const std::vector<std::string> &formulaIDs);
+                              const std::vector<std::string> &formulaIDs) const;
 };

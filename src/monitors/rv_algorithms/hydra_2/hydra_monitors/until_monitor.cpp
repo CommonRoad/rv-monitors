@@ -1,5 +1,7 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/until_monitor.h"
 
+#include <cmath>
+
 void UntilMonitor::stepLeftRightMonitors() {
     subVerdictLeft = subMonitorLeft->step(monitorId, stepNumberUntil);
     if (subVerdictLeft->timeStamp)
@@ -14,6 +16,23 @@ void UntilMonitor::stepLeftRightMonitors() {
     else
         endReached = true;
     ++stepNumberUntil;
+}
+
+double UntilMonitor::computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &left,
+                                                    const std::shared_ptr<Hydra2Monitor> &right,
+                                                    const IntervalTemporalOperator &iv) {
+    size_t end{0};
+    if (iv.isFinite() and !iv.isEmpty())
+        end = iv.getEnd();
+    else
+        end = 100; // todo provide value as parameter
+    double probability{0.0};
+    for (size_t i{iv.getStart()}; i <= end; ++i) {
+        probability += right->getSatisfactionProbability() *
+                       std::pow(1 - right->getSatisfactionProbability(), i - iv.getStart()) *
+                       std::pow(left->getSatisfactionProbability(), i);
+    }
+    return probability;
 }
 
 Verdict UntilMonitor::concreteStep(const size_t parentId, const size_t stepNumber) {

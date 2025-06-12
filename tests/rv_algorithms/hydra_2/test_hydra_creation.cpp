@@ -37,7 +37,7 @@ TEST(TestHydraCreation, testAnd) {
 TEST(TestHydraCreation, testAndReorder) {
     Formula formula = Parser::parse("(a(test) & b(test) & c(test) & d(test))");
     formula.setId("R1");
-    std::map<std::string, std::array<double, 3>> predicateCosts{
+    const std::map<std::string, std::array<double, 3>> predicateCosts{
         {"a", {20.0, 0.80}}, {"b", {100.0, 0.20}}, {"c", {100.0, 0.80}}, {"d", {20.0, 0.20}}};
     std::string expectedFormula{"(d(test) & a(test) & b(test) & c(test))"};
     executeTest(formula, expectedFormula, predicateCosts);
@@ -46,9 +46,9 @@ TEST(TestHydraCreation, testAndReorder) {
 TEST(TestHydraCreation, testAndReorderPriorityEnforcement) {
     Formula formula = Parser::parse("(a(test) & b(test) & c(test) & d(test))");
     formula.setId("R1");
-    std::map<std::string, std::array<double, 3>> predicateCosts{
-        {"a", {20.0, 0.80, 200}}, {"b", {100.0, 0.20, 2000}}, {"c", {100.0, 0.80, 1}}, {"d", {20.0, 0.20, 100}}};
-    std::string expectedFormula{"(c(test) & d(test) & a(test) & b(test))"};
+    const std::map<std::string, std::array<double, 3>> predicateCosts{
+        {"a", {20.0, 0.80, 2}}, {"b", {100.0, 0.20, 1}}, {"c", {100.0, 0.80, 4}}, {"d", {20.0, 0.20, 3}}};
+    const std::string expectedFormula{"(c(test) & d(test) & a(test) & b(test))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
 
@@ -56,17 +56,17 @@ TEST(TestHydraCreation, testAndAndDuplicated) {
     Formula formula =
         Parser::parse("(!(a(test)) & P(b(test))) | X(!(a(test)) | (!(a(test)) & P(b(test))) | P(c(test)))");
     formula.setId("R1");
-    std::map<std::string, std::array<double, 3>> predicateCosts{
-        {"a", {20.0, 0.80}}, {"b", {100.0, 0.20}}, {"c", {100.0, 0.80}}, {"d", {20.0, 0.20}}};
+    const std::map<std::string, std::array<double, 3>> predicateCosts{
+        {"a", {20.0, 0.80, 0.0}}, {"b", {100.0, 0.20, 0.0}}, {"c", {100.0, 0.80, 0.0}}, {"d", {20.0, 0.20, 0.0}}};
     std::string expectedFormula{
-        "(X((!(a(test)) | (!(a(test)) & P(b(test))) | P(c(test)))) | (!(a(test)) & P(b(test))))"};
+        "(X((!(a(test)) | P(c(test)) | (!(a(test)) & P(b(test))))) | (!(a(test)) & P(b(test))))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
 
 TEST(TestHydraCreation, testPreviousAnd) {
     Formula formula = Parser::parse("P(d(test)) & P(a(test)) & P(b(test)) & P(c(test))");
     formula.setId("R1");
-    std::map<std::string, std::array<double, 3>> predicateCosts{
+    const std::map<std::string, std::array<double, 3>> predicateCosts{
         {"a", {20.0, 0.80}}, {"b", {100.0, 0.20}}, {"c", {100.0, 0.80}}, {"d", {20.0, 0.20}}};
     std::string expectedFormula{"(P(d(test)) & P(a(test)) & P(b(test)) & P(c(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
@@ -75,7 +75,7 @@ TEST(TestHydraCreation, testPreviousAnd) {
 TEST(TestHydraCreation, testAndOrDuplicatedPrevious) {
     Formula formula = Parser::parse("P(a(test)) & (P(a(test)) | P(b(test)) | P(c(test)))");
     formula.setId("R1");
-    std::map<std::string, std::array<double, 3>> predicateCosts{
+    const std::map<std::string, std::array<double, 3>> predicateCosts{
         {"a", {20.0, 0.80}}, {"b", {100.0, 0.20}}, {"c", {100.0, 0.80}}, {"d", {20.0, 0.20}}};
     std::string expectedFormula{"(P(a(test)) & (P(a(test)) | P(c(test)) | P(b(test))))"};
     executeTest(formula, expectedFormula, predicateCosts);
@@ -220,7 +220,7 @@ TEST(TestHydraCreation, testOrReorderPriorityEnforcement) {
     Formula formula = Parser::parse("a(test) | b(test) | c(test) | d(test)");
     formula.setId("R1");
     std::map<std::string, std::array<double, 3>> predicateCosts{
-        {"a", {20.0, 0.80, 1000}}, {"b", {100.0, 0.20, 1}}, {"c", {100.0, 0.80, 200}}, {"d", {20.0, 0.20, 2000}}};
+        {"a", {20.0, 0.80, 2}}, {"b", {100.0, 0.20, 4}}, {"c", {100.0, 0.80, 3}}, {"d", {20.0, 0.20, 1}}};
     std::string expectedFormula{"(b(test) | c(test) | a(test) | d(test))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
@@ -232,7 +232,7 @@ TEST(TestHydraCreation, testOrOrDuplicated) {
     std::map<std::string, std::array<double, 3>> predicateCosts{
         {"a", {20.0, 0.80}}, {"b", {100.0, 0.20}}, {"c", {100.0, 0.80}}, {"d", {20.0, 0.20}}};
     std::string expectedFormula{
-        "((!(a(test)) | P(b(test))) & X((!(a(test)) & (!(a(test)) | P(b(test))) & P(c(test)))))"};
+        "(X((!(a(test)) & (!(a(test)) | P(b(test))) & P(c(test)))) & (!(a(test)) | P(b(test))))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
 

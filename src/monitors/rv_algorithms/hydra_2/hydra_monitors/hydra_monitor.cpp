@@ -3,11 +3,11 @@
 #include <spdlog/spdlog.h>
 #include <utility>
 
-Hydra2Monitor::Hydra2Monitor(Formula formula, const size_t monitorId, const bool connectedEval, const double evalCost,
+Hydra2Monitor::Hydra2Monitor(Formula formula, const size_t monitorId, const double evalCost,
                              const double satisfactionProbability)
-    : formula(std::move(formula)), monitorId(monitorId), connectedEval(connectedEval), evalCost(evalCost),
+    : formula(std::move(formula)), monitorId(monitorId), evalCost(evalCost),
       satisfactionProbability(satisfactionProbability) {
-    assert(evalCost >= 0 and evalCost <= 100 and satisfactionProbability >= 0 and satisfactionProbability <= 1 &&
+    assert(evalCost >= 0 and satisfactionProbability >= 0 and satisfactionProbability <= 1 &&
            "Invalid predicate costs/probabilities Hydra2 Monitor.");
 }
 
@@ -99,6 +99,7 @@ std::shared_ptr<Hydra2Monitor> Hydra2Monitor::resetClonedMonitor(std::shared_ptr
     allCopies.emplace_back(domValNames, clonedMonitor);
     return clonedMonitor;
 }
+
 bool Hydra2Monitor::stepNumberValid(const size_t stepNumber, const size_t parentId) {
     if (stepNumber < traceIdx[parentId])
         return false;

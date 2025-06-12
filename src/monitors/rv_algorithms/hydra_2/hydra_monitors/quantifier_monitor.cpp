@@ -1,25 +1,25 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/quantifier_monitor.h"
 
-QuantifierMonitor::QuantifierMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, size_t monitorId,
+QuantifierMonitor::QuantifierMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, const size_t monitorId,
                                      std::map<std::string, std::shared_ptr<DomainStorage>> &variableValues,
-                                     bool connectedEval, bool shortCircuiting, double cost,
-                                     double satisfactionProbability)
-    : Hydra2Monitor(std::move(formula), monitorId, connectedEval, cost, satisfactionProbability),
-      subMonitor(std::move(subMonitor)), shortCircuiting(shortCircuiting), variableValues(variableValues) {
+                                     const bool shortCircuiting, const double cost,
+                                     const double satisfactionProbability)
+    : Hydra2Monitor(std::move(formula), monitorId, cost, satisfactionProbability), subMonitor(std::move(subMonitor)),
+      shortCircuiting(shortCircuiting), variableValues(variableValues) {
 
     for (auto &[varName, domain] : variableValues)
         if (!domain->empty())
             iters.push_back(domain->begin());
 }
 
-std::string QuantifierMonitor::getUniqueID() {
+std::string QuantifierMonitor::getUniqueID() const {
     std::string tmp;
     for (const auto &val : currentDomainValues)
         tmp += val.getUniqueID();
     return tmp;
 }
 
-std::shared_ptr<Hydra2Monitor> QuantifierMonitor::nextEvalMonitor(size_t stepNumber) {
+std::shared_ptr<Hydra2Monitor> QuantifierMonitor::nextEvalMonitor(const size_t stepNumber) {
     std::shared_ptr<Hydra2Monitor> evalMonitor;
     currentDomainValues = nextCombination();
     if (evalMonitors.find(getUniqueID()) == evalMonitors.end()) // if there is no monitor for the current
@@ -45,7 +45,7 @@ std::shared_ptr<Hydra2Monitor> QuantifierMonitor::nextEvalMonitor(size_t stepNum
 
 std::vector<DomainValue> QuantifierMonitor::nextCombination() {
     // store for each quantified variable value which is used
-    std::vector<DomainValue> vals{domainValues};
+    std::vector vals{domainValues};
     size_t idx{0};
     for (const auto &[varName, domainStorage] : variableValues) {
         if (domainStorage->isConstDomain())
@@ -101,10 +101,10 @@ void QuantifierMonitor::setTrace(const std::shared_ptr<Trace> &tra,
                                  const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     trace = tra;
 
-    for (const auto &var : variableValues)
+    for (const auto &[fst, snd] : variableValues)
         for (const auto &dom : domains)
-            if (dom->getName() == var.second->getName()) {
-                variableValues[var.first] = dom;
+            if (dom->getName() == snd->getName()) {
+                variableValues[fst] = dom;
                 break;
             }
     iters.clear();
@@ -123,34 +123,26 @@ void QuantifierMonitor::reset() {
     violations.clear();
 }
 
-double QuantifierMonitor::computeCost(const std::shared_ptr<Hydra2Monitor> &monitor, size_t numEval) {
+double QuantifierMonitor::computeCost(const std::shared_ptr<Hydra2Monitor> &monitor, const size_t numEval) {
     return monitor->getEvalCost() * static_cast<double>(numEval);
 }
 
-double QuantifierMonitor::computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &monitor,
-                                                         size_t numEval) {
-    double prob{monitor->getSatisfactionProbability()};
-    for (size_t num{1}; num < numEval; num++)
-        prob *= monitor->getSatisfactionProbability();
-    return prob;
-}
-
-Verdict QuantifierMonitor::concreteStep(size_t parentId, size_t stepNumber) {
+Verdict QuantifierMonitor::concreteStep(const size_t parentId, const size_t stepNumber) {
     size_t idx{0};
     for (const auto &[_, dom] : variableValues) {
         iters[idx] = dom->updateDynamicDomain(stepNumber, domainValues, trace->getConstantCollection());
         ++idx;
     }
-    auto numberCombinations{numCombinations()};
+    const auto numberCombinations{numCombinations()};
 
-    auto verdict{quantifierStep(parentId, stepNumber, numberCombinations)};
+    const auto verdict{quantifierStep(parentId, stepNumber, numberCombinations)};
     resetIterators();
     for (const auto &[_, dom] : variableValues)
         dom->updateDynamicDomain(stepNumber, domainValues, trace->getConstantCollection());
     return verdict;
 }
 
-Verdict QuantifierMonitor::initializeStepTrue(size_t parentId) {
+Verdict QuantifierMonitor::initializeStepTrue(const size_t parentId) {
     Verdict verdict{true};
     if (traceIdx[parentId] < trace->getLength())
         verdict.timeStamp = trace->getEvent(traceIdx[parentId]).getTimeStep();
@@ -162,7 +154,7 @@ Verdict QuantifierMonitor::initializeStepTrue(size_t parentId) {
     return verdict;
 }
 
-Verdict QuantifierMonitor::initializeStepFalse(size_t parentId) {
+Verdict QuantifierMonitor::initializeStepFalse(const size_t parentId) {
     Verdict verdict{false};
     if (traceIdx[parentId] < trace->getLength())
         verdict.timeStamp = trace->getEvent(traceIdx[parentId]).getTimeStep();
@@ -177,7 +169,7 @@ Verdict QuantifierMonitor::initializeStepFalse(size_t parentId) {
 std::map<size_t, std::vector<std::vector<DomainValue>>> QuantifierMonitor::getViolatingDomainValues() const {
     return {violations};
 }
-void QuantifierMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
+void QuantifierMonitor::setStepNumber(const size_t stepNumber, const size_t parentId) {
     Hydra2Monitor::setStepNumber(stepNumber, parentId);
     subMonitor->setStepNumber(stepNumber, parentId);
     for (const auto &[name, sub] : evalMonitors)

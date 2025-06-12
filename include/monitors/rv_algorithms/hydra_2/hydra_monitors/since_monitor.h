@@ -16,15 +16,14 @@ class SinceMonitor final : public Hydra2Monitor {
      * @param subMonitorRight Monitor from right side of until operator.
      * @param interval  Interval of operator.
      * @param monitorId ID of monitor.
-     * @param connectedEval Boolean indicating whether connected evaluation should be used.
      */
     SinceMonitor(const Formula &formula, std::shared_ptr<Hydra2Monitor> subMonitorLeft,
                  std::shared_ptr<Hydra2Monitor> subMonitorRight, const IntervalTemporalOperator &interval,
-                 const size_t monitorId, const bool connectedEval)
-        : Hydra2Monitor(
-              formula, monitorId, connectedEval, (subMonitorRight->getEvalCost() + subMonitorLeft->getEvalCost()) / 2,
-              (subMonitorRight->getSatisfactionProbability() + subMonitorRight->getSatisfactionProbability()) / 2),
-          subMonitorLeft(std::move(subMonitorLeft)), subMonitorRight(std::move(subMonitorRight)), interval(interval) {}
+                 const size_t monitorId)
+        : Hydra2Monitor(formula, monitorId, subMonitorRight->getEvalCost() + subMonitorLeft->getEvalCost(),
+                        computeSatisfactionProbability(subMonitorLeft, subMonitorRight, interval)),
+          subMonitorLeft(std::move(subMonitorLeft)), subMonitorRight(std::move(subMonitorRight)), interval(interval),
+          headPositionMonitorLeft(), headPositionMonitorRight() {}
 
     /**
      * Performs concrete step of since-monitor.
@@ -117,4 +116,16 @@ class SinceMonitor final : public Hydra2Monitor {
      * @return Boolean indicating whether time step is valid.
      */
     bool checkTimeStepValidity(size_t concreteStep);
+
+    /**
+     * Computes satisfaction probability of since monitor based on left and right monitors.
+     *
+     * @param left Left monitor of since operator.
+     * @param right Right monitor of since operator.
+     * @param iv Interval of operator.
+     * @return Satisfaction probability of since operator.
+     */
+    [[nodiscard]] static double computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &left,
+                                                               const std::shared_ptr<Hydra2Monitor> &right,
+                                                               const IntervalTemporalOperator &iv);
 };

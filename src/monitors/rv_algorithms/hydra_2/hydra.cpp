@@ -32,7 +32,7 @@ std::map<std::string, std::vector<Verdict>> Hydra2::evaluate(const std::shared_p
 }
 
 void Hydra2::evalEarlyTermination(std::map<std::string, std::vector<Verdict>> &result,
-                                  const std::vector<std::string> &formulaIDs) {
+                                  const std::vector<std::string> &formulaIDs) const {
     std::vector<std::shared_ptr<Hydra2Monitor>> relMonitors;
     for (const auto &mon : monitors)
         if (result.find(mon->getFormulaId()) == result.end() and
@@ -114,7 +114,7 @@ Hydra2::Hydra2(const std::vector<Formula> &formulas, const bool connectedEval, c
         const auto &globally_formula =
             formulaEvaluationMode != initial_step ? formula : Formula(std::make_shared<Globally>(formula.getExpr()));
         if (!std::any_of(supportedFormulaTypes.at(hydra_2_mtl).begin(), supportedFormulaTypes.at(hydra_2_mtl).end(),
-                         [globally_formula](MonitoringProperties formulaType) {
+                         [globally_formula](const MonitoringProperties formulaType) {
                              return globally_formula.checkCompatibility(formulaType);
                          })) {
             throw std::logic_error("Formula is not supported by monitor: " + formula.to_string());
@@ -126,7 +126,7 @@ Hydra2::Hydra2(const std::vector<Formula> &formulas, const bool connectedEval, c
 std::map<std::string, std::array<double, 3>> &Hydra2::getPredicateCost() const { return predicateCosts; }
 
 void Hydra2::evalCompleteTrace(std::map<std::string, std::vector<Verdict>> &result,
-                               const std::vector<std::string> &formulaIDs) {
+                               const std::vector<std::string> &formulaIDs) const {
     std::vector<std::shared_ptr<Hydra2Monitor>> relMonitors;
     for (const auto &mon : monitors)
         if (result.find(mon->getFormulaId()) == result.end() and
@@ -152,7 +152,7 @@ Hydra2::getViolatingDomainValues() const {
     return violations;
 }
 
-TreeVis Hydra2::to_tree() {
+TreeVis Hydra2::to_tree() const {
     std::vector<size_t> roots;
     std::map<size_t, std::tuple<std::string, std::vector<size_t>>> treeComplete;
     for (const auto &mon : monitors) {

@@ -6,7 +6,7 @@
 /**
  * Hydra2 monitor representing universal monitor.
  */
-class UniversalMonitor : public QuantifierMonitor {
+class UniversalMonitor final : public QuantifierMonitor {
   public:
     /**
      * Constructor.
@@ -14,14 +14,11 @@ class UniversalMonitor : public QuantifierMonitor {
      * @param formula Formula to be monitored.
      * @param subMonitor Child monitor.
      * @param monitorId ID of monitor.
-     * @param variables Variables used by quantifier.
-     * @param domains Collection of domains.
-     * @param connectedEval Boolean indicating whether connected evaluation should be used.
-     * @param shortCircuiting Boolean indicating whether short circuiting should be used.
+     * @param variableValues Variables used by quantifier.
+     * @param shortCircuiting Boolean indicating whether short-circuiting should be used.
      */
     UniversalMonitor(Formula formula, const std::shared_ptr<Hydra2Monitor> &subMonitor, size_t monitorId,
-                     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues, bool connectedEval,
-                     bool shortCircuiting);
+                     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues, bool shortCircuiting);
 
     /**
      * Performs concrete step of universal monitor. The sub-verdict for each combination has to be true
@@ -51,4 +48,13 @@ class UniversalMonitor : public QuantifierMonitor {
 
   private:
     bool storeVariableResults{true}; //**< Boolean indicating whether results should be stored. */
+
+    /**
+     * Computes satisfaction probability over provided monitor.
+     *
+     * @param monitor Monitor which should be used for universal satisfaction probability computation.
+     * @param numEval Number of sub-monitors.
+     * @return Satisfaction probability of universal monitor in interval [0, 1].
+     */
+    double computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &monitor, size_t numEval) override;
 };

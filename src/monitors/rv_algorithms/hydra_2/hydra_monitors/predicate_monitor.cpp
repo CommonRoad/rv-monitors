@@ -58,9 +58,9 @@ void PredicateMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
     domainName += ")";
 }
 
-PredicateMonitor::PredicateMonitor(Formula formula, const size_t monitorId, const bool connectedEval,
-                                   const double evalCost, const double satisfactionProbability)
-    : Hydra2Monitor(std::move(formula), monitorId, connectedEval, evalCost, satisfactionProbability),
+PredicateMonitor::PredicateMonitor(Formula formula, const size_t monitorId, const double evalCost,
+                                   const double satisfactionProbability)
+    : Hydra2Monitor(std::move(formula), monitorId, evalCost, satisfactionProbability),
       name(std::dynamic_pointer_cast<Predicate>(this->formula.getExpr())->to_string()),
       relevantArguments(std::dynamic_pointer_cast<Predicate>(this->formula.getExpr())->getParameters()) {}
 
