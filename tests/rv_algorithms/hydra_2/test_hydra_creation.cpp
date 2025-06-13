@@ -344,11 +344,20 @@ TEST(TestHydraCreation, testUntilOrReorder) {
     executeTest(formula, expectedFormula, predicateCosts);
 }
 
-TEST(TestHydraCreation, testAndOrDuplicatedPredicate) {
+TEST(TestHydraCreation, testAndOrDuplicatedPredicates) {
     Formula formula = Parser::parse("(a(test)) & ((a(test)) | (b(test)) | (c(test)))");
     formula.setId("R1");
     std::map<std::string, std::array<double, 3>> predicateCosts{
         {"a", {20.0, 0.80}}, {"b", {100.0, 0.20}}, {"c", {100.0, 0.80}}, {"d", {20.0, 0.20}}};
+    std::string expectedFormula{"((a(test) | c(test) | b(test)) & a(test))"};
+    executeTest(formula, expectedFormula, predicateCosts);
+}
+
+TEST(TestHydraCreation, testAndOrDuplicatedPredicatesWithPriority) {
+    Formula formula = Parser::parse("(a(test)) & ((a(test)) | (b(test)) | (c(test)))");
+    formula.setId("R1");
+    std::map<std::string, std::array<double, 3>> predicateCosts{
+        {"a", {20.0, 0.80, 1}}, {"b", {100.0, 0.20}}, {"c", {100.0, 0.80}}, {"d", {20.0, 0.20}}};
     std::string expectedFormula{"(a(test) & (a(test) | c(test) | b(test)))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
