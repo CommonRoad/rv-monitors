@@ -39,7 +39,7 @@ std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::createMonitor(const Formul
 }
 
 std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitAtomic(Atomic &top, const size_t parentId,
-                                                                  bool connectedEval) {
+                                                                  const bool connectedEval) {
     if (connectedEval and baseline.find(top.to_string()) != baseline.end()) {
         baseline.at(top.to_string())->registerParent(parentId);
         return baseline.at(top.to_string());
@@ -213,11 +213,11 @@ void HydraCreationVisitor2::reorder(std::vector<std::shared_ptr<Hydra2Monitor>> 
     std::vector<std::vector<std::shared_ptr<Hydra2Monitor>>> orderCombined;
 
     // iterate first over all monitors and collect available priorities
-    std::set<double> priorities;
+    std::set<double> priorities{};
     for (const auto &mon : monitors) {
         std::string str{mon->to_string()};
         str = mon->to_string().substr(0, str.find('('));
-        if (auto specificMonitor = dynamic_cast<PredicateMonitor *>(mon.get())) {
+        if (dynamic_cast<PredicateMonitor *>(mon.get())) {
             if (predicateCosts.find(str) != predicateCosts.end())
                 priorities.insert(predicateCosts.at(str).at(2));
             else
@@ -225,9 +225,15 @@ void HydraCreationVisitor2::reorder(std::vector<std::shared_ptr<Hydra2Monitor>> 
         } else
             priorities.insert(0);
     }
-    if (priorities.empty())
-        priorities.insert({0.0}); // no predicate costs specified
+    priorities.insert({0}); // no predicate costs specified; we need at least 0 priority
     // prio == 0 represents lowes priority
+    // fill missing priorities
+    const double min{(*priorities.begin())};
+    const double max{*priorities.rbegin()};
+    for (double i{min}; i < max; ++i) {
+        if (priorities.find(i) == priorities.end())
+            priorities.insert(i);
+    }
 
     // for each priority group, compute costs for corresponding monitors
     std::set<std::string> visitedMonitors;
@@ -236,7 +242,8 @@ void HydraCreationVisitor2::reorder(std::vector<std::shared_ptr<Hydra2Monitor>> 
         std::vector<double> curCosts;
         std::vector<std::shared_ptr<Hydra2Monitor>> curOrder;
         for (const auto &mon : monitors) {
-            if (visitedMonitors.find(mon->to_string()) != visitedMonitors.end())
+            if (!dynamic_cast<PredicateMonitor *>(mon.get()) or
+                visitedMonitors.find(mon->to_string()) != visitedMonitors.end())
                 continue;
             double costTmp;
             if (increasing) // and-operator
@@ -244,29 +251,52 @@ void HydraCreationVisitor2::reorder(std::vector<std::shared_ptr<Hydra2Monitor>> 
             else
                 costTmp = mon->getEvalCost() / mon->getSatisfactionProbability();
 
-            // add monitor to correct priority group
-            if (auto specificMonitor = dynamic_cast<PredicateMonitor *>(mon.get())) {
-                std::string str{mon->to_string()};
-                str = mon->to_string().substr(0, str.find('('));
+            // add predicate monitor to correct priority group
+            std::string str{mon->to_string()};
+            str = mon->to_string().substr(0, str.find('('));
 
-                if (predicateCosts.find(str) != predicateCosts.end() and predicateCosts.at(str).at(2) == prio) {
-                    curCosts.push_back(costTmp);
-                    curOrder.push_back(mon);
-                    visitedMonitors.insert(str);
-                } else if (prio == 0 and predicateCosts.find(str) ==
-                                             predicateCosts.end()) { // no priority specified or priority does not match
-                    curOrder.push_back(mon);
-                    curCosts.push_back(costTmp);
-                    visitedMonitors.insert(str);
-                }
-            } else if (prio == 0) {
+            if (predicateCosts.find(str) != predicateCosts.end() and predicateCosts.at(str).at(2) == prio) {
+                curCosts.push_back(costTmp);
+                curOrder.push_back(mon);
+                visitedMonitors.insert(str);
+            } else if (prio == 0 and predicateCosts.find(str) ==
+                                         predicateCosts.end()) { // no priority specified or priority does not match
                 curOrder.push_back(mon);
                 curCosts.push_back(costTmp);
-                visitedMonitors.insert(mon->to_string());
+                visitedMonitors.insert(str);
             }
         }
         costCombined.push_back(curCosts);
         orderCombined.push_back(curOrder);
+    }
+
+    // take care of monitors that are no predicates
+    std::vector<double> curCosts;
+    bool otherMonitors{false};
+    std::vector<std::shared_ptr<Hydra2Monitor>> curOrder;
+    for (const auto &mon : monitors) {
+        if (dynamic_cast<PredicateMonitor *>(mon.get()))
+            continue;
+        double costTmp;
+        if (increasing) // and-operator
+            costTmp = mon->getSatisfactionProbability() * mon->getEvalCost();
+        else
+            costTmp = mon->getEvalCost() / mon->getSatisfactionProbability();
+
+        curOrder.push_back(mon);
+        curCosts.push_back(costTmp);
+        otherMonitors = true;
+    }
+    if (otherMonitors) {
+        if (priorities.count(1) > 0) {
+            costCombined.at(costCombined.size() - 2)
+                .insert(costCombined.at(costCombined.size() - 2).end(), curCosts.begin(), curCosts.end());
+            orderCombined.at(costCombined.size() - 2)
+                .insert(orderCombined.at(costCombined.size() - 2).end(), curOrder.begin(), curOrder.end());
+        } else {
+            costCombined.insert(std::prev(costCombined.end()), curCosts);
+            orderCombined.insert(std::prev(orderCombined.end()), curOrder);
+        }
     }
 
     // assert to check that orderedCombined contains correct number of monitors
