@@ -130,22 +130,29 @@ double QuantifierMonitor::computeCost(const std::shared_ptr<Hydra2Monitor> &moni
 Verdict QuantifierMonitor::concreteStep(const size_t parentId, const size_t stepNumber) {
     size_t idx{0};
     for (const auto &[_, dom] : variableValues) {
-        iters[idx] = dom->updateDynamicDomain(stepNumber, domainValues, trace->getConstantCollection());
+        if (const auto tracePtr = trace.lock(); tracePtr and stepNumber < tracePtr->getLength())
+            iters[idx] = dom->updateDynamicDomain(tracePtr->getEvent(stepNumber).getTimeStep(), domainValues,
+                                                  tracePtr->getConstantCollection());
+        else
+            return {false};
         ++idx;
     }
     const auto numberCombinations{numCombinations()};
-
     const auto verdict{quantifierStep(parentId, stepNumber, numberCombinations)};
     resetIterators();
     for (const auto &[_, dom] : variableValues)
-        dom->updateDynamicDomain(stepNumber, domainValues, trace->getConstantCollection());
+        if (const auto tracePtr = trace.lock(); tracePtr and stepNumber < tracePtr->getLength())
+            dom->updateDynamicDomain(tracePtr->getEvent(stepNumber).getTimeStep(), domainValues,
+                                     tracePtr->getConstantCollection());
+        else
+            return {false};
     return verdict;
 }
 
-Verdict QuantifierMonitor::initializeStepTrue(const size_t parentId) {
+Verdict QuantifierMonitor::initializeStepTrue(const size_t stepNumber) const {
     Verdict verdict{true};
-    if (traceIdx[parentId] < trace->getLength())
-        verdict.timeStamp = trace->getEvent(traceIdx[parentId]).getTimeStep();
+    if (const auto tracePtr = trace.lock(); tracePtr && stepNumber < tracePtr->getLength())
+        verdict.timeStamp = tracePtr->getEvent(stepNumber).getTimeStep();
     else
         return Verdict{false};
 
@@ -154,10 +161,10 @@ Verdict QuantifierMonitor::initializeStepTrue(const size_t parentId) {
     return verdict;
 }
 
-Verdict QuantifierMonitor::initializeStepFalse(const size_t parentId) {
+Verdict QuantifierMonitor::initializeStepFalse(const size_t stepNumber) const {
     Verdict verdict{false};
-    if (traceIdx[parentId] < trace->getLength())
-        verdict.timeStamp = trace->getEvent(traceIdx[parentId]).getTimeStep();
+    if (const auto tracePtr = trace.lock(); tracePtr && stepNumber < tracePtr->getLength())
+        verdict.timeStamp = tracePtr->getEvent(stepNumber).getTimeStep();
     else
         return Verdict{false};
 

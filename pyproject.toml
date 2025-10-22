@@ -2,7 +2,7 @@
 name = "rv-monitors"
 dynamic = ["version"]
 readme = "README.md"
-requires-python = ">=3.9,<3.13"
+requires-python = ">=3.10,<3.15"
 license = {file = "LICENSE"}
 authors = [
   {email = "sebastian.maierhofer@tum.de"},

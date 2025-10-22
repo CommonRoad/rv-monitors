@@ -64,6 +64,8 @@ NB_MODULE(_rvm, m) {
         .def_prop_ro("length", &Trace::getLength)
         .def("__len__", &Trace::getLength)
         .def("get_event", &Trace::getEvent)
+        .def("to_csv", &Trace::to_csv)
+        .def("to_string", &Trace::to_string)
         .def("__getitem__", [](const std::shared_ptr<Trace> &trace, size_t index) { return trace->getEvent(index); })
         .def("__getitem__", [](const std::shared_ptr<Trace> &trace, nb::slice _slice) -> nb::sequence {
             nb::raise("Trace slicing is not implemented");

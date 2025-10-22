@@ -1,12 +1,14 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/atomic_monitor.h"
 
 Verdict AtomicMonitor::concreteStep(size_t parentId, const size_t stepNumber) {
-    if (stepNumber < trace->getLength()) {
+    if (const auto tracePtr = trace.lock(); !tracePtr)
+        return {false};
+    if (const auto tracePtr = trace.lock(); stepNumber < tracePtr->getLength()) {
         if (!domainValue.empty()) {
-            trace->updateEvent(stepNumber, domainValue);
-            return trace->verdictAtTimeStep(stepNumber, domainValue);
+            tracePtr->updateEvent(stepNumber, domainValue);
+            return tracePtr->verdictAtTimeStep(stepNumber, domainValue);
         }
-        return trace->verdictAtTimeStep(stepNumber, name);
+        return tracePtr->verdictAtTimeStep(stepNumber, name);
     }
     return {false};
 }

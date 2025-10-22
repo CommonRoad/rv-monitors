@@ -15,7 +15,7 @@ UniversalMonitor::UniversalMonitor(Formula formula, const std::shared_ptr<Hydra2
 
 Verdict UniversalMonitor::quantifierStep(const size_t parentId, const size_t stepNumber,
                                          const size_t numberCombinations) {
-    auto verdict{initializeStepTrue(parentId)};
+    auto verdict{initializeStepTrue(stepNumber)};
     std::vector<std::vector<DomainValue>> violationsTmp;
     if (!verdict.timeStamp.has_value())
         return verdict;

@@ -25,6 +25,7 @@ void AndMonitor::setTrace(const std::shared_ptr<Trace> &tra,
                           const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     for (const auto &mon : subMonitors)
         mon->setTrace(tra, domains);
+    trace = tra;
 }
 
 void AndMonitor::reset() {
