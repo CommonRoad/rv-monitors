@@ -31,14 +31,14 @@ DomainStorage::DomainStorage(std::string name,
     : name(std::move(name)), dynamicDomainStorageFunction(std::move(dynamicDomainStorageFunction)),
       constDomainStorage(false), validityCondition(std::move(validityCondition)), idFunction(idFunction) {}
 
-std::vector<std::any>::iterator DomainStorage::updateDynamicDomain(size_t stepNumber,
+std::vector<std::any>::iterator DomainStorage::updateDynamicDomain(size_t timeStep,
                                                                    const std::vector<DomainValue> &domVals,
                                                                    ConstantCollection constants) {
     if (!constDomainStorage) {
         std::vector<DomainValue> args;
         for (const auto &arg : dynamicDomainStorageFunction->getArgumentNames()) {
             if (arg == "stepNumber") {
-                args.emplace_back("stepNumber", stepNumber, true,
+                args.emplace_back("stepNumber", timeStep, true,
                                   [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); });
                 continue;
             }

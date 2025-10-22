@@ -3,17 +3,22 @@
 #include <cassert>
 
 Verdict PredicateMonitor::concreteStep(size_t parentId, const size_t stepNumber) {
-    if (stepNumber < trace->getLength()) {
-        auto verdict{Verdict(false)};
-        if (!trace->getTraceRef().at(stepNumber).hasVerdict(domainName)) {
-            trace->updateEvent(stepNumber, name, orderedValues);
-            verdict = trace->verdictAtTimeStep(stepNumber, name, domainName);
-            orderedValues.erase(orderedValues.begin());
-        } else
-            verdict = trace->verdictAtTimeStep(stepNumber, name, domainName);
+    const auto tracePtr = trace.lock();
+    auto verdict{Verdict(false)};
+    if (!tracePtr or stepNumber >= tracePtr->getLength() or
+        !std::all_of(domainValueArguments.begin(), domainValueArguments.end(),
+                     [tracePtr, stepNumber](const DomainValue &val) {
+                         return val.isConst() or val.checkValidity(tracePtr->getEvent(stepNumber).getTimeStep());
+                     }))
         return verdict;
-    }
-    return {false};
+
+    if (!tracePtr->getTraceRef().at(stepNumber).hasVerdict(domainName)) {
+        tracePtr->updateEvent(stepNumber, name, orderedValues);
+        verdict = tracePtr->verdictAtTimeStep(stepNumber, name, domainName);
+        orderedValues.erase(orderedValues.begin());
+    } else
+        verdict = tracePtr->verdictAtTimeStep(stepNumber, name, domainName);
+    return verdict;
 }
 
 std::shared_ptr<Hydra2Monitor> PredicateMonitor::clone(const std::vector<std::string> &domValNames) {
@@ -25,7 +30,7 @@ std::shared_ptr<Hydra2Monitor> PredicateMonitor::clone(const std::vector<std::st
 
 void PredicateMonitor::setTrace(const std::shared_ptr<Trace> &tra,
                                 const std::vector<std::shared_ptr<DomainStorage>> &domains) {
-    if (trace == nullptr) {
+    if (trace.expired()) {
         trace = tra;
         for (const auto &con : std::dynamic_pointer_cast<Predicate>(this->formula.getExpr())->getConstParameters())
             constArguments.push_back(tra->getConstantCollection().getConstant(con));
@@ -69,5 +74,5 @@ void PredicateMonitor::reset() {
     domainValueArguments.clear();
     orderedValues.clear();
     constArguments.clear();
-    trace = nullptr;
+    trace = {};
 }

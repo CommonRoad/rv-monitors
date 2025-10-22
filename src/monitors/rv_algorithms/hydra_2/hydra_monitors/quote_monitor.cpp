@@ -16,7 +16,7 @@ float QuoteMonitor::computeRatio(const size_t trueVerdicts) const {
 }
 
 Verdict QuoteMonitor::quantifierStep(const size_t parentId, const size_t stepNumber, const size_t numberCombinations) {
-    auto verdict{initializeStepTrue(parentId)};
+    auto verdict{initializeStepTrue(stepNumber)};
     if (!verdict.timeStamp.has_value())
         return verdict;
     float totalQuote;

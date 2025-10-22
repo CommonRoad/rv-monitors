@@ -1,4 +1,9 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/hydra_monitor.h"
+
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/atomic_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/constant_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/predicate_monitor.h"
+
 #include <cassert>
 #include <spdlog/spdlog.h>
 #include <utility>
@@ -41,12 +46,20 @@ Verdict Hydra2Monitor::step(const size_t parentId, size_t stepNumber) {
         verdict = verdictHistory.at(stepNumber);
     } else {
         verdict = concreteStep(parentId, stepNumber);
-        if (traceIdx[parentId] == getMaxTraceIdx())
+        if (verdictHistory.find(stepNumber) == verdictHistory.end()) // store non-existing eval results
             verdictHistory.insert({stepNumber, verdict});
         ++traceIdx[parentId];
     }
     // note: verdict time step can be different from step number if time steps are no equidistant
-
+    if (const auto tracePtr = trace.lock(); verdict.timeStamp.has_value() && !dynamic_cast<PredicateMonitor *>(this) &&
+                                            !dynamic_cast<ConstantMonitor *>(this) &&
+                                            !dynamic_cast<AtomicMonitor *>(this) && tracePtr &&
+                                            tracePtr->getTraceRef().size() > stepNumber) {
+        tracePtr->getTraceRef()
+            .at(stepNumber)
+            .getEventMapRef()
+            .insert({formula.to_string(), EventValue(verdict.value)});
+    }
     return verdict;
 }
 

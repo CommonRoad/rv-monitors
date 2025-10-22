@@ -208,6 +208,7 @@ class Hydra2Monitor {
                                                       const std::vector<std::string> &domValNames);
 
   protected:
+    std::weak_ptr<Trace> trace;               //**< Trace which should be monitored. */
     Formula formula;                          //**< Monitored formula. */
     std::string formulaId;                    //**< ID of formula */
     size_t monitorId;                         //**< ID of monitor */

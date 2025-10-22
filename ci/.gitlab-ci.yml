@@ -6,17 +6,19 @@ stages:
   - docs
   - evaluation
 
-image: $CI_REGISTRY/tum-cps/commonroad-docker/ci-base:2025.2
-
-before_script:
-  - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lrz.de/".insteadOf "git@gitlab.lrz.de:"
-
-### static test ###
-clang-format:
+default:
   image: $CI_REGISTRY/tum-cps/commonroad-docker/ci-base:2025.2
-  stage: static-test
-  script: bash ./ci/clang-format.sh
-  needs: []
+  before_script:
+    - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lrz.de/".insteadOf "git@gitlab.lrz.de:"
+    - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lrz.de".insteadOf "ssh://git@gitlab.lrz.de"
+
+.common-rules:
+  rules:
+    # Rule to disable a job for merge request pipelines (imitate default job behaviour)
+    - &skip_non_protected_pipeline
+      if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_REF_PROTECTED != "true" || $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: &full_wheel_build_condition $CI_COMMIT_TAG || $CI_COMMIT_REF_PROTECTED == "true" || $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_REF_NAME =~ /^(master|develop)$/
 
 clang-tidy:
   image: $CI_REGISTRY/tum-cps/commonroad-docker/ci-base:2025.2
@@ -172,7 +174,7 @@ build-python:
     - python -m pip install build~=1.2.1 pytest~=8.1.1
     - python -m build
     - python -m pip install dist/*.whl
-    - python -m pytest tests/bindings
+    - python -m pytest tests/python/bindings
   needs: []
   variables:
     # Necessary so that Git detects all tags
@@ -228,7 +230,7 @@ run-coverage:
         path: coverage.xml
 
 .install-python-venv: &install-python-venv
-  - apt-get update && apt-get install -y --no-install-recommends git python3-venv python3-pip python3-dev doxygen openjdk-11-jre-headless
+  - apt-get update && apt-get install -y --no-install-recommends git python3-venv python3-pip python3-dev doxygen openjdk-11-jre-headless ffmpeg libsm6 libxext6 build-essential git pkg-config wget libomp-dev gcovr graphviz cppcheck libeigen3-dev libboost-all-dev uuid-dev libcgal-dev libspdlog-dev default-jre default-jdk gcc cmake
   - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lrz.de/".insteadOf "git@gitlab.lrz.de:"
   - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lrz.de".insteadOf "ssh://git@gitlab.lrz.de"
   - python3 -m pip config set global.disable-pip-version-check true
@@ -236,6 +238,62 @@ run-coverage:
   - source test-venv/bin/activate
   - python3 -m pip install pip-tools
 
+.test-python-common: &test-python-common
+  stage: test
+  image: python:${JOB_PYTHON_VERSION}-slim-bullseye
+  before_script:
+    - *install-python-venv
+    - python -m pip install .["test"]
+  script:
+    - python -m pytest --junit-xml=pytest-report.xml tests/python/bindings
+  artifacts:
+    reports:
+      junit: pytest-report.xml
+    expire_in: 30 minutes
+
+.test-python-single: &test-python-single
+  variables:
+    JOB_PYTHON_VERSION: "3.13"
+  rules:
+    - *skip_non_protected_pipeline
+    - if: *full_wheel_build_condition
+      when: never
+    - when: on_success
+
+.test-python-matrix: &test-python-matrix
+  parallel:
+    matrix:
+      - JOB_PYTHON_VERSION: ["3.10", "3.11", "3.12", "3.13"]
+  rules:
+    - *skip_non_protected_pipeline
+    - if: *full_wheel_build_condition
+      when: on_success
+    - when: never
+
+test-python-manylinux-single:
+  <<: [ *test-python-common, *test-python-single ]
+  variables:
+    JOB_PYTHON_VERSION: "3.13"
+
+test-python-manylinux:
+  <<: [ *test-python-common, *test-python-matrix ]
+
+test-python-general:
+  stage: test
+  image: python:${JOB_PYTHON_VERSION}-slim-bullseye
+  parallel:
+    matrix:
+      - JOB_PYTHON_VERSION: ["3.10", "3.11", "3.12", "3.13"]
+  before_script:
+    - *install-python-venv
+    - python -m pip install ".[test]"
+  script:
+    - python -m pytest --junit-xml=pytest-report.xml tests/python/bindings
+  needs: []
+  artifacts:
+    reports:
+      junit: pytest-report.xml
+    expire_in: 30 minutes
 
 pages:
   stage: docs
@@ -273,7 +331,7 @@ evaluation_hydra_python:
     - chmod +x /builds/cps/commonroad/rv-monitors/scripts/exec/gen_fmla
     - chmod +x /builds/cps/commonroad/rv-monitors/scripts/exec/gen_log
     - pip install pytest psutil matplotlib pyyaml
-    - pytest ./tests/test_org_hydra_eval.py
+    - pytest ./tests/python/test_org_hydra_eval.py
   needs:
     - job: build-evaluation
       artifacts: true
