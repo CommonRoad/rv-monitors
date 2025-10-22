@@ -13,7 +13,7 @@ ExistentialMonitor::ExistentialMonitor(const Formula &formula, const std::shared
 
 Verdict ExistentialMonitor::quantifierStep(const size_t parentId, const size_t stepNumber,
                                            const size_t numberCombinations) {
-    auto verdict{initializeStepFalse(parentId)};
+    auto verdict{initializeStepFalse(stepNumber)};
     if (!verdict.timeStamp.has_value())
         return verdict;
     for (size_t count{0}; count != numberCombinations; count++) { // loop over all possible combinations

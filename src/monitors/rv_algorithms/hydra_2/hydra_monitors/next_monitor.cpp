@@ -1,7 +1,6 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/next_monitor.h"
-#include <iostream>
 
-Verdict NextMonitor::concreteStep(size_t parentId, size_t stepNumber) {
+Verdict NextMonitor::concreteStep(size_t parentId, const size_t stepNumber) {
 
     if (!currentTime) // first event in trace (next time step specifies verdict
         currentTime = subMonitor->step(monitorId, stepNumber).timeStamp;
@@ -12,8 +11,8 @@ Verdict NextMonitor::concreteStep(size_t parentId, size_t stepNumber) {
         return {*currentTime, false};
     }
 
-    auto subVerdict{subMonitor->step(monitorId, stepNumber + 1)};
-    if (subVerdict.timeStamp.has_value() and currentTime) {
+    if (auto subVerdict{subMonitor->step(monitorId, stepNumber + 1)};
+        subVerdict.timeStamp.has_value() and currentTime) {
         size_t lastTime = *currentTime;
         currentTime = subVerdict.timeStamp;
         if (!interval.isFinite() and interval.getStart() <= lastTime)
@@ -29,6 +28,7 @@ Verdict NextMonitor::concreteStep(size_t parentId, size_t stepNumber) {
 void NextMonitor::setTrace(const std::shared_ptr<Trace> &tra,
                            const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     subMonitor->setTrace(tra, domains);
+    trace = tra;
 }
 
 void NextMonitor::reset() {
@@ -63,9 +63,9 @@ void NextMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
     subMonitor->addDomainValues(vals);
 }
 
-void NextMonitor::setStepNumber(size_t stepNumber, size_t parentId) {
+void NextMonitor::setStepNumber(const size_t stepNumber, const size_t parentId) {
     Hydra2Monitor::setStepNumber(stepNumber, parentId);
-    if (!Hydra2Monitor::stepNumberValid(stepNumber, parentId))
+    if (!stepNumberValid(stepNumber, parentId))
         return;
     subMonitor->setStepNumber(stepNumber, monitorId);
 }

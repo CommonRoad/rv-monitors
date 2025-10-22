@@ -26,6 +26,7 @@ Verdict PreviousMonitor::concreteStep(const size_t parentId, const size_t stepNu
 void PreviousMonitor::setTrace(const std::shared_ptr<Trace> &tra,
                                const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     subMonitor->setTrace(tra, domains);
+    trace = tra;
 }
 
 void PreviousMonitor::reset() {

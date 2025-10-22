@@ -30,10 +30,10 @@ class PredicateMonitor final : public Hydra2Monitor {
     /**
      * Setter for trace.
      *
-     * @param trace Trace.
+     * @param tra Trace.
      * @param domains List of domains.
      */
-    void setTrace(const std::shared_ptr<Trace> &trace,
+    void setTrace(const std::shared_ptr<Trace> &tra,
                   const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 
     /**
@@ -64,7 +64,6 @@ class PredicateMonitor final : public Hydra2Monitor {
     std::string to_string() override;
 
   private:
-    std::shared_ptr<Trace> trace;                  //**< Trace which should be monitored. */
     std::string name;                              //**< Name of predicate. */
     std::vector<std::string> relevantArguments;    //**< All arguments of predicate. */
     std::vector<ConstantValue> constArguments;     //**< Constant arguments of predicate. */
