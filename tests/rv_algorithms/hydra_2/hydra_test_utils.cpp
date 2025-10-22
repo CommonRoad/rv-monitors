@@ -67,7 +67,7 @@ bool hydraTestUtils::divisible_by_time_step(size_t timeStep, size_t val) {
 
 bool hydraTestUtils::lower_than_time_step(size_t timeStep, size_t val) { return val < timeStep; }
 
-bool hydraTestUtils::equals_three(size_t timeStep, size_t val) { return val == 3; }
+bool hydraTestUtils::equals_three(size_t timeStep, const size_t val) { return val == 3; }
 
 std::shared_ptr<Trace>
 hydraTestUtils::createTraceWithVariable(size_t length, const std::vector<std::shared_ptr<IFunction<bool>>> &function,

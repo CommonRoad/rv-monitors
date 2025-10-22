@@ -7,6 +7,7 @@ Verdict NegationMonitor::concreteStep(size_t parentId, const size_t stepNumber) 
 void NegationMonitor::setTrace(const std::shared_ptr<Trace> &tra,
                                const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     subMonitor->setTrace(tra, domains);
+    trace = tra;
 }
 
 void NegationMonitor::reset() {

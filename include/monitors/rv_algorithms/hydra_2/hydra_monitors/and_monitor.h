@@ -32,10 +32,10 @@ class AndMonitor final : public Hydra2Monitor {
     /**
      * Setter for trace.
      *
-     * @param trace Trace.
+     * @param tra Trace.
      * @param domains List of domains.
      */
-    void setTrace(const std::shared_ptr<Trace> &trace,
+    void setTrace(const std::shared_ptr<Trace> &tra,
                   const std::vector<std::shared_ptr<DomainStorage>> &domains = {}) override;
 
     /**

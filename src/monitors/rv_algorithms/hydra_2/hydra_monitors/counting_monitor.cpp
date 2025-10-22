@@ -14,7 +14,7 @@ CountingMonitor::CountingMonitor(Formula formula, const std::shared_ptr<Hydra2Mo
 
 Verdict CountingMonitor::quantifierStep(const size_t parentId, const size_t stepNumber,
                                         const size_t numberCombinations) {
-    auto verdict{initializeStepFalse(parentId)};
+    auto verdict{initializeStepFalse(stepNumber)};
     if (!verdict.timeStamp.has_value())
         return verdict;
     size_t trueVerdicts{0};
@@ -74,8 +74,8 @@ unsigned long long CountingMonitor::binomialCoefficient(const size_t n, const si
     if (k == 0 || k == n)
         return 1;
 
-    unsigned long long result = 1;
-    for (int i = 1; i <= k; ++i) {
+    size_t result = 1;
+    for (size_t i = 1; i <= k; ++i) {
         result *= n - (k - i);
         result /= i;
     }

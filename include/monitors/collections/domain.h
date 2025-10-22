@@ -93,12 +93,13 @@ class DomainStorage {
     /**
      * Updates dynamic domain by calling registered domain function.
      *
-     * @param stepNumber Step number of interest.
+     * @param timeStep Relevant time step of dynamic domain. Can differ from current trace step in case of
+     * non-equidistant time step or skipped steps.
      * @param domVals Additional arguments for domain function from parent domains.
      * @param constants List of constant values.
      * @return Iterator to beginning.
      */
-    std::vector<std::any>::iterator updateDynamicDomain(size_t stepNumber, const std::vector<DomainValue> &domVals = {},
+    std::vector<std::any>::iterator updateDynamicDomain(size_t timeStep, const std::vector<DomainValue> &domVals = {},
                                                         ConstantCollection constants = {});
 
     /**

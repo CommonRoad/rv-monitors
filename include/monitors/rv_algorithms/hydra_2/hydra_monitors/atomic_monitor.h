@@ -59,7 +59,6 @@ class AtomicMonitor final : public Hydra2Monitor {
     std::string to_string() override;
 
   private:
-    std::shared_ptr<Trace> trace; //**< Trace which should be monitored. */
-    std::string name;             //**< Name of atomic value. */
-    std::string domainValue;      //**< Name of domain if atomic is one otherwise empty string. */
+    std::string name;        //**< Name of atomic value. */
+    std::string domainValue; //**< Name of domain if atomic is one otherwise empty string. */
 };

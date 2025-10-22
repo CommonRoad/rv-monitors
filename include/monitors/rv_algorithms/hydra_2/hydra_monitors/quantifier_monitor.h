@@ -41,19 +41,19 @@ class QuantifierMonitor : public Hydra2Monitor {
     /**
      * Initializes monitor variables and evaluates domains and trace for immediately return. Uses true for base verdict.
      *
-     * @param parentId ID of parent monitor.
+     * @param stepNumber Current step number.
      * @return Verdict.
      */
-    Verdict initializeStepTrue(size_t parentId);
+    [[nodiscard]] Verdict initializeStepTrue(size_t stepNumber) const;
 
     /**
      * Initializes monitor variables and evaluates domains and trace for immediately return. Uses false for base
      * verdict.
      *
-     * @param parentId ID of parent monitor.
+     * @param stepNumber Current step number.
      * @return Verdict.
      */
-    Verdict initializeStepFalse(size_t parentId);
+    [[nodiscard]] Verdict initializeStepFalse(size_t stepNumber) const;
 
     /**
      *
@@ -161,7 +161,6 @@ class QuantifierMonitor : public Hydra2Monitor {
     bool shortCircuiting; //**< Boolean indicating whether short-circuiting should be used. */
     std::map<std::string, std::shared_ptr<DomainStorage>>
         variableValues;                                 //**< Mapping of name of quantified variables to domains. */
-    std::shared_ptr<Trace> trace;                       //**< Trace. */
     std::vector<std::vector<std::any>::iterator> iters; //**< Iterators forming the current combination. */
     std::vector<DomainValue> domainValues;              //**< Domain values. */
     std::map<size_t, std::vector<std::vector<DomainValue>>> violations; //**< Violating domain values per time step. */

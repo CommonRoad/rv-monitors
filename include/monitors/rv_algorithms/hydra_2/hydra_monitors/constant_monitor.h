@@ -57,7 +57,4 @@ class ConstantMonitor final : public Hydra2Monitor {
      * @return String representing monitor.
      */
     std::string to_string() override;
-
-  private:
-    std::shared_ptr<Trace> trace; //**< Trace which should be monitored. */
 };

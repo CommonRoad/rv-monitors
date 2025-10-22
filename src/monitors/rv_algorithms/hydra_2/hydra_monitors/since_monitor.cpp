@@ -130,6 +130,7 @@ void SinceMonitor::setTrace(const std::shared_ptr<Trace> &tra,
     timeStepsTrace = {};
     for (const auto &event : tra->getTrace())
         timeStepsTrace.push_back(event.getTimeStep());
+    trace = tra;
 }
 void SinceMonitor::reset() {
     Hydra2Monitor::reset();
