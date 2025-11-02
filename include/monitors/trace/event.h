@@ -82,9 +82,9 @@ class Event {
 
     /**
      * Setter for terminal attribute.
-     * @param terminal Boolean indicating whether event should be terminal or not.
+     * @param isTerminal Boolean indicating whether event should be terminal or not.
      */
-    void setTerminal(bool terminal);
+    void setTerminal(bool isTerminal);
 
     /**
      * Creates string representation of event.

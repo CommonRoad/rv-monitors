@@ -14,7 +14,7 @@ bool Event::getValue(const Predicate &predicate) const { return getValue(predica
 
 bool Event::isTerminal() const { return terminal; }
 
-void Event::setTerminal(bool isTerminal) { Event::terminal = isTerminal; }
+void Event::setTerminal(const bool isTerminal) { terminal = isTerminal; }
 
 std::string Event::to_string() const {
     std::stringstream res;
