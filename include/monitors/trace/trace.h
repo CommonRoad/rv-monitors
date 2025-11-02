@@ -112,17 +112,39 @@ class Trace {
         return csv;
     }
 
+    /**
+     * Inserts events to trace between start and end with given step size.
+     *
+     * @param start Start time step.
+     * @param end End time step.
+     * @param step Step size.
+     */
     void insertEvents(const size_t start, const size_t end, const size_t step) {
-        // use two loops otherwise we would need to iterative over trace where we add new elements which makes iterating
-        // complex
-        for (size_t time = start; time <= end; time += step)
-            for (size_t traceIdx = 0; traceIdx <= end; ++traceIdx) {
-                if (trace[traceIdx].getTimeStep() <= time and trace[traceIdx + 1].getTimeStep() > time or
-                    traceIdx + 2 > trace.size()) {
-                    trace.insert(trace.begin() + traceIdx + 1, Event(time, time == end));
-                    break;
-                }
-            }
+        std::set<size_t> existingSteps;
+        std::set<size_t> desiredSteps;
+        for (const auto &event : trace) {
+            existingSteps.insert(event.getTimeStep());
+        }
+        for (size_t timeStepIdx{start}; timeStepIdx <= end; timeStepIdx += step) {
+            desiredSteps.insert(timeStepIdx);
+        }
+        std::set<size_t> missingSteps;
+        std::set_difference(desiredSteps.begin(), desiredSteps.end(), existingSteps.begin(), existingSteps.end(),
+                            std::inserter(missingSteps, missingSteps.begin()));
+
+        size_t terminalStep;
+        if (!trace.empty())
+            terminalStep = std::max(trace.back().getTimeStep(), *missingSteps.rbegin());
+        else
+            terminalStep = *missingSteps.rbegin();
+        if (terminalStep > trace.back().getTimeStep())
+            trace.back().setTerminal(false);
+        size_t idx{0};
+        for (auto &time : missingSteps) {
+            while (idx < trace.size() and trace.at(idx).getTimeStep() < time)
+                ++idx;
+            trace.insert(trace.begin() + static_cast<long>(idx), Event(time, time == terminalStep));
+        }
     }
 
     /**
