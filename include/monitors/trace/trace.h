@@ -120,6 +120,7 @@ class Trace {
      * @param step Step size.
      */
     void insertEvents(const size_t start, const size_t end, const size_t step) {
+        // Determine missing steps
         std::set<size_t> existingSteps;
         std::set<size_t> desiredSteps;
         for (const auto &event : trace) {
@@ -128,10 +129,14 @@ class Trace {
         for (size_t timeStepIdx{start}; timeStepIdx <= end; timeStepIdx += step) {
             desiredSteps.insert(timeStepIdx);
         }
-        std::set<size_t> missingSteps;
+        std::vector<size_t> missingSteps;
         std::set_difference(desiredSteps.begin(), desiredSteps.end(), existingSteps.begin(), existingSteps.end(),
                             std::inserter(missingSteps, missingSteps.begin()));
 
+        if (missingSteps.empty())
+            return;
+
+        // Find current terminal step and adjust terminal flags if necessary
         size_t terminalStep;
         if (!trace.empty())
             terminalStep = std::max(trace.back().getTimeStep(), *missingSteps.rbegin());
@@ -139,6 +144,8 @@ class Trace {
             terminalStep = *missingSteps.rbegin();
         if (terminalStep > trace.back().getTimeStep())
             trace.back().setTerminal(false);
+
+        // insert new events
         size_t idx{0};
         for (auto &time : missingSteps) {
             while (idx < trace.size() and trace.at(idx).getTimeStep() < time)
