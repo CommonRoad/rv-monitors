@@ -57,3 +57,8 @@ double UniversalMonitor::computeSatisfactionProbability(const std::shared_ptr<Hy
                                                         const size_t numEval) {
     return std::pow(monitor->getSatisfactionProbability(), numEval);
 }
+
+void UniversalMonitor::setStoreVariableResults(const bool store) {
+    storeVariableResults = store;
+    QuantifierMonitor::setStoreVariableResults(store);
+}

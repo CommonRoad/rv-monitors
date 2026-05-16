@@ -46,6 +46,13 @@ class UniversalMonitor final : public QuantifierMonitor {
      */
     std::string to_string() override;
 
+    /**
+     * Sets flag whether variable resutls shoudl be stored.
+     *
+     * @param store Boolean indicating whether variables should be stored.
+     */
+    void setStoreVariableResults(bool store) override;
+
   private:
     bool storeVariableResults{true}; //**< Boolean indicating whether results should be stored. */
 
