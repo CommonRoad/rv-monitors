@@ -120,38 +120,45 @@ class Trace {
      * @param step Step size.
      */
     void insertEvents(const size_t start, const size_t end, const size_t step) {
-        // Determine missing steps
-        std::set<size_t> existingSteps;
-        std::set<size_t> desiredSteps;
-        for (const auto &event : trace) {
-            existingSteps.insert(event.getTimeStep());
-        }
-        for (size_t timeStepIdx{start}; timeStepIdx <= end; timeStepIdx += step) {
-            desiredSteps.insert(timeStepIdx);
-        }
+        // Collect desired steps, skipping those already in the trace.
+        // The trace is maintained in sorted order, so we walk both sequences together
+        // to find missing steps in O(n + k) rather than O(n*k).
         std::vector<size_t> missingSteps;
-        std::set_difference(desiredSteps.begin(), desiredSteps.end(), existingSteps.begin(), existingSteps.end(),
-                            std::inserter(missingSteps, missingSteps.begin()));
+        {
+            size_t ti = 0;
+            for (size_t t = start; t <= end; t += step) {
+                while (ti < trace.size() && trace[ti].getTimeStep() < t)
+                    ++ti;
+                if (ti >= trace.size() || trace[ti].getTimeStep() != t)
+                    missingSteps.push_back(t);
+            }
+        }
 
         if (missingSteps.empty())
             return;
 
-        // Find current terminal step and adjust terminal flags if necessary
-        size_t terminalStep;
-        if (!trace.empty())
-            terminalStep = std::max(trace.back().getTimeStep(), *missingSteps.rbegin());
-        else
-            terminalStep = *missingSteps.rbegin();
-        if (terminalStep > trace.back().getTimeStep())
+        // Determine the new terminal step and clear the old terminal flag if needed.
+        const size_t terminalStep =
+            std::max(trace.empty() ? size_t{0} : trace.back().getTimeStep(), missingSteps.back());
+        if (!trace.empty() && terminalStep > trace.back().getTimeStep())
             trace.back().setTerminal(false);
 
-        // insert new events
-        size_t idx{0};
-        for (auto &time : missingSteps) {
-            while (idx < trace.size() and trace.at(idx).getTimeStep() < time)
-                ++idx;
-            trace.insert(trace.begin() + static_cast<long>(idx), Event(time, time == terminalStep));
+        // Merge existing events and new events in a single O(n + k) pass.
+        std::vector<Event> merged;
+        merged.reserve(trace.size() + missingSteps.size());
+        size_t mi = 0;
+        for (auto &evt : trace) {
+            while (mi < missingSteps.size() && missingSteps[mi] < evt.getTimeStep()) {
+                merged.emplace_back(missingSteps[mi], missingSteps[mi] == terminalStep);
+                ++mi;
+            }
+            merged.push_back(std::move(evt));
         }
+        while (mi < missingSteps.size()) {
+            merged.emplace_back(missingSteps[mi], missingSteps[mi] == terminalStep);
+            ++mi;
+        }
+        trace = std::move(merged);
     }
 
     /**

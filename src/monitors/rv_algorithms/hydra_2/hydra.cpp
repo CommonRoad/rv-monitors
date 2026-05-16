@@ -22,6 +22,10 @@ std::map<std::string, std::vector<Verdict>> Hydra2::evaluate(const std::shared_p
         setTraceMonitors(trace, domains);
     }
 
+    const bool shouldStore = (formulaEvaluationMode == globally);
+    for (const auto &mon : monitors)
+        mon->setStoreVariableResults(shouldStore);
+
     if (formulaEvaluationMode == globally) {
         evalCompleteTrace(result, formulaIDs);
     } else {
@@ -45,14 +49,23 @@ void Hydra2::evalEarlyTermination(std::map<std::string, std::vector<Verdict>> &r
             relMonitors.push_back(mon);
         }
 
+    // Cache the verdict slots so the per-step loop avoids a string-keyed map lookup. The monitor
+    // evaluation order is left unchanged on purpose: under early termination it determines which
+    // rule is reported when several are violated at the same earliest time step.
+    std::vector<std::vector<Verdict> *> verdictRefs;
+    verdictRefs.reserve(relMonitors.size());
+    for (const auto &mon : relMonitors)
+        verdictRefs.push_back(&result[mon->getFormulaId()]);
+
     for (size_t i{0}; i < traceLength; ++i) {
-        for (const auto &mon : relMonitors) {
+        for (size_t m{0}; m < relMonitors.size(); ++m) {
+            const auto &mon = relMonitors[m];
             spdlog::debug("Monitor evaluation: " + std::to_string(i) + " - " + mon->getFormulaId());
             mon->addDomainValues({}); // triggers adding of domain values, e.g., to predicates
-            result[mon->getFormulaId()].at(0) = mon->step(0, i);
+            verdictRefs[m]->at(0) = mon->step(0, i);
             // In globally_early_termination mode, we terminate as soon as the formula is not satisfied at any time step
             // In initial_step mode, we can always terminate after looking at the first time step
-            if ((formulaEvaluationMode == globally_early_termination && !result[mon->getFormulaId()].at(0).value) ||
+            if ((formulaEvaluationMode == globally_early_termination && !verdictRefs[m]->at(0).value) ||
                 formulaEvaluationMode == initial_step) {
                 return;
             }
@@ -128,19 +141,23 @@ std::map<std::string, std::array<double, 3>> &Hydra2::getPredicateCost() const {
 void Hydra2::evalCompleteTrace(std::map<std::string, std::vector<Verdict>> &result,
                                const std::vector<std::string> &formulaIDs) const {
     std::vector<std::shared_ptr<Hydra2Monitor>> relMonitors;
+    std::vector<std::vector<Verdict> *> verdictRefs;
     for (const auto &mon : monitors)
         if (result.find(mon->getFormulaId()) == result.end() and
             (formulaIDs.empty() or std::any_of(formulaIDs.begin(), formulaIDs.end(),
                                                [mon](const std::string &fID) { return fID == mon->getFormulaId(); }))) {
-            result[mon->getFormulaId()].reserve(traceLength);
+            auto &verdicts = result[mon->getFormulaId()];
+            verdicts.reserve(traceLength);
             relMonitors.push_back(mon);
+            verdictRefs.push_back(&verdicts);
         }
 
     for (size_t i{0}; i < traceLength; ++i)
-        for (const auto &mon : relMonitors) {
+        for (size_t m{0}; m < relMonitors.size(); ++m) {
+            const auto &mon = relMonitors[m];
             spdlog::debug("Monitor evaluation: " + std::to_string(i) + " - " + mon->getFormulaId());
             mon->addDomainValues({}); // triggers adding of domain values, e.g., to predicates
-            result[mon->getFormulaId()].emplace_back(mon->step(0, i));
+            verdictRefs[m]->emplace_back(mon->step(0, i));
         }
 }
 

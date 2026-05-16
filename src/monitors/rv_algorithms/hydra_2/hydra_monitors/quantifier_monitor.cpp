@@ -189,3 +189,9 @@ void QuantifierMonitor::to_tree(std::map<size_t, std::tuple<std::string, std::ve
     tree.insert({monitorId, {formula.getExpr()->getSymbol(), {subMonitor->getMonitorID()}}});
     subMonitor->to_tree(tree);
 }
+
+void QuantifierMonitor::setStoreVariableResults(const bool store) {
+    subMonitor->setStoreVariableResults(store);
+    for (auto &[id, mon] : evalMonitors)
+        mon->setStoreVariableResults(store);
+}
