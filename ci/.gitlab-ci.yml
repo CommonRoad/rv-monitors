@@ -8,9 +8,17 @@ stages:
 
 default:
   image: $CI_REGISTRY/tum-cps/commonroad-docker/ci-base:2025.2
+  retry:
+    max: 2
+    when:
+      - script_failure
+      - runner_system_failure
+      - scheduler_failure
   before_script:
     - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lrz.de/".insteadOf "git@gitlab.lrz.de:"
     - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lrz.de".insteadOf "ssh://git@gitlab.lrz.de"
+    # authenticate HTTPS clones (e.g. FetchContent) to avoid anonymous rate limiting (HTTP 429)
+    - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lrz.de/".insteadOf "https://gitlab.lrz.de/"
 
 .common-rules:
   rules:
@@ -162,9 +170,9 @@ build-coverage:
 
 build-python:
   stage: compile
-  image: python:3.12-bullseye
+  image: python:3.12-bookworm
   script:
-    - DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -y install openjdk-11-jre-headless
+    - DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -y install openjdk-17-jre-headless
     - python --version
     - git describe --always
     - python -m venv venv
@@ -230,9 +238,10 @@ run-coverage:
         path: coverage.xml
 
 .install-python-venv: &install-python-venv
-  - apt-get update && apt-get install -y --no-install-recommends git python3-venv python3-pip python3-dev doxygen openjdk-11-jre-headless ffmpeg libsm6 libxext6 build-essential git pkg-config wget libomp-dev gcovr graphviz cppcheck libeigen3-dev libboost-all-dev uuid-dev libcgal-dev libspdlog-dev default-jre default-jdk gcc cmake
+  - apt-get update && apt-get install -y --no-install-recommends git python3-venv python3-pip python3-dev doxygen openjdk-17-jre-headless ffmpeg libsm6 libxext6 build-essential git pkg-config wget libomp-dev gcovr graphviz cppcheck libeigen3-dev libboost-all-dev uuid-dev libcgal-dev libspdlog-dev default-jre default-jdk gcc cmake
   - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lrz.de/".insteadOf "git@gitlab.lrz.de:"
   - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lrz.de".insteadOf "ssh://git@gitlab.lrz.de"
+  - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lrz.de/".insteadOf "https://gitlab.lrz.de/"
   - python3 -m pip config set global.disable-pip-version-check true
   - python3 -m venv test-venv
   - source test-venv/bin/activate
@@ -240,7 +249,7 @@ run-coverage:
 
 .test-python-common: &test-python-common
   stage: test
-  image: python:${JOB_PYTHON_VERSION}-slim-bullseye
+  image: python:${JOB_PYTHON_VERSION}-slim-bookworm
   before_script:
     - *install-python-venv
     - python -m pip install .["test"]
@@ -280,7 +289,7 @@ test-python-manylinux:
 
 test-python-general:
   stage: test
-  image: python:${JOB_PYTHON_VERSION}-slim-bullseye
+  image: python:${JOB_PYTHON_VERSION}-slim-bookworm
   parallel:
     matrix:
       - JOB_PYTHON_VERSION: ["3.10", "3.11", "3.12", "3.13"]
