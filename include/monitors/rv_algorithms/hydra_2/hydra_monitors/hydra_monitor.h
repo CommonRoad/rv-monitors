@@ -55,6 +55,15 @@ class Hydra2Monitor {
      */
     bool stepNumberValid(size_t stepNumber, size_t parentId);
 
+    /**
+     * Checks whether all non-constant domain values are valid at a time stamp.
+     *
+     * @param domainValues Domain values to check.
+     * @param timeStamp Time stamp of interest.
+     * @return Boolean indicating whether all domain values are valid.
+     */
+    static bool validAt(const std::vector<DomainValue> &domainValues, size_t timeStamp);
+
   private:
     /**
      * Extracts maximum trace idx of monitor given all parent monitors (required for connected evaluation).

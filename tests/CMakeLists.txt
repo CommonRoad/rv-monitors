@@ -22,6 +22,8 @@ set(RV_MONITOR_TEST_SRC_FILES
         rv_algorithms/hydra_2/hydra_monitors/test_universal_monitor.cpp
         rv_algorithms/hydra_2/hydra_monitors/test_quote_monitor.cpp
         rv_algorithms/hydra_2/test_hydra_creation.cpp
+        rv_algorithms/hydra_2/test_hydra_differential.cpp
+        rv_algorithms/hydra_2/test_hydra_regression.cpp
         rv_algorithms/hydra/hydra_test_utils.cpp
         rv_algorithms/hydra/test_hydra.cpp
         rv_algorithms/hydra/hydra_monitors/test_constant_monitor.cpp

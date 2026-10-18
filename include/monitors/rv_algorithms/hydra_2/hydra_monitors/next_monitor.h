@@ -68,14 +68,6 @@ class NextMonitor final : public Hydra2Monitor {
     std::string to_string() override;
 
     /**
-     * Sets step number of monitor and sub-monitors.
-     *
-     * @param stepNumber Desired step number.
-     * @param parentId ID of parent monitor.
-     */
-    void setStepNumber(size_t stepNumber, size_t parentId) override;
-
-    /**
      * Extracts tree structure for visualization.
      *
      * @param tree Mapping of monitor ID to its logical representation and child nodes.
@@ -83,9 +75,8 @@ class NextMonitor final : public Hydra2Monitor {
     void to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) override;
 
   private:
-    std::shared_ptr<Hydra2Monitor> subMonitor; //**< Child monitor. */
-    IntervalTemporalOperator interval;         //**< Interval of operator. */
-    std::optional<size_t> currentTime;         //**< Previous time step to check whether next verdict lies in interval.
-                                               // Initialized after first event has been seen. */
+    std::shared_ptr<Hydra2Monitor> subMonitor;     //**< Child monitor. */
+    IntervalTemporalOperator interval;             //**< Interval of operator. */
     std::vector<DomainValue> domainValueArguments; //**< Domain values. */
+    std::vector<size_t> timeStepsTrace;            //**< Time steps of trace. */
 };

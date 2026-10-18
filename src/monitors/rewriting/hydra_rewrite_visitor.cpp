@@ -32,6 +32,22 @@
 #include "monitors/trace/event.h"
 #include <iostream>
 
+namespace {
+/**
+ * Checks whether an interval of a temporal operator is [0, inf], i.e., whether the operator has no timing constraint.
+ */
+bool isUnboundedFromZero(const std::shared_ptr<Interval> &interval) {
+    return !interval or interval->isEmpty() or (interval->getStart() == 0 and !interval->isFinite());
+}
+
+/**
+ * Checks whether an interval of a temporal operator contains 0.
+ */
+bool startsAtZero(const std::shared_ptr<Interval> &interval) {
+    return !interval or interval->isEmpty() or interval->getStart() == 0;
+}
+} // namespace
+
 void HydraRewriteVisitor::rewrite(Formula &formula) {
     event_map_t map;
     // Dummy eventMap
@@ -299,14 +315,17 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitFuture(Future &opr, const 
     if (opr.getLeft()->isConstFalse()) {
         return std::make_shared<Constant>(false);
     }
-    // Idempotence F(F(a)) = F(a)
-    if (auto future = std::dynamic_pointer_cast<Future>(opr.getLeft())) {
+    // Idempotence F(F(a)) = F(a); only valid without timing constraints
+    if (auto future = std::dynamic_pointer_cast<Future>(opr.getLeft());
+        future and isUnboundedFromZero(opr.getInterval()) and isUnboundedFromZero(future->getInterval())) {
         return future;
     }
 
-    // Absorption F(G(F(a))) = G(F(a))
-    if (auto globally = std::dynamic_pointer_cast<Globally>(opr.getLeft())) {
-        if (std::dynamic_pointer_cast<Future>(globally->getLeft())) {
+    // Absorption F(G(F(a))) = G(F(a)); only valid without timing constraints
+    if (auto globally = std::dynamic_pointer_cast<Globally>(opr.getLeft());
+        globally and isUnboundedFromZero(opr.getInterval()) and isUnboundedFromZero(globally->getInterval())) {
+        if (auto innerFuture = std::dynamic_pointer_cast<Future>(globally->getLeft());
+            innerFuture and isUnboundedFromZero(innerFuture->getInterval())) {
             return globally;
         }
     }
@@ -320,21 +339,24 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitFuture(Future &opr, const 
 std::shared_ptr<Expression> HydraRewriteVisitor::visitGlobally(Globally &opr, const std::shared_ptr<Trace> &trace,
                                                                size_t index) {
     visitExpression(opr, trace, index);
-    // G(false) = false
-    if (opr.getLeft()->isConstFalse()) {
+    // G(false) = false; only valid if the interval contains 0, otherwise G holds if no step lies within the interval
+    if (opr.getLeft()->isConstFalse() and startsAtZero(opr.getInterval())) {
         return std::make_shared<Constant>(false);
     }
     // G(true) = true
     if (opr.getLeft()->isConstTrue()) {
         return std::make_shared<Constant>(true);
     }
-    // Idempotence
-    if (auto globally = std::dynamic_pointer_cast<Globally>(opr.getLeft())) {
+    // Idempotence G(G(a)) = G(a); only valid without timing constraints
+    if (auto globally = std::dynamic_pointer_cast<Globally>(opr.getLeft());
+        globally and isUnboundedFromZero(opr.getInterval()) and isUnboundedFromZero(globally->getInterval())) {
         return globally;
     }
-    // Absorption G(F(G(a))) = F(G(a))
-    if (auto future = std::dynamic_pointer_cast<Future>(opr.getLeft())) {
-        if (std::dynamic_pointer_cast<Globally>(future->getLeft())) {
+    // Absorption G(F(G(a))) = F(G(a)); only valid without timing constraints
+    if (auto future = std::dynamic_pointer_cast<Future>(opr.getLeft());
+        future and isUnboundedFromZero(opr.getInterval()) and isUnboundedFromZero(future->getInterval())) {
+        if (auto innerGlobally = std::dynamic_pointer_cast<Globally>(future->getLeft());
+            innerGlobally and isUnboundedFromZero(innerGlobally->getInterval())) {
             return future;
         }
     }
@@ -356,21 +378,24 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitGlobally(Globally &opr, co
 std::shared_ptr<Expression> HydraRewriteVisitor::visitHistorically(Historically &opr,
                                                                    const std::shared_ptr<Trace> &trace, size_t index) {
     visitExpression(opr, trace, index);
-    // H(false) = false
-    if (opr.getLeft()->isConstFalse()) {
+    // H(false) = false; only valid if the interval contains 0, otherwise H holds if no step lies within the interval
+    if (opr.getLeft()->isConstFalse() and startsAtZero(opr.getInterval())) {
         return std::make_shared<Constant>(false);
     }
     // H(true) = true
     if (opr.getLeft()->isConstTrue()) {
         return std::make_shared<Constant>(true);
     }
-    // Idempotence
-    if (auto historically = std::dynamic_pointer_cast<Historically>(opr.getLeft())) {
+    // Idempotence H(H(a)) = H(a); only valid without timing constraints
+    if (auto historically = std::dynamic_pointer_cast<Historically>(opr.getLeft());
+        historically and isUnboundedFromZero(opr.getInterval()) and isUnboundedFromZero(historically->getInterval())) {
         return historically;
     }
-    // Absorption H(O(H(a))) = O(H(a))
-    if (auto once = std::dynamic_pointer_cast<Once>(opr.getLeft())) {
-        if (std::dynamic_pointer_cast<Historically>(once->getLeft())) {
+    // Absorption H(O(H(a))) = O(H(a)); only valid without timing constraints
+    if (auto once = std::dynamic_pointer_cast<Once>(opr.getLeft());
+        once and isUnboundedFromZero(opr.getInterval()) and isUnboundedFromZero(once->getInterval())) {
+        if (auto innerHistorically = std::dynamic_pointer_cast<Historically>(once->getLeft());
+            innerHistorically and isUnboundedFromZero(innerHistorically->getInterval())) {
             return once;
         }
     }
@@ -413,8 +438,9 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitOnce(Once &opr, const std:
         return std::make_shared<Constant>(false);
     }
 
-    // Idempotence
-    if (auto once = std::dynamic_pointer_cast<Once>(opr.getLeft())) {
+    // Idempotence O(O(a)) = O(a); only valid without timing constraints
+    if (auto once = std::dynamic_pointer_cast<Once>(opr.getLeft());
+        once and isUnboundedFromZero(opr.getInterval()) and isUnboundedFromZero(once->getInterval())) {
         return once;
     }
 
@@ -464,8 +490,8 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitUntil(Until &opr, const st
         return std::make_shared<Constant>(false);
     }
 
-    // a U a = a
-    if (opr.getRight()->to_string() == opr.getLeft()->to_string())
+    // a U a = a; only valid if the interval contains 0
+    if (startsAtZero(opr.getInterval()) and opr.getRight()->to_string() == opr.getLeft()->to_string())
         return opr.getRight();
 
     // Idempotence
@@ -490,8 +516,8 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitSince(Since &opr, const st
         return std::make_shared<Constant>(false);
     }
 
-    // a S a = a
-    if (opr.getRight()->to_string() == opr.getLeft()->to_string())
+    // a S a = a; only valid if the interval contains 0
+    if (startsAtZero(opr.getInterval()) and opr.getRight()->to_string() == opr.getLeft()->to_string())
         return opr.getRight();
 
     // Idempotence
@@ -560,7 +586,7 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitUniversalQuantifier(Univer
 std::shared_ptr<Expression> HydraRewriteVisitor::visitExistentialQuantifier(ExistentialQuantifier &opr,
                                                                             const std::shared_ptr<Trace> &trace,
                                                                             size_t index) {
-    // E x in D. X(x) <-> X(E x in D. x)
+    // E x in D. F(x) <-> F(E x in D. x) and E x in D. O(x) <-> O(E x in D. x)
     if (auto rewExpr = swapQuantifierAndTempUnary(std::make_shared<ExistentialQuantifier>(opr), trace, index))
         return rewExpr;
 
@@ -590,34 +616,14 @@ std::shared_ptr<Expression> HydraRewriteVisitor::visitExistentialQuantifier(Exis
 
 std::shared_ptr<Expression>
 HydraRewriteVisitor::visitQuoteQuantifier(QuoteQuantifier &opr, const std::shared_ptr<Trace> &trace, size_t index) {
-    // Q[0., 0.5] x in D. X(x) <-> X(Q[0., 0.5] x in D. x)
-    if (auto rewExpr = swapQuantifierAndTempUnary(std::make_shared<QuoteQuantifier>(opr), trace, index))
-        return rewExpr;
-
     visitExpression(opr, trace, index);
 
-    // Q[0., 0.5] x in D. Q[0., 0.5] y in D. x & y <-> Q[0., 0.5] x, y in D. x & y
-    if (auto inner = std::dynamic_pointer_cast<QuoteQuantifier>(opr.getLeft())) {
-        auto opProb{opr.getQuoteInterval()};
-        auto innerProb{inner->getQuoteInterval()};
-        if (opProb.getMin() == innerProb.getMin() and opProb.getMax() == innerProb.getMax()) {
-            std::vector<Variable> variables;
-            for (const auto &var : opr.getVariables())
-                variables.push_back(var);
-            for (const auto &var : inner->getVariables())
-                variables.push_back(var);
-            std::shared_ptr<Expression> innerLeft = inner->getLeft();
-            auto newQuote = std::make_shared<QuoteQuantifier>(innerLeft, variables, opProb);
-            for (const auto &var : inner->getVariables()) {
-                newQuote->removeVariable(var.getName());
-                newQuote->addVariable(var.getName(), var.getDomain());
-            }
-            return newQuote;
-        }
-    }
+    // Note: nested quote quantifiers cannot be merged, e.g., Q[0., 0.5] x in D. Q[0., 0.5] y in D. x & y is not
+    // equivalent to Q[0., 0.5] x, y in D. x & y.
 
-    // Q[0., 0.5] x, y in D. x <-> Q[0., 0.5] x in D. x or C[0., 0.5] x in D. A x in D. x <-> A x in D. x
-    auto newExpr = removeUnusedVariables(std::make_shared<QuoteQuantifier>(opr));
+    // Q[0., 0.5] x, y in D. x <-> Q[0., 0.5] x in D. x; the ratio does not depend on unused variables, but the last
+    // variable is kept since the quantifier does not evaluate to its sub-formula
+    auto newExpr = removeUnusedVariables(std::make_shared<QuoteQuantifier>(opr), true);
 
     return newExpr;
 }
@@ -625,45 +631,24 @@ HydraRewriteVisitor::visitQuoteQuantifier(QuoteQuantifier &opr, const std::share
 std::shared_ptr<Expression> HydraRewriteVisitor::visitCountingQuantifier(CountingQuantifier &opr,
                                                                          const std::shared_ptr<Trace> &trace,
                                                                          size_t index) {
-    // C=2 x in D. X(x) <-> X(C=2 x in D. x)
-    if (auto rewExpr = swapQuantifierAndTempUnary(std::make_shared<CountingQuantifier>(opr), trace, index))
-        return rewExpr;
-
     visitExpression(opr, trace, index);
 
-    // C=2 x in D. C=2 y in D. x & y <-> C=2 x, y in D. x & y
-    if (auto inner = std::dynamic_pointer_cast<CountingQuantifier>(opr.getLeft())) {
-        auto opOpera{opr.getOperator()};
-        auto innerOpera{inner->getOperator()};
-        auto opNum{opr.getNum()};
-        auto innerNum{inner->getNum()};
-        if (opOpera == innerOpera and opNum == innerNum) {
-            std::vector<Variable> variables;
-            for (const auto &var : opr.getVariables())
-                variables.push_back(var);
-            for (const auto &var : inner->getVariables())
-                variables.push_back(var);
-            std::shared_ptr<Expression> innerLeft = inner->getLeft();
-            auto newCounting = std::make_shared<CountingQuantifier>(innerLeft, variables, opOpera, opNum);
-            for (const auto &var : inner->getVariables()) {
-                newCounting->removeVariable(var.getName());
-                newCounting->addVariable(var.getName(), var.getDomain());
-            }
-            return newCounting;
-        }
-    }
-
-    // C=2 x, y in D. x <-> C=2 x in D. x or C=2 x in D. A x in D. x <-> A x in D. x
-    auto newExpr = removeUnusedVariables(std::make_shared<CountingQuantifier>(opr));
-
-    return newExpr;
+    // Note: nested counting quantifiers cannot be merged and unused variables cannot be removed since both change the
+    // number of satisfying variable assignments, e.g., C=2 x in D. true is not equivalent to true.
+    return std::make_shared<CountingQuantifier>(opr);
 }
 
 std::shared_ptr<Expression>
 HydraRewriteVisitor::swapQuantifierAndTempUnary(const std::shared_ptr<FirstOrderOperator> &oper,
                                                 const std::shared_ptr<Trace> &trace, size_t index) {
+    // The swap is only sound for operators that distribute over the disjunction represented by the existential
+    // quantifier, i.e., eventually and once. It is, e.g., unsound for negation, globally, and historically, and for
+    // the universal, counting, and quote quantifiers.
+    if (!std::dynamic_pointer_cast<ExistentialQuantifier>(oper))
+        return nullptr;
     if (auto firstOrder = std::dynamic_pointer_cast<Unary>(oper)) {
-        if (!std::dynamic_pointer_cast<FirstOrderOperator>(firstOrder->getLeft()))
+        if (std::dynamic_pointer_cast<Future>(firstOrder->getLeft()) or
+            std::dynamic_pointer_cast<Once>(firstOrder->getLeft()))
             if (auto tempUnary = std::dynamic_pointer_cast<Unary>(firstOrder->getLeft())) {
                 firstOrder->setLeft(tempUnary->getLeft());
                 tempUnary->setLeft(firstOrder);
@@ -673,11 +658,13 @@ HydraRewriteVisitor::swapQuantifierAndTempUnary(const std::shared_ptr<FirstOrder
     return nullptr;
 }
 
-std::shared_ptr<Expression>
-HydraRewriteVisitor::removeUnusedVariables(const std::shared_ptr<FirstOrderOperator> &oper) {
+std::shared_ptr<Expression> HydraRewriteVisitor::removeUnusedVariables(const std::shared_ptr<FirstOrderOperator> &oper,
+                                                                       const bool keepLastVariable) {
     if (auto unary = std::dynamic_pointer_cast<Unary>(oper)) {
         for (const auto &var : std::vector<Variable>{oper->getVariables()}) {
             std::string varName = var.getName();
+            if (keepLastVariable and oper->getVariables().size() == 1)
+                break;
             if (not hasUsedQuantifiedVariable(*unary->getLeft(), varName))
                 oper->removeVariable(varName);
         }

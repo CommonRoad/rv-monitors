@@ -105,10 +105,11 @@ class HydraRewriteVisitor : public ExpressionVisitor {
      * will be removed. A shadowed variable is also be seen as a unused one.
      *
      * @param oper First-order quantifier.
-     * @param left Child expression.
+     * @param keepLastVariable Boolean indicating whether at least one variable should be kept.
      * @return Expression with removed shadowed quantified variables.
      */
-    static std::shared_ptr<Expression> removeUnusedVariables(const std::shared_ptr<FirstOrderOperator> &oper);
+    static std::shared_ptr<Expression> removeUnusedVariables(const std::shared_ptr<FirstOrderOperator> &oper,
+                                                             bool keepLastVariable = false);
 
     /**
      * Searches an expression to check if a certain quantified variable is used.

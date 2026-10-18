@@ -30,6 +30,7 @@ std::shared_ptr<Hydra2Monitor> AtomicMonitor::clone(const std::vector<std::strin
     if (auto tmpCopy{Hydra2Monitor::clone(domValNames)}; tmpCopy != nullptr)
         return tmpCopy;
     auto clonedMonitor{std::make_shared<AtomicMonitor>(*this)};
+    clonedMonitor->verdictHistory.clear();
     allCopies.emplace_back(domValNames, clonedMonitor);
     return clonedMonitor;
 }

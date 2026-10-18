@@ -1,38 +1,27 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/previous_monitor.h"
 
-Verdict PreviousMonitor::concreteStep(const size_t parentId, const size_t stepNumber) {
-    if (traceIdx[parentId] < stepNumber)
-        currentVerdict = subMonitor->step(monitorId, stepNumber - 1); // in case of short-circuiting
-
-    if (Verdict subVerdict = subMonitor->step(monitorId, stepNumber);
-        currentVerdict.has_value() and subVerdict.timeStamp.has_value()) {
-        Verdict lastSubVerdict = *currentVerdict;
-        currentVerdict = subVerdict;
-        if ((!interval.isFinite() and
-             interval.getStart() <= subVerdict.timeStamp.value() - lastSubVerdict.timeStamp.value()) or
-            (interval.isFinite() and
-             Utils::isInInterval(subVerdict.timeStamp.value() - lastSubVerdict.timeStamp.value(), interval.getStart(),
-                                 interval.getEnd())))
-            return {subVerdict.timeStamp.value(), lastSubVerdict.value};
-        return {subVerdict.timeStamp.value(), false};
-    } else {
-        if (subVerdict.timeStamp.has_value()) { // first trace element
-            currentVerdict = subVerdict;
-            return {subVerdict.timeStamp.value(), false};
-        } // behind trace (no more trace element exist)
+Verdict PreviousMonitor::concreteStep(size_t /*parentId*/, const size_t stepNumber) {
+    if (stepNumber >= timeStepsTrace.size())
         return {false};
-    }
+    const size_t timeStamp{timeStepsTrace.at(stepNumber)};
+    if (stepNumber == 0 or !interval.contains(timeStamp - timeStepsTrace.at(stepNumber - 1)))
+        return {timeStamp, false};
+    return {timeStamp, subMonitor->step(monitorId, stepNumber - 1).value};
 }
+
 void PreviousMonitor::setTrace(const std::shared_ptr<Trace> &tra,
                                const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     subMonitor->setTrace(tra, domains);
+    timeStepsTrace = {};
+    for (const auto &event : tra->getTrace())
+        timeStepsTrace.push_back(event.getTimeStep());
     trace = tra;
 }
 
 void PreviousMonitor::reset() {
     Hydra2Monitor::reset();
+    timeStepsTrace = {};
     subMonitor->reset();
-    currentVerdict = {};
 }
 
 std::shared_ptr<Hydra2Monitor> PreviousMonitor::clone(const std::vector<std::string> &domValNames) {
@@ -57,13 +46,6 @@ std::string PreviousMonitor::to_string() {
 }
 
 void PreviousMonitor::addDomainValues(const std::vector<DomainValue> &vals) { subMonitor->addDomainValues(vals); }
-
-void PreviousMonitor::setStepNumber(const size_t stepNumber, const size_t parentId) {
-    Hydra2Monitor::setStepNumber(stepNumber, parentId);
-    if (!stepNumberValid(stepNumber, parentId))
-        return;
-    subMonitor->setStepNumber(stepNumber, monitorId);
-}
 
 void PreviousMonitor::to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) {
     if (tree.find(monitorId) != tree.end())
