@@ -1,4 +1,5 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/quantifier_monitor.h"
+#include <cmath>
 
 QuantifierMonitor::QuantifierMonitor(Formula formula, std::shared_ptr<Hydra2Monitor> subMonitor, const size_t monitorId,
                                      std::map<std::string, std::shared_ptr<DomainStorage>> &variableValues,
@@ -125,6 +126,20 @@ void QuantifierMonitor::reset() {
 
 double QuantifierMonitor::computeCost(const std::shared_ptr<Hydra2Monitor> &monitor, const size_t numEval) {
     return monitor->getEvalCost() * static_cast<double>(numEval);
+}
+
+double QuantifierMonitor::computeBinomialProbability(const size_t numEval, const double probability,
+                                                     const std::function<bool(size_t)> &accepted) {
+    double probabilitySum{0.0};
+    double binom{1.0}; // n choose k, computed in floating point to avoid integer overflow
+    for (size_t k{0}; k <= numEval; ++k) {
+        if (k > 0)
+            binom = binom * static_cast<double>(numEval - k + 1) / static_cast<double>(k);
+        if (accepted(k))
+            probabilitySum += binom * std::pow(probability, static_cast<double>(k)) *
+                              std::pow(1 - probability, static_cast<double>(numEval - k));
+    }
+    return probabilitySum;
 }
 
 Verdict QuantifierMonitor::concreteStep(const size_t parentId, const size_t stepNumber) {

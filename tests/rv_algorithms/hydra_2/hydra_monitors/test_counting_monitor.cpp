@@ -5,6 +5,7 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/counting_monitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/predicate_monitor.h"
 #include "monitors/trace/trace.h"
+#include <cmath>
 
 TEST(TestCountingMonitor, testCountingMonitorStandard) {
     const std::shared_ptr<Trace> trace =
@@ -39,4 +40,27 @@ TEST(TestCountingMonitor, testCountingMonitorToString) {
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues;
     auto mon{CountingMonitor(formula, mon1, 0, variableValues, quantifier->getOperator(), quantifier->getNum(), false)};
     EXPECT_EQ(mon.to_string(), "C=4 x in D, y in D, z in D. p(x, y, z)");
+}
+
+TEST(TestCountingMonitor, testCountingMonitorSatisfactionProbability) {
+    Formula formula = Parser::parse("C>=1 x in D. p(x)");
+    Formula formulaPredicate = Parser::parse("p(x)");
+    DomainStorage dom1{
+        "D", {"a", "b", "c", "d", "e"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
+    auto mon1{std::make_shared<PredicateMonitor>(formulaPredicate, 2, 1.0, 0.3)};
+    std::map<std::string, std::shared_ptr<DomainStorage>> variableValues{{"x", std::make_shared<DomainStorage>(dom1)}};
+
+    // binomial distribution with n = 5 and p = 0.3
+    EXPECT_NEAR(CountingMonitor(formula, mon1, 1, variableValues, CountingQuantifier::GREATER_EQ, 1, false)
+                    .getSatisfactionProbability(),
+                1 - std::pow(0.7, 5), 1e-9);
+    EXPECT_NEAR(CountingMonitor(formula, mon1, 1, variableValues, CountingQuantifier::LESS_EQ, 1, false)
+                    .getSatisfactionProbability(),
+                std::pow(0.7, 5) + 5 * 0.3 * std::pow(0.7, 4), 1e-9);
+    EXPECT_NEAR(CountingMonitor(formula, mon1, 1, variableValues, CountingQuantifier::EQ, 2, false)
+                    .getSatisfactionProbability(),
+                10 * std::pow(0.3, 2) * std::pow(0.7, 3), 1e-9);
+    EXPECT_NEAR(CountingMonitor(formula, mon1, 1, variableValues, CountingQuantifier::GREATER_EQ, 6, false)
+                    .getSatisfactionProbability(),
+                0.0, 1e-9);
 }

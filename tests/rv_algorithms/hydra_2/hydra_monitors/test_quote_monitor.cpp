@@ -68,3 +68,16 @@ TEST(TestQuoteMonitor, testQuoteMonitorToString) {
                           quantifier->getQuoteInterval().getMax(), false)};
     EXPECT_EQ(mon.to_string(), "Q[0.220000, 0.650000] x in D, y in D. p(x, '20', y)");
 }
+
+TEST(TestQuoteMonitor, testQuoteMonitorSatisfactionProbability) {
+    Formula formula = Parser::parse("Q[0.2, 0.7] x in D. p(x)");
+    Formula formulaPredicate = Parser::parse("p(x)");
+    DomainStorage dom1{
+        "D", {1ul, 2ul, 3ul, 4ul}, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }};
+    auto mon1{std::make_shared<PredicateMonitor>(formulaPredicate, 2, 1.0, 0.5)};
+    std::map<std::string, std::shared_ptr<DomainStorage>> variableValues{{"x", std::make_shared<DomainStorage>(dom1)}};
+    auto mon{QuoteMonitor(formula, mon1, 1, variableValues, 0.2, 0.7, false)};
+
+    // binomial distribution with n = 4 and p = 0.5; quotes 0.25 and 0.5 lie in [0.2, 0.7]
+    EXPECT_NEAR(mon.getSatisfactionProbability(), (4.0 + 6.0) / 16.0, 1e-9);
+}
