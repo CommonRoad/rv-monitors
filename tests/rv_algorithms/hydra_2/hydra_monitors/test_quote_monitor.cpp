@@ -81,3 +81,16 @@ TEST(TestQuoteMonitor, testQuoteMonitorSatisfactionProbability) {
     // binomial distribution with n = 4 and p = 0.5; quotes 0.25 and 0.5 lie in [0.2, 0.7]
     EXPECT_NEAR(mon.getSatisfactionProbability(), (4.0 + 6.0) / 16.0, 1e-9);
 }
+
+// If every quote is accepted, the sum of the binomial terms is 1 but rounding made it, e.g., 1.0000000000000002 for
+// n = 2 and p = 0.18, which triggered the assertion in the Hydra2Monitor constructor (debug builds).
+TEST(TestQuoteMonitor, testQuoteMonitorSatisfactionProbabilityIsClamped) {
+    Formula formula = Parser::parse("Q[0.0, 1.0] x in D. p(x)");
+    Formula formulaPredicate = Parser::parse("p(x)");
+    DomainStorage dom1{"D", {1ul, 2ul}, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }};
+    auto mon1{std::make_shared<PredicateMonitor>(formulaPredicate, 2, 1.0, 0.18)};
+    std::map<std::string, std::shared_ptr<DomainStorage>> variableValues{{"x", std::make_shared<DomainStorage>(dom1)}};
+    const auto mon{QuoteMonitor(formula, mon1, 1, variableValues, 0.0, 1.0, false)};
+    EXPECT_LE(mon.getSatisfactionProbability(), 1.0); // EXPECT_DOUBLE_EQ would accept 1.0000000000000002
+    EXPECT_DOUBLE_EQ(mon.getSatisfactionProbability(), 1.0);
+}
