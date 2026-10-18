@@ -245,11 +245,12 @@ void HydraCreationVisitor2::reorder(std::vector<std::shared_ptr<Hydra2Monitor>> 
             if (!dynamic_cast<PredicateMonitor *>(mon.get()) or
                 visitedMonitors.find(mon->to_string()) != visitedMonitors.end())
                 continue;
+            constexpr double eps{1e-9};
             double costTmp;
-            if (increasing) // and-operator
-                costTmp = mon->getSatisfactionProbability() * mon->getEvalCost();
-            else
-                costTmp = mon->getEvalCost() / mon->getSatisfactionProbability();
+            if (increasing) // and-operator: stop on first FALSE -> optimal rank c / (1 - p)
+                costTmp = mon->getEvalCost() / std::max(1.0 - mon->getSatisfactionProbability(), eps);
+            else // or-operator: stop on first TRUE -> optimal rank c / p
+                costTmp = mon->getEvalCost() / std::max(mon->getSatisfactionProbability(), eps);
 
             // add predicate monitor to correct priority group
             std::string str{mon->to_string()};
@@ -277,11 +278,12 @@ void HydraCreationVisitor2::reorder(std::vector<std::shared_ptr<Hydra2Monitor>> 
     for (const auto &mon : monitors) {
         if (dynamic_cast<PredicateMonitor *>(mon.get()))
             continue;
+        constexpr double eps{1e-9};
         double costTmp;
-        if (increasing) // and-operator
-            costTmp = mon->getSatisfactionProbability() * mon->getEvalCost();
-        else
-            costTmp = mon->getEvalCost() / mon->getSatisfactionProbability();
+        if (increasing) // and-operator: stop on first FALSE -> optimal rank c / (1 - p)
+            costTmp = mon->getEvalCost() / std::max(1.0 - mon->getSatisfactionProbability(), eps);
+        else // or-operator: stop on first TRUE -> optimal rank c / p
+            costTmp = mon->getEvalCost() / std::max(mon->getSatisfactionProbability(), eps);
 
         curOrder.push_back(mon);
         curCosts.push_back(costTmp);
