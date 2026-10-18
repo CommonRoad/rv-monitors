@@ -2,9 +2,7 @@
 
 #include <utility>
 
-#include "../../../expression_tree/atomic/constant.h"
 #include "../../../utils/interval.h"
-#include "constant_monitor.h"
 #include "hydra_monitor.h"
 
 /**
@@ -25,10 +23,7 @@ class UntilMonitor final : public Hydra2Monitor {
                  const size_t monitorId)
         : Hydra2Monitor(formula, monitorId, subMonitorRight->getEvalCost() + subMonitorLeft->getEvalCost(),
                         computeSatisfactionProbability(subMonitorLeft, subMonitorRight, interval)),
-          subMonitorLeft(std::move(subMonitorLeft)), subMonitorRight(std::move(subMonitorRight)),
-          subMonitorBaseTimeStep(std::make_shared<ConstantMonitor>(Formula(std::make_shared<Constant>(true)), 0)),
-          interval(interval), headPositionMonitorLeft(), headPositionMonitorRight(), headPositionMonitorBaseTimeStep() {
-    }
+          subMonitorLeft(std::move(subMonitorLeft)), subMonitorRight(std::move(subMonitorRight)), interval(interval) {}
 
     /**
      * Performs concrete step of until-monitor.
@@ -76,14 +71,6 @@ class UntilMonitor final : public Hydra2Monitor {
     std::string to_string() override;
 
     /**
-     * Sets step number of monitor and sub-monitors.
-     *
-     * @param stepNumber Desired step number.
-     * @param parentId ID of parent monitor.
-     */
-    void setStepNumber(size_t stepNumber, size_t parentId) override;
-
-    /**
      * Extracts tree structure for visualization.
      *
      * @param tree Mapping of monitor ID to its logical representation and child nodes.
@@ -93,28 +80,35 @@ class UntilMonitor final : public Hydra2Monitor {
   private:
     std::shared_ptr<Hydra2Monitor> subMonitorLeft;  //**< Monitor for specification on left side of until. */
     std::shared_ptr<Hydra2Monitor> subMonitorRight; //**< Monitor for specification on right side of until. */
-    std::shared_ptr<Hydra2Monitor>
-        subMonitorBaseTimeStep; //**< Monitor to extract time step and index from trace at position of until monitor
-                                // head. Represented by Constant-True-Monitor. */
-    std::optional<Verdict> subVerdictLeft;         //**< Verdict for monitor on left side of until. */
-    std::optional<Verdict> subVerdictRight;        //**< Verdict for monitor on right side of until. */
-    std::optional<Verdict> subVerdictBaseTimeStep; //**< Monitor to extract time step and index from trace at position
-                                                   // of until monitor head. Represented by Constant-True-Monitor. */
-    IntervalTemporalOperator interval;             //**< Interval of operator. */
-    HeadPosHydra2 headPositionMonitorLeft;         //**< Head position of left monitor. */
-    HeadPosHydra2 headPositionMonitorRight;        //**< Head position of right monitor. *
-    HeadPosHydra2 headPositionMonitorBaseTimeStep; //**< Head position of base time monitor. *
-    std::optional<HeadPosHydra2> lastSatisfaction; //**< Last time right side of until was satisfied. */
-    std::optional<HeadPosHydra2> lastViolation;    //**< Last time left side of until was violated. */
-    bool endReached{false};                        //**< Boolean indicating whether end of trace was reached. */
-    size_t stepNumberUntil{0}; //**< Stores real step number because until operator can be before parent step number. */
-    std::vector<DomainValue> domainValueArguments; //**< Domain values. */
-    std::vector<size_t> timeStepsTrace;            //**< Time steps of trace. */
+    IntervalTemporalOperator interval;              //**< Interval of operator. */
+    std::vector<DomainValue> domainValueArguments;  //**< Domain values. */
+    std::vector<size_t> timeStepsTrace;             //**< Time steps of trace. */
+    std::vector<signed char>
+        untilUnbounded; //**< Cached verdicts of (left U[0, inf] right) per step: -1 unknown, 0 false, 1 true. */
 
     /**
-     * Executes left and right monitors of until.
+     * Evaluates left side of until at a step. Steps at which a domain value is invalid evaluate to false.
+     *
+     * @param stepNumber Step of interest.
+     * @return Verdict of left monitor.
      */
-    void stepLeftRightMonitors();
+    bool left(size_t stepNumber);
+
+    /**
+     * Evaluates right side of until at a step. Steps at which a domain value is invalid evaluate to false.
+     *
+     * @param stepNumber Step of interest.
+     * @return Verdict of right monitor.
+     */
+    bool right(size_t stepNumber);
+
+    /**
+     * Evaluates (left U[0, inf] right) at a step. Results are cached so that each step is evaluated at most once.
+     *
+     * @param stepNumber Step of interest.
+     * @return Verdict of unbounded until.
+     */
+    bool evalUnbounded(size_t stepNumber);
 
     /**
      * Computes satisfaction probability of until monitor based on left and right monitors.

@@ -4,6 +4,7 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/constant_monitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/predicate_monitor.h"
 
+#include <algorithm>
 #include <cassert>
 #include <spdlog/spdlog.h>
 #include <utility>
@@ -40,16 +41,17 @@ Verdict Hydra2Monitor::step(const size_t parentId, size_t stepNumber) {
     spdlog::debug("Hydra2Monitor::step: " + formula.getExpr()->getSymbol() + " - " + std::to_string(monitorId) + " - " +
                   subID + " - " + std::to_string(parentId) + " - " + std::to_string(stepNumber));
     auto verdict{Verdict(false)};
-    if (traceIdx.size() > 1 and
-        verdictHistory.find(stepNumber) != verdictHistory.end()) { // required step was already performed based on other
-                                                                   // parent monitor, use already computed verdict
-        verdict = verdictHistory.at(stepNumber);
-    } else {
+    // The verdict at a step only depends on the trace and the domain values of the monitor, so it is computed at most
+    // once. This makes the evaluation independent of which steps were skipped by short-circuiting and of how many
+    // parents request the step.
+    if (const auto iter{verdictHistory.find(stepNumber)}; iter != verdictHistory.end())
+        verdict = iter->second;
+    else {
         verdict = concreteStep(parentId, stepNumber);
-        if (verdictHistory.find(stepNumber) == verdictHistory.end()) // store non-existing eval results
-            verdictHistory.insert({stepNumber, verdict});
-        ++traceIdx[parentId];
+        verdictHistory.insert({stepNumber, verdict});
     }
+    if (stepNumber + 1 > traceIdx[parentId])
+        traceIdx[parentId] = stepNumber + 1;
     // note: verdict time step can be different from step number if time steps are no equidistant
     if (const auto tracePtr = trace.lock(); verdict.timeStamp.has_value() && !dynamic_cast<PredicateMonitor *>(this) &&
                                             !dynamic_cast<ConstantMonitor *>(this) &&
@@ -107,10 +109,16 @@ std::shared_ptr<Hydra2Monitor> Hydra2Monitor::clone(const std::vector<std::strin
 std::shared_ptr<Hydra2Monitor> Hydra2Monitor::resetClonedMonitor(std::shared_ptr<Hydra2Monitor> clonedMonitor,
                                                                  const std::vector<std::string> &domValNames) {
     clonedMonitor->allCopies.clear();
+    clonedMonitor->verdictHistory.clear();
     for (const auto &val : domValNames)
         clonedMonitor->subID += "_" + val;
     allCopies.emplace_back(domValNames, clonedMonitor);
     return clonedMonitor;
+}
+
+bool Hydra2Monitor::validAt(const std::vector<DomainValue> &domainValues, const size_t timeStamp) {
+    return std::all_of(domainValues.begin(), domainValues.end(),
+                       [timeStamp](const DomainValue &val) { return val.isConst() or val.checkValidity(timeStamp); });
 }
 
 bool Hydra2Monitor::stepNumberValid(const size_t stepNumber, const size_t parentId) {

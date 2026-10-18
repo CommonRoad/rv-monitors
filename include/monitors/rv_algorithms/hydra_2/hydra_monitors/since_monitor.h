@@ -22,8 +22,7 @@ class SinceMonitor final : public Hydra2Monitor {
                  const size_t monitorId)
         : Hydra2Monitor(formula, monitorId, subMonitorRight->getEvalCost() + subMonitorLeft->getEvalCost(),
                         computeSatisfactionProbability(subMonitorLeft, subMonitorRight, interval)),
-          subMonitorLeft(std::move(subMonitorLeft)), subMonitorRight(std::move(subMonitorRight)), interval(interval),
-          headPositionMonitorLeft(), headPositionMonitorRight() {}
+          subMonitorLeft(std::move(subMonitorLeft)), subMonitorRight(std::move(subMonitorRight)), interval(interval) {}
 
     /**
      * Performs concrete step of since-monitor.
@@ -71,14 +70,6 @@ class SinceMonitor final : public Hydra2Monitor {
     std::string to_string() override;
 
     /**
-     * Sets step number of monitor and sub-monitors.
-     *
-     * @param stepNumber Desired step number.
-     * @param parentId ID of parent monitor.
-     */
-    void setStepNumber(size_t stepNumber, size_t parentId) override;
-
-    /**
      * Extracts tree structure for visualization.
      *
      * @param tree Mapping of monitor ID to its logical representation and child nodes.
@@ -88,34 +79,35 @@ class SinceMonitor final : public Hydra2Monitor {
   private:
     std::shared_ptr<Hydra2Monitor> subMonitorLeft;  //**< Monitor for specification on left side of since. */
     std::shared_ptr<Hydra2Monitor> subMonitorRight; //**< Monitor for specification on right side of since. */
-    std::optional<Verdict> subVerdictLeft;          //**< Verdict for monitor on left side of since. */
-    std::optional<Verdict> subVerdictRight;         //**< Verdict for monitor on right side of since. */
     IntervalTemporalOperator interval;              //**< Interval of operator. */
-    HeadPosHydra2 headPositionMonitorLeft;          //**< Head position of left monitor. */
-    HeadPosHydra2 headPositionMonitorRight;         //**< Head position of right monitor. *
-    std::optional<HeadPosHydra2> lastSatisfaction;  //**< Last time right side of until was satisfied. */
-    std::optional<HeadPosHydra2> lastViolation;     //**< Last time left side of until was violated. */
-    size_t stepNumberRight{0}; // Custom step number for right monitor since left monitor is only called once
-    bool endReached{false};    //**< Boolean indicating whether end of trace was reached. */
-    std::vector<DomainValue> domainValueArguments; //**< Domain values. */
-    std::vector<size_t> timeStepsTrace;            //**< Time steps of trace. */
+    std::vector<DomainValue> domainValueArguments;  //**< Domain values. */
+    std::vector<size_t> timeStepsTrace;             //**< Time steps of trace. */
+    std::vector<signed char>
+        sinceUnbounded; //**< Cached verdicts of (left S[0, inf] right) per step: -1 unknown, 0 false, 1 true. */
 
     /**
-     * Propagate trace index and reset variables after short-circuiting or invalid dynamic domain value.
+     * Evaluates left side of since at a step. Steps at which a domain value is invalid evaluate to false.
      *
-     * @param parentId Parent monitor ID.
-     * @param stepNumber Current step number.
-     * @returs Boolean indicating whether reset was performed.
+     * @param stepNumber Step of interest.
+     * @return Verdict of left monitor.
      */
-    bool updateTraceIndex(size_t parentId, size_t stepNumber);
+    bool left(size_t stepNumber);
 
     /**
-     * Checks whether time step is valid.
+     * Evaluates right side of since at a step. Steps at which a domain value is invalid evaluate to false.
      *
-     * @param concreteStep Time step to check.
-     * @return Boolean indicating whether time step is valid.
+     * @param stepNumber Step of interest.
+     * @return Verdict of right monitor.
      */
-    bool checkTimeStepValidity(size_t concreteStep);
+    bool right(size_t stepNumber);
+
+    /**
+     * Evaluates (left S[0, inf] right) at a step. Results are cached so that each step is evaluated at most once.
+     *
+     * @param stepNumber Step of interest.
+     * @return Verdict of unbounded since.
+     */
+    bool evalUnbounded(size_t stepNumber);
 
     /**
      * Computes satisfaction probability of since monitor based on left and right monitors.

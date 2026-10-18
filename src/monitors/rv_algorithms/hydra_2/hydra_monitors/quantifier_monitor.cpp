@@ -23,21 +23,29 @@ std::string QuantifierMonitor::getUniqueID() const {
 std::shared_ptr<Hydra2Monitor> QuantifierMonitor::nextEvalMonitor(const size_t stepNumber) {
     std::shared_ptr<Hydra2Monitor> evalMonitor;
     currentDomainValues = nextCombination();
-    if (evalMonitors.find(getUniqueID()) == evalMonitors.end()) // if there is no monitor for the current
-                                                                // combination, then a new monitor will be cloned
+    // Monitors cache their verdict per step, so each combination evaluated in a step needs its own monitor. If the ID
+    // function of a domain maps different values to the same ID, the repeated IDs are made unique by their occurrence.
+    std::string uniqueId{getUniqueID()};
+    std::string occurrenceSuffix;
+    if (const size_t occurrence{idOccurrences[uniqueId]++}; occurrence > 0)
+        occurrenceSuffix = "#" + std::to_string(occurrence);
+    uniqueId += occurrenceSuffix;
+    if (evalMonitors.find(uniqueId) == evalMonitors.end()) // if there is no monitor for the current
+                                                           // combination, then a new monitor will be cloned
     {
         std::vector<std::string> domValueNames;
         domValueNames.reserve(currentDomainValues.size());
         for (const auto &val : currentDomainValues)
             domValueNames.push_back(val.getUniqueID());
+        if (!domValueNames.empty())
+            domValueNames.back() += occurrenceSuffix;
         evalMonitor = subMonitor->clone(domValueNames);
         evalMonitor->addDomainValues(currentDomainValues);
-        evalMonitors[getUniqueID()] = evalMonitor;
+        evalMonitors[uniqueId] = evalMonitor;
         evalMonitor->setStepNumber(stepNumber, monitorId);
     } else {
-        evalMonitor = evalMonitors[getUniqueID()];
+        evalMonitor = evalMonitors[uniqueId];
         evalMonitor->addDomainValues(currentDomainValues); // required (see testExistentialStepLoopingDynamicDomain)
-        evalMonitors[getUniqueID()] = evalMonitor;
     }
 
     shiftCombination();
@@ -153,6 +161,7 @@ Verdict QuantifierMonitor::concreteStep(const size_t parentId, const size_t step
         ++idx;
     }
     const auto numberCombinations{numCombinations()};
+    idOccurrences.clear();
     const auto verdict{quantifierStep(parentId, stepNumber, numberCombinations)};
     resetIterators();
     for (const auto &[_, dom] : variableValues)

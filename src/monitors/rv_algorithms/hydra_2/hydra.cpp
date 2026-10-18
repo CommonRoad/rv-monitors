@@ -11,8 +11,8 @@ std::map<std::string, std::vector<Verdict>> Hydra2::evaluate(const std::shared_p
     // Empty trace
     if ((trace == nullptr or trace->getTrace().empty()) and traceLength == 0) {
         spdlog::debug("Hydra2::evaluate | Trace is empty\n");
-        for (const auto &mon : monitors)
-            result[mon->getFormulaId()] = {};
+        for (const auto &formulaId : formulaIds)
+            result[formulaId] = {};
         return result;
     }
 
@@ -38,15 +38,17 @@ std::map<std::string, std::vector<Verdict>> Hydra2::evaluate(const std::shared_p
 void Hydra2::evalEarlyTermination(std::map<std::string, std::vector<Verdict>> &result,
                                   const std::vector<std::string> &formulaIDs) const {
     std::vector<std::shared_ptr<Hydra2Monitor>> relMonitors;
-    for (const auto &mon : monitors)
-        if (result.find(mon->getFormulaId()) == result.end() and
-            (formulaIDs.empty() or std::any_of(formulaIDs.begin(), formulaIDs.end(),
-                                               [mon](const std::string &fID) { return fID == mon->getFormulaId(); }))) {
-            result[mon->getFormulaId()].emplace_back(
-                0, true); // initially, we had only single verdict and uses "invalid" time step to indicate early
-                          // termination; however, for better interpretation of result, we provide time stamp where
-                          // specification is violated
-            relMonitors.push_back(mon);
+    std::vector<std::string> relFormulaIds;
+    for (size_t idx{0}; idx < monitors.size(); ++idx)
+        if (const auto &formulaId{formulaIds.at(idx)};
+            result.find(formulaId) == result.end() and
+            (formulaIDs.empty() or std::find(formulaIDs.begin(), formulaIDs.end(), formulaId) != formulaIDs.end())) {
+            result[formulaId].emplace_back(0,
+                                           true); // initially, we had only single verdict and uses "invalid" time step
+                                                  // to indicate early termination; however, for better interpretation
+                                                  // of result, we provide time stamp where specification is violated
+            relMonitors.push_back(monitors.at(idx));
+            relFormulaIds.push_back(formulaId);
         }
 
     // Cache the verdict slots so the per-step loop avoids a string-keyed map lookup. The monitor
@@ -54,13 +56,13 @@ void Hydra2::evalEarlyTermination(std::map<std::string, std::vector<Verdict>> &r
     // rule is reported when several are violated at the same earliest time step.
     std::vector<std::vector<Verdict> *> verdictRefs;
     verdictRefs.reserve(relMonitors.size());
-    for (const auto &mon : relMonitors)
-        verdictRefs.push_back(&result[mon->getFormulaId()]);
+    for (const auto &formulaId : relFormulaIds)
+        verdictRefs.push_back(&result[formulaId]);
 
     for (size_t i{0}; i < traceLength; ++i) {
         for (size_t m{0}; m < relMonitors.size(); ++m) {
             const auto &mon = relMonitors[m];
-            spdlog::debug("Monitor evaluation: " + std::to_string(i) + " - " + mon->getFormulaId());
+            spdlog::debug("Monitor evaluation: " + std::to_string(i) + " - " + relFormulaIds[m]);
             mon->addDomainValues({}); // triggers adding of domain values, e.g., to predicates
             verdictRefs[m]->at(0) = mon->step(0, i);
             // In globally_early_termination mode, we terminate as soon as the formula is not satisfied at any time step
@@ -110,8 +112,10 @@ void Hydra2::createMonitor(const std::vector<Formula> &formulas, const bool conn
         rwv.rewrite(formulaCopy);
         formulaCopy.setId(form.getId());
 
-        // baseline monitors are kept for each creation run -> connected eval
+        // baseline monitors are kept for each creation run -> connected eval; with connected evaluation, formulas with
+        // identical (sub)structure share the same monitor, so the formula IDs are stored separately
         monitors.push_back(hcv.createMonitor(formulaCopy, 0, connectedEval));
+        formulaIds.push_back(form.getId());
     }
 }
 
@@ -141,21 +145,23 @@ std::map<std::string, std::array<double, 3>> &Hydra2::getPredicateCost() const {
 void Hydra2::evalCompleteTrace(std::map<std::string, std::vector<Verdict>> &result,
                                const std::vector<std::string> &formulaIDs) const {
     std::vector<std::shared_ptr<Hydra2Monitor>> relMonitors;
+    std::vector<std::string> relFormulaIds;
     std::vector<std::vector<Verdict> *> verdictRefs;
-    for (const auto &mon : monitors)
-        if (result.find(mon->getFormulaId()) == result.end() and
-            (formulaIDs.empty() or std::any_of(formulaIDs.begin(), formulaIDs.end(),
-                                               [mon](const std::string &fID) { return fID == mon->getFormulaId(); }))) {
-            auto &verdicts = result[mon->getFormulaId()];
+    for (size_t idx{0}; idx < monitors.size(); ++idx)
+        if (const auto &formulaId{formulaIds.at(idx)};
+            result.find(formulaId) == result.end() and
+            (formulaIDs.empty() or std::find(formulaIDs.begin(), formulaIDs.end(), formulaId) != formulaIDs.end())) {
+            auto &verdicts = result[formulaId];
             verdicts.reserve(traceLength);
-            relMonitors.push_back(mon);
+            relMonitors.push_back(monitors.at(idx));
+            relFormulaIds.push_back(formulaId);
             verdictRefs.push_back(&verdicts);
         }
 
     for (size_t i{0}; i < traceLength; ++i)
         for (size_t m{0}; m < relMonitors.size(); ++m) {
             const auto &mon = relMonitors[m];
-            spdlog::debug("Monitor evaluation: " + std::to_string(i) + " - " + mon->getFormulaId());
+            spdlog::debug("Monitor evaluation: " + std::to_string(i) + " - " + relFormulaIds[m]);
             mon->addDomainValues({}); // triggers adding of domain values, e.g., to predicates
             verdictRefs[m]->emplace_back(mon->step(0, i));
         }
@@ -164,8 +170,8 @@ void Hydra2::evalCompleteTrace(std::map<std::string, std::vector<Verdict>> &resu
 std::map<std::string, std::map<size_t, std::vector<std::vector<DomainValue>>>>
 Hydra2::getViolatingDomainValues() const {
     std::map<std::string, std::map<size_t, std::vector<std::vector<DomainValue>>>> violations;
-    for (const auto &mon : this->monitors)
-        violations[mon->getFormulaId()] = mon->getViolatingDomainValues();
+    for (size_t idx{0}; idx < monitors.size(); ++idx)
+        violations[formulaIds.at(idx)] = monitors.at(idx)->getViolatingDomainValues();
     return violations;
 }
 
