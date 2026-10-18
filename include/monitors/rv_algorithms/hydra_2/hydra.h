@@ -114,6 +114,7 @@ class Hydra2 : public MonitorInterface {
   private:
     std::vector<std::shared_ptr<Hydra2Monitor>>
         monitors; //**< List of monitors corresponding to the formulas which should be evaluated. */
+    std::vector<std::string> formulaIds; //**< IDs of the formulas, in the order of the monitors. */
     mutable std::map<std::string, std::array<double, 3>> predicateCosts; //**< Predicate costs. */
     size_t traceLength{0};                                               //**< Current trace length. */
 
