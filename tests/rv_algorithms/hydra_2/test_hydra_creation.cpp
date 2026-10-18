@@ -232,7 +232,7 @@ TEST(TestHydraCreation, testOrOrDuplicated) {
     std::map<std::string, std::array<double, 3>> predicateCosts{
         {"a", {20.0, 0.80}}, {"b", {100.0, 0.20}}, {"c", {100.0, 0.80}}, {"d", {20.0, 0.20}}};
     std::string expectedFormula{
-        "(X((!(a(test)) & (!(a(test)) | P(b(test))) & P(c(test)))) & (!(a(test)) | P(b(test))))"};
+        "((!(a(test)) | P(b(test))) & X((!(a(test)) & (!(a(test)) | P(b(test))) & P(c(test)))))"};
     executeTest(formula, expectedFormula, predicateCosts);
 }
 
