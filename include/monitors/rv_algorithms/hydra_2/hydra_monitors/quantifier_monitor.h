@@ -2,6 +2,7 @@
 
 #include "hydra_monitor.h"
 #include "monitors/collections/domain_collection.h"
+#include <functional>
 
 /**
  * Hydra2 monitor representing quantifier monitor.
@@ -181,6 +182,18 @@ class QuantifierMonitor : public Hydra2Monitor {
      * @return Normalized evaluation cost of universal monitor in interval [0, 100].
      */
     static double computeCost(const std::shared_ptr<Hydra2Monitor> &monitor, size_t numEval);
+
+    /**
+     * Computes the probability that the number of true sub-monitors is accepted, assuming the sub-monitors are
+     * independent and each is true with the same probability (binomial distribution).
+     *
+     * @param numEval Number of sub-monitors.
+     * @param probability Satisfaction probability of a single sub-monitor.
+     * @param accepted Function indicating whether a given number of true sub-monitors satisfies the quantifier.
+     * @return Satisfaction probability in interval [0, 1].
+     */
+    static double computeBinomialProbability(size_t numEval, double probability,
+                                             const std::function<bool(size_t)> &accepted);
 
     /**
      * Computes satisfaction probability over provided monitor.

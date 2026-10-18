@@ -68,30 +68,12 @@ std::shared_ptr<Hydra2Monitor> CountingMonitor::clone(const std::vector<std::str
 
 std::string CountingMonitor::to_string() { return formula.to_string(); }
 
-unsigned long long CountingMonitor::binomialCoefficient(const size_t n, const size_t k) {
-    if (k > n)
-        return 0;
-    if (k == 0 || k == n)
-        return 1;
-
-    size_t result = 1;
-    for (size_t i = 1; i <= k; ++i) {
-        result *= n - (k - i);
-        result /= i;
-    }
-    return result;
-}
-
 double CountingMonitor::computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &monitor,
                                                        const size_t numEval) {
-    double probability = 0.0;
-
-    for (size_t k = num; k <= numEval; ++k) {
-        const unsigned long long binom = binomialCoefficient(num, k);
-        const double term = static_cast<double>(binom) * std::pow(monitor->getSatisfactionProbability(), k) *
-                            std::pow(1 - monitor->getSatisfactionProbability(), numEval - k);
-        probability += term;
-    }
-
-    return probability;
+    return computeBinomialProbability(numEval, monitor->getSatisfactionProbability(),
+                                      [this](const size_t trueVerdicts) {
+                                          return (op == CountingQuantifier::LESS_EQ and trueVerdicts <= num) or
+                                                 (op == CountingQuantifier::EQ and trueVerdicts == num) or
+                                                 (op == CountingQuantifier::GREATER_EQ and trueVerdicts >= num);
+                                      });
 }
