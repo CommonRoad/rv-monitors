@@ -73,6 +73,14 @@ struct IntervalTemporalOperator {
      */
     [[nodiscard]] bool isEmpty() const;
 
+    /**
+     * Checks whether a time distance lies within the interval. An empty interval represents [0, inf].
+     *
+     * @param distance Time distance.
+     * @return Boolean indicating whether distance lies within interval.
+     */
+    [[nodiscard]] bool contains(size_t distance) const;
+
   private:
     size_t start;              //**< Start of interval.  */
     std::optional<size_t> end; //**< End of interval.   */

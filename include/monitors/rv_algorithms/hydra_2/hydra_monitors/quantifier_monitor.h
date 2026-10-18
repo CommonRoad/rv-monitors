@@ -173,6 +173,7 @@ class QuantifierMonitor : public Hydra2Monitor {
     std::vector<DomainValue> domainValues;              //**< Domain values. */
     std::map<size_t, std::vector<std::vector<DomainValue>>> violations; //**< Violating domain values per time step. */
     std::vector<DomainValue> currentDomainValues;                       //**< Currently evaluated domain values. */
+    std::map<std::string, size_t> idOccurrences; //**< Number of occurrences of each combination ID in current step. */
 
     /**
      * Computes normalized cost over provided monitor.

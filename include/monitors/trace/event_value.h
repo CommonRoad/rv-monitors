@@ -9,7 +9,7 @@
 template <typename T> class EventValue {
 
   private:
-    mutable T value;
+    mutable T value{};
     mutable bool initialized{false};
     std::function<T()> valueFetcher{};
 

@@ -1,21 +1,43 @@
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/until_monitor.h"
 
+#include <algorithm>
 #include <cmath>
 
-void UntilMonitor::stepLeftRightMonitors() {
-    subVerdictLeft = subMonitorLeft->step(monitorId, stepNumberUntil);
-    if (subVerdictLeft->timeStamp)
-        headPositionMonitorLeft.update(subVerdictLeft->timeStamp.value());
-    else {
-        endReached = true;
-        ++stepNumberUntil;
+bool UntilMonitor::left(const size_t stepNumber) {
+    return validAt(domainValueArguments, timeStepsTrace.at(stepNumber)) and
+           subMonitorLeft->step(monitorId, stepNumber).value;
+}
+
+bool UntilMonitor::right(const size_t stepNumber) {
+    return validAt(domainValueArguments, timeStepsTrace.at(stepNumber)) and
+           subMonitorRight->step(monitorId, stepNumber).value;
+}
+
+bool UntilMonitor::evalUnbounded(const size_t stepNumber) {
+    // (left U[0, inf] right) at j holds iff right holds at j, or left holds at j and the until holds at j + 1. The
+    // steps up to the first step with a known result, a satisfied right side, or a violated left side share its result.
+    if (untilUnbounded.size() != timeStepsTrace.size())
+        untilUnbounded.assign(timeStepsTrace.size(), -1);
+    size_t idx{stepNumber};
+    bool result{false};
+    while (true) {
+        if (untilUnbounded.at(idx) >= 0) {
+            result = untilUnbounded.at(idx) == 1;
+            break;
+        }
+        if (right(idx)) {
+            result = true;
+            break;
+        }
+        if (!left(idx) or idx + 1 == timeStepsTrace.size()) {
+            result = false;
+            break;
+        }
+        ++idx;
     }
-    subVerdictRight = subMonitorRight->step(monitorId, stepNumberUntil);
-    if (subVerdictRight->timeStamp)
-        headPositionMonitorRight.update(subVerdictRight->timeStamp.value());
-    else
-        endReached = true;
-    ++stepNumberUntil;
+    for (size_t j{stepNumber}; j <= idx; ++j)
+        untilUnbounded.at(j) = result ? 1 : 0;
+    return result;
 }
 
 double UntilMonitor::computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &left,
@@ -32,92 +54,34 @@ double UntilMonitor::computeSatisfactionProbability(const std::shared_ptr<Hydra2
                        std::pow(1 - right->getSatisfactionProbability(), i - iv.getStart()) *
                        std::pow(left->getSatisfactionProbability(), i);
     }
-    return probability;
+    return std::clamp(probability, 0.0, 1.0); // the sum can slightly exceed 1 due to rounding
 }
 
-Verdict UntilMonitor::concreteStep(const size_t parentId, const size_t stepNumber) {
-    if (stepNumber > traceIdx[parentId]) {
-        if (const auto subVerdictBaseTimeStepTmp{subMonitorBaseTimeStep->step(monitorId, stepNumber - 1)};
-            subVerdictBaseTimeStepTmp.timeStamp)
-            headPositionMonitorBaseTimeStep =
-                HeadPosHydra2(subVerdictBaseTimeStepTmp.timeStamp.value(), static_cast<int>(stepNumber - 1));
-    }
-    bool reset{false};
-    // reset monitor after short-circuiting
-    if (stepNumberUntil <= stepNumber and stepNumber > traceIdx[parentId]) {
-        subVerdictLeft = {};
-        subVerdictRight = {};
-        lastSatisfaction = {};
-        lastViolation = {};
-        headPositionMonitorRight =
-            HeadPosHydra2(headPositionMonitorBaseTimeStep.timeStep, static_cast<int>(stepNumber - 1));
-        headPositionMonitorLeft =
-            HeadPosHydra2(headPositionMonitorBaseTimeStep.timeStep, static_cast<int>(stepNumber - 1));
-        stepNumberUntil = stepNumber;
-        reset = true;
-    }
-
-    subVerdictBaseTimeStep =
-        subMonitorBaseTimeStep->step(monitorId, stepNumber); // required in case of non-equidistant time steps
-    if (subVerdictBaseTimeStep->timeStamp)
-        headPositionMonitorBaseTimeStep.update(subVerdictBaseTimeStep->timeStamp.value());
-    else
+Verdict UntilMonitor::concreteStep(size_t /*parentId*/, const size_t stepNumber) {
+    if (stepNumber >= timeStepsTrace.size())
         return {false};
-
-    if (lastSatisfaction &&
-        lastSatisfaction->traceIdx <
-            headPositionMonitorBaseTimeStep.traceIdx) // if last satisfaction (-> right side of until satisfied) is
-                                                      // before current time step, reset last satisfaction
-        lastSatisfaction = {};
-    if (lastViolation &&
-        lastViolation->traceIdx <
-            headPositionMonitorBaseTimeStep.traceIdx) // if last violation (-> left side of until violated) is
-                                                      // before current time step, reset last satisfaction
-        lastViolation = {};
-
-    // if not step was performed yet or last verdicts are behind base time step, execute step for current base step
-    if (!endReached and (stepNumberUntil == 0 or reset)) { // only executed at first call of function
-        stepLeftRightMonitors();
-    }
-
-    while (!endReached && !lastViolation &&
-           (!interval.isFinite() or
-            headPositionMonitorLeft.timeStep - headPositionMonitorBaseTimeStep.timeStep <= interval.getEnd() or
-            headPositionMonitorLeft.timeStep <
-                headPositionMonitorBaseTimeStep.timeStep)) { // loop until end is reached, until left side of monitor is
-                                                             // false, or until upper bound of time
-                                                             // interval is violated
-        if (subVerdictRight->value) {
-            lastSatisfaction = HeadPosHydra2(headPositionMonitorRight.timeStep, headPositionMonitorRight.traceIdx);
-        }
-        if (!subVerdictLeft->value) {
-            lastViolation = HeadPosHydra2(headPositionMonitorLeft.timeStep, headPositionMonitorLeft.traceIdx);
-        }
-        if (timeStepsTrace.size() <= stepNumberUntil or
-            !std::all_of(domainValueArguments.begin(), domainValueArguments.end(),
-                         [step = timeStepsTrace.at(stepNumberUntil)](const DomainValue &dv) {
-                             return dv.isConst() or dv.checkValidity(step);
-                         })) {
-            endReached = true; // just for completeness, could be removed
+    const size_t timeStamp{timeStepsTrace.at(stepNumber)};
+    for (size_t idx{stepNumber}; idx < timeStepsTrace.size(); ++idx) {
+        const size_t distance{timeStepsTrace.at(idx) - timeStamp};
+        if (interval.isFinite() and distance > interval.getEnd())
             break;
-        }
-        stepLeftRightMonitors();
+        // from the first step within an unbounded interval on, the until behaves like (left U[0, inf] right)
+        if (!interval.isFinite() and distance >= interval.getStart())
+            return {timeStamp, evalUnbounded(idx)};
+        if (interval.contains(distance) and right(idx))
+            return {timeStamp, true};
+        if (!left(idx))
+            break;
     }
-    // check whether right side of until was satisfied, whether satisfaction is after start of allowed time interval,
-    // and whether left side of from is greater/equal zero (required since unsigned, and we have an overflow
-    if (lastSatisfaction &&
-        lastSatisfaction->timeStep - headPositionMonitorBaseTimeStep.timeStep >= interval.getStart() &&
-        lastSatisfaction->timeStep >= headPositionMonitorBaseTimeStep.timeStep)
-        return {headPositionMonitorBaseTimeStep.timeStep, true};
-    return {headPositionMonitorBaseTimeStep.timeStep, false};
+    return {timeStamp, false};
 }
 
 void UntilMonitor::setTrace(const std::shared_ptr<Trace> &tra,
                             const std::vector<std::shared_ptr<DomainStorage>> &domains) {
     subMonitorLeft->setTrace(tra, domains);
     subMonitorRight->setTrace(tra, domains);
-    subMonitorBaseTimeStep->setTrace(tra, domains);
     timeStepsTrace = {};
+    untilUnbounded = {};
     for (const auto &event : tra->getTrace())
         timeStepsTrace.push_back(event.getTimeStep());
     trace = tra;
@@ -127,17 +91,8 @@ void UntilMonitor::reset() {
     Hydra2Monitor::reset();
     subMonitorRight->reset();
     subMonitorLeft->reset();
-    subMonitorBaseTimeStep->reset();
-    subVerdictLeft = {};
-    subVerdictRight = {};
-    lastSatisfaction = {};
-    lastViolation = {};
-    headPositionMonitorRight.reset();
-    headPositionMonitorLeft.reset();
-    headPositionMonitorBaseTimeStep.reset();
-    stepNumberUntil = 0;
-    endReached = false;
     timeStepsTrace = {};
+    untilUnbounded = {};
 }
 
 std::shared_ptr<Hydra2Monitor> UntilMonitor::clone(const std::vector<std::string> &domValNames) {
@@ -146,7 +101,7 @@ std::shared_ptr<Hydra2Monitor> UntilMonitor::clone(const std::vector<std::string
     const auto clonedMonitor = std::make_shared<UntilMonitor>(*this);
     clonedMonitor->subMonitorRight = subMonitorRight->clone(domValNames);
     clonedMonitor->subMonitorLeft = subMonitorLeft->clone(domValNames);
-    clonedMonitor->subMonitorBaseTimeStep = subMonitorBaseTimeStep->clone(domValNames);
+    clonedMonitor->untilUnbounded = {};
     return resetClonedMonitor(clonedMonitor, domValNames);
 }
 
@@ -167,17 +122,6 @@ void UntilMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
     domainValueArguments = vals;
     subMonitorRight->addDomainValues(vals);
     subMonitorLeft->addDomainValues(vals);
-    subMonitorBaseTimeStep->addDomainValues(vals);
-}
-
-void UntilMonitor::setStepNumber(const size_t stepNumber, const size_t parentId) {
-    Hydra2Monitor::setStepNumber(stepNumber, parentId);
-    if (!stepNumberValid(stepNumber, parentId))
-        return;
-    subMonitorRight->setStepNumber(stepNumber, monitorId);
-    subMonitorLeft->setStepNumber(stepNumber, monitorId);
-    subMonitorBaseTimeStep->setStepNumber(stepNumber, monitorId);
-    stepNumberUntil = stepNumber;
 }
 
 void UntilMonitor::to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) {

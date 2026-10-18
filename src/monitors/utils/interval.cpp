@@ -31,3 +31,7 @@ size_t IntervalTemporalOperator::getEnd() const {
 bool IntervalTemporalOperator::isFinite() const { return finite; }
 
 bool IntervalTemporalOperator::isEmpty() const { return empty; }
+
+bool IntervalTemporalOperator::contains(const size_t distance) const {
+    return distance >= start and (!finite or distance <= end.value());
+}
