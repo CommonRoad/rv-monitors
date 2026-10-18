@@ -69,13 +69,4 @@ class QuoteMonitor final : public QuantifierMonitor {
      * @return Satisfaction probability of universal monitor in interval [0, 1].
      */
     double computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &monitor, size_t numEval) override;
-
-    /**
-     * Function to compute n choose k (binomial coefficient)
-     *
-     * @param n Number of clauses.
-     * @param k Number of true clauses.
-     * @return Binomial coefficient.
-     */
-    static unsigned long long binomialCoefficient(size_t n, size_t k);
 };

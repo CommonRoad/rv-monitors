@@ -65,31 +65,13 @@ std::shared_ptr<Hydra2Monitor> QuoteMonitor::clone(const std::vector<std::string
 
 std::string QuoteMonitor::to_string() { return formula.to_string(); }
 
-unsigned long long QuoteMonitor::binomialCoefficient(const size_t n, const size_t k) {
-    if (k > n)
-        return 0;
-    if (k == 0 || k == n)
-        return 1;
-
-    unsigned long long result = 1;
-    for (int i = 1; i <= k; ++i) {
-        result *= n - (k - i);
-        result /= i;
-    }
-    return result;
-}
-
 double QuoteMonitor::computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &monitor,
                                                     const size_t numEval) {
-    double probability = 0.0;
-    const size_t num = static_cast<int>(std::ceil(minQuote * static_cast<double>(numEval)));
-
-    for (size_t k = num; k <= numEval; ++k) {
-        const unsigned long long binom = binomialCoefficient(num, k);
-        const double term = static_cast<double>(binom) * std::pow(monitor->getSatisfactionProbability(), k) *
-                            std::pow(1 - monitor->getSatisfactionProbability(), numEval - k);
-        probability += term;
-    }
-
-    return probability;
+    if (numEval == 0) // the verdict of a quote monitor without sub-monitors is true
+        return 1.0;
+    return computeBinomialProbability(
+        numEval, monitor->getSatisfactionProbability(), [this, numEval](const size_t trueVerdicts) {
+            const float quote{static_cast<float>(trueVerdicts) / static_cast<float>(numEval)};
+            return minQuote <= quote and quote <= maxQuote;
+        });
 }
