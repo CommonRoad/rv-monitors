@@ -2,6 +2,7 @@
 #include "monitors/expression_tree/unary/temporal/globally.h"
 #include "monitors/rewriting/hydra_rewrite_visitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_creation_visitor.h"
+#include <algorithm>
 #include <spdlog/spdlog.h>
 
 std::map<std::string, std::vector<Verdict>> Hydra2::evaluate(const std::shared_ptr<Trace> &trace,
@@ -59,16 +60,16 @@ void Hydra2::evalEarlyTermination(std::map<std::string, std::vector<Verdict>> &r
     for (const auto &formulaId : relFormulaIds)
         verdictRefs.push_back(&result[formulaId]);
 
-    for (size_t i{0}; i < traceLength; ++i) {
+    // In initial_step mode, only the first time step is evaluated, but for all formulas
+    const size_t numSteps{formulaEvaluationMode == initial_step ? std::min<size_t>(traceLength, 1) : traceLength};
+    for (size_t i{0}; i < numSteps; ++i) {
         for (size_t m{0}; m < relMonitors.size(); ++m) {
             const auto &mon = relMonitors[m];
             spdlog::debug("Monitor evaluation: " + std::to_string(i) + " - " + relFormulaIds[m]);
             mon->addDomainValues({}); // triggers adding of domain values, e.g., to predicates
             verdictRefs[m]->at(0) = mon->step(0, i);
             // In globally_early_termination mode, we terminate as soon as the formula is not satisfied at any time step
-            // In initial_step mode, we can always terminate after looking at the first time step
-            if ((formulaEvaluationMode == globally_early_termination && !verdictRefs[m]->at(0).value) ||
-                formulaEvaluationMode == initial_step) {
+            if (formulaEvaluationMode == globally_early_termination && !verdictRefs[m]->at(0).value) {
                 return;
             }
         }
