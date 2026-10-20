@@ -767,8 +767,8 @@ struct MonitorRun {
     std::string error; // non-empty if the monitor threw
 };
 
-// Number of formulas that are monitored in the given mode (initial_step is used with a single formula).
-size_t numMonitored(const Case &c, const Mode mode) { return mode == Mode::InitialStep ? 1 : c.formulas.size(); }
+// Number of formulas that are monitored in the given mode.
+size_t numMonitored(const Case &c, const Mode /*mode*/) { return c.formulas.size(); }
 
 // One monitor instance per call; it is reused for all traces of the case so that resetting is exercised.
 MonitorRun runMonitor(const Case &c, const Config &cfg, const Mode mode) {
@@ -830,7 +830,8 @@ Verdicts referenceVerdicts(const Case &c, const Mode mode) {
             break;
         }
         case Mode::InitialStep:
-            perFormula[0] = {ref.eval(c.formulas[0], 0)};
+            for (size_t k{0}; k < perFormula.size(); ++k)
+                perFormula[k] = {ref.eval(c.formulas[k], 0)};
             break;
         }
         all.push_back(perFormula);
@@ -1144,7 +1145,7 @@ TEST(TestHydra2Differential, earlyTermination) {
 }
 
 TEST(TestHydra2Differential, initialStep) {
-    const auto res{runCampaign(20260923ULL, 500, 1, Mode::InitialStep, true, allConfigs())};
+    const auto res{runCampaign(20260923ULL, 500, 3, Mode::InitialStep, true, allConfigs())};
     EXPECT_EQ(res.equivalence.mismatches, 0U) << "optimizations changed verdicts";
     EXPECT_EQ(res.reference.mismatches, 0U) << "monitor disagrees with the reference semantics";
 }

@@ -307,3 +307,36 @@ TEST(TestHydra2Regression, quoteQuantifierKeepsLastVariable) {
     expectVerdicts("G(Q[0.0, 0.5] x in D. a)", Utils::createTrace({"a", "b"}, {{}, {"a"}}, {0, 1}),
                    {{0, true}, {1, false}}, atomDomain());
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Evaluation modes
+// ---------------------------------------------------------------------------------------------------------------------
+
+// In mode initial_step, the evaluation returned after the first formula, so the other formulas kept the placeholder
+// verdict true.
+TEST(TestHydra2Regression, initialStepEvaluatesAllFormulas) {
+    const std::shared_ptr<Trace> trace = Utils::createTrace({"a", "b"}, {{"a"}, {"b"}}, {0, 1});
+    std::vector<Formula> formulas{Parser::parse("a"), Parser::parse("b"), Parser::parse("F(b)"),
+                                  Parser::parse("a & b")};
+    formulas[0].setId("R1");
+    formulas[1].setId("R2");
+    formulas[2].setId("R3");
+    formulas[3].setId("R4");
+    for (const bool connectedEval : {false, true})
+        for (const bool reordering : {false, true})
+            for (const bool shortCircuiting : {false, true}) {
+                auto monitor{Hydra2(formulas, connectedEval, reordering, shortCircuiting, initial_step)};
+                for (size_t run{0}; run < 2; ++run) {
+                    const auto result{monitor.evaluate(trace)};
+                    ASSERT_EQ(result.size(), 4);
+                    EXPECT_EQ(result.at("R1"), (std::vector<Verdict>{{0, true}}));
+                    EXPECT_EQ(result.at("R2"), (std::vector<Verdict>{{0, false}}));
+                    EXPECT_EQ(result.at("R3"), (std::vector<Verdict>{{0, true}}));
+                    EXPECT_EQ(result.at("R4"), (std::vector<Verdict>{{0, false}}));
+                }
+                const auto filtered{monitor.evaluate(trace, {}, {"R2", "R4"})};
+                ASSERT_EQ(filtered.size(), 2);
+                EXPECT_EQ(filtered.at("R2"), (std::vector<Verdict>{{0, false}}));
+                EXPECT_EQ(filtered.at("R4"), (std::vector<Verdict>{{0, false}}));
+            }
+}
