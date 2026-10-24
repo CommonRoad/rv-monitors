@@ -164,6 +164,14 @@ class QuantifierMonitor : public Hydra2Monitor {
     void to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) override;
 
   protected:
+    [[nodiscard]] std::vector<std::shared_ptr<Hydra2Monitor>> getChildren() const override {
+        std::vector<std::shared_ptr<Hydra2Monitor>> children{subMonitor};
+        for (const auto &[_, mon] : evalMonitors)
+            children.push_back(mon);
+        return children;
+    }
+
+  protected:
     std::shared_ptr<Hydra2Monitor> subMonitor;                          //**< Child monitor. */
     std::map<std::string, std::shared_ptr<Hydra2Monitor>> evalMonitors; //**< Monitors for evaluation. */
     bool shortCircuiting; //**< Boolean indicating whether short-circuiting should be used. */

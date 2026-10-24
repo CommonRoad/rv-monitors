@@ -19,13 +19,63 @@ Hydra2Monitor::Hydra2Monitor(Formula formula, const size_t monitorId, const doub
 
 void Hydra2Monitor::reset() {
     verdictHistory = {};
+    lastPruneStep = {};
     //  verdictHistoryPopCounter = 0;
     allCopies = {};
     for (auto &[_, id] : traceIdx)
         id = 0;
 }
 
-void Hydra2Monitor::registerParent(const size_t parentId) { traceIdx[parentId] = 0; }
+void Hydra2Monitor::registerParent(const size_t parentId) {
+    traceIdx[parentId] = 0;
+    ++numParents;
+}
+
+void Hydra2Monitor::configureVerdictStorage(const VerdictRetention &requested) {
+    // A monitor that is reachable via several parents is configured once per path; it is only revisited if the new path
+    // requires a longer retention.
+    if (retention and retention->covers(requested))
+        return;
+    retention = retention ? VerdictRetention{std::max(retention->steps, requested.steps),
+                                             std::max(retention->time, requested.time)}
+                          : requested;
+    if (numParents > 1)
+        storeVerdicts = true;
+    const auto retentionChildren{childRetention(*retention)};
+    for (const auto &child : getChildren()) {
+        if (requestsChildVerdictsRepeatedly())
+            child->storeVerdicts = true;
+        child->configureVerdictStorage(retentionChildren);
+    }
+}
+
+void Hydra2Monitor::pruneVerdictHistory(const size_t stepNumber, const size_t timeStamp) {
+    if (lastPruneStep == stepNumber)
+        return;
+    lastPruneStep = stepNumber;
+    const auto keep{retention.value_or(VerdictRetention{})};
+    // verdicts are ordered by step; the time stamps are non-decreasing with the step
+    for (auto iter{verdictHistory.begin()}; iter != verdictHistory.end();) {
+        const auto &[step, verdict]{*iter};
+        if (step + keep.steps >= stepNumber or
+            (verdict.timeStamp.has_value() and verdict.timeStamp.value() + keep.time >= timeStamp))
+            break;
+        iter = verdictHistory.erase(iter);
+    }
+    for (const auto &child : getChildren())
+        child->pruneVerdictHistory(stepNumber, timeStamp);
+}
+
+size_t Hydra2Monitor::getVerdictHistorySize() const { return verdictHistory.size(); }
+
+size_t Hydra2Monitor::getNumStoredVerdicts(std::set<const Hydra2Monitor *> &visited) const {
+    if (!visited.insert(this).second)
+        return 0;
+    size_t numVerdicts{verdictHistory.size()};
+    for (const auto &child : getChildren())
+        numVerdicts += child->getNumStoredVerdicts(visited);
+    return numVerdicts;
+}
 
 size_t Hydra2Monitor::getMaxTraceIdx() {
     if (traceIdx.empty())
@@ -41,14 +91,16 @@ Verdict Hydra2Monitor::step(const size_t parentId, size_t stepNumber) {
     spdlog::debug("Hydra2Monitor::step: " + formula.getExpr()->getSymbol() + " - " + std::to_string(monitorId) + " - " +
                   subID + " - " + std::to_string(parentId) + " - " + std::to_string(stepNumber));
     auto verdict{Verdict(false)};
-    // The verdict at a step only depends on the trace and the domain values of the monitor, so it is computed at most
-    // once. This makes the evaluation independent of which steps were skipped by short-circuiting and of how many
-    // parents request the step.
+    // The verdict at a step only depends on the trace and the domain values of the monitor, so the evaluation is
+    // independent of which steps were skipped by short-circuiting and of how many parents request the step. Verdicts
+    // that can be requested several times are stored, so they are computed at most once (as long as they are not
+    // pruned).
     if (const auto iter{verdictHistory.find(stepNumber)}; iter != verdictHistory.end())
         verdict = iter->second;
     else {
         verdict = concreteStep(parentId, stepNumber);
-        verdictHistory.insert({stepNumber, verdict});
+        if (storeVerdicts)
+            verdictHistory.insert({stepNumber, verdict});
     }
     if (stepNumber + 1 > traceIdx[parentId])
         traceIdx[parentId] = stepNumber + 1;
@@ -110,6 +162,7 @@ std::shared_ptr<Hydra2Monitor> Hydra2Monitor::resetClonedMonitor(std::shared_ptr
                                                                  const std::vector<std::string> &domValNames) {
     clonedMonitor->allCopies.clear();
     clonedMonitor->verdictHistory.clear();
+    clonedMonitor->lastPruneStep = {};
     for (const auto &val : domValNames)
         clonedMonitor->subID += "_" + val;
     allCopies.emplace_back(domValNames, clonedMonitor);

@@ -74,6 +74,9 @@ class NextMonitor final : public Hydra2Monitor {
      */
     void to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) override;
 
+  protected:
+    [[nodiscard]] std::vector<std::shared_ptr<Hydra2Monitor>> getChildren() const override { return {subMonitor}; }
+
   private:
     std::shared_ptr<Hydra2Monitor> subMonitor;     //**< Child monitor. */
     IntervalTemporalOperator interval;             //**< Interval of operator. */
