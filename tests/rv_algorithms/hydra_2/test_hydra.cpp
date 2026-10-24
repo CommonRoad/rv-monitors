@@ -428,3 +428,97 @@ TEST(TestHydra2, testInvalidPredicateCost) {
     EXPECT_DEATH(Hydra2({formula}, false, false, false, globally, {}, {{"test", {1, 2}}}),
                  "Invalid predicate costs/probabilities");
 }
+
+namespace {
+constexpr size_t kLongTraceLength{200};
+
+bool atomA(const size_t i) { return i % 3 == 0 or i % 7 == 1; }
+bool atomB(const size_t i) { return i % 5 == 1; }
+bool atomC(const size_t i) { return i % 2 == 0 or i % 11 == 3; }
+
+// Equidistant trace of length kLongTraceLength over the atoms a, b, and c.
+std::shared_ptr<Trace> longTrace() {
+    std::vector<std::vector<std::string>> events;
+    std::vector<size_t> timeStamps;
+    for (size_t i{0}; i < kLongTraceLength; ++i) {
+        std::vector<std::string> event;
+        if (atomA(i))
+            event.emplace_back("a");
+        if (atomB(i))
+            event.emplace_back("b");
+        if (atomC(i))
+            event.emplace_back("c");
+        events.push_back(event);
+        timeStamps.push_back(i);
+    }
+    return Utils::createTrace({"a", "b", "c"}, events, timeStamps);
+}
+} // namespace
+
+// Verdicts are only stored if they can be requested several times and are removed once no parent can request them
+// anymore, so the number of stored verdicts does not grow with the trace length.
+TEST(TestHydra2, testStoredVerdictsAreBounded) {
+    const auto trace{longTrace()};
+    for (const bool connectedEval : {false, true})
+        for (const bool reordering : {false, true})
+            for (const bool shortCircuiting : {false, true}) {
+                // no temporal operator and no shared sub-formula: every verdict is requested once
+                auto propositional{Hydra2({Parser::parse("G(a & (b | c))", "R1")}, connectedEval, reordering,
+                                          shortCircuiting, globally)};
+                propositional.evaluate(trace);
+                EXPECT_EQ(propositional.getNumStoredVerdicts(), 0);
+
+                // the children of since and until are requested repeatedly; only the window of since (4 steps) and
+                // the current step of until are kept
+                auto temporal{Hydra2(
+                    {Parser::parse("G((a S[0, 3] b) | (c U[1, 4] a))", "R1"), Parser::parse("G(P(a) -> X(b))", "R2")},
+                    connectedEval, reordering, shortCircuiting, globally)};
+                temporal.evaluate(trace);
+                EXPECT_LE(temporal.getNumStoredVerdicts(), 20);
+            }
+}
+
+// Pruning does not change the verdicts on traces that are longer than the intervals.
+TEST(TestHydra2, testPrunedVerdictsOnLongTrace) {
+    const auto trace{longTrace()};
+    std::vector<Verdict> expected;
+    for (size_t i{0}; i < kLongTraceLength; ++i) {
+        // a S[0, 3] b: b at j with i - j <= 3 and a at all steps after j up to i
+        bool since{false};
+        for (size_t j{i + 1}; j-- > 0 and i - j <= 3;) {
+            if (atomB(j)) {
+                since = true;
+                break;
+            }
+            if (!atomA(j))
+                break;
+        }
+        // c U[1, 4] a: a at j with 1 <= j - i <= 4 and c at all steps from i before j
+        bool until{false};
+        for (size_t j{i}; j < kLongTraceLength and j - i <= 4; ++j) {
+            if (j - i >= 1 and atomA(j)) {
+                until = true;
+                break;
+            }
+            if (!atomC(j))
+                break;
+        }
+        expected.emplace_back(i, since or until);
+    }
+    std::vector<Formula> formulas{Parser::parse("G((a S[0, 3] b) | (c U[1, 4] a))", "R1"),
+                                  Parser::parse("G(a S[0, 3] b)", "R2")};
+    std::vector<Verdict> expectedSince;
+    for (size_t i{0}; i < kLongTraceLength; ++i) {
+        bool since{false};
+        for (size_t j{i + 1}; j-- > 0 and i - j <= 3;) {
+            if (atomB(j)) {
+                since = true;
+                break;
+            }
+            if (!atomA(j))
+                break;
+        }
+        expectedSince.emplace_back(i, since);
+    }
+    hydraTestUtils::executeHydraEval(trace, formulas, {expected, expectedSince});
+}

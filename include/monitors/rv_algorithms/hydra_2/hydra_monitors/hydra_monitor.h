@@ -2,6 +2,9 @@
 #include "monitors/collections/domain_value.h"
 #include "monitors/utils/utils.h"
 
+#include <optional>
+#include <set>
+
 /**
  * Representation of Hydra2 monitor head position consisting of time step and trace position.
  */
@@ -42,6 +45,26 @@ struct HeadPosHydra2 {
 };
 
 /**
+ * How far back verdicts of a monitor can still be requested, relative to the step evaluated by the roots: a verdict at
+ * step k with time stamp t_k can be requested at root step i with time stamp t_i if k + steps >= i or t_k + time >=
+ * t_i.
+ */
+struct VerdictRetention {
+    size_t steps{0}; //**< Number of steps. */
+    size_t time{0};  //**< Time difference. */
+
+    /**
+     * Checks whether this retention covers another one.
+     *
+     * @param other Other retention.
+     * @return Boolean indicating whether this retention is at least as long as the other one in steps and time.
+     */
+    [[nodiscard]] bool covers(const VerdictRetention &other) const {
+        return steps >= other.steps and time >= other.time;
+    }
+};
+
+/**
  * Hydra2 monitor interface.
  */
 class Hydra2Monitor {
@@ -63,6 +86,30 @@ class Hydra2Monitor {
      * @return Boolean indicating whether all domain values are valid.
      */
     static bool validAt(const std::vector<DomainValue> &domainValues, size_t timeStamp);
+
+    /**
+     * Returns the child monitors.
+     *
+     * @return Child monitors.
+     */
+    [[nodiscard]] virtual std::vector<std::shared_ptr<Hydra2Monitor>> getChildren() const { return {}; }
+
+    /**
+     * Computes how far back the verdicts of the children can be requested given the retention of this monitor.
+     * Operators that look into the past, i.e., previous and since, extend the retention of their children.
+     *
+     * @param own Retention of this monitor.
+     * @return Retention of the children.
+     */
+    [[nodiscard]] virtual VerdictRetention childRetention(const VerdictRetention &own) const { return own; }
+
+    /**
+     * Checks whether the monitor requests the verdict of a child at the same step several times, i.e., whether it is an
+     * until or since operator, which scan a window of steps. The children of such a monitor store their verdicts.
+     *
+     * @return Boolean indicating whether verdicts of the children are requested repeatedly.
+     */
+    [[nodiscard]] virtual bool requestsChildVerdictsRepeatedly() const { return false; }
 
   private:
     /**
@@ -136,6 +183,40 @@ class Hydra2Monitor {
      * @param parentId ID of parent monitor.
      */
     void registerParent(size_t parentId);
+
+    /**
+     * Determines which verdicts the monitor and its descendants store and for how long. A monitor only stores its
+     * verdicts if they can be requested several times, i.e., if it has several parents or a parent is an until or
+     * since operator. Called for the root monitors after their creation.
+     *
+     * @param retention How far back the verdicts of this monitor can be requested.
+     */
+    void configureVerdictStorage(const VerdictRetention &retention = {});
+
+    /**
+     * Removes the stored verdicts of the monitor and its descendants which can no longer be requested after the roots
+     * evaluated the given step. A removed verdict that is requested anyway, e.g., when other formulas are evaluated on
+     * the same trace later, is recomputed.
+     *
+     * @param stepNumber Step evaluated by the roots.
+     * @param timeStamp Time stamp of the step.
+     */
+    void pruneVerdictHistory(size_t stepNumber, size_t timeStamp);
+
+    /**
+     * Returns the number of stored verdicts of the monitor (without descendants).
+     *
+     * @return Number of stored verdicts.
+     */
+    [[nodiscard]] size_t getVerdictHistorySize() const;
+
+    /**
+     * Returns the number of stored verdicts of the monitor and its descendants; shared monitors are counted once.
+     *
+     * @param visited Monitors that were already counted.
+     * @return Number of stored verdicts.
+     */
+    [[nodiscard]] size_t getNumStoredVerdicts(std::set<const Hydra2Monitor *> &visited) const;
 
     /**
      * Getter for ID of formula which is monitored.
@@ -220,15 +301,19 @@ class Hydra2Monitor {
                                                       const std::vector<std::string> &domValNames);
 
   protected:
-    std::weak_ptr<Trace> trace;               //**< Trace which should be monitored. */
-    Formula formula;                          //**< Monitored formula. */
-    std::string formulaId;                    //**< ID of formula */
-    size_t monitorId;                         //**< ID of monitor */
-    std::string subID;                        //**< Sub ID considering domain values */
-    std::map<size_t, Verdict> verdictHistory; //**< History of verdicts belonging to monitor */
-    std::map<size_t, size_t> traceIdx;        //**< Index of current trace element (even) */
-    double evalCost{0.0};                     //**< Evaluation cost of monitor */
-    double satisfactionProbability{1.0};      //**< Satisfaction probability of monitor */
+    std::weak_ptr<Trace> trace;                //**< Trace which should be monitored. */
+    Formula formula;                           //**< Monitored formula. */
+    std::string formulaId;                     //**< ID of formula */
+    size_t monitorId;                          //**< ID of monitor */
+    std::string subID;                         //**< Sub ID considering domain values */
+    std::map<size_t, Verdict> verdictHistory;  //**< History of verdicts belonging to monitor */
+    size_t numParents{0};                      //**< Number of registered parent monitors. */
+    bool storeVerdicts{false};                 //**< Whether verdicts are stored (see configureVerdictStorage). */
+    std::optional<VerdictRetention> retention; //**< How far back stored verdicts can be requested. */
+    std::optional<size_t> lastPruneStep;       //**< Step of the last pruning (pruning is done once per step). */
+    std::map<size_t, size_t> traceIdx;         //**< Index of current trace element (even) */
+    double evalCost{0.0};                      //**< Evaluation cost of monitor */
+    double satisfactionProbability{1.0};       //**< Satisfaction probability of monitor */
     std::vector<std::tuple<std::vector<std::string>, std::shared_ptr<Hydra2Monitor>>>
         allCopies; /** List of created copies/clones of monitor. */
 };

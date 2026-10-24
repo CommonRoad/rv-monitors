@@ -81,6 +81,9 @@ class OrMonitor final : public Hydra2Monitor {
      */
     void to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) override;
 
+  protected:
+    [[nodiscard]] std::vector<std::shared_ptr<Hydra2Monitor>> getChildren() const override { return subMonitors; }
+
   private:
     std::vector<std::shared_ptr<Hydra2Monitor>> subMonitors; //**< Child monitors. */
     bool shortCircuiting; //**< Boolean indicating whether short-circuiting should be used. */

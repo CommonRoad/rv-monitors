@@ -73,6 +73,7 @@ void Hydra2::evalEarlyTermination(std::map<std::string, std::vector<Verdict>> &r
                 return;
             }
         }
+        pruneVerdicts(relMonitors, i);
     }
 }
 
@@ -93,6 +94,9 @@ void Hydra2::setTraceMonitors(const std::shared_ptr<Trace> &tra,
     for (const auto &mon : monitors)
         mon->setTrace(tra, domains);
     traceLength = tra->getTrace().size();
+    timeStamps.clear();
+    for (const auto &event : tra->getTrace())
+        timeStamps.push_back(event.getTimeStep());
 }
 
 void Hydra2::createMonitor(const std::vector<Formula> &formulas, const bool connectedEval, const bool reordering,
@@ -118,6 +122,9 @@ void Hydra2::createMonitor(const std::vector<Formula> &formulas, const bool conn
         monitors.push_back(hcv.createMonitor(formulaCopy, 0, connectedEval));
         formulaIds.push_back(form.getId());
     }
+    // after all monitors are created since the number of parents of shared monitors is known only then
+    for (const auto &mon : monitors)
+        mon->configureVerdictStorage();
 }
 
 Hydra2::Hydra2(const std::vector<Formula> &formulas, const bool connectedEval, const bool reordering,
@@ -159,13 +166,29 @@ void Hydra2::evalCompleteTrace(std::map<std::string, std::vector<Verdict>> &resu
             verdictRefs.push_back(&verdicts);
         }
 
-    for (size_t i{0}; i < traceLength; ++i)
+    for (size_t i{0}; i < traceLength; ++i) {
         for (size_t m{0}; m < relMonitors.size(); ++m) {
             const auto &mon = relMonitors[m];
             spdlog::debug("Monitor evaluation: " + std::to_string(i) + " - " + relFormulaIds[m]);
             mon->addDomainValues({}); // triggers adding of domain values, e.g., to predicates
             verdictRefs[m]->emplace_back(mon->step(0, i));
         }
+        pruneVerdicts(relMonitors, i);
+    }
+}
+
+void Hydra2::pruneVerdicts(const std::vector<std::shared_ptr<Hydra2Monitor>> &relMonitors,
+                           const size_t stepNumber) const {
+    for (const auto &mon : relMonitors)
+        mon->pruneVerdictHistory(stepNumber, timeStamps.at(stepNumber));
+}
+
+size_t Hydra2::getNumStoredVerdicts() const {
+    std::set<const Hydra2Monitor *> visited;
+    size_t numVerdicts{0};
+    for (const auto &mon : monitors)
+        numVerdicts += mon->getNumStoredVerdicts(visited);
+    return numVerdicts;
 }
 
 std::map<std::string, std::map<size_t, std::vector<std::vector<DomainValue>>>>
