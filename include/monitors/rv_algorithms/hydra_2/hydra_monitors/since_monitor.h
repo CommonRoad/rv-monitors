@@ -76,6 +76,19 @@ class SinceMonitor final : public Hydra2Monitor {
      */
     void to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) override;
 
+  protected:
+    [[nodiscard]] std::vector<std::shared_ptr<Hydra2Monitor>> getChildren() const override {
+        return {subMonitorLeft, subMonitorRight};
+    }
+
+    // the children are evaluated back to the end of the interval, or to its start for unbounded intervals, after which
+    // the cached (left S[0, inf] right) of the previous step is used
+    [[nodiscard]] VerdictRetention childRetention(const VerdictRetention &own) const override {
+        return {own.steps + 1, own.time + (interval.isFinite() ? interval.getEnd() : interval.getStart())};
+    }
+
+    [[nodiscard]] bool requestsChildVerdictsRepeatedly() const override { return true; }
+
   private:
     std::shared_ptr<Hydra2Monitor> subMonitorLeft;  //**< Monitor for specification on left side of since. */
     std::shared_ptr<Hydra2Monitor> subMonitorRight; //**< Monitor for specification on right side of since. */

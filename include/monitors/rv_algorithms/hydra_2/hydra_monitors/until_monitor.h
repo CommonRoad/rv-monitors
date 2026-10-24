@@ -77,6 +77,13 @@ class UntilMonitor final : public Hydra2Monitor {
      */
     void to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) override;
 
+  protected:
+    [[nodiscard]] std::vector<std::shared_ptr<Hydra2Monitor>> getChildren() const override {
+        return {subMonitorLeft, subMonitorRight};
+    }
+
+    [[nodiscard]] bool requestsChildVerdictsRepeatedly() const override { return true; }
+
   private:
     std::shared_ptr<Hydra2Monitor> subMonitorLeft;  //**< Monitor for specification on left side of until. */
     std::shared_ptr<Hydra2Monitor> subMonitorRight; //**< Monitor for specification on right side of until. */

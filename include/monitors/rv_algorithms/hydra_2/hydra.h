@@ -111,12 +111,20 @@ class Hydra2 : public MonitorInterface {
      */
     TreeVis to_tree() const;
 
+    /**
+     * Returns the number of verdicts currently stored by all monitors (shared monitors are counted once).
+     *
+     * @return Number of stored verdicts.
+     */
+    [[nodiscard]] size_t getNumStoredVerdicts() const;
+
   private:
     std::vector<std::shared_ptr<Hydra2Monitor>>
         monitors; //**< List of monitors corresponding to the formulas which should be evaluated. */
     std::vector<std::string> formulaIds; //**< IDs of the formulas, in the order of the monitors. */
     mutable std::map<std::string, std::array<double, 3>> predicateCosts; //**< Predicate costs. */
     size_t traceLength{0};                                               //**< Current trace length. */
+    std::vector<size_t> timeStamps; //**< Time stamps of the current trace (used to prune stored verdicts). */
 
     /**
      * Creates monitors for specified formulas based on provided configuration information.
@@ -127,6 +135,14 @@ class Hydra2 : public MonitorInterface {
      * @param shortCircuiting Boolean indicating whether short-circuiting should be used.
      */
     void createMonitor(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting);
+
+    /**
+     * Removes stored verdicts that can no longer be requested after a step was evaluated.
+     *
+     * @param relMonitors Root monitors which were evaluated.
+     * @param stepNumber Evaluated step.
+     */
+    void pruneVerdicts(const std::vector<std::shared_ptr<Hydra2Monitor>> &relMonitors, size_t stepNumber) const;
 
     /**
      * Resets monitor variables to default values.
