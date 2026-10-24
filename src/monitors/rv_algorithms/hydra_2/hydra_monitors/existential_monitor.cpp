@@ -7,8 +7,9 @@ ExistentialMonitor::ExistentialMonitor(const Formula &formula, const std::shared
                                        std::map<std::string, std::shared_ptr<DomainStorage>> variableValues,
                                        const bool shortCircuiting)
     : QuantifierMonitor(formula, subMonitor, monitorId, variableValues, shortCircuiting, 0.0, 0.0) {
-    evalCost = computeCost(subMonitor, numCombinations());
-    satisfactionProbability = computeSatisfactionProbability(subMonitor, numCombinations());
+    const auto numberCombinations{estimatedNumCombinations()};
+    evalCost = computeCost(subMonitor, numberCombinations);
+    satisfactionProbability = computeSatisfactionProbability(subMonitor, numberCombinations);
 }
 
 Verdict ExistentialMonitor::quantifierStep(const size_t parentId, const size_t stepNumber,

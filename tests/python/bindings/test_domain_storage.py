@@ -65,3 +65,12 @@ def test_domain_storage_3():
     assert len(values) == 1
     assert values[0] == "f"
     assert list(iter(dom3)) == values
+
+
+def test_domain_storage_expected_size():
+    dom = rvm.DomainStorage("dynamicDomain", lambda step_number: ["a", "b"])
+    assert dom.expected_size == 1
+
+    dom.expected_size = 5
+    assert dom.expected_size == 5
+    assert len(dom) == 0

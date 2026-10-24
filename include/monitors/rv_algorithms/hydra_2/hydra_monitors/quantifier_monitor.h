@@ -99,6 +99,15 @@ class QuantifierMonitor : public Hydra2Monitor {
     [[nodiscard]] size_t numCombinations() const;
 
     /**
+     * Estimates the number of combinations for the evaluation cost and satisfaction probability. Unlike
+     * numCombinations(), dynamic domains whose values are not known yet, e.g., when the monitor is created, count with
+     * their expected size instead of being skipped.
+     *
+     * @return Estimated number of combinations.
+     */
+    [[nodiscard]] size_t estimatedNumCombinations() const;
+
+    /**
      * Checks whether one of the domains of the variables is empty.
      *
      * @return Boolean indicating whether one of the domains is empty.

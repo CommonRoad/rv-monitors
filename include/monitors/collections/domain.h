@@ -48,6 +48,30 @@ class DomainStorage {
     [[nodiscard]] size_t size() const;
 
     /**
+     * Sets the expected number of values of a dynamic domain. It is used to estimate the evaluation cost and
+     * satisfaction probability of quantifiers over the domain as long as its values are not known yet, e.g., when the
+     * monitor is created.
+     *
+     * @param size Expected number of values.
+     */
+    void setExpectedSize(size_t size);
+
+    /**
+     * Returns the expected number of values of a dynamic domain (default: 1).
+     *
+     * @return Expected number of values.
+     */
+    [[nodiscard]] size_t getExpectedSize() const;
+
+    /**
+     * Returns the estimated number of values: the actual number for constant domains and dynamic domains with known
+     * values, the expected number for dynamic domains whose values are not known yet.
+     *
+     * @return Estimated number of values.
+     */
+    [[nodiscard]] size_t estimatedSize() const;
+
+    /**
      * Returns whether DomainStorage is empty.
      *
      * @return Boolean indicating whether DomainStorage is empty.
@@ -137,4 +161,5 @@ class DomainStorage {
     mutable std::optional<std::function<bool(size_t, std::any)>>
         validityCondition;                                   //**< Validity condition function. */
     mutable std::function<std::string(std::any)> idFunction; //**< ID function. */
+    size_t expectedSize{1}; //**< Expected number of values of a dynamic domain whose values are not known yet. */
 };

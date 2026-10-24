@@ -6,7 +6,7 @@ QuoteMonitor::QuoteMonitor(Formula formula, const std::shared_ptr<Hydra2Monitor>
                            const float maxQuote, const bool shortCircuiting)
     : QuantifierMonitor(std::move(formula), subMonitor, monitorId, variableValues, shortCircuiting, 0.0, 0.0),
       minQuote(minQuote), maxQuote(maxQuote) {
-    const auto numberCombinations{numCombinations()};
+    const auto numberCombinations{estimatedNumCombinations()};
     evalCost = computeCost(subMonitor, numberCombinations);
     satisfactionProbability = computeSatisfactionProbability(subMonitor, numberCombinations);
 }
