@@ -7,7 +7,7 @@ CountingMonitor::CountingMonitor(Formula formula, const std::shared_ptr<Hydra2Mo
                                  const CountingQuantifier::Operator opr, const size_t num, const bool shortCircuiting)
     : QuantifierMonitor(std::move(formula), subMonitor, monitorId, variableValues, shortCircuiting, 0.0, 0.0), op(opr),
       num(num) {
-    const auto numberCombinations{numCombinations()};
+    const auto numberCombinations{estimatedNumCombinations()};
     evalCost = computeCost(subMonitor, numberCombinations);
     satisfactionProbability = computeSatisfactionProbability(subMonitor, numberCombinations);
 }
