@@ -522,3 +522,50 @@ TEST(TestHydra2, testPrunedVerdictsOnLongTrace) {
     }
     hydraTestUtils::executeHydraEval(trace, formulas, {expected, expectedSince});
 }
+
+namespace {
+// Asymmetric, time-dependent relation between two values.
+bool asymmetricRelation(size_t timeStep, size_t x, size_t y) { return (7 * x + 13 * y + timeStep + x * y) % 5 < 2; }
+} // namespace
+
+// The clones of a sub-monitor are cached per variable and domain value. With connected evaluation, rel(x, y) is shared
+// by both formulas, whose quantifiers bind x and y in different orders, so the formulas must not receive each other's
+// clones (including their cached verdicts).
+TEST(TestHydra2, testQuantifierClonesDistinguishVariables) {
+    const std::shared_ptr<Trace> trace = hydraTestUtils::createTraceWithVariable(
+        4, {std::make_shared<Function<bool, size_t, size_t, size_t>>(Function<bool, size_t, size_t, size_t>(
+               "rel", {"timeStep", "x", "y"}, asymmetricRelation, hydraTestUtils::threeSizeTArgs))});
+    const std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(DomainStorage(
+        "D", {0ul, 1ul, 2ul}, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }))};
+    const auto verdicts = [](const std::vector<bool> &values) {
+        std::vector<Verdict> result;
+        for (size_t idx{0}; idx < values.size(); ++idx)
+            result.emplace_back(idx, values[idx]);
+        return result;
+    };
+    // formula R1, formula R2, expected verdicts of R1, expected verdicts of R2
+    const std::vector<std::tuple<std::string, std::string, std::vector<bool>, std::vector<bool>>> cases{
+        {"G(E x in D. A y in D. rel(x, y))",
+         "G(E y in D. A x in D. rel(x, y))",
+         {false, true, true, false},
+         {false, false, false, false}},
+        {"G(A x in D. E y in D. rel(x, y))",
+         "G(A y in D. E x in D. rel(x, y))",
+         {false, true, false, false},
+         {true, true, true, false}},
+        {"G(E x in D. C=1 y in D. rel(x, y))",
+         "G(E y in D. C=1 x in D. rel(x, y))",
+         {false, true, true, true},
+         {true, true, true, true}},
+        {"G(A x in D. C>=1 y in D. rel(x, y))",
+         "G(C=1 y in D. A x in D. rel(x, y))",
+         {false, true, false, false},
+         {false, false, false, false}}};
+    for (const auto &[first, second, expectedFirst, expectedSecond] : cases) {
+        std::vector<Formula> formulas{Parser::parse(first), Parser::parse(second)};
+        formulas[0].setId("R1");
+        formulas[1].setId("R2");
+        SCOPED_TRACE(first + " / " + second);
+        hydraTestUtils::executeHydraEval(trace, formulas, {verdicts(expectedFirst), verdicts(expectedSecond)}, domains);
+    }
+}
