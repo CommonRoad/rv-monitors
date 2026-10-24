@@ -35,10 +35,13 @@ std::shared_ptr<Hydra2Monitor> QuantifierMonitor::nextEvalMonitor(const size_t s
     if (evalMonitors.find(uniqueId) == evalMonitors.end()) // if there is no monitor for the current
                                                            // combination, then a new monitor will be cloned
     {
+        // The clones of a sub-monitor are cached by these names. They contain the variable since a shared sub-monitor
+        // can be cloned by quantifiers over different variables, e.g., rel(x, y) in E x. A y. rel(x, y) and
+        // E y. A x. rel(x, y).
         std::vector<std::string> domValueNames;
         domValueNames.reserve(currentDomainValues.size());
         for (const auto &val : currentDomainValues)
-            domValueNames.push_back(val.getUniqueID());
+            domValueNames.push_back(val.getVariable() + "=" + val.getUniqueID());
         if (!domValueNames.empty())
             domValueNames.back() += occurrenceSuffix;
         evalMonitor = subMonitor->clone(domValueNames);
