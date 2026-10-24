@@ -74,6 +74,14 @@ class PreviousMonitor final : public Hydra2Monitor {
      */
     void to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) override;
 
+  protected:
+    [[nodiscard]] std::vector<std::shared_ptr<Hydra2Monitor>> getChildren() const override { return {subMonitor}; }
+
+    // the child is evaluated at the previous step
+    [[nodiscard]] VerdictRetention childRetention(const VerdictRetention &own) const override {
+        return {own.steps + 1, own.time};
+    }
+
   private:
     std::shared_ptr<Hydra2Monitor> subMonitor; //**< Child monitor. */
     IntervalTemporalOperator interval;         //**< Interval of operator. */
