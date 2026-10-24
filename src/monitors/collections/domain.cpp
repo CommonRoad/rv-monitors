@@ -24,6 +24,16 @@ size_t DomainStorage::size() const { return values.size(); }
 
 bool DomainStorage::empty() const { return values.empty(); }
 
+void DomainStorage::setExpectedSize(const size_t size) { expectedSize = size; }
+
+size_t DomainStorage::getExpectedSize() const { return expectedSize; }
+
+size_t DomainStorage::estimatedSize() const {
+    if (constDomainStorage or !values.empty())
+        return values.size();
+    return expectedSize;
+}
+
 DomainStorage::DomainStorage(std::string name,
                              std::shared_ptr<IFunction<std::vector<std::any>>> dynamicDomainStorageFunction,
                              const std::function<std::string(std::any)> &idFunction,

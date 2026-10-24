@@ -101,6 +101,13 @@ size_t QuantifierMonitor::numCombinations() const {
     return numCombinations;
 }
 
+size_t QuantifierMonitor::estimatedNumCombinations() const {
+    size_t numCombinations{1};
+    for (const auto &[_, domain] : variableValues)
+        numCombinations *= domain->estimatedSize();
+    return numCombinations;
+}
+
 bool QuantifierMonitor::checkNonEmptiness() const {
     return std::all_of(variableValues.begin(), variableValues.end(),
                        [](const std::pair<std::string, std::shared_ptr<DomainStorage>> &varDomain) {

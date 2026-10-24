@@ -346,6 +346,9 @@ void init_domain(nb::module_ &m) {
         .def("reset", &DomainStorage::reset)
         .def("update_dynamic_domain", [](DomainStorage &ds, size_t stepNumber) { ds.updateDynamicDomain(stepNumber); })
         .def("is_empty", &DomainStorage::empty)
+        .def_prop_rw("expected_size", &DomainStorage::getExpectedSize, &DomainStorage::setExpectedSize,
+                     "Expected number of values of a dynamic domain; used to estimate the evaluation cost and "
+                     "satisfaction probability of quantifiers as long as the values are not known yet.")
         .def("__bool__", [](const DomainStorage &ds) { return !ds.empty(); })
         .def(
             "__iter__",

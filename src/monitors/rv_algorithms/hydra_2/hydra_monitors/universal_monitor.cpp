@@ -8,7 +8,7 @@ UniversalMonitor::UniversalMonitor(Formula formula, const std::shared_ptr<Hydra2
                                    std::map<std::string, std::shared_ptr<DomainStorage>> variableValues,
                                    const bool shortCircuiting)
     : QuantifierMonitor(std::move(formula), subMonitor, monitorId, variableValues, shortCircuiting, 0.0, 0.0) {
-    const auto numberCombinations{numCombinations()};
+    const auto numberCombinations{estimatedNumCombinations()};
     evalCost = computeCost(subMonitor, numberCombinations);
     satisfactionProbability = computeSatisfactionProbability(subMonitor, numberCombinations);
 }
