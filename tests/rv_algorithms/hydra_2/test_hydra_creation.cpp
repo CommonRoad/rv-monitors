@@ -3,7 +3,14 @@
 #include "monitors/collections/domain.h"
 #include "monitors/parser/parser.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_creation_visitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/counting_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/existential_monitor.h"
 #include "monitors/rv_algorithms/hydra_2/hydra_monitors/hydra_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/predicate_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/quote_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/universal_monitor.h"
+
+#include <cmath>
 
 void executeTest(Formula inputFormula, const std::string &expectedFormulaStringReordered,
                  const std::map<std::string, std::array<double, 3>> &predicateCosts,
@@ -441,4 +448,71 @@ TEST(TestHydraCreation, testInvalidPredicateCost) {
     GTEST_SKIP() << "assertions are disabled";
 #endif
     EXPECT_DEATH(HydraCreationVisitor2(predicateCosts, false);, "Invalid predicate costs/probabilities");
+}
+
+namespace {
+// Dynamic domain whose values are only known during the evaluation.
+std::shared_ptr<DomainStorage> dynamicDomain(const std::string &name) {
+    auto function{std::make_shared<Function<std::vector<std::any>, size_t>>(Function<std::vector<std::any>, size_t>(
+        name, {"stepNumber"}, [](size_t) { return std::vector<std::any>{1ul, 2ul}; },
+        [](const std::vector<DomainValue> &args) {
+            return std::tuple<size_t>{std::any_cast<size_t>(args.at(0).getValue())};
+        }))};
+    return std::make_shared<DomainStorage>(
+        name, function, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); },
+        [](size_t, const std::any &) { return true; });
+}
+} // namespace
+
+// The cost and satisfaction probability of quantifiers were computed when the monitor was created, i.e., while dynamic
+// domains were still empty. Empty dynamic domains were skipped (factor 1), or the number of combinations was 0 if all
+// domains were dynamic, so these quantifiers looked free and were evaluated first by the reordering.
+TEST(TestHydraCreation, testQuantifierCostWithDynamicDomain) {
+    const Formula predicateFormula{Parser::parse("p(x)")};
+    const double predicateCost{20.0};
+    const double predicateProbability{0.5};
+    for (const size_t expectedSize : {1ul, 4ul}) {
+        const auto domain{dynamicDomain("D")};
+        EXPECT_EQ(domain->getExpectedSize(), 1);
+        if (expectedSize != 1)
+            domain->setExpectedSize(expectedSize);
+        EXPECT_EQ(domain->getExpectedSize(), expectedSize);
+        EXPECT_EQ(domain->estimatedSize(), expectedSize);
+        std::map<std::string, std::shared_ptr<DomainStorage>> variableValues{{"x", domain}};
+        const auto predicate{
+            std::make_shared<PredicateMonitor>(predicateFormula, 1, predicateCost, predicateProbability)};
+        const auto numEval{static_cast<double>(expectedSize)};
+
+        const ExistentialMonitor existential{Parser::parse("E x in D. p(x)"), predicate, 0, variableValues, true};
+        EXPECT_DOUBLE_EQ(existential.getEvalCost(), predicateCost * numEval);
+        EXPECT_DOUBLE_EQ(existential.getSatisfactionProbability(), 1 - std::pow(1 - predicateProbability, numEval));
+
+        const UniversalMonitor universal{Parser::parse("A x in D. p(x)"), predicate, 0, variableValues, true};
+        EXPECT_DOUBLE_EQ(universal.getEvalCost(), predicateCost * numEval);
+        EXPECT_DOUBLE_EQ(universal.getSatisfactionProbability(), std::pow(predicateProbability, numEval));
+
+        const CountingMonitor counting{Parser::parse("C>=1 x in D. p(x)"),       predicate, 0,   variableValues,
+                                       CountingQuantifier::Operator::GREATER_EQ, 1,         true};
+        EXPECT_DOUBLE_EQ(counting.getEvalCost(), predicateCost * numEval);
+        EXPECT_DOUBLE_EQ(counting.getSatisfactionProbability(), 1 - std::pow(1 - predicateProbability, numEval));
+
+        const QuoteMonitor quote{
+            Parser::parse("Q[0.0, 1.0] x in D. p(x)"), predicate, 0, variableValues, 0.0, 1.0, true};
+        EXPECT_DOUBLE_EQ(quote.getEvalCost(), predicateCost * numEval);
+        EXPECT_DOUBLE_EQ(quote.getSatisfactionProbability(), 1.0);
+    }
+}
+
+// A quantifier over a dynamic domain with many expected values is evaluated after a quantifier over a small constant
+// domain.
+TEST(TestHydraCreation, testReorderQuantifierWithDynamicDomain) {
+    Formula formula = Parser::parse("(E x in D0. p(x)) & (E y in D1. q(y))");
+    formula.setId("R1");
+    const std::map<std::string, std::array<double, 3>> predicateCosts{{"p", {20.0, 0.5}}, {"q", {20.0, 0.5}}};
+    const auto dynamic{dynamicDomain("D0")};
+    dynamic->setExpectedSize(10);
+    const auto constant{std::make_shared<DomainStorage>("D1", std::vector<std::any>{1ul, 2ul}, [](const std::any &val) {
+        return std::to_string(std::any_cast<size_t>(val));
+    })};
+    executeTest(formula, "(E y in D1. q(y) & E x in D0. p(x))", predicateCosts, {dynamic, constant});
 }
