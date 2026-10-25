@@ -8,7 +8,7 @@ Simply insert the following snippet somewhere in your `CMakeLists.txt`:
 include(FetchContent)
 
 FetchContent_Declare(RVMonitors
-        GIT_REPOSITORY git@gitlab.lrz.de:cps/commonroad/rv-monitors.git
+        GIT_REPOSITORY https://github.com/<GITHUB_ORG>/rv-monitors.git
         # You can specify any reference here, but prefer specifying a concrete commit if possible
         # as that will speed up the build since Git won't need to check whether branch moved in the meantime
         GIT_TAG <reference to commit, branch, tag...>
@@ -18,5 +18,5 @@ FetchContent_MakeAvailable(RVMonitors)
 
 Then add the RV-Monitor as a dependency to the targets which require it:
 ```cmake
-target_link_libraries(<MyLibraryOrExecutable> PUBLIC CRVMonitors::rvmonitors)
+target_link_libraries(<MyLibraryOrExecutable> PUBLIC RVMonitors::rvmonitors)
 ```

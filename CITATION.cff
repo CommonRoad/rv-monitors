@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use RV-Monitors, please cite it using the metadata below."
+title: "RV-Monitors: Temporal Logic Runtime Verification Algorithms"
+type: software
+authors:
+  - family-names: Maierhofer
+    given-names: Sebastian
+    email: sebastian.maierhofer@tum.de
+version: 0.5.0
+license: BSD-3-Clause
+# TODO: replace <GITHUB_ORG> once the public GitHub repository exists
+repository-code: "https://github.com/<GITHUB_ORG>/rv-monitors"
+keywords:
+  - runtime verification
+  - temporal logic
+  - LTL
+  - MTL
+  - monitoring

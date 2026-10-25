@@ -24,7 +24,10 @@ nav:
   - Home:
       - "index.md"
       - "cpp.md"
+      - "development.md"
+      - "documentation.md"
       - "vydra.md"
+      - "licensing.md"
 
   - API Documentation:
       - "Links": "rv-monitors/links.md"
