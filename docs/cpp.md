@@ -8,7 +8,7 @@ Simply insert the following snippet somewhere in your `CMakeLists.txt`:
 include(FetchContent)
 
 FetchContent_Declare(RVMonitors
-        GIT_REPOSITORY https://github.com/<GITHUB_ORG>/rv-monitors.git
+        GIT_REPOSITORY https://github.com/CommonRoad/rv-monitors.git
         # You can specify any reference here, but prefer specifying a concrete commit if possible
         # as that will speed up the build since Git won't need to check whether branch moved in the meantime
         GIT_TAG <reference to commit, branch, tag...>

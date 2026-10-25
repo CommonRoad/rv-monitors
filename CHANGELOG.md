@@ -5,7 +5,7 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.5.0] - Unreleased
+## [1.0.0] - Unreleased
 
 First public release.
 
@@ -28,4 +28,4 @@ First public release.
 - CI evaluation against the reference implementations Hydra and Vydra.
 - `CONTRIBUTING.md`, `CITATION.cff`, and documentation on development, documentation generation, and licensing.
 
-[0.5.0]: https://github.com/<GITHUB_ORG>/rv-monitors/releases/tag/v0.5.0
+[1.0.0]: https://github.com/CommonRoad/rv-monitors/releases/tag/1.0.0

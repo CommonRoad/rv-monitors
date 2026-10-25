@@ -24,11 +24,10 @@ classifiers = [
 ]
 
 [project.urls]
-# TODO: replace <GITHUB_ORG> once the public GitHub repository exists
-Homepage = "https://github.com/<GITHUB_ORG>/rv-monitors"
-Source = "https://github.com/<GITHUB_ORG>/rv-monitors"
-Issues = "https://github.com/<GITHUB_ORG>/rv-monitors/issues"
-Changelog = "https://github.com/<GITHUB_ORG>/rv-monitors/blob/develop/CHANGELOG.md"
+Homepage = "https://github.com/CommonRoad/rv-monitors"
+Source = "https://github.com/CommonRoad/rv-monitors"
+Issues = "https://github.com/CommonRoad/rv-monitors/issues"
+Changelog = "https://github.com/CommonRoad/rv-monitors/blob/develop/CHANGELOG.md"
 
 [project.optional-dependencies]
 eval = [

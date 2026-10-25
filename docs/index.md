@@ -21,7 +21,7 @@ RV-Monitors parses a formula, builds a monitor with one of several algorithms, a
 Building from source requires Python 3.10–3.13, a C++17 compiler, CMake ≥ 3.24, and a Java runtime (used by ANTLR to generate the parser).
 
 ```bash
-pip install git+https://github.com/<GITHUB_ORG>/rv-monitors.git
+pip install git+https://github.com/CommonRoad/rv-monitors.git
 # or, from a local checkout
 pip install .
 ```
@@ -33,7 +33,7 @@ Add RV-Monitors to your project with `FetchContent`:
 ```cmake
 include(FetchContent)
 FetchContent_Declare(RVMonitors
-    GIT_REPOSITORY https://github.com/<GITHUB_ORG>/rv-monitors.git
+    GIT_REPOSITORY https://github.com/CommonRoad/rv-monitors.git
     GIT_TAG <commit/tag>
 )
 FetchContent_MakeAvailable(RVMonitors)
@@ -88,16 +88,16 @@ pip install -e ".[dev,test]"
 pytest tests/python/bindings
 ```
 
-For the full development setup (pre-commit, formatting, static analysis), see [Development](development.md) and [CONTRIBUTING.md](https://github.com/<GITHUB_ORG>/rv-monitors/blob/develop/CONTRIBUTING.md).
+For the full development setup (pre-commit, formatting, static analysis), see [Development](development.md) and [CONTRIBUTING.md](https://github.com/CommonRoad/rv-monitors/blob/develop/CONTRIBUTING.md).
 Other docs:
 
 - [Evaluation against Hydra/Vydra](vydra.md)
 - [Generating the documentation](documentation.md)
-- [Changelog](https://github.com/<GITHUB_ORG>/rv-monitors/blob/develop/CHANGELOG.md)
+- [Changelog](https://github.com/CommonRoad/rv-monitors/blob/develop/CHANGELOG.md)
 
 ## Citation
 
-If you use RV-Monitors in your research, please cite it as described in [`CITATION.cff`](https://github.com/<GITHUB_ORG>/rv-monitors/blob/develop/CITATION.cff).
+If you use RV-Monitors in your research, please cite it as described in [`CITATION.cff`](https://github.com/CommonRoad/rv-monitors/blob/develop/CITATION.cff).
 
 ## Contributors
 
@@ -107,8 +107,8 @@ Florian Lercher, Tobias Markus, Valentin Merle, and Yannick Ballnath.
 
 ## License
 
-RV-Monitors is released under the [BSD 3-Clause License](https://github.com/<GITHUB_ORG>/rv-monitors/blob/develop/LICENSE).
-For the licenses of third-party components, see [`THIRD_PARTY_NOTICES.md`](https://github.com/<GITHUB_ORG>/rv-monitors/blob/develop/THIRD_PARTY_NOTICES.md) and [Licensing](licensing.md).
+RV-Monitors is released under the [BSD 3-Clause License](https://github.com/CommonRoad/rv-monitors/blob/develop/LICENSE).
+For the licenses of third-party components, see [`THIRD_PARTY_NOTICES.md`](https://github.com/CommonRoad/rv-monitors/blob/develop/THIRD_PARTY_NOTICES.md) and [Licensing](licensing.md).
 
 ## References
 
