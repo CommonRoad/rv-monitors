@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20..3.29)
 
 project(RVMonitors
         LANGUAGES C CXX
-        VERSION 0.5
+        VERSION 1.0.0
         HOMEPAGE_URL "https://commonroad.in.tum.de/"
         DESCRIPTION "Classes and methods to monitor traces based on temporal logic specifications in C++17")
 

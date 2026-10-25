@@ -22,4 +22,4 @@ Before the license was chosen, every dependency was checked for license terms th
 
 No dependency is under a copyleft license (GPL/LGPL), so none of them forces a particular license on RV-Monitors.
 BSD-3-Clause matches the licenses of the main dependencies and of other CommonRoad tools.
-All notices that must be retained are collected in [`THIRD_PARTY_NOTICES.md`](https://github.com/<GITHUB_ORG>/rv-monitors/blob/develop/THIRD_PARTY_NOTICES.md).
+All notices that must be retained are collected in [`THIRD_PARTY_NOTICES.md`](https://github.com/CommonRoad/rv-monitors/blob/develop/THIRD_PARTY_NOTICES.md).

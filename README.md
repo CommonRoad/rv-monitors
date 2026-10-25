@@ -21,7 +21,7 @@ RV-Monitors parses a formula, builds a monitor with one of several algorithms, a
 Building from source requires Python 3.10–3.13, a C++17 compiler, CMake ≥ 3.24, and a Java runtime (used by ANTLR to generate the parser).
 
 ```bash
-pip install git+https://github.com/<GITHUB_ORG>/rv-monitors.git
+pip install git+https://github.com/CommonRoad/rv-monitors.git
 # or, from a local checkout
 pip install .
 ```
@@ -33,7 +33,7 @@ Add RV-Monitors to your project with `FetchContent`:
 ```cmake
 include(FetchContent)
 FetchContent_Declare(RVMonitors
-    GIT_REPOSITORY https://github.com/<GITHUB_ORG>/rv-monitors.git
+    GIT_REPOSITORY https://github.com/CommonRoad/rv-monitors.git
     GIT_TAG <commit/tag>
 )
 FetchContent_MakeAvailable(RVMonitors)
