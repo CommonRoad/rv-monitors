@@ -3,12 +3,32 @@ name = "rv-monitors"
 dynamic = ["version"]
 readme = "README.md"
 requires-python = ">=3.10,<3.15"
-license = {file = "LICENSE"}
+license = "BSD-3-Clause"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
 authors = [
-  {email = "sebastian.maierhofer@tum.de"},
-  {name = "Sebastian Maierhofer"}
+  {name = "Sebastian Maierhofer", email = "sebastian.maierhofer@tum.de"}
 ]
 description = "Collection of Temporal Logic Runtime Verification Algorithms"
+keywords = ["runtime verification", "temporal logic", "LTL", "MTL", "monitoring", "formal methods"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: C++",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+]
+
+[project.urls]
+# TODO: replace <GITHUB_ORG> once the public GitHub repository exists
+Homepage = "https://github.com/<GITHUB_ORG>/rv-monitors"
+Source = "https://github.com/<GITHUB_ORG>/rv-monitors"
+Issues = "https://github.com/<GITHUB_ORG>/rv-monitors/issues"
+Changelog = "https://github.com/<GITHUB_ORG>/rv-monitors/blob/develop/CHANGELOG.md"
 
 [project.optional-dependencies]
 eval = [
