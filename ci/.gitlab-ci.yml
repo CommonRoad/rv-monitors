@@ -198,6 +198,11 @@ build-python:
 ### tests ###
 test:
   stage: test
+  variables:
+    # run the tests in parallel; sequentially, they exceed the job timeout of one hour. The number of parallel tests is
+    # fixed instead of $(nproc) since the runner is shared and exposes all CPUs of the host to the container; the job
+    # duration is dominated by a few long-running tests anyway.
+    CTEST_PARALLEL_LEVEL: "8"
   script:
     - cmake --build build --config RelWithDebInfo --target test
   needs:
