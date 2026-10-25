@@ -191,6 +191,14 @@ size_t Hydra2::getNumStoredVerdicts() const {
     return numVerdicts;
 }
 
+size_t Hydra2::getNumEvaluations() const {
+    std::set<const Hydra2Monitor *> visited;
+    size_t evaluations{0};
+    for (const auto &mon : monitors)
+        evaluations += mon->getNumEvaluations(visited);
+    return evaluations;
+}
+
 std::map<std::string, std::map<size_t, std::vector<std::vector<DomainValue>>>>
 Hydra2::getViolatingDomainValues() const {
     std::map<std::string, std::map<size_t, std::vector<std::vector<DomainValue>>>> violations;

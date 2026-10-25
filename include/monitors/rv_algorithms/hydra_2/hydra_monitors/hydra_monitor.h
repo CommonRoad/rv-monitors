@@ -219,6 +219,15 @@ class Hydra2Monitor {
     [[nodiscard]] size_t getNumStoredVerdicts(std::set<const Hydra2Monitor *> &visited) const;
 
     /**
+     * Returns the number of verdicts computed by the monitor and its descendants since the last reset, i.e., the number
+     * of steps that were not answered from the stored verdicts; shared monitors are counted once.
+     *
+     * @param visited Monitors that were already counted.
+     * @return Number of computed verdicts.
+     */
+    [[nodiscard]] size_t getNumEvaluations(std::set<const Hydra2Monitor *> &visited) const;
+
+    /**
      * Getter for ID of formula which is monitored.
      * @return
      */
@@ -311,6 +320,7 @@ class Hydra2Monitor {
     bool storeVerdicts{false};                 //**< Whether verdicts are stored (see configureVerdictStorage). */
     std::optional<VerdictRetention> retention; //**< How far back stored verdicts can be requested. */
     std::optional<size_t> lastPruneStep;       //**< Step of the last pruning (pruning is done once per step). */
+    size_t numEvaluations{0};                  //**< Number of computed verdicts since the last reset. */
     std::map<size_t, size_t> traceIdx;         //**< Index of current trace element (even) */
     double evalCost{0.0};                      //**< Evaluation cost of monitor */
     double satisfactionProbability{1.0};       //**< Satisfaction probability of monitor */

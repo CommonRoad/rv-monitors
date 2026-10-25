@@ -118,6 +118,15 @@ class Hydra2 : public MonitorInterface {
      */
     [[nodiscard]] size_t getNumStoredVerdicts() const;
 
+    /**
+     * Returns the number of verdicts computed by all monitors since the monitors were last reset, i.e., since the last
+     * evaluation of a new trace (shared monitors are counted once). Evaluations that continue the current trace
+     * (nullptr trace) add to the count. Verdicts answered from the stored verdicts are not counted.
+     *
+     * @return Number of computed verdicts.
+     */
+    [[nodiscard]] size_t getNumEvaluations() const;
+
   private:
     std::vector<std::shared_ptr<Hydra2Monitor>>
         monitors; //**< List of monitors corresponding to the formulas which should be evaluated. */
