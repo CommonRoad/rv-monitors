@@ -569,3 +569,34 @@ TEST(TestHydra2, testQuantifierClonesDistinguishVariables) {
         hydraTestUtils::executeHydraEval(trace, formulas, {verdicts(expectedFirst), verdicts(expectedSecond)}, domains);
     }
 }
+
+// With lazy evaluation, the unbounded since is skipped as long as a holds and catches up on the skipped steps at the
+// last step. It evaluates its children at most at the steps at which they are evaluated without lazy evaluation, so
+// lazy evaluation computes fewer verdicts in total.
+TEST(TestHydra2, testLazyEvaluationComputesNoAdditionalVerdicts) {
+    constexpr size_t traceLength{50};
+    std::vector<std::vector<std::string>> events;
+    std::vector<size_t> timeStamps;
+    for (size_t i{0}; i < traceLength; ++i) {
+        std::vector<std::string> event{"b"};
+        if (i + 1 < traceLength)
+            event.emplace_back("a");
+        if (i == 0)
+            event.emplace_back("c");
+        events.push_back(event);
+        timeStamps.push_back(i);
+    }
+    const auto trace{Utils::createTrace({"a", "b", "c"}, events, timeStamps)};
+    for (const bool connectedEval : {false, true}) {
+        auto notLazy{Hydra2({Parser::parse("G(a | (b S c))", "R1")}, connectedEval, false, false, globally)};
+        auto lazy{Hydra2({Parser::parse("G(a | (b S c))", "R1")}, connectedEval, false, true, globally)};
+        const auto resultNotLazy{notLazy.evaluate(trace)};
+        const auto resultLazy{lazy.evaluate(trace)};
+        for (size_t i{0}; i < traceLength; ++i) {
+            EXPECT_TRUE(resultNotLazy.at("R1").at(i).value);
+            EXPECT_TRUE(resultLazy.at("R1").at(i).value);
+        }
+        EXPECT_EQ(notLazy.getNumEvaluations(), 249U);
+        EXPECT_EQ(lazy.getNumEvaluations(), 199U);
+    }
+}

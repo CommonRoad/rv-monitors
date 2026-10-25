@@ -3,7 +3,9 @@
 // Random first-order MTL formulas and random timed traces are generated with a fixed seed. Every formula set is
 // monitored with all eight combinations of the optimizations (sharing of subformulas across and within formulas,
 // cost-based reordering, and short-circuit/lazy evaluation) and the verdict at every time step is compared with a
-// naive reference evaluator that implements the point-based finite-trace semantics directly. Each monitor instance
+// naive reference evaluator that implements the point-based finite-trace semantics directly. In addition, lazy
+// evaluation must not compute more verdicts than the same configuration without it, i.e., the steps that previous and
+// since operators catch up after skipped steps are never more than the steps saved by skipping. Each monitor instance
 // is reused for several traces, so the reset logic is exercised as well. Failing cases are shrunk to a small
 // counterexample before they are reported.
 
@@ -764,7 +766,8 @@ using Verdicts = std::vector<std::vector<std::vector<bool>>>;
 
 struct MonitorRun {
     Verdicts verdicts;
-    std::string error; // non-empty if the monitor threw
+    std::string error;               // non-empty if the monitor threw
+    std::vector<size_t> evaluations; // number of computed verdicts per trace
 };
 
 // Number of formulas that are monitored in the given mode.
@@ -798,6 +801,7 @@ MonitorRun runMonitor(const Case &c, const Config &cfg, const Mode mode) {
                 perFormula.push_back(values);
             }
             run.verdicts.push_back(perFormula);
+            run.evaluations.push_back(monitor.getNumEvaluations());
         }
     } catch (const std::exception &e) {
         run.error = e.what();
@@ -881,6 +885,28 @@ Outcome compareRuns(const MonitorRun &expected, const MonitorRun &actual) {
     return compare(expected.verdicts, actual.verdicts);
 }
 
+// Compares the number of computed verdicts per trace; a trace on which `actual` computes more verdicts than `expected`
+// counts as a mismatch. Runs that threw are compared by compareRuns.
+Outcome compareEvaluations(const MonitorRun &expected, const MonitorRun &actual) {
+    Outcome out;
+    if (!expected.error.empty() or !actual.error.empty())
+        return out;
+    for (size_t t{0}; t < std::min(expected.evaluations.size(), actual.evaluations.size()); ++t) {
+        ++out.compared;
+        if (actual.evaluations[t] <= expected.evaluations[t])
+            continue;
+        ++out.mismatches;
+        if (out.first.empty())
+            out.first = "trace#" + std::to_string(t) + ": " + std::to_string(expected.evaluations[t]) +
+                        " computed verdicts without lazy evaluation, " + std::to_string(actual.evaluations[t]) +
+                        " with lazy evaluation";
+    }
+    return out;
+}
+
+// Same configuration without lazy evaluation.
+Config withoutLazy(const Config &cfg) { return {cfg.sharing, cfg.reordering, false}; }
+
 // A check maps a case to the comparison outcome; used for counting and for shrinking.
 using Check = std::function<Outcome(const Case &)>;
 
@@ -892,6 +918,12 @@ Check againstReference(const Mode mode, const Config cfg) {
 
 Check againstBaseline(const Mode mode, const Config cfg) {
     return [mode, cfg](const Case &c) { return compareRuns(runMonitor(c, kBaseline, mode), runMonitor(c, cfg, mode)); };
+}
+
+Check lazyEvaluations(const Mode mode, const Config cfg) {
+    return [mode, cfg](const Case &c) {
+        return compareEvaluations(runMonitor(c, withoutLazy(cfg), mode), runMonitor(c, cfg, mode));
+    };
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -1052,6 +1084,9 @@ struct CampaignResult {
     size_t traces{0};
     Totals equivalence;                                // each optimized configuration vs. the unoptimized baseline
     Totals reference;                                  // each configuration vs. the reference semantics
+    Totals lazyEvaluations;                            // each lazy configuration vs. the same one without lazy
+    size_t evaluationsLazy{0};                         // computed verdicts of the lazy configurations
+    size_t evaluationsNotLazy{0};                      // computed verdicts of the same configurations without lazy
     std::map<std::string, size_t> mismatchesPerConfig; // optimized vs. baseline
 };
 
@@ -1084,8 +1119,9 @@ CampaignResult runCampaign(const uint64_t seed, const size_t numCases, const siz
         const MonitorRun baseline{runMonitor(c, kBaseline, mode)};
         bool equivalenceFailed{false};
         bool referenceFailed{false};
+        std::map<std::string, MonitorRun> runs;
         for (const auto &cfg : configs) {
-            const MonitorRun run{cfg == kBaseline ? baseline : runMonitor(c, cfg, mode)};
+            const MonitorRun &run{runs[cfg.str()] = cfg == kBaseline ? baseline : runMonitor(c, cfg, mode)};
             const Outcome ref{compareRuns(expected, run)};
             res.reference.compared += ref.compared;
             res.reference.mismatches += ref.mismatches;
@@ -1104,8 +1140,27 @@ CampaignResult runCampaign(const uint64_t seed, const size_t numCases, const siz
                 report("optimization changes verdicts", c, againstBaseline(mode, cfg), cfg);
             }
         }
+        bool lazyEvaluationsFailed{false};
+        for (const auto &cfg : configs) {
+            const auto notLazy{runs.find(withoutLazy(cfg).str())};
+            if (!cfg.lazy or notLazy == runs.end())
+                continue;
+            const MonitorRun &run{runs.at(cfg.str())};
+            const Outcome ev{compareEvaluations(notLazy->second, run)};
+            res.lazyEvaluations.compared += ev.compared;
+            res.lazyEvaluations.mismatches += ev.mismatches;
+            for (size_t t{0}; t < ev.compared; ++t) {
+                res.evaluationsLazy += run.evaluations[t];
+                res.evaluationsNotLazy += notLazy->second.evaluations[t];
+            }
+            if (ev.mismatches > 0) {
+                lazyEvaluationsFailed = true;
+                report("lazy evaluation computes more verdicts", c, lazyEvaluations(mode, cfg), cfg);
+            }
+        }
         res.equivalence.failingCases += equivalenceFailed ? 1 : 0;
         res.reference.failingCases += referenceFailed ? 1 : 0;
+        res.lazyEvaluations.failingCases += lazyEvaluationsFailed ? 1 : 0;
     }
     std::cout << "[differential " << modeName(mode) << (equidistant ? ", equidistant" : ", non-equidistant")
               << "] cases=" << res.cases << " formulas=" << res.formulas << " traces=" << res.traces
@@ -1114,7 +1169,12 @@ CampaignResult runCampaign(const uint64_t seed, const size_t numCases, const siz
               << " mismatches=" << res.equivalence.mismatches << " failing_cases=" << res.equivalence.failingCases
               << "\n"
               << "  monitor vs. reference:  verdicts=" << res.reference.compared
-              << " mismatches=" << res.reference.mismatches << " failing_cases=" << res.reference.failingCases << "\n";
+              << " mismatches=" << res.reference.mismatches << " failing_cases=" << res.reference.failingCases << "\n"
+              << "  lazy vs. not lazy:      traces=" << res.lazyEvaluations.compared
+              << " more_evaluations=" << res.lazyEvaluations.mismatches
+              << " failing_cases=" << res.lazyEvaluations.failingCases
+              << " computed_verdicts_lazy=" << res.evaluationsLazy
+              << " computed_verdicts_not_lazy=" << res.evaluationsNotLazy << "\n";
     for (const auto &[cfg, count] : res.mismatchesPerConfig)
         std::cout << "  optimized vs. baseline [" << cfg << "]: mismatches=" << count << "\n";
     std::cout << std::flush;
@@ -1130,22 +1190,26 @@ TEST(TestHydra2Differential, globallyEquidistant) {
     const auto res{runCampaign(20260920ULL, 1000, 3, Mode::Globally, true, allConfigs())};
     EXPECT_EQ(res.equivalence.mismatches, 0U) << "optimizations changed verdicts";
     EXPECT_EQ(res.reference.mismatches, 0U) << "monitor disagrees with the reference semantics";
+    EXPECT_EQ(res.lazyEvaluations.mismatches, 0U) << "lazy evaluation computed more verdicts";
 }
 
 TEST(TestHydra2Differential, globallyNonEquidistant) {
     const auto res{runCampaign(20260921ULL, 1000, 3, Mode::Globally, false, allConfigs())};
     EXPECT_EQ(res.equivalence.mismatches, 0U) << "optimizations changed verdicts";
     EXPECT_EQ(res.reference.mismatches, 0U) << "monitor disagrees with the reference semantics";
+    EXPECT_EQ(res.lazyEvaluations.mismatches, 0U) << "lazy evaluation computed more verdicts";
 }
 
 TEST(TestHydra2Differential, earlyTermination) {
     const auto res{runCampaign(20260922ULL, 500, 3, Mode::EarlyTermination, true, allConfigs())};
     EXPECT_EQ(res.equivalence.mismatches, 0U) << "optimizations changed verdicts";
     EXPECT_EQ(res.reference.mismatches, 0U) << "monitor disagrees with the reference semantics";
+    EXPECT_EQ(res.lazyEvaluations.mismatches, 0U) << "lazy evaluation computed more verdicts";
 }
 
 TEST(TestHydra2Differential, initialStep) {
     const auto res{runCampaign(20260923ULL, 500, 3, Mode::InitialStep, true, allConfigs())};
     EXPECT_EQ(res.equivalence.mismatches, 0U) << "optimizations changed verdicts";
     EXPECT_EQ(res.reference.mismatches, 0U) << "monitor disagrees with the reference semantics";
+    EXPECT_EQ(res.lazyEvaluations.mismatches, 0U) << "lazy evaluation computed more verdicts";
 }

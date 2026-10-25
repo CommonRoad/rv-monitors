@@ -20,6 +20,7 @@ Hydra2Monitor::Hydra2Monitor(Formula formula, const size_t monitorId, const doub
 void Hydra2Monitor::reset() {
     verdictHistory = {};
     lastPruneStep = {};
+    numEvaluations = 0;
     //  verdictHistoryPopCounter = 0;
     allCopies = {};
     for (auto &[_, id] : traceIdx)
@@ -77,6 +78,15 @@ size_t Hydra2Monitor::getNumStoredVerdicts(std::set<const Hydra2Monitor *> &visi
     return numVerdicts;
 }
 
+size_t Hydra2Monitor::getNumEvaluations(std::set<const Hydra2Monitor *> &visited) const {
+    if (!visited.insert(this).second)
+        return 0;
+    size_t evaluations{numEvaluations};
+    for (const auto &child : getChildren())
+        evaluations += child->getNumEvaluations(visited);
+    return evaluations;
+}
+
 size_t Hydra2Monitor::getMaxTraceIdx() {
     if (traceIdx.empty())
         return 0;
@@ -99,6 +109,7 @@ Verdict Hydra2Monitor::step(const size_t parentId, size_t stepNumber) {
         verdict = iter->second;
     else {
         verdict = concreteStep(parentId, stepNumber);
+        ++numEvaluations;
         if (storeVerdicts)
             verdictHistory.insert({stepNumber, verdict});
     }
@@ -163,6 +174,7 @@ std::shared_ptr<Hydra2Monitor> Hydra2Monitor::resetClonedMonitor(std::shared_ptr
     clonedMonitor->allCopies.clear();
     clonedMonitor->verdictHistory.clear();
     clonedMonitor->lastPruneStep = {};
+    clonedMonitor->numEvaluations = 0;
     for (const auto &val : domValNames)
         clonedMonitor->subID += "_" + val;
     allCopies.emplace_back(domValNames, clonedMonitor);
