@@ -47,6 +47,10 @@ else()
     )
 endif()
 
+install(FILES ${PROJECT_SOURCE_DIR}/LICENSE.txt ${PROJECT_SOURCE_DIR}/THIRD_PARTY_NOTICES.md
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/doc/${PROJECT_NAME}
+)
+
 # Define INSTALL_..._FROM_SYSTEM for each dependency depending on whether we're using
 # our own version (via FetchContent) or a system version (via find_package)
 # This information is used in the installed config file.

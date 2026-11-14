@@ -1,23 +1,112 @@
 # RV-Monitors
-A `C++17` implementation of several temporal logic runtime verification algorithms [[1]](#1), [[2]](#2) for LTLf, PLTLf, and MTL formulas on finite traces:
-- Dynamic Programming
-- Event Consuming
-- MTL Event Consuming
-- Multi-transition Finite State Machine (MT-FSM*)
-- Binary Transition Finite State Machine (BTT-FSM*)
-- Multi-Head Monitoring (Hydra)
-- Extended Multi-Head Monitoring
 
-### Overview
-We extracted the relevant information in separate readmes depending on the way you want to use the CommonRoad Monitor:
+A `C++17` library of temporal logic runtime verification algorithms [[1]](#1), [[2]](#2) for **LTLf**, **PLTLf**, and **MTL** formulas on finite traces.
+It comes with Python bindings (`rvm`).
+RV-Monitors parses a formula, builds a monitor with one of several algorithms, and returns a timestamped verdict for each step of a trace.
 
-- You want to integrate the RV-Monitor into another CMake project: [C++ Usage](./docs/cpp.md)
-- You want to set up a development environment for the RV-Monitor itself: [C++ Development](https://gitlab.lrz.de/cps/commonroad/environment-model/-/blob/develop/docs/cpp_dev.md?ref_type=heads)
-- You want to learn about the evaluation of our monitor against Hydra/Vydra inside the CI: [C++ Usage](./docs/vydra.md)
-- You want to generate the docu of the RV-Monitor: [Documentation Generation](https://gitlab.lrz.de/cps/commonroad/environment-model/-/blob/develop/docs/doc.md?ref_type=heads)
+| Algorithm | C++ / Python class | Supported formulas |
+|-----------|--------------------|-------|
+| Dynamic Programming | `DynamicProgrammingLTL` | future-only LTLf or past-safety PLTLf |
+| Event Consuming | `EventConsumingLTL` | future-only LTLf or past-safety PLTLf |
+| MTL Event Consuming | `MTLEventConsuming` | MTL (safety) |
+| Multi-transition Finite State Machine (MT-FSM*) | `MtFsm` | future-only LTLf or past-safety PLTLf |
+| Binary Transition Finite State Machine (BTT-FSM*) | `BttFsm` | future-only LTLf or past-safety PLTLf |
+| Multi-Head Monitoring (Hydra) | `Hydra` | MTL (safety), based on [[2]](#2) |
+| Extended Multi-Head Monitoring | `Hydra2` | first-order MTL (safety) over domains; predicate reordering and short-circuiting |
 
+## Installation
+
+### Python
+
+Building from source requires Python 3.10–3.13, a C++17 compiler, CMake ≥ 3.24, and a Java runtime (used by ANTLR to generate the parser).
+
+```bash
+pip install git+https://github.com/CommonRoad/rv-monitors.git
+# or, from a local checkout
+pip install .
+```
+
+### C++ (CMake)
+
+Add RV-Monitors to your project with `FetchContent`:
+
+```cmake
+include(FetchContent)
+FetchContent_Declare(RVMonitors
+    GIT_REPOSITORY https://github.com/CommonRoad/rv-monitors.git
+    GIT_TAG <commit/tag>
+)
+FetchContent_MakeAvailable(RVMonitors)
+
+target_link_libraries(<MyTarget> PUBLIC RVMonitors::rvmonitors)
+```
+
+See [C++ Usage](cpp.md) for details.
+
+## Usage
+
+### Python
+
+```python
+import rvm
+
+formula = rvm.Parser.parse("G((a) S[1, inf] (b))", "phi")
+
+# atomic propositions, the propositions that hold at each step, and the time stamps
+trace = rvm.create_trace({"a", "b"}, [["b"], ["a"], ["a", "b"], []], [0, 1, 2, 3])
+
+monitor = rvm.Hydra2([formula])
+verdicts = monitor.evaluate(trace)["phi"]  # one rvm.Verdict per step
+for verdict in verdicts:
+    print(verdict.time_stamp, verdict.value)
+```
+
+### C++
+
+```cpp
+#include <monitors/parser/parser.h>
+#include <monitors/rv_algorithms/hydra_2/hydra.h>
+#include <monitors/utils/utils.h>
+
+Formula formula = Parser::parse("G((a) S[1, inf] (b))", "phi");
+auto trace = Utils::createTrace({"a", "b"}, {{"b"}, {"a"}, {"a", "b"}, {}}, {0, 1, 2, 3});
+
+Hydra2 monitor({formula});
+auto verdicts = monitor.evaluate(trace).at("phi");
+```
+
+## Development
+
+```bash
+cmake -B build -S .
+cmake --build build
+ctest --test-dir build
+```
+
+```bash
+pip install -e ".[dev,test]"
+pytest tests/python/bindings
+```
+
+For the full development setup (pre-commit, formatting, static analysis), see [Development](development.md).
+
+Other docs:
+
+- [Generating the documentation](documentation.md)
+- [Changelog](https://github.com/CommonRoad/rv-monitors/blob/develop/CHANGELOG.md)
+
+## Authors
+
+Contribution (in alphabetic order by last name): Yannick Ballnath, Florian Lercher, Sebastian Maierhofer,
+Tobias Markus, and Valentin Merle
+
+## License
+
+RV-Monitors is licensed under the [BSD 3-Clause License](https://github.com/CommonRoad/rv-monitors/blob/develop/LICENSE.txt).
+For the licenses of third-party components, see [`THIRD_PARTY_NOTICES.md`](https://github.com/CommonRoad/rv-monitors/blob/develop/THIRD_PARTY_NOTICES.md) and [Licensing](licensing.md).
 
 ## References
+
 <a id="1">[1]</a>
 G. Roşu and K. Havelund. “Rewriting-based techniques for runtime verification.”
 In: Automated Software Engineering 12.2 (2005), pp. 151–197.
