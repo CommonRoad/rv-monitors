@@ -91,9 +91,9 @@ pytest tests/python/bindings
 For the full development setup (pre-commit, formatting, static analysis), see [Development](./docs/development.md) and [CONTRIBUTING.md](./CONTRIBUTING.md).
 Other docs:
 
-- [Evaluation against Hydra/Vydra](./docs/vydra.md)
 - [Generating the documentation](./docs/documentation.md)
 - [Changelog](./CHANGELOG.md)
+- [Contributors](./CONTRIBUTORS.md)
 
 ## Citation
 

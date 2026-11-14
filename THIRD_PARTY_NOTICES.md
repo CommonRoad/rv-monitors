@@ -18,7 +18,6 @@ Each component remains under its own license.
 | Component | Location | License | Copyright |
 |-----------|----------|---------|-----------|
 | `CodeCoverage.cmake` from [bilke/cmake-modules](https://github.com/bilke/cmake-modules) | `cmake/external/CodeCoverage.cmake` | BSD-3-Clause | Copyright (c) 2012-2017 Lars Bilke |
-| Formula/log generators `gen_fmla`, `gen_log` built from [Hydra](https://bitbucket.org/krle/hydra) (`evaluation/gen_fmla.cpp`, `evaluation/gen_log.cpp`) | `scripts/exec/` | BSD-3-Clause | Copyright (c) 2019 Martin Raszyk, ETH Zurich |
 
 ## Build- and test-time only (not redistributed)
 
@@ -26,7 +25,6 @@ Each component remains under its own license.
 |-----------|---------|
 | [GoogleTest](https://github.com/google/googletest) | BSD-3-Clause |
 | [commonroad-cmake](https://gitlab.lrz.de/tum-cps/commonroad-cmake) (optional CMake helper modules, fetched at configure time) | no license file published |
-| [Hydra / Vydra](https://bitbucket.org/krle/hydra) (reference monitors used in the CI evaluation) | BSD-3-Clause |
 
 ---
 
@@ -54,7 +52,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### BSD 3-Clause License (ANTLR 4, nanobind, CodeCoverage.cmake, Hydra)
+### BSD 3-Clause License (ANTLR 4, nanobind, CodeCoverage.cmake)
 
 ```
 Redistribution and use in source and binary forms, with or without

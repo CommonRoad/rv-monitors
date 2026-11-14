@@ -15,8 +15,6 @@ Before the license was chosen, every dependency was checked for license terms th
 | nanobind | linked into the Python extension | BSD-3-Clause | notice must be retained |
 | GoogleTest | test suite only | BSD-3-Clause | none |
 | `CodeCoverage.cmake` (Lars Bilke) | vendored CMake module | BSD-3-Clause | header retained |
-| Hydra `gen_fmla` / `gen_log` | vendored evaluation binaries | BSD-3-Clause | notice must be retained |
-| Hydra / Vydra | CI evaluation only | BSD-3-Clause | none |
 | commonroad-cmake | optional CMake helpers fetched at configure time | none published | not redistributed |
 | Python `eval` extras (matplotlib, pandas, seaborn, …) | optional, not bundled | permissive | none |
 

@@ -91,7 +91,6 @@ pytest tests/python/bindings
 For the full development setup (pre-commit, formatting, static analysis), see [Development](development.md) and [CONTRIBUTING.md](https://github.com/CommonRoad/rv-monitors/blob/develop/CONTRIBUTING.md).
 Other docs:
 
-- [Evaluation against Hydra/Vydra](vydra.md)
 - [Generating the documentation](documentation.md)
 - [Changelog](https://github.com/CommonRoad/rv-monitors/blob/develop/CHANGELOG.md)
 

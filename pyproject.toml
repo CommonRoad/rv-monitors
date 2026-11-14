@@ -32,13 +32,8 @@ Changelog = "https://github.com/CommonRoad/rv-monitors/blob/develop/CHANGELOG.md
 [project.optional-dependencies]
 eval = [
     "matplotlib<3.6.0",
-    "seaborn>=0.13.2",
     "networkx>=3.2.1",
     "pandas>=2.2.3",
-    "psutil",
-    "pyyaml>=6.0.2",
-    "tikzplotlib>=0.10.1",
-    "webcolors<24.6.0"
 ]
 test = [
    "pytest~=8.1.1"

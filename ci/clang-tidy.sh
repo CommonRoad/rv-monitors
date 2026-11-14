@@ -35,7 +35,7 @@ if [[ "$CI" = "true" ]]; then
     fi
 
     # Diff target has not been checked out in CI environment, therefore the remote tracking is not set up
-    # (origin should be fine in 99% of all cases, unless Gitlab changes anything)
+    # (origin should be fine in 99% of all cases, unless the hosting platform changes anything)
     diff_target_remote="origin"
 
 else
