@@ -25,7 +25,6 @@ First public release.
 - ANTLR 4–based parsers for formulas and logs.
 - Domains and functions for first-order formulas (`DomainStorage`, `DomainCollection`, `ConstantCollection`, `Function`).
 - Python bindings (`rvm`) based on nanobind.
-- GitHub Actions workflows for tests, documentation, and PyPI releases.
 - `CONTRIBUTING.md`, `CITATION.cff`, and documentation on development, documentation generation, and licensing.
 
 [1.0.0]: https://github.com/CommonRoad/rv-monitors/releases/tag/1.0.0
