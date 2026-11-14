@@ -1,0 +1,51 @@
+#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
+
+CountingQuantifier::CountingQuantifier(std::shared_ptr<Expression> &left, std::vector<Variable> &variables,
+                                       CountingQuantifier::Operator cop, size_t num)
+    : Unary(countingSymbol, left), FirstOrderOperator(variables), op(cop), num(num) {}
+
+CountingQuantifier::CountingQuantifier(std::shared_ptr<Expression> &left, Variable &variable,
+                                       CountingQuantifier::Operator cop, size_t num)
+    : Unary(countingSymbol, left), FirstOrderOperator(variable), op(cop), num(num) {}
+
+std::string CountingQuantifier::to_string() const {
+    std::string opStr;
+    if (op == Operator::LESS_EQ)
+        opStr = "<=";
+    else if (op == Operator::EQ)
+        opStr = "=";
+    else
+        opStr = ">=";
+    std::string str = getSymbol() + opStr + std::to_string(num) + " ";
+
+    str += FirstOrderOperator::to_string();
+
+    str += getLeft()->to_string();
+
+    return str;
+}
+
+std::shared_ptr<Expression> CountingQuantifier::clone() { return std::make_shared<CountingQuantifier>(*this); }
+
+std::shared_ptr<Expression> CountingQuantifier::accept(ExpressionVisitor &visitor, const std::shared_ptr<Trace> &trace,
+                                                       size_t index) {
+    return visitor.visitCountingQuantifier(*this, trace, index);
+}
+
+std::shared_ptr<Hydra2Monitor> CountingQuantifier::accept(HydraCreationVisitor2 &visitor, size_t parentId,
+                                                          bool connectedEval) {
+    return visitor.visitCountingQuantifier(*this, parentId, connectedEval);
+}
+
+std::shared_ptr<HydraMonitor> CountingQuantifier::accept(HydraCreationVisitor &visitor) { return nullptr; }
+
+const CountingQuantifier::Operator &CountingQuantifier::getOperator() const { return op; }
+
+size_t CountingQuantifier::getNum() const { return num; }
+
+std::vector<Variable> CountingQuantifier::extractVariables() const {
+    std::vector<Variable> variablesTmp{variables};
+    auto variablesLeft{left->extractVariables()};
+    variablesTmp.insert(variablesTmp.begin(), variablesLeft.begin(), variablesLeft.end());
+    return variablesTmp;
+}

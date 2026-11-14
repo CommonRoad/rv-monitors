@@ -1,63 +1,116 @@
 # RV-Monitors
-A `C++17` Implementation of four runtime verification monitor synthesis algorithms [[1]](#1) for LTLf and PLTLf formulas on finite traces:
-- Dynamic Programming
-- Event Consuming
-- Multi-transition Finite State Machine (MT-FSM*)
-- Binary Transition Finite State Machine (BTT-FSM*)
 
-## Build and Compile
+A `C++17` library of temporal logic runtime verification algorithms [[1]](#1), [[2]](#2) for **LTLf**, **PLTLf**, and **MTL** formulas on finite traces.
+It comes with Python bindings (`rvm`).
+RV-Monitors parses a formula, builds a monitor with one of several algorithms, and returns a timestamped verdict for each step of a trace.
 
-Tested with 
-- CMake 3.18.3
-- Clang compiler 10.0.1
-- GCC 10.2.0
+| Algorithm | C++ / Python class | Supported formulas |
+|-----------|--------------------|-------|
+| Dynamic Programming | `DynamicProgrammingLTL` | future-only LTLf or past-safety PLTLf |
+| Event Consuming | `EventConsumingLTL` | future-only LTLf or past-safety PLTLf |
+| MTL Event Consuming | `MTLEventConsuming` | MTL (safety) |
+| Multi-transition Finite State Machine (MT-FSM*) | `MtFsm` | future-only LTLf or past-safety PLTLf |
+| Binary Transition Finite State Machine (BTT-FSM*) | `BttFsm` | future-only LTLf or past-safety PLTLf |
+| Multi-Head Monitoring (Hydra) | `Hydra` | MTL (safety), based on [[2]](#2) |
+| Extended Multi-Head Monitoring | `Hydra2` | first-order MTL (safety) over domains; predicate reordering and short-circuiting |
 
-### Dependencies
+## Installation
 
-#### Bundled Dependencies:
-- [ANTLR4](https://www.antlr.org/) is used for parsing formulas. For this, the following files from [here](https://www.antlr.org/download/index.html) are used:
-    - `antlr4-cpp-runtime-4.8-source.zip`
-    - `antlr-4.7-complete.jar`
+### Python
 
-- [gtest](https://github.com/google/googletest) version 1.10.0 is used for tests.
-
-## Build
-1. Make a build folder and change into it:
-```bash
-mkdir build-debug && cd build-debug
-```
-**NB:** You can in theory use `build` as a name
-for the build folder, however keep in mind that Python's setuptools will always use the `build` folder for
-their build process.
-This normally shouldn't cause any issues since the file names
-used by setuptools don't clash with any names CMake uses currently, but you should still consider using separate folders just in case.
-
-Generate the build files with `cmake`.
-Consider specifying an installation prefix where you want to install the RV-Monitors using `-DCMAKE_INSTALL_PREFIX`.
-The recommended approach is to use a user-writable folder as the installation prefix.
-It is totally fine to use the same installation prefix for all C++ libraries.
+Building from source requires Python 3.10–3.13, a C++17 compiler, CMake ≥ 3.24, and a Java runtime (used by ANTLR to generate the parser).
 
 ```bash
-cmake \
--DCMAKE_INSTALL_PREFIX=/path/to/install/prefix \
--DCMAKE_BUILD_TYPE=Release ..
+pip install git+https://github.com/CommonRoad/rv-monitors.git
+# or, from a local checkout
+pip install .
 ```
 
-Afterward build with make,
-```bash
-make -j4
-```
-where you can replace `-j4` in case more/less threads are available for the build.
+### C++ (CMake)
 
-## Documentation
-Add the `-DBUILD_DOXYGEN=ON` to the cmake command above.
-Afterward, the documentation can be generated with
-```bash
-cd build-debug
-make doc_doxygen
+Add RV-Monitors to your project with `FetchContent`:
+
+```cmake
+include(FetchContent)
+FetchContent_Declare(RVMonitors
+    GIT_REPOSITORY https://github.com/CommonRoad/rv-monitors.git
+    GIT_TAG <commit/tag>
+)
+FetchContent_MakeAvailable(RVMonitors)
+
+target_link_libraries(<MyTarget> PUBLIC RVMonitors::rvmonitors)
 ```
+
+See [C++ Usage](./docs/cpp.md) for details.
+
+## Usage
+
+### Python
+
+```python
+import rvm
+
+formula = rvm.Parser.parse("G((a) S[1, inf] (b))", "phi")
+
+# atomic propositions, the propositions that hold at each step, and the time stamps
+trace = rvm.create_trace({"a", "b"}, [["b"], ["a"], ["a", "b"], []], [0, 1, 2, 3])
+
+monitor = rvm.Hydra2([formula])
+verdicts = monitor.evaluate(trace)["phi"]  # one rvm.Verdict per step
+for verdict in verdicts:
+    print(verdict.time_stamp, verdict.value)
+```
+
+### C++
+
+```cpp
+#include <monitors/parser/parser.h>
+#include <monitors/rv_algorithms/hydra_2/hydra.h>
+#include <monitors/utils/utils.h>
+
+Formula formula = Parser::parse("G((a) S[1, inf] (b))", "phi");
+auto trace = Utils::createTrace({"a", "b"}, {{"b"}, {"a"}, {"a", "b"}, {}}, {0, 1, 2, 3});
+
+Hydra2 monitor({formula});
+auto verdicts = monitor.evaluate(trace).at("phi");
+```
+
+## Development
+
+```bash
+cmake -B build -S .
+cmake --build build
+ctest --test-dir build
+```
+
+```bash
+pip install -e ".[dev,test]"
+pytest tests/python/bindings
+```
+
+For the full development setup (pre-commit, formatting, static analysis), see [Development](./docs/development.md).
+
+Other docs:
+
+- [Generating the documentation](./docs/documentation.md)
+- [Changelog](./CHANGELOG.md)
+
+## Authors
+
+Contribution (in alphabetic order by last name): Yannick Ballnath, Florian Lercher, Sebastian Maierhofer,
+Tobias Markus, and Valentin Merle
+
+## License
+
+RV-Monitors is licensed under the [BSD 3-Clause License](./LICENSE.txt).
+For the licenses of third-party components, see [`THIRD_PARTY_NOTICES.md`](./THIRD_PARTY_NOTICES.md) and [Licensing](./docs/licensing.md).
 
 ## References
-<a id="1">[1]</a> 
+
+<a id="1">[1]</a>
 G. Roşu and K. Havelund. “Rewriting-based techniques for runtime verification.”
 In: Automated Software Engineering 12.2 (2005), pp. 151–197.
+
+<a id="2">[2]</a>
+M. Raszyk, D. Basin, D. Traytel. “Multi-head Monitoring of Metric Dynamic Logic.”
+In: Automated Technology for Verification and Analysis (ATVA) 2020, pp. 233–250.

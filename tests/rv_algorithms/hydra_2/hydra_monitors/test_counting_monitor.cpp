@@ -1,0 +1,81 @@
+#include "test_counting_monitor.h"
+#include "monitors/expression_tree/unary/first_order/counting_quantifier.h"
+#include "monitors/parser/parser.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/atomic_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/counting_monitor.h"
+#include "monitors/rv_algorithms/hydra_2/hydra_monitors/predicate_monitor.h"
+#include "monitors/trace/trace.h"
+#include <cmath>
+
+TEST(TestCountingMonitor, testCountingMonitorStandard) {
+    const std::shared_ptr<Trace> trace =
+        Utils::createTrace({"a", "b", "c", "d"}, {{"a", "b", "c"}, {}, {"a", "b"}, {"b", "c"}, {"a", "d"}});
+    Formula formula = Parser::parse("C>=2 x in D. x");
+    Formula formulaAtomic = Parser::parse("x");
+    formula.setId("R1");
+    DomainStorage dom1{"D", {"a", "b", "c"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
+
+    auto mon1{std::make_shared<AtomicMonitor>(formulaAtomic, 2)};
+    mon1->registerParent(1);
+    CountingQuantifier *quantifier = dynamic_cast<CountingQuantifier *>(formula.getExpr().get());
+    std::map<std::string, std::shared_ptr<DomainStorage>> variableValues{{"x", std::make_shared<DomainStorage>(dom1)}};
+    auto mon{CountingMonitor(formula, mon1, 1, variableValues, quantifier->getOperator(), quantifier->getNum(), false)};
+    mon.registerParent(0);
+    mon.setTrace(trace);
+    EXPECT_EQ(mon.step(0, 0).value, true);
+    EXPECT_EQ(mon.step(0, 1).value, false);
+    EXPECT_EQ(mon.step(0, 2).value, true);
+    EXPECT_EQ(mon.step(0, 3).value, true);
+    EXPECT_EQ(mon.step(0, 4).value, false);
+    EXPECT_EQ(mon.step(0, 5).value, false);
+}
+
+TEST(TestCountingMonitor, testCountingMonitorToString) {
+    Formula formula = Parser::parse("C=4 x, y, z in D. p(x, y, z)");
+    Formula formulaPredicate = Parser::parse("p(x, y, z)");
+    formula.setId("R1");
+
+    auto mon1{std::make_shared<PredicateMonitor>(formulaPredicate, 1, false)};
+    CountingQuantifier *quantifier = dynamic_cast<CountingQuantifier *>(formula.getExpr().get());
+    std::map<std::string, std::shared_ptr<DomainStorage>> variableValues;
+    auto mon{CountingMonitor(formula, mon1, 0, variableValues, quantifier->getOperator(), quantifier->getNum(), false)};
+    EXPECT_EQ(mon.to_string(), "C=4 x in D, y in D, z in D. p(x, y, z)");
+}
+
+TEST(TestCountingMonitor, testCountingMonitorSatisfactionProbability) {
+    Formula formula = Parser::parse("C>=1 x in D. p(x)");
+    Formula formulaPredicate = Parser::parse("p(x)");
+    DomainStorage dom1{
+        "D", {"a", "b", "c", "d", "e"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
+    auto mon1{std::make_shared<PredicateMonitor>(formulaPredicate, 2, 1.0, 0.3)};
+    std::map<std::string, std::shared_ptr<DomainStorage>> variableValues{{"x", std::make_shared<DomainStorage>(dom1)}};
+
+    // binomial distribution with n = 5 and p = 0.3
+    EXPECT_NEAR(CountingMonitor(formula, mon1, 1, variableValues, CountingQuantifier::GREATER_EQ, 1, false)
+                    .getSatisfactionProbability(),
+                1 - std::pow(0.7, 5), 1e-9);
+    EXPECT_NEAR(CountingMonitor(formula, mon1, 1, variableValues, CountingQuantifier::LESS_EQ, 1, false)
+                    .getSatisfactionProbability(),
+                std::pow(0.7, 5) + 5 * 0.3 * std::pow(0.7, 4), 1e-9);
+    EXPECT_NEAR(CountingMonitor(formula, mon1, 1, variableValues, CountingQuantifier::EQ, 2, false)
+                    .getSatisfactionProbability(),
+                10 * std::pow(0.3, 2) * std::pow(0.7, 3), 1e-9);
+    EXPECT_NEAR(CountingMonitor(formula, mon1, 1, variableValues, CountingQuantifier::GREATER_EQ, 6, false)
+                    .getSatisfactionProbability(),
+                0.0, 1e-9);
+}
+
+// If every number of true verdicts is accepted, the sum of the binomial terms is 1 but rounding made it, e.g.,
+// 1.0000000000000002 for n = 2 and p = 0.18, which triggered the assertion in the Hydra2Monitor constructor (debug
+// builds) and is no valid probability.
+TEST(TestCountingMonitor, testCountingMonitorSatisfactionProbabilityIsClamped) {
+    Formula formula = Parser::parse("C<=2 x in D. p(x)");
+    Formula formulaPredicate = Parser::parse("p(x)");
+    DomainStorage dom1{"D", {"a", "b"}, [](const std::any &val) { return std::any_cast<const char *>(val); }};
+    auto mon1{std::make_shared<PredicateMonitor>(formulaPredicate, 2, 1.0, 0.18)};
+    std::map<std::string, std::shared_ptr<DomainStorage>> variableValues{{"x", std::make_shared<DomainStorage>(dom1)}};
+
+    const auto mon{CountingMonitor(formula, mon1, 1, variableValues, CountingQuantifier::LESS_EQ, 2, false)};
+    EXPECT_LE(mon.getSatisfactionProbability(), 1.0); // EXPECT_DOUBLE_EQ would accept 1.0000000000000002
+    EXPECT_DOUBLE_EQ(mon.getSatisfactionProbability(), 1.0);
+}

@@ -1,0 +1,67 @@
+#pragma once
+
+#include "monitors/utils/utils.h"
+#include "quantifier_monitor.h"
+
+/**
+ * Hydra2 monitor representing universal monitor.
+ */
+class UniversalMonitor final : public QuantifierMonitor {
+  public:
+    /**
+     * Constructor.
+     *
+     * @param formula Formula to be monitored.
+     * @param subMonitor Child monitor.
+     * @param monitorId ID of monitor.
+     * @param variableValues Variables used by quantifier.
+     * @param shortCircuiting Boolean indicating whether short-circuiting should be used.
+     */
+    UniversalMonitor(Formula formula, const std::shared_ptr<Hydra2Monitor> &subMonitor, size_t monitorId,
+                     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues, bool shortCircuiting);
+
+    /**
+     * Performs concrete step of universal monitor. The sub-verdict for each combination has to be true
+     * so that the universal monitor returns also a true verdict for the current step number.
+     *
+     * @param parentId ID of parent monitor.
+     * @param stepNumber Current step of monitor.
+     * @param numberCombinations Number of combinations of variables.
+     * @return Verdict for monitoring step result.
+     */
+    Verdict quantifierStep(size_t parentId, size_t stepNumber, size_t numberCombinations) override;
+
+    /**
+     * Clones this monitor.
+     *
+     * @param domValNames List of domain value names.
+     * @return New shared_ptr of this monitor.
+     */
+    std::shared_ptr<Hydra2Monitor> clone(const std::vector<std::string> &domValNames) override;
+
+    /**
+     * Creates string representation of monitor.
+     *
+     * @return String representing monitor.
+     */
+    std::string to_string() override;
+
+    /**
+     * Sets flag whether variable resutls shoudl be stored.
+     *
+     * @param store Boolean indicating whether variables should be stored.
+     */
+    void setStoreVariableResults(bool store) override;
+
+  private:
+    bool storeVariableResults{true}; //**< Boolean indicating whether results should be stored. */
+
+    /**
+     * Computes satisfaction probability over provided monitor.
+     *
+     * @param monitor Monitor which should be used for universal satisfaction probability computation.
+     * @param numEval Number of sub-monitors.
+     * @return Satisfaction probability of universal monitor in interval [0, 1].
+     */
+    double computeSatisfactionProbability(const std::shared_ptr<Hydra2Monitor> &monitor, size_t numEval) override;
+};

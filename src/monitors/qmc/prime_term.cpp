@@ -1,4 +1,4 @@
-#include "prime_term.h"
+#include "monitors/qmc/prime_term.h"
 
 #include <iostream>
 #include <sstream>

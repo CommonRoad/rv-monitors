@@ -1,22 +1,34 @@
 stages:
   - compile
   - test
-  #  - sanitizer TODO
   - coverage
   - static-test
   - docs
 
+default:
+  image: $CI_REGISTRY/tum-cps/commonroad-docker/ci-base:2025.2
+  retry:
+    max: 2
+    when:
+      - script_failure
+      - runner_system_failure
+      - scheduler_failure
+  before_script:
+    - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lrz.de/".insteadOf "git@gitlab.lrz.de:"
+    - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lrz.de".insteadOf "ssh://git@gitlab.lrz.de"
+    # authenticate HTTPS clones (e.g. FetchContent) to avoid anonymous rate limiting (HTTP 429)
+    - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lrz.de/".insteadOf "https://gitlab.lrz.de/"
 
-
-image: $CI_REGISTRY/maierhofer/rv-monitors/ci:0.4.3
-
-### static test ###
-clang-format:
-  stage: static-test
-  script: bash ./ci/clang-format.sh
-  needs: []
+.common-rules:
+  rules:
+    # Rule to disable a job for merge request pipelines (imitate default job behaviour)
+    - &skip_non_protected_pipeline
+      if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_REF_PROTECTED != "true" || $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: &full_wheel_build_condition $CI_COMMIT_TAG || $CI_COMMIT_REF_PROTECTED == "true" || $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_REF_NAME =~ /^(master|develop)$/
 
 clang-tidy:
+  image: $CI_REGISTRY/tum-cps/commonroad-docker/ci-base:2025.2
   stage: static-test
   script: bash ./ci/clang-tidy.sh
   needs:
@@ -33,133 +45,280 @@ cppcheck:
     - job: build-compile-commands
       artifacts: true
 
+pre_commit:
+  image: python:3.11
+  stage: static-test
+  before_script:
+    - pip install pre-commit
+  script:
+    - pre-commit run --all-files --show-diff-on-failure
+  needs: []
+
+.cache-build-dir:
+  cache: &cache_dependency_archives
+    key: cache-dependency-archives
+    paths:
+      - build/_deps/*-subbuild/*-populate-prefix/src/*.{tar*,zip}
+    policy: pull
+
+generate-cache:
+  stage: compile
+  cache:
+    <<: *cache_dependency_archives
+    policy: push
+  script:
+    - cmake -G "Ninja Multi-Config" -S . -B build -DFETCHCONTENT_QUIET:BOOL=OFF
+  needs: []
+
 ### build project ###
 build-compile-commands:
   stage: compile
   script:
     # run CMake in order to get compile_commands.json
-    - mkdir build && cd build
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON  ..
-    - cd ..
+    - cmake -G Ninja -S . -B build
+      -DCMAKE_PREFIX_PATH=/commonroad/dist
+      -DCMAKE_BUILD_TYPE=Debug
+      -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+    - cmake --build build
   needs: []
   artifacts:
     paths:
-      - ./build/compile_commands.json
+      - ./build
     expire_in: 20 minutes
 
 build-clang:
   stage: compile
+  cache:
+    <<: *cache_dependency_archives
+  image: $CI_REGISTRY/tum-cps/commonroad-docker/ci-clang:2025.2
+  parallel:
+    matrix:
+      - CLANG_VERSION: [15, 16, 17, 18, 19]
+  variables:
+    CC: clang-$CLANG_VERSION
+    CXX: clang++-$CLANG_VERSION
   script:
-    - export CC=clang
-    - export CXX=clang++
-    - mkdir build && cd build
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Release ..
-    - make rvmonitors -j4
+    - cmake -G "Ninja Multi-Config" -S . -B build
+    - cmake --build build --config Release
   needs: []
 
 build-gcc:
   stage: compile
+  cache:
+    <<: *cache_dependency_archives
+  image: $CI_REGISTRY/tum-cps/commonroad-docker/ci-gcc:2025.2
+  parallel:
+    matrix:
+      - GCC_VERSION: [10, 11, 12, 13, 14]
+  variables:
+    CC: x86_64-linux-gnu-gcc-$GCC_VERSION
+    CXX: x86_64-linux-gnu-g++-$GCC_VERSION
   script:
-    - export CC=gcc
-    - export CXX=g++
-    - mkdir build && cd build
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Release ..
-    - make rvmonitors -j4
+    - cmake -G "Ninja Multi-Config" -S . -B build
+    - cmake --build build --config Release
   needs: []
+
+build-ubuntu2204:
+  stage: compile
+  cache:
+    <<: *cache_dependency_archives
+  image: $CI_REGISTRY/tum-cps/commonroad-docker/ci-ubuntu2204:2025.2
+  script:
+    - cmake -G "Ninja Multi-Config" -S . -B build
+    - cmake --build build --config Release
+  needs: []
+
 
 build-test:
   stage: compile
+  cache:
+    <<: *cache_dependency_archives
   script:
-    - mkdir build && cd build
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Debug ..
-    - make rvmonitors_test -j4
-  artifacts:
-    paths:
-      - ./build/
-      - ./rvmonitors_test
-      - ./librvmonitors.so
-    expire_in: 20 minutes
-
-build-run-coverage:
-  stage: compile
-  script:
-    - mkdir build && cd build
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCODE_COVERAGE=ON -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_BUILD_TYPE=Debug ..
-    - make rvmonitors_coverage -j4
+    - cmake -G "Ninja Multi-Config" -S . -B build
+    - cmake --build build --config Debug --target rvmonitors_test
   needs: []
   artifacts:
     paths:
-      - ./build/
-      - ./rvmonitors_coverage
-      - ./librvmonitors.so
-    expire_in: 20 minutes
+      - build
+    expire_in: 30 minutes
 
+build-coverage:
+  stage: compile
+  cache:
+    <<: *cache_dependency_archives
+  script:
+    - cmake -G "Ninja Multi-Config" -S . -B build -DRVMonitors_BUILD_CODE_COVERAGE=ON
+    - cmake --build build --config Debug --target rvmonitors_test
+  needs: []
+  artifacts:
+    paths:
+      - build
+    expire_in: 30 minutes
+
+build-python:
+  stage: compile
+  image: python:3.12-bookworm
+  script:
+    - DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -y install openjdk-17-jre-headless
+    - python --version
+    - git describe --always
+    - python -m venv venv
+    - echo "/venv" >> .gitignore
+    - source venv/bin/activate
+    - python -m pip install --upgrade pip
+    - python -m pip install build~=1.2.1 pytest~=8.1.1
+    - python -m build
+    - python -m pip install dist/*.whl
+    - python -m pytest tests/python/bindings
+  needs: []
+  variables:
+    # Necessary so that Git detects all tags
+    GIT_STRATEGY: clone
+    GIT_DEPTH: 0
+    GIT_FETCH_EXTRA_FLAGS: --tags
+  artifacts:
+    paths:
+      - dist/*.tar.gz
+      - dist/*.whl
+    expire_in: 30 minutes
 
 ### tests ###
-test-coverage:
+test:
+  stage: test
+  variables:
+    # run the tests in parallel; sequentially, they exceed the job timeout of one hour. The number of parallel tests is
+    # fixed instead of $(nproc) since the runner is shared and exposes all CPUs of the host to the container; the job
+    # duration is dominated by a few long-running tests anyway.
+    CTEST_PARALLEL_LEVEL: "8"
+  script:
+    - cmake --build build --config RelWithDebInfo --target test
+  needs:
+    - job: build-test
+      artifacts: true
+  artifacts:
+    # Upload reports even if tests fail
+    when: always
+    reports:
+      junit: build/test-reports/*.xml
+    expire_in: 30 minutes
+
+run-coverage:
   stage: test
   script:
-    - ./rvmonitors_test --gtest_output="xml:report.xml"
-  dependencies:
-    - build-test
-  artifacts:
-    reports:
-      junit: ./report.xml
-
-
-### coverage ###
-coverage-analyze:
-  stage: coverage
-  script:
+    - cmake --build build --config RelWithDebInfo --target rvmonitors_coverage
     - gcovr --version
     - gcovr
       -f src/
-      -e src/Parser/gen
+      -e build/
       --print-summary
       --exclude-unreachable-branches
       --output coverage.xml
       --xml
+    - mv build/rvmonitors_coverage coverage-report
   needs:
-    - job: build-run-coverage
+    - job: build-coverage
       artifacts: true
   coverage: /^\s*lines:\s*\d+.\d+\%/
   artifacts:
+    paths:
+      - coverage-report
+    expose_as: 'Coverage Report'
+    expire_in: 30 minutes
     reports:
-      cobertura: coverage.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
 
-coverage-report:
-  stage: coverage
+.install-python-venv: &install-python-venv
+  - apt-get update && apt-get install -y --no-install-recommends git python3-venv python3-pip python3-dev doxygen openjdk-17-jre-headless ffmpeg libsm6 libxext6 build-essential git pkg-config wget libomp-dev gcovr graphviz cppcheck libeigen3-dev libboost-all-dev uuid-dev libcgal-dev libspdlog-dev default-jre default-jdk gcc cmake
+  - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lrz.de/".insteadOf "git@gitlab.lrz.de:"
+  - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lrz.de".insteadOf "ssh://git@gitlab.lrz.de"
+  - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.lrz.de/".insteadOf "https://gitlab.lrz.de/"
+  - python3 -m pip config set global.disable-pip-version-check true
+  - python3 -m venv test-venv
+  - source test-venv/bin/activate
+  - python3 -m pip install pip-tools
+
+.test-python-common: &test-python-common
+  stage: test
+  image: python:${JOB_PYTHON_VERSION}-slim-bookworm
+  before_script:
+    - *install-python-venv
+    - python -m pip install .["test"]
   script:
-    - gcovr --version
-    - gcovr
-      -f src/
-      -e src/Parser/gen
-      --print-summary
-      --exclude-unreachable-branches
-      --output coverage.html
-      --html
-      --html-details
-    - mkdir coverage
-    - mv coverage*.html coverage
-  needs:
-    - job: build-run-coverage
-      artifacts: true
+    - python -m pytest --junit-xml=pytest-report.xml tests/python/bindings
+  artifacts:
+    reports:
+      junit: pytest-report.xml
+    expire_in: 30 minutes
+
+.test-python-single: &test-python-single
+  variables:
+    JOB_PYTHON_VERSION: "3.13"
+  rules:
+    - *skip_non_protected_pipeline
+    - if: *full_wheel_build_condition
+      when: never
+    - when: on_success
+
+.test-python-matrix: &test-python-matrix
+  parallel:
+    matrix:
+      - JOB_PYTHON_VERSION: ["3.10", "3.11", "3.12", "3.13"]
+  rules:
+    - *skip_non_protected_pipeline
+    - if: *full_wheel_build_condition
+      when: on_success
+    - when: never
+
+test-python-manylinux-single:
+  <<: [ *test-python-common, *test-python-single ]
+  variables:
+    JOB_PYTHON_VERSION: "3.13"
+
+test-python-manylinux:
+  <<: [ *test-python-common, *test-python-matrix ]
+
+test-python-general:
+  stage: test
+  image: python:${JOB_PYTHON_VERSION}-slim-bookworm
+  parallel:
+    matrix:
+      - JOB_PYTHON_VERSION: ["3.10", "3.11", "3.12", "3.13"]
+  before_script:
+    - *install-python-venv
+    - python -m pip install ".[test]"
+  script:
+    - python -m pytest --junit-xml=pytest-report.xml tests/python/bindings
+  needs: []
+  artifacts:
+    reports:
+      junit: pytest-report.xml
+    expire_in: 30 minutes
+
+pages:
+  stage: docs
+  when: manual
+  publish: site
+  script:
+    - *install-python-venv
+    - pip install ".[docs]"
+    - mkdocs build
   artifacts:
     paths:
-      - coverage
-    expose_as: 'Coverage Report'
-    expire_in: 20 minutes
+      - site
+  environment:
+    name: Gitlab Pages
+    url: https://cps.pages.gitlab.lrz.de/commonroad/rv-monitors/
+  needs: []
 
-### create documentation ###
-docs:
+build_pages:
   stage: docs
   script:
-    - mkdir -p build && cd build
-    - cmake -DCMAKE_PREFIX_PATH=/commonroad/dist -DCMAKE_BUILD_TYPE=Debug -DBUILD_DOXYGEN=ON  ..
-    - make doc_doxygen ..
-  dependencies: []
+    - *install-python-venv
+    - pip install ".[docs]"
+    - mkdocs build
   artifacts:
     paths:
-      - build/doc_doxygen/html/
-    expose_as: 'Doxygen Documentation'
-    expire_in: 20 minutes
+      - site
+  needs: []

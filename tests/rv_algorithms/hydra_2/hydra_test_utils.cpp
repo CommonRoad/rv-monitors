@@ -1,0 +1,136 @@
+#include "hydra_test_utils.h"
+#include <gtest/gtest.h>
+
+bool hydraTestUtils::higher_than_time_step(size_t timeStep, size_t val) { return val > timeStep; }
+
+std::tuple<size_t, size_t> hydraTestUtils::twoSizeTArgs(std::vector<DomainValue> values) {
+    return {std::any_cast<size_t>(values.at(0).getValue()), std::any_cast<size_t>(values.at(1).getValue())};
+}
+
+bool hydraTestUtils::equal_to_time_step(size_t timeStep, size_t value) { return timeStep == value; }
+
+std::tuple<size_t, size_t, size_t> hydraTestUtils::threeSizeTArgs(std::vector<DomainValue> values) {
+    return {std::any_cast<size_t>(values.at(0).getValue()), std::any_cast<size_t>(values.at(1).getValue()),
+            std::any_cast<size_t>(values.at(2).getValue())};
+}
+
+bool hydraTestUtils::equal_to_time_step_with_unused_arg(size_t timeStep, size_t randomValue, size_t value) {
+    return timeStep == value;
+}
+
+std::vector<std::any> hydraTestUtils::createStringDomain3(const size_t stepNumber) {
+    if (stepNumber < 6)
+        return {std::string("a"), std::string("b"), std::string("d")};
+    throw std::runtime_error("Invalid step number");
+}
+
+std::tuple<size_t> hydraTestUtils::createDomain3Arguments(const std::vector<DomainValue> &args) {
+    return {std::any_cast<size_t>(args.at(0).getValue())};
+}
+
+bool hydraTestUtils::raiseIfStepLessThanTwo(size_t timeStep, size_t randomValue) {
+    if (timeStep < 2)
+        throw std::runtime_error("Time step is less than 2");
+    return true;
+}
+
+bool hydraTestUtils::test_domain(const size_t timeStep, const std::string &val) {
+    switch (timeStep) {
+    case 0:
+        return val == "a" or val == "b" or val == "c";
+    case 1:
+        return false;
+    case 2:
+        return val == "a" or val == "b";
+    case 3:
+        return false;
+    case 4:
+        return false;
+    case 5:
+        return val == "d";
+    default:
+        return false;
+    }
+}
+
+std::tuple<size_t, std::string> hydraTestUtils::sizeTStringArgs(const std::vector<DomainValue> &values) {
+    return {std::any_cast<size_t>(values.at(0).getValue()), std::any_cast<std::string>(values.at(1).getValue())};
+}
+
+bool hydraTestUtils::higher_than_zero(size_t timeStep, size_t val) { return val > 0; }
+
+bool hydraTestUtils::divisible_by_time_step(size_t timeStep, size_t val) {
+    if (timeStep == 0)
+        return false;
+    return val % timeStep == 0;
+}
+
+bool hydraTestUtils::lower_than_time_step(size_t timeStep, size_t val) { return val < timeStep; }
+
+bool hydraTestUtils::equals_three(size_t timeStep, const size_t val) { return val == 3; }
+
+std::shared_ptr<Trace>
+hydraTestUtils::createTraceWithVariable(size_t length, const std::vector<std::shared_ptr<IFunction<bool>>> &function,
+                                        const ConstantCollection &constants, std::vector<Event> eventList) {
+    if (eventList.empty())
+        for (size_t timeStepIdx{0}; timeStepIdx < length; ++timeStepIdx)
+            eventList.emplace_back(timeStepIdx, timeStepIdx == length - 1);
+
+    return std::make_shared<Trace>(Trace(eventList, function, constants));
+}
+
+size_t hydraTestUtils::executeHydraEval(const std::shared_ptr<Trace> &trace, const std::vector<Formula> &formulas,
+                                        const std::vector<std::vector<Verdict>> &expSolution,
+                                        const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+    std::array<size_t, 9> numFailures{};
+    numFailures.fill(0);
+    auto monitor1{Hydra2(formulas, false, false, false, globally)};
+    numFailures[0] = evalHydra(formulas, expSolution, monitor1, trace, "fff", domains);
+    evalHydra(formulas, expSolution, monitor1, trace, "fff",
+              domains); // execute trace on monitor again to check whether resetting of variables works
+    auto monitor2{Hydra2(formulas, false, false, true, globally)};
+    numFailures[1] = evalHydra(formulas, expSolution, monitor2, trace, "fft", domains);
+    evalHydra(formulas, expSolution, monitor2, trace, "fft", domains);
+    auto monitor3{Hydra2(formulas, false, true, false, globally)};
+    numFailures[2] = evalHydra(formulas, expSolution, monitor3, trace, "ftf", domains);
+    evalHydra(formulas, expSolution, monitor3, trace, "ftf", domains);
+    auto monitor4{Hydra2(formulas, false, true, true, globally)};
+    numFailures[3] = evalHydra(formulas, expSolution, monitor4, trace, "ftt", domains);
+    evalHydra(formulas, expSolution, monitor4, trace, "ftt", domains);
+    auto monitor5{Hydra2(formulas, true, false, false, globally)};
+    numFailures[4] = evalHydra(formulas, expSolution, monitor5, trace, "tff", domains);
+    evalHydra(formulas, expSolution, monitor5, trace, "tff", domains);
+    auto monitor6{Hydra2(formulas, true, false, true, globally)};
+    numFailures[5] = evalHydra(formulas, expSolution, monitor6, trace, "tft", domains);
+    evalHydra(formulas, expSolution, monitor6, trace, "tft", domains);
+    auto monitor7{Hydra2(formulas, true, true, false, globally)};
+    numFailures[6] = evalHydra(formulas, expSolution, monitor7, trace, "ttf", domains);
+    evalHydra(formulas, expSolution, monitor7, trace, "ttf", domains);
+    auto monitor9{Hydra2(formulas, true, true, true, globally)};
+    numFailures[7] = evalHydra(formulas, expSolution, monitor9, trace, "ttt", domains);
+    evalHydra(formulas, expSolution, monitor9, trace, "ttt", domains);
+    return *std::max_element(numFailures.begin(), numFailures.end());
+}
+
+size_t hydraTestUtils::evalHydra(const std::vector<Formula> &formulas,
+                                 const std::vector<std::vector<Verdict>> &expSolution, Hydra2 &monitor,
+                                 const std::shared_ptr<Trace> &trace, const std::string &evaluation,
+                                 const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+    size_t failure{0};
+    auto solution{monitor.evaluate(trace, domains)};
+    for (int i{0}; i < formulas.size(); ++i) {
+        if (solution.at(formulas[i].getId()).size() != expSolution[i].size())
+            throw std::logic_error("Hydra Test /" + evaluation + " formula " + formulas[i].getId() +
+                                   ": length of expected solution and solution does not match");
+        bool formulaWrong{false};
+        for (size_t j{0}; j < expSolution[i].size(); ++j) {
+            EXPECT_TRUE(expSolution[i][j] == solution.at(formulas[i].getId())[j])
+                << evaluation + " formula " + formulas[i].getId() + ": Mismatch at element index: " << j;
+            if (!(expSolution[i][j] == solution.at(formulas[i].getId())[j]))
+                formulaWrong = true;
+        }
+        if (formulaWrong)
+            failure++;
+    }
+    return failure;
+}

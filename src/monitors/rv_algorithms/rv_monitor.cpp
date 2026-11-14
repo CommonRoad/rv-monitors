@@ -1,114 +1,215 @@
-//
-// Created by Sebastian Maierhofer on 20.01.21.
-//
-
-#include "rv_monitor.h"
-
-#include "monitors/rv_algorithms/btt_fsm/btt_fsm_creation.h"
-#include "monitors/rv_algorithms/btt_fsm/btt_fsm_evaluation.h"
-#include "monitors/rv_algorithms/dynamic_programming/dynamic.h"
-#include "monitors/rv_algorithms/event_consuming/event_consuming.h"
-#include "monitors/rv_algorithms/mt_fsm/mt_fsm_creation.h"
-#include "monitors/rv_algorithms/mt_fsm/mt_fsm_evaluation.h"
-#include "monitors/rv_algorithms/mtl/mtl_event_consuming.h"
+#include "monitors/rv_algorithms/rv_monitor.h"
+#include "monitors/rv_algorithms/hydra/hydra.h"
+#include "monitors/rv_algorithms/hydra_2/hydra.h"
+#include "monitors/rv_algorithms/ltl_event_consuming/event_consuming.h"
+#include "monitors/rv_algorithms/mt_fsm/mt_fsm.h"
+#include "monitors/rv_algorithms/mtl_event_consuming/mtl_event_consuming.h"
 #include "monitors/utils/utils.h"
+#include <cassert>
 
-/**
- * Executes algorithm on a given trace and with given parameters.
- * @param formula Formula.
- * @param algorithm Monitoring algorithm.
- * @param trace Trace.
- * @param past True if formula is in PLTLf.
- * @param consoleOutput True if console output is desired.
- */
-bool RVMonitor::verify(Trace trace) {
-    if (algorithm > eventconsuming_mtl) {
-        throw std::runtime_error("main::verify() No valid argument for algorithm given. Try MT_FSM, BTT_FSM, DYNAMIC, "
-                                 "or EVENTCONSUMING-LTL, EVENTCONSUMING-MTL.)");
-    }
-    auto predicates = Utils::getAtomics(formula);
-    bool verdict = false;
+std::map<std::string, std::vector<Verdict>>
+RVMonitor::verify(const std::shared_ptr<Trace> &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains,
+                  const std::vector<std::string> &formulaIDs) {
     std::chrono::high_resolution_clock::time_point startTime;
-    if (performanceMeasurement)
+    if (configuration.performanceMeasurement)
         startTime = ExecutionStatistic::start();
-    switch (algorithm) {
-    case mt_fsm: {
-        verdict = MT_FSMEvaluation::evaluateMT_FSM(*mtFSM, trace, past);
-        break;
-    }
-    case btt_fsm: {
-        verdict = BTT_FSMEvaluation::evaluateBTT_FSM(*bttFSM, trace, past);
-        break;
-    }
-    case dynamic: {
-        verdict = Dynamic::dynamic(formula, trace, past);
-        break;
-    }
-    case eventconsuming_ltl: {
-        auto formulaCopy = formula.deepCopy();
-        verdict = EventConsuming::eventConsuming(formulaCopy, trace, past);
-        break;
-    }
-    case eventconsuming_mtl:
-        auto formulaCopy = formula.deepCopy();
-        verdict = MTLEventConsuming::eventConsuming(formulaCopy, trace);
-        break;
-    }
-    if (performanceMeasurement)
-        executionStatistic.stop(startTime, trace.getLength());
+
+    auto verdict{monitor->evaluate(trace, domains, formulaIDs)};
+
+    if (configuration.performanceMeasurement and trace->getLength() > 0)
+        executionStatistic.stop(startTime, trace->getLength());
     return verdict;
 }
-/**
- * Easier output for algorithms.
- * @param os
- * @param algorithm
- * @return osstream for algorithm.
- */
-std::ostream &operator<<(std::ostream &os, const AlgorithmType &algorithm) {
+
+std::ostream &operator<<(std::ostream &stream, const AlgorithmType &algorithm) {
     switch (algorithm) {
-    case dynamic:
-        os << "DynamicProgramming";
+    case dynamic_programming_ltl:
+        stream << "DynamicProgramming";
         break;
-    case eventconsuming_ltl:
-        os << "EventConsuming-LTL";
+    case event_consuming_ltl:
+        stream << "EventConsuming-LTL";
         break;
     case mt_fsm:
-        os << "MT-FSM*";
+        stream << "MT-FSM*";
         break;
     case btt_fsm:
-        os << "BTT-FSM*";
+        stream << "BTT-FSM*";
         break;
-    case eventconsuming_mtl:
-        os << "EventConsuming-MTL";
+    case hydra_mtl:
+        stream << "Hydra-MTL";
+        break;
+    case hydra_2_mtl:
+        stream << "Hydra_2-MTL";
+        break;
+    case event_consuming_mtl:
+        stream << "EventConsuming-MTL";
         break;
     }
-    return os;
+    return stream;
 }
 
 AlgorithmType stringToAlgorithm(const std::string &algorithmString) {
-    if (algorithmString == "dynamicprogramming") {
-        return dynamic;
-    } else if (algorithmString == "eventconsuming-ltl") {
-        return eventconsuming_ltl;
-    } else if (algorithmString == "eventconsuming-mtl") {
-        return eventconsuming_mtl;
-    } else if (algorithmString == "mt-fsm*") {
+    if (algorithmString == "dynamic-programming-ltl") {
+        return dynamic_programming_ltl;
+    }
+    if (algorithmString == "event-consuming-ltl") {
+        return event_consuming_ltl;
+    }
+    if (algorithmString == "hydra-mtl") {
+        return hydra_mtl;
+    }
+    if (algorithmString == "hydra_2-mtl") {
+        return hydra_2_mtl;
+    }
+    if (algorithmString == "mt-fsm*") {
         return mt_fsm;
-    } else if (algorithmString == "btt-fsm*") {
+    }
+    if (algorithmString == "btt-fsm*") {
         return btt_fsm;
-    } else {
-        throw std::runtime_error("Algorithm::stringToAlgorithm Command line argument " + algorithmString +
-                                 " is not a valid algorithm.\n Options are: dynamicprogramming, eventconsuming-ltl, "
-                                 "eventconsuming-mtl, mt-fsm*, btt-fsm*");
+    }
+    if (algorithmString == "event-consuming-mtl") {
+        return event_consuming_mtl;
+    }
+    throw std::runtime_error("Algorithm::stringToAlgorithm Command line argument " + algorithmString +
+                             " is not a valid algorithm.\n Options are: dynamic-programming-ltl, event-consuming-ltl, "
+                             "event-consuming-mtl, mt-fsm*, btt-fsm*");
+}
+
+RVMonitor::RVMonitor(const std::vector<Formula> &formulas, MonitorConfiguration configuration,
+                     const std::map<std::string, std::array<double, 3>> &predicateCosts,
+                     const std::vector<std::shared_ptr<DomainStorage>> &domains)
+    : configuration(configuration) {
+    for (const auto &pred : predicateCosts)
+        assert(pred.second[0] >= 0 and pred.second[0] <= 100 and pred.second[1] >= 0 and pred.second[1] <= 1);
+    switch (configuration.algorithm) {
+    case dynamic_programming_ltl:
+        monitor = std::make_unique<DynamicProgrammingLTL>(formulas);
+        break;
+    case event_consuming_ltl:
+        monitor = std::make_unique<EventConsumingLTL>(formulas);
+        break;
+    case mt_fsm:
+        monitor = std::make_unique<MtFsm>(formulas);
+        break;
+    case btt_fsm:
+        monitor = std::make_unique<BttFsm>(formulas);
+        break;
+    case hydra_mtl:
+        monitor = std::make_unique<Hydra>(formulas);
+        break;
+    case hydra_2_mtl:
+        monitor = std::make_unique<Hydra2>(formulas, configuration.hydraConnectedEvaluation,
+                                           configuration.hydraReordering, configuration.shortCircuiting,
+                                           configuration.formulaEvaluationMode, domains, predicateCosts);
+        break;
+    case event_consuming_mtl:
+        monitor = std::make_unique<MTLEventConsuming>(formulas);
+        break;
     }
 }
 
-RVMonitor::RVMonitor(AlgorithmType algorithm, const Formula &formula, bool past, bool measurement)
-    : past(past), algorithm(algorithm), formula(formula), performanceMeasurement(measurement) {
-
-    if (algorithm == mt_fsm)
-        mtFSM = std::make_unique<MtFsm>(MT_FSMCreation::formulaToMT_FSM(formula, past));
-    else if (algorithm == btt_fsm)
-        bttFSM = std::make_unique<BttFsm>(BTT_FSMCreation::formulaToBTT_FSM(formula, past));
+RVMonitor::RVMonitor(const Formula &formula, MonitorConfiguration configuration,
+                     const std::map<std::string, std::array<double, 3>> &predicateCosts,
+                     const std::vector<std::shared_ptr<DomainStorage>> &domains)
+    : configuration(configuration) {
+    for (const auto &pred : predicateCosts)
+        assert(pred.second[0] >= 0 and pred.second[0] <= 100 and pred.second[1] >= 0 and pred.second[1] <= 1);
+    switch (configuration.algorithm) {
+    case dynamic_programming_ltl:
+        monitor = std::make_unique<DynamicProgrammingLTL>(std::vector<Formula>{formula});
+        break;
+    case event_consuming_ltl:
+        monitor = std::make_unique<EventConsumingLTL>(std::vector<Formula>{formula});
+        break;
+    case mt_fsm:
+        monitor = std::make_unique<MtFsm>(std::vector<Formula>{formula});
+        break;
+    case btt_fsm:
+        monitor = std::make_unique<BttFsm>(std::vector<Formula>{formula});
+        break;
+    case hydra_mtl:
+        monitor = std::make_unique<Hydra>(std::vector<Formula>{formula});
+        break;
+    case hydra_2_mtl:
+        monitor = std::make_unique<Hydra2>(std::vector<Formula>{formula}, configuration.hydraConnectedEvaluation,
+                                           configuration.hydraReordering, configuration.shortCircuiting,
+                                           configuration.formulaEvaluationMode, domains, predicateCosts);
+        break;
+    case event_consuming_mtl:
+        monitor = std::make_unique<MTLEventConsuming>(std::vector<Formula>{formula});
+        break;
+    }
 }
+
 const ExecutionStatistic &RVMonitor::getExecutionStatistic() const { return executionStatistic; }
+
+RVMonitor::RVMonitor(const RVMonitor &obj) : configuration(obj.configuration) {
+    if (auto *dynLTL = dynamic_cast<DynamicProgrammingLTL *>(obj.monitor.get()))
+        monitor = std::make_unique<DynamicProgrammingLTL>(dynLTL->getFormulas(), dynLTL->isPastEvaluation());
+    else if (auto *hydra = dynamic_cast<Hydra *>(obj.monitor.get())) {
+        monitor = std::make_unique<Hydra>(hydra->getFormulas());
+    } else if (auto *ecltl = dynamic_cast<EventConsumingLTL *>(obj.monitor.get())) {
+        monitor = std::make_unique<EventConsumingLTL>(ecltl->getFormulas());
+    } else if (auto *mtfsm = dynamic_cast<MtFsm *>(obj.monitor.get())) {
+        monitor = std::make_unique<MtFsm>(mtfsm->getFormulas());
+    } else if (auto *bttfsm = dynamic_cast<BttFsm *>(obj.monitor.get())) {
+        monitor = std::make_unique<BttFsm>(bttfsm->getFormulas());
+    } else if (auto *ecmtl = dynamic_cast<MTLEventConsuming *>(obj.monitor.get())) {
+        monitor = std::make_unique<MTLEventConsuming>(ecmtl->getFormulas());
+    } else if (auto *hydra2 = dynamic_cast<Hydra2 *>(obj.monitor.get())) {
+        std::vector<Formula> formulas;
+        for (const auto &form : hydra2->getFormulas()) {
+            auto formulaCopy{form.deepCopy()};
+            formulaCopy.setId(form.getId());
+            formulas.push_back(formulaCopy);
+        }
+        monitor =
+            std::make_unique<Hydra2>(formulas, configuration.hydraConnectedEvaluation, configuration.hydraReordering,
+                                     configuration.shortCircuiting, configuration.formulaEvaluationMode,
+                                     hydra2->getDomains(), hydra2->getPredicateCost());
+    }
+    executionStatistic = obj.executionStatistic;
+}
+
+RVMonitor &RVMonitor::operator=(const RVMonitor &other) {
+    if (this != &other) { // prevent self-assignment
+        if (const auto *dynLTL = dynamic_cast<DynamicProgrammingLTL *>(other.monitor.get()))
+            monitor = std::make_unique<DynamicProgrammingLTL>(dynLTL->getFormulas(), dynLTL->isPastEvaluation());
+        else if (auto *hydra = dynamic_cast<Hydra2 *>(other.monitor.get())) {
+            std::vector<Formula> formulas;
+            for (const auto &form : hydra->getFormulas()) {
+                auto formulaCopy{form.deepCopy()};
+                formulaCopy.setId(form.getId());
+                formulas.push_back(formulaCopy);
+            }
+
+            monitor = std::make_unique<Hydra2>(formulas, other.configuration.hydraConnectedEvaluation,
+                                               other.configuration.hydraReordering, other.configuration.shortCircuiting,
+                                               other.configuration.formulaEvaluationMode, hydra->getDomains(),
+                                               hydra->getPredicateCost());
+        }
+        // TODO other algorithms
+        executionStatistic = other.executionStatistic;
+        configuration = other.configuration;
+    }
+    return *this;
+}
+
+std::string RVMonitor::to_string() const { return monitor->to_string(); }
+
+MonitorConfiguration::MonitorConfiguration(const AlgorithmType algorithm, const bool measurement,
+                                           const bool hydraConnectedEvaluation, const bool hydraReordering,
+                                           const bool shortCircuiting,
+                                           const FormulaEvaluationMode formulaEvaluationMode)
+    : algorithm(algorithm), performanceMeasurement(measurement), hydraConnectedEvaluation(hydraConnectedEvaluation),
+      hydraReordering(hydraReordering), shortCircuiting(shortCircuiting), formulaEvaluationMode(formulaEvaluationMode) {
+}
+
+MonitorConfiguration::MonitorConfiguration(const AlgorithmType algorithm, const bool measurement)
+    : algorithm(algorithm), performanceMeasurement(measurement) {}
+
+MonitorConfiguration RVMonitor::getConfiguration() const { return configuration; }
+
+std::map<std::string, std::map<size_t, std::vector<std::vector<DomainValue>>>> RVMonitor::getMfotlRes() const {
+    return monitor->getViolatingDomainValues();
+}

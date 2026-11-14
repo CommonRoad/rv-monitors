@@ -1,0 +1,52 @@
+site_name: "Runtime Verification Monitors Documentation"
+
+theme:
+  name: material
+
+plugins:
+  - search
+  - mkdoxy:
+      projects:
+        rv-monitors:
+          src-dirs: "src include"
+          full-doc: True
+          doxy-cfg:
+            FILE_PATTERNS: "*.cpp *.h*"
+            RECURSIVE: True
+            EXTRACT_ALL: True
+            EXTRACT_PACKAGE: True
+            EXTRACT_STATIC: True
+            EXTRACT_ANON_NSPACES: True
+            JAVADOC_AUTOBRIEF: True
+            TEMPLATE_RELATIONS: True
+
+nav:
+  - Home:
+      - "index.md"
+      - "cpp.md"
+      - "development.md"
+      - "documentation.md"
+      - "licensing.md"
+
+  - API Documentation:
+      - "Links": "rv-monitors/links.md"
+      - "Classes":
+          - "Class List": "rv-monitors/annotated.md"
+          - "Class Index": "rv-monitors/classes.md"
+          - "Class Hierarchy": "rv-monitors/hierarchy.md"
+          - "Class Members": "rv-monitors/class_members.md"
+          - "Class Member Functions": "rv-monitors/class_member_functions.md"
+          - "Class Member Variables": "rv-monitors/class_member_variables.md"
+          - "Class Member Typedefs": "rv-monitors/class_member_typedefs.md"
+          - "Class Member Enumerations": "rv-monitors/class_member_enums.md"
+      - "Namespaces":
+          - "Namespace List": "rv-monitors/namespaces.md"
+          - "Namespace Members": "rv-monitors/namespace_members.md"
+          - "Namespace Member Functions": "rv-monitors/namespace_member_functions.md"
+          - "Namespace Member Variables": "rv-monitors/namespace_member_variables.md"
+          - "Namespace Member Typedefs": "rv-monitors/namespace_member_typedefs.md"
+          - "Namespace Member Enumerations": "rv-monitors/namespace_member_enums.md"
+      - "Functions": "rv-monitors/functions.md"
+      - "Variables": "rv-monitors/variables.md"
+      - "Macros": "rv-monitors/macros.md"
+      - "Files": "rv-monitors/files.md"

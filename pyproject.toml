@@ -1,0 +1,110 @@
+[project]
+name = "rv-monitors"
+dynamic = ["version"]
+readme = "README.md"
+requires-python = ">=3.10,<3.15"
+license = "BSD-3-Clause"
+license-files = ["LICENSE.txt", "THIRD_PARTY_NOTICES.md"]
+authors = [
+  {name = "Cyber-Physical Systems Group, Technical University of Munich", email = "commonroad@lists.lrz.de"},
+]
+maintainers = [
+  {name = "Sebastian Maierhofer", email = "sebastian.maierhofer@tum.de"},
+]
+description = "Collection of Temporal Logic Runtime Verification Algorithms"
+keywords = ["runtime verification", "temporal logic", "LTL", "MTL", "monitoring", "formal methods"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: C++",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+]
+
+[project.urls]
+Homepage = "https://commonroad.in.tum.de"
+Source = "https://github.com/CommonRoad/rv-monitors"
+Issues = "https://github.com/CommonRoad/rv-monitors/issues"
+Changelog = "https://github.com/CommonRoad/rv-monitors/blob/develop/CHANGELOG.md"
+
+[project.optional-dependencies]
+eval = [
+    "matplotlib<3.6.0",
+    "networkx>=3.2.1",
+    "pandas>=2.2.3",
+]
+test = [
+   "pytest~=8.1.1"
+]
+docs = [
+    "mkdocs~=1.6.1",
+    "mkdocs-material~=9.5.42",
+    "mkdoxy~=1.2.4"
+]
+dev = [
+    "ruff~=0.5.5",
+]
+
+[build-system]
+requires = [
+    "scikit-build-core~=0.11.0",
+    "nanobind~=2.2.0",
+    "setuptools_scm[toml]~=8.0.3"
+]
+build-backend = "scikit_build_core.build"
+
+[tool.setuptools_scm]
+write_to = "src/python/rvm/_version.py"
+
+[tool.scikit-build]
+minimum-version = "0.10"
+metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
+sdist.include = ["src/python/rvm/_version.py"]
+wheel.packages = [ "src/python/rvm" ]
+build-dir = "build-python/{build_type}-{wheel_tag}"
+cmake.version = ">=3.24"
+install.components = ["PythonModules"]
+editable.rebuild = true
+
+[tool.scikit-build.cmake.define]
+RV_MONITOR_BUILD_PYTHON_BINDINGS = "ON"
+
+[tool.sphinx-pyproject]
+language = "en"
+
+[tool.cibuildwheel]
+# Skip PyPy
+skip = "pp*"
+archs = ["auto"]
+environment = { PIP_DISABLE_PIP_VERSION_CHECK="1" }
+build-verbosity = 1
+# Skip tests on musllinux due to missing wheels
+test-skip = "*i686 *-musllinux*"
+test-extras = ["test"]
+test-command = "python -m pytest {package}/tests/bindings"
+
+[tool.cibuildwheel.linux]
+before-build = "ulimit -n 1024 && yum install java-11-openjdk-headless -y"
+
+# NOTE: cibuildwheel on macOS untested
+[tool.cibuildwheel.macos]
+archs = ["x86_64", "arm64"]
+# macOS 10.14 is required for full C++17 support
+# macOS 10.15 is required for directory_iterator
+environment = {MACOSX_DEPLOYMENT_TARGET=10.15}
+
+# Formatting
+[tool.ruff]
+line-length = 120
+indent-width = 4
+format.quote-style = "double"
+target-version = "py311"
+ignore = ["E203"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402", "F401"]
