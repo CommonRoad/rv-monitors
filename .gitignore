@@ -24,3 +24,8 @@ rvmonitors_test_coverage
 /.pytest_cache
 /dist/
 __pycache__/
+
+__pycache__/
+/.venv/
+/.ruff_cache/
+/site/

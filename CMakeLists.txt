@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20..3.29)
 
 project(RVMonitors
         LANGUAGES C CXX
-        VERSION 0.5
+        VERSION 1.0.0
         HOMEPAGE_URL "https://commonroad.in.tum.de/"
         DESCRIPTION "Classes and methods to monitor traces based on temporal logic specifications in C++17")
 
@@ -134,7 +134,7 @@ FetchContent_Declare(
         commonroad_cmake
 
         GIT_REPOSITORY https://gitlab.lrz.de/tum-cps/commonroad-cmake.git
-        GIT_TAG        main
+        GIT_TAG        daa0cf35d7a751d5758125595f9f4160b3e1e92e # main as of 2026-10-25
 )
 FetchContent_MakeAvailable(commonroad_cmake)
 

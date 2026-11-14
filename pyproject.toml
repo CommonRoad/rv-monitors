@@ -3,23 +3,40 @@ name = "rv-monitors"
 dynamic = ["version"]
 readme = "README.md"
 requires-python = ">=3.10,<3.15"
-license = {file = "LICENSE"}
+license = "BSD-3-Clause"
+license-files = ["LICENSE.txt", "THIRD_PARTY_NOTICES.md"]
 authors = [
-  {email = "sebastian.maierhofer@tum.de"},
-  {name = "Sebastian Maierhofer"}
+  {name = "Cyber-Physical Systems Group, Technical University of Munich", email = "commonroad@lists.lrz.de"},
+]
+maintainers = [
+  {name = "Sebastian Maierhofer", email = "sebastian.maierhofer@tum.de"},
 ]
 description = "Collection of Temporal Logic Runtime Verification Algorithms"
+keywords = ["runtime verification", "temporal logic", "LTL", "MTL", "monitoring", "formal methods"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: C++",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+]
+
+[project.urls]
+Homepage = "https://commonroad.in.tum.de"
+Source = "https://github.com/CommonRoad/rv-monitors"
+Issues = "https://github.com/CommonRoad/rv-monitors/issues"
+Changelog = "https://github.com/CommonRoad/rv-monitors/blob/develop/CHANGELOG.md"
 
 [project.optional-dependencies]
 eval = [
     "matplotlib<3.6.0",
-    "seaborn>=0.13.2",
     "networkx>=3.2.1",
     "pandas>=2.2.3",
-    "psutil",
-    "pyyaml>=6.0.2",
-    "tikzplotlib>=0.10.1",
-    "webcolors<24.6.0"
 ]
 test = [
    "pytest~=8.1.1"

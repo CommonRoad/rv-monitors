@@ -4,7 +4,6 @@ stages:
   - coverage
   - static-test
   - docs
-  - evaluation
 
 default:
   image: $CI_REGISTRY/tum-cps/commonroad-docker/ci-base:2025.2
@@ -127,18 +126,6 @@ build-ubuntu2204:
   script:
     - cmake -G "Ninja Multi-Config" -S . -B build
     - cmake --build build --config Release
-  needs: []
-
-build-evaluation:
-  stage: compile
-  cache:
-    <<: *cache_dependency_archives
-  script:
-    - cmake -G "Ninja Multi-Config" -S . -B build
-    - cmake --build build --config Release --target rvmonitors_eval
-  artifacts:
-    paths:
-      - build
   needs: []
 
 
@@ -335,17 +322,3 @@ build_pages:
     paths:
       - site
   needs: []
-
-
-### evaluate rvmonitors ###
-evaluation_hydra_python:
-  stage: evaluation
-  image: python:3.10
-  script:
-    - chmod +x /builds/cps/commonroad/rv-monitors/scripts/exec/gen_fmla
-    - chmod +x /builds/cps/commonroad/rv-monitors/scripts/exec/gen_log
-    - pip install pytest psutil matplotlib pyyaml
-    - pytest ./tests/python/test_org_hydra_eval.py
-  needs:
-    - job: build-evaluation
-      artifacts: true
