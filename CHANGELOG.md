@@ -9,6 +9,13 @@
   history of a vehicle) stay in the trace as context for past operators. This also applies to `initial_step`, which now
   evaluates the first event at or after the start time step.
 
+### Fixed
+
+- Negation binds to the next unary expression. `!` followed by a predicate with arguments or by a temporal operator
+  (e.g., `!lo(x) & X(hi(x))`, `!X(q) & p`) negated the remainder of the conjunction, disjunction, implication, until,
+  or since formula (`!(lo(x) & X(hi(x)))`). Formulas that negate a bracketed expression, an atomic proposition, or a
+  boolean were not affected.
+
 ## [1.0.0]
 
 First public release.

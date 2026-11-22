@@ -250,14 +250,6 @@ class Visitor : public FormulaBaseVisitor {
     std::any visitNot(FormulaParser::NotContext *ctx) override;
 
     /**
-     * Recursively visits the child and builds a Not with it.
-     *
-     * @param ctx Context.
-     * @return Not.
-     */
-    std::any visitNotExpr(FormulaParser::NotExprContext *ctx) override;
-
-    /**
      * Visits the atom in atomExpr.
      *
      * @param ctx Context.

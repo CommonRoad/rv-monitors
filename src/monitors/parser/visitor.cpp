@@ -315,11 +315,6 @@ std::any Visitor::visitNot(FormulaParser::NotContext *ctx) {
     return std::make_shared<Not>(right);
 }
 
-std::any Visitor::visitNotExpr(FormulaParser::NotExprContext *ctx) {
-    auto right = getType(visit(ctx->right));
-    return std::make_shared<Not>(right);
-}
-
 std::any Visitor::visitAtomExpr(FormulaParser::AtomExprContext *ctx) { return visit(ctx->atom()); }
 
 std::any Visitor::visitBoolean(FormulaParser::BooleanContext *ctx) { return visit(ctx->bool_()); }

@@ -45,8 +45,7 @@ unary
   | op=NEXT_STRONG iv=interval right=atom                                      #NextStrongInterval
   | op=HISTORICALLY right=atom                                                 #Historically
   | op=HISTORICALLY iv=interval right=atom                                     #HistoricallyInterval
-  | op=NOT right=atom                                                          #Not
-  | op=NOT right=expr                                                          #NotExpr
+  | op=NOT right=unary                                                         #Not
   | atom                                                                       #AtomExpr
   | op=FUNCTION_NAME right=(ATOMIC|CONST_VALUE) (',' (ATOMIC|CONST_VALUE))*')' #Predicate
   | op=UNIVERSAL dv=domain_vars '.' right=expr                                 #Universal
