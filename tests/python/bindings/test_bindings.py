@@ -268,3 +268,18 @@ def test_to_tree1():
     assert tree_vis.nodeTypes[1] == "b"
     assert tree_vis.nodeTypes[4] == "&"
     assert tree_vis.rootIDs == [0, 3, 4]
+
+
+def test_hydra2_statistics():
+    formula = rvm.Parser.parse("G(a S[0, 3] b)", "R1")
+    trace = rvm.create_trace({"a", "b"}, [["a", "b"], ["a"], ["a"], ["a"], []])
+    mon = rvm.Hydra2([formula])
+    assert mon.get_num_evaluations() == 0
+    assert mon.get_num_stored_verdicts() == 0
+    mon.evaluate(trace)
+    assert mon.get_num_evaluations() == 14
+    assert mon.get_num_stored_verdicts() == 8
+    # evaluating the same trace again resets the monitor: counts are not doubled
+    mon.evaluate(trace)
+    assert mon.get_num_evaluations() == 14
+    assert mon.get_num_stored_verdicts() == 8

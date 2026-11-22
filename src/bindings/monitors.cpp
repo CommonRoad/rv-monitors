@@ -52,7 +52,9 @@ void init_monitors(nb::module_ &m) {
              nb::arg("shortCircuiting") = true, nb::arg("evaluationMode") = globally,
              nb::arg("domains") = std::vector<std::shared_ptr<DomainStorage>>{},
              nb::arg("predicateCosts") = std::map<std::string, std::array<double, 3>>{})
-        .def("to_tree", &Hydra2::to_tree);
+        .def("to_tree", &Hydra2::to_tree)
+        .def("get_num_stored_verdicts", &Hydra2::getNumStoredVerdicts)
+        .def("get_num_evaluations", &Hydra2::getNumEvaluations);
 
     nb::class_<EventConsumingLTL, MonitorInterface>(m, "EventConsumingLTL")
         .def(nb::init<std::vector<Formula>, bool, bool>(), nb::arg("formulas"), nb::arg("pastEvaluation") = false,

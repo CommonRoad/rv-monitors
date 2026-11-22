@@ -214,3 +214,15 @@ MonitorConfiguration RVMonitor::getConfiguration() const { return configuration;
 std::map<std::string, std::map<size_t, std::vector<std::vector<DomainValue>>>> RVMonitor::getMfotlRes() const {
     return monitor->getViolatingDomainValues();
 }
+
+size_t RVMonitor::getNumStoredVerdicts() const {
+    if (const auto *hydra2 = dynamic_cast<const Hydra2 *>(monitor.get()))
+        return hydra2->getNumStoredVerdicts();
+    return 0;
+}
+
+size_t RVMonitor::getNumEvaluations() const {
+    if (const auto *hydra2 = dynamic_cast<const Hydra2 *>(monitor.get()))
+        return hydra2->getNumEvaluations();
+    return 0;
+}
