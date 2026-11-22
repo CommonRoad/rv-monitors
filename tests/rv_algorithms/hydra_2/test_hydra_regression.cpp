@@ -1,6 +1,7 @@
 #include "hydra_test_utils.h"
 #include "monitors/collections/domain.h"
 #include "monitors/parser/parser.h"
+#include "monitors/rewriting/hydra_rewrite_visitor.h"
 
 #include <gtest/gtest.h>
 
@@ -211,6 +212,46 @@ TEST(TestHydra2Regression, identicalFormulasWithConnectedEvaluation) {
 TEST(TestHydra2Regression, existentialQuantifierNotSwappedWithNegation) {
     expectVerdicts("G(E x in D. !x)", Utils::createTrace({"a", "b"}, {{"a"}, {"a", "b"}}, {0, 1}),
                    {{0, true}, {1, false}}, atomDomain());
+}
+
+// E x in D. O(φ) was rewritten to O(E x in D. φ) even if D depends on the time step. Then D is evaluated at an earlier
+// time step (preliminaries: the domain of a quantifier is the one at the time step where it is evaluated).
+TEST(TestHydra2Regression, existentialQuantifierNotSwappedWithOnceForDynamicDomain) {
+    // D = {a} at time step 0 and {b} afterwards
+    auto domainFunction{std::make_shared<Function<std::vector<std::any>, size_t>>(
+        Function<std::vector<std::any>, size_t>(
+            "dynDomain", {"stepNumber"},
+            [](const size_t step) { return step == 0 ? std::vector<std::any>{"a"} : std::vector<std::any>{"b"}; },
+            [](const std::vector<DomainValue> &args) {
+                return std::tuple<size_t>{std::any_cast<size_t>(args.at(0).getValue())};
+            }))};
+    const std::vector domains{std::make_shared<DomainStorage>(
+        DomainStorage("D", domainFunction, [](const std::any &val) { return std::any_cast<const char *>(val); },
+                      [](size_t, const std::any &) { return true; }))};
+    Formula formula = Parser::parse("G(E x in D. O(x))");
+    formula.setId("R1");
+    const auto trace{Utils::createTrace({"a", "b"}, {{"a"}, {}}, {0, 1})};
+    // At step 1, x ranges over D(1) = {b}, and b never held, so the formula is violated.
+    for (const bool reordering : {false, true}) {
+        // the domain is known when the monitor is created, so the rewriter sees that it is dynamic
+        auto monitor{Hydra2({formula}, true, reordering, false, globally, domains)};
+        const auto result{monitor.evaluate(trace, domains).at("R1")};
+        ASSERT_EQ(result.size(), 2);
+        EXPECT_TRUE(result.at(0).value);
+        EXPECT_FALSE(result.at(1).value);
+    }
+}
+
+// E x in D. O(φ) is still swapped for constant domains known at creation.
+TEST(TestHydra2Regression, existentialQuantifierSwappedWithOnceForConstantDomain) {
+    Formula formula = Parser::parse("E x in D. O(x)");
+    HydraRewriteVisitor rwv{atomDomain()};
+    rwv.rewrite(formula);
+    EXPECT_EQ(formula.getExpr()->to_string(), "(true S E x in D. x)");
+    Formula formula2 = Parser::parse("E x in D. O(x)");
+    HydraRewriteVisitor rwvUnknown;
+    rwvUnknown.rewrite(formula2);
+    EXPECT_EQ(formula2.getExpr()->to_string(), "E x in D. (true S x)");
 }
 
 // C=1 x. !φ was rewritten to !C=1 x. φ and C=1 x. F φ to F C=1 x. φ.
