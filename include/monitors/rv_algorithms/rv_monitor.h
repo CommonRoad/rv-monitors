@@ -126,6 +126,23 @@ class RVMonitor {
      */
     [[nodiscard]] std::map<std::string, std::map<size_t, std::vector<std::vector<DomainValue>>>> getMfotlRes() const;
 
+    /**
+     * Returns the number of verdicts currently stored by the monitor. Only supported by Hydra2; for other algorithms
+     * 0 is returned, which means "not supported" rather than "no verdicts".
+     *
+     * @return Number of stored verdicts.
+     */
+    [[nodiscard]] size_t getNumStoredVerdicts() const;
+
+    /**
+     * Returns the number of verdicts computed by the monitor since it was last reset (see
+     * Hydra2::getNumEvaluations). Only supported by Hydra2; for other algorithms 0 is
+     * returned, which means "not supported".
+     *
+     * @return Number of computed verdicts.
+     */
+    [[nodiscard]] size_t getNumEvaluations() const;
+
   protected:
     std::unique_ptr<MonitorInterface> monitor; //**< Pointer to monitoring algorithm */
     ExecutionStatistic executionStatistic;     //**< Execution statistic object */
