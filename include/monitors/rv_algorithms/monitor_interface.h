@@ -68,6 +68,23 @@ class MonitorInterface {
              const std::vector<std::string> &formulaIDs = {}) = 0;
 
     /**
+     * Sets the time step from which on the trace is evaluated. Events before this time step stay in the trace as
+     * context for past operators, but they are neither evaluated nor reported, and they do not cause early
+     * termination. Evaluation starts at the first event whose time step is >= startTimeStep. The default is 0, i.e.,
+     * the complete trace is evaluated. Currently only considered by Hydra2.
+     *
+     * @param startTimeStep First time step which is evaluated.
+     */
+    void setEvaluationStartTimeStep(size_t startTimeStep);
+
+    /**
+     * Getter for the first evaluated time step.
+     *
+     * @return First time step which is evaluated.
+     */
+    [[nodiscard]] size_t getEvaluationStartTimeStep() const;
+
+    /**
      * Prints a representation of the monitor.
      *
      * @return String representation of the monitor.
@@ -101,6 +118,7 @@ class MonitorInterface {
     AlgorithmType algorithm;                             /**< Name of algorithm. */
     FormulaEvaluationMode formulaEvaluationMode;         /**< Indicates how to evaluate the formula. */
     std::vector<std::shared_ptr<DomainStorage>> domains; /**< List of domains. */
+    size_t evaluationStartTimeStep{0};                   /**< First time step which is evaluated. */
 };
 
 extern const std::map<AlgorithmType, std::vector<MonitoringProperties>>
