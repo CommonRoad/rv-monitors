@@ -30,6 +30,7 @@
 #include "monitors/expression_tree/unary/unary.h"
 #include "monitors/rewriting/rewrite_visitor_utils.h"
 #include "monitors/trace/event.h"
+#include <algorithm>
 #include <iostream>
 
 namespace {
@@ -47,6 +48,22 @@ bool startsAtZero(const std::shared_ptr<Interval> &interval) {
     return !interval or interval->isEmpty() or interval->getStart() == 0;
 }
 } // namespace
+
+HydraRewriteVisitor::HydraRewriteVisitor(std::vector<std::shared_ptr<DomainStorage>> domains)
+    : domains(std::move(domains)) {}
+
+bool HydraRewriteVisitor::hasConstantDomains(const FirstOrderOperator &oper) const {
+    const auto variables{oper.getVariables()};
+    return std::all_of(variables.begin(), variables.end(), [this](const Variable &var) {
+        const auto domain{var.getDomain()};
+        if (domain.isFunctionDomain())
+            return false;
+        const auto storage{std::find_if(domains.begin(), domains.end(), [&domain](const auto &dom) {
+            return dom != nullptr and dom->getName() == domain.getName();
+        })};
+        return storage != domains.end() and (*storage)->isConstDomain();
+    });
+}
 
 void HydraRewriteVisitor::rewrite(Formula &formula) {
     event_map_t map;
@@ -645,6 +662,11 @@ HydraRewriteVisitor::swapQuantifierAndTempUnary(const std::shared_ptr<FirstOrder
     // quantifier, i.e., eventually and once. It is, e.g., unsound for negation, globally, and historically, and for
     // the universal, counting, and quote quantifiers.
     if (!std::dynamic_pointer_cast<ExistentialQuantifier>(oper))
+        return nullptr;
+    // Moreover, the domain is evaluated at the time step of the quantifier, so the swap is only sound if it does not
+    // depend on the time step (E x in D. O(phi) would otherwise range over the domain of the current time step, but
+    // O(E x in D. phi) over the domain of the earlier time step).
+    if (!hasConstantDomains(*oper))
         return nullptr;
     if (auto firstOrder = std::dynamic_pointer_cast<Unary>(oper)) {
         if (std::dynamic_pointer_cast<Future>(firstOrder->getLeft()) or
