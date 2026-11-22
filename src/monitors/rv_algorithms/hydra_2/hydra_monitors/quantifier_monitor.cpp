@@ -62,6 +62,10 @@ std::vector<DomainValue> QuantifierMonitor::nextCombination() {
     std::vector vals{domainValues};
     size_t idx{0};
     for (const auto &[varName, domainStorage] : variableValues) {
+        // the variable shadows variables of the same name of enclosing quantifiers
+        vals.erase(std::remove_if(vals.begin(), vals.end(),
+                                  [&varName](const DomainValue &val) { return val.getVariable() == varName; }),
+                   vals.end());
         if (domainStorage->isConstDomain())
             vals.emplace_back(varName, *iters[idx], domainStorage->isConstDomain(), domainStorage->getIdFunction());
         else
@@ -221,10 +225,4 @@ void QuantifierMonitor::to_tree(std::map<size_t, std::tuple<std::string, std::ve
         return;
     tree.insert({monitorId, {formula.getExpr()->getSymbol(), {subMonitor->getMonitorID()}}});
     subMonitor->to_tree(tree);
-}
-
-void QuantifierMonitor::setStoreVariableResults(const bool store) {
-    subMonitor->setStoreVariableResults(store);
-    for (auto &[id, mon] : evalMonitors)
-        mon->setStoreVariableResults(store);
 }

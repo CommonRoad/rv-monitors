@@ -94,11 +94,14 @@ class RVMonitor {
      * @param trace Trace of predicates/atomic prepositions.
      * @param domains List of domains.
      * @param formulas List of formulas which should be evaluated.
-     * @return Verdict for each time step of trace.
+     * @param startTimeStep First time step which is evaluated (see MonitorInterface::setEvaluationStartTimeStep).
+     * Earlier events only serve as context for past operators.
+     * @return Verdict for each evaluated time step of trace.
      */
     std::map<std::string, std::vector<Verdict>> verify(const std::shared_ptr<Trace> &trace,
                                                        const std::vector<std::shared_ptr<DomainStorage>> &domains = {},
-                                                       const std::vector<std::string> &formulas = {});
+                                                       const std::vector<std::string> &formulas = {},
+                                                       size_t startTimeStep = 0);
 
     /**
      * Getter for execution statistics.
@@ -125,6 +128,23 @@ class RVMonitor {
      * @return Map containing violating domain values per rule and time step.
      */
     [[nodiscard]] std::map<std::string, std::map<size_t, std::vector<std::vector<DomainValue>>>> getMfotlRes() const;
+
+    /**
+     * Returns the number of verdicts currently stored by the monitor. Only supported by Hydra2; for other algorithms
+     * 0 is returned, which means "not supported" rather than "no verdicts".
+     *
+     * @return Number of stored verdicts.
+     */
+    [[nodiscard]] size_t getNumStoredVerdicts() const;
+
+    /**
+     * Returns the number of verdicts computed by the monitor since it was last reset (see
+     * Hydra2::getNumEvaluations). Only supported by Hydra2; for other algorithms 0 is
+     * returned, which means "not supported".
+     *
+     * @return Number of computed verdicts.
+     */
+    [[nodiscard]] size_t getNumEvaluations() const;
 
   protected:
     std::unique_ptr<MonitorInterface> monitor; //**< Pointer to monitoring algorithm */

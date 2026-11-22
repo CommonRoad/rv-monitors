@@ -60,9 +60,12 @@ void Hydra2::evalEarlyTermination(std::map<std::string, std::vector<Verdict>> &r
     for (const auto &formulaId : relFormulaIds)
         verdictRefs.push_back(&result[formulaId]);
 
-    // In initial_step mode, only the first time step is evaluated, but for all formulas
-    const size_t numSteps{formulaEvaluationMode == initial_step ? std::min<size_t>(traceLength, 1) : traceLength};
-    for (size_t i{0}; i < numSteps; ++i) {
+    // Events before the start time step only serve as context for past operators. In initial_step mode, only the first
+    // evaluated time step is evaluated, but for all formulas.
+    const size_t startIdx{getStartIdx()};
+    const size_t numSteps{formulaEvaluationMode == initial_step ? std::min<size_t>(traceLength, startIdx + 1)
+                                                                : traceLength};
+    for (size_t i{startIdx}; i < numSteps; ++i) {
         for (size_t m{0}; m < relMonitors.size(); ++m) {
             const auto &mon = relMonitors[m];
             spdlog::debug("Monitor evaluation: " + std::to_string(i) + " - " + relFormulaIds[m]);
@@ -75,6 +78,12 @@ void Hydra2::evalEarlyTermination(std::map<std::string, std::vector<Verdict>> &r
         }
         pruneVerdicts(relMonitors, i);
     }
+}
+
+size_t Hydra2::getStartIdx() const {
+    // time stamps are sorted in ascending order
+    return static_cast<size_t>(std::lower_bound(timeStamps.begin(), timeStamps.end(), evaluationStartTimeStep) -
+                               timeStamps.begin());
 }
 
 std::string Hydra2::to_string() const {
@@ -166,7 +175,7 @@ void Hydra2::evalCompleteTrace(std::map<std::string, std::vector<Verdict>> &resu
             verdictRefs.push_back(&verdicts);
         }
 
-    for (size_t i{0}; i < traceLength; ++i) {
+    for (size_t i{getStartIdx()}; i < traceLength; ++i) {
         for (size_t m{0}; m < relMonitors.size(); ++m) {
             const auto &mon = relMonitors[m];
             spdlog::debug("Monitor evaluation: " + std::to_string(i) + " - " + relFormulaIds[m]);

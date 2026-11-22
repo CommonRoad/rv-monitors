@@ -1,5 +1,6 @@
 #include "test_rv_monitors.h"
 #include "monitors/parser/parser.h"
+#include "monitors/rv_algorithms/hydra_2/hydra.h"
 #include "monitors/rv_algorithms/ltl_event_consuming/event_consuming.h"
 
 void TestRVMonitors::SetUp() {
@@ -96,4 +97,32 @@ TEST_F(TestRVMonitors, CopyAndAssignmentConstructor) {
     copyMonitor(trace, AlgorithmType::dynamic_programming_ltl);
     copyMonitor(trace, AlgorithmType::btt_fsm);
     copyMonitor(trace, AlgorithmType::mt_fsm);
+}
+
+TEST_F(TestRVMonitors, Hydra2Statistics) {
+    const auto formula{Parser::parse("G(a | (b S c))", "R1")};
+    const auto trace{Utils::createTrace({"a", "b", "c"}, {{"b", "c"}, {"b"}, {"a", "b"}, {"b"}}, {0, 1, 2, 3})};
+    auto hydra2{RVMonitor(formula, MonitorConfiguration(AlgorithmType::hydra_2_mtl, false))};
+    EXPECT_EQ(hydra2.getNumEvaluations(), 0U);
+    hydra2.verify(trace);
+    EXPECT_GT(hydra2.getNumEvaluations(), 0U);
+
+    // evaluating the same trace again resets the monitor, so the counts are not doubled
+    const auto evaluations{hydra2.getNumEvaluations()};
+    const auto stored{hydra2.getNumStoredVerdicts()};
+    hydra2.verify(trace);
+    EXPECT_EQ(hydra2.getNumEvaluations(), evaluations);
+    EXPECT_EQ(hydra2.getNumStoredVerdicts(), stored);
+
+    // matches the underlying algorithm
+    auto direct{Hydra2({formula}, true, true, true, globally)};
+    direct.evaluate(trace);
+    EXPECT_EQ(hydra2.getNumEvaluations(), direct.getNumEvaluations());
+    EXPECT_EQ(hydra2.getNumStoredVerdicts(), direct.getNumStoredVerdicts());
+
+    // other algorithms do not collect statistics
+    auto dynamic{RVMonitor(*this->formula, MonitorConfiguration(AlgorithmType::dynamic_programming_ltl, false))};
+    dynamic.verify(this->trace);
+    EXPECT_EQ(dynamic.getNumEvaluations(), 0U);
+    EXPECT_EQ(dynamic.getNumStoredVerdicts(), 0U);
 }

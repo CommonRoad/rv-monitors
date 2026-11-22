@@ -146,6 +146,14 @@ class Hydra2 : public MonitorInterface {
     void createMonitor(const std::vector<Formula> &formulas, bool connectedEval, bool reordering, bool shortCircuiting);
 
     /**
+     * Index of the first trace event that is evaluated, i.e., the first event with a time step >= the evaluation start
+     * time step.
+     *
+     * @return Index into the current trace (equals the trace length if all events are before the start time step).
+     */
+    [[nodiscard]] size_t getStartIdx() const;
+
+    /**
      * Removes stored verdicts that can no longer be requested after a step was evaluated.
      *
      * @param relMonitors Root monitors which were evaluated.

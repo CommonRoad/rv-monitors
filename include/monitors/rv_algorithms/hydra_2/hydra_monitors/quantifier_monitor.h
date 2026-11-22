@@ -168,13 +168,6 @@ class QuantifierMonitor : public Hydra2Monitor {
     void setStepNumber(size_t stepNumber, size_t parentId) override;
 
     /**
-     * Sets flag whether variable resutls shoudl be stored.
-     *
-     * @param store Boolean indicating whether variables should be stored.
-     */
-    void setStoreVariableResults(bool store) override;
-
-    /**
      * Extracts tree structure for visualization.
      *
      * @param tree Mapping of monitor ID to its logical representation and child nodes.
