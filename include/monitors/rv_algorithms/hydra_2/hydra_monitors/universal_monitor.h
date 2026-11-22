@@ -47,7 +47,8 @@ class UniversalMonitor final : public QuantifierMonitor {
     std::string to_string() override;
 
     /**
-     * Sets flag whether variable resutls shoudl be stored.
+     * Sets whether the violating domain values should be stored. Storing them disables short-circuiting. Hydra2 enables
+     * it only for top-level (root) universal monitors; nested universal monitors are created with it disabled.
      *
      * @param store Boolean indicating whether variables should be stored.
      */

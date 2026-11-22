@@ -600,3 +600,36 @@ TEST(TestHydra2, testLazyEvaluationComputesNoAdditionalVerdicts) {
         EXPECT_EQ(lazy.getNumEvaluations(), 199U);
     }
 }
+
+namespace {
+bool alwaysFalseRelation(size_t, size_t, size_t) { return false; }
+} // namespace
+
+// Short-circuiting is only disabled for the top-level universal quantifier (it records every violating domain value).
+// The nested universal quantifier stops at its first violating value, so it evaluates fewer predicates.
+TEST(TestHydra2, testNestedUniversalQuantifierShortCircuits) {
+    constexpr size_t traceLength{4};
+    const std::shared_ptr<Trace> trace = hydraTestUtils::createTraceWithVariable(
+        traceLength, {std::make_shared<Function<bool, size_t, size_t, size_t>>(Function<bool, size_t, size_t, size_t>(
+                         "rel", {"timeStep", "x", "y"}, alwaysFalseRelation, hydraTestUtils::threeSizeTArgs))});
+    const std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(DomainStorage(
+        "D", {0ul, 1ul, 2ul}, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }))};
+    const auto formula{Parser::parse("A x in D. G(A y in D. rel(x, y))", "R1")};
+
+    auto shortCircuit{Hydra2({formula}, true, false, true, globally, domains)};
+    auto noShortCircuit{Hydra2({formula}, true, false, false, globally, domains)};
+    const auto resultShortCircuit{shortCircuit.evaluate(trace)};
+    const auto resultNoShortCircuit{noShortCircuit.evaluate(trace)};
+    for (size_t i{0}; i < traceLength; ++i) {
+        EXPECT_FALSE(resultShortCircuit.at("R1").at(i).value);
+        EXPECT_FALSE(resultNoShortCircuit.at("R1").at(i).value);
+    }
+    // top-level quantifier: all three values of x are recorded as violating at every step
+    for (const auto &mon : {&shortCircuit, &noShortCircuit}) {
+        const auto violations{mon->getViolatingDomainValues().at("R1")};
+        for (size_t i{0}; i < traceLength; ++i)
+            EXPECT_EQ(violations.at(i).size(), 3U);
+    }
+    // nested quantifier: one instead of three evaluations of rel per value of x
+    EXPECT_LT(shortCircuit.getNumEvaluations(), noShortCircuit.getNumEvaluations());
+}
