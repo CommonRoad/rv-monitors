@@ -75,13 +75,15 @@ std::vector<DomainValue> QuantifierMonitor::nextCombination() {
 void QuantifierMonitor::shiftCombination() {
     // prepare next combination of variable values by always propagating from last one, e.g., domains A={a, b, c}, B={1,
     // 2, 3}, we have first <a,1>, <a,2>, <a,3>, <b,1>, <b,2>, <b,3>, <c,1>, ...
-    size_t idx{variableValues.size() - 1};
-    ++iters[idx];
-    if (variableValues.rbegin()->second->end() == iters[idx])
-        for (auto iter = variableValues.rbegin(); iter != variableValues.rend() and idx > 0; ++iter, --idx) {
-            iters[idx] = iter->second->begin();
-            ++iters[idx - 1];
-        }
+    // Carry over to the previous variable only if the iterator of a variable reached the end of its domain.
+    auto domain{variableValues.rbegin()};
+    for (size_t idx{variableValues.size()}; idx-- > 0; ++domain) {
+        ++iters[idx];
+        if (iters[idx] != domain->second->end())
+            return;
+        if (idx > 0)
+            iters[idx] = domain->second->begin();
+    }
 }
 
 void QuantifierMonitor::resetIterators() {
@@ -92,15 +94,9 @@ void QuantifierMonitor::resetIterators() {
 
 size_t QuantifierMonitor::numCombinations() const {
     size_t numCombinations{1};
-    bool nonEmpty{false};
-    for (const auto &[_, domain] : variableValues) {
-        if (!domain->empty() or domain->isConstDomain())
-            numCombinations *= domain->size();
-        if (!domain->empty())
-            nonEmpty = true;
-    }
-    if (!nonEmpty)
-        numCombinations = 0;
+    // there is no combination as soon as one domain is empty, e.g., for A x in D, y in D2 with an empty dynamic D
+    for (const auto &[_, domain] : variableValues)
+        numCombinations *= domain->size();
     return numCombinations;
 }
 
@@ -163,26 +159,27 @@ double QuantifierMonitor::computeBinomialProbability(const size_t numEval, const
 }
 
 Verdict QuantifierMonitor::concreteStep(const size_t parentId, const size_t stepNumber) {
-    size_t idx{0};
-    for (const auto &[_, dom] : variableValues) {
-        if (const auto tracePtr = trace.lock(); tracePtr and stepNumber < tracePtr->getLength())
-            iters[idx] = dom->updateDynamicDomain(tracePtr->getEvent(stepNumber).getTimeStep(), domainValues,
-                                                  tracePtr->getConstantCollection());
-        else
-            return {false};
-        ++idx;
-    }
+    if (!updateDynamicDomains(stepNumber))
+        return {false};
     const auto numberCombinations{numCombinations()};
     idOccurrences.clear();
     const auto verdict{quantifierStep(parentId, stepNumber, numberCombinations)};
-    resetIterators();
-    for (const auto &[_, dom] : variableValues)
-        if (const auto tracePtr = trace.lock(); tracePtr and stepNumber < tracePtr->getLength())
-            dom->updateDynamicDomain(tracePtr->getEvent(stepNumber).getTimeStep(), domainValues,
-                                     tracePtr->getConstantCollection());
-        else
-            return {false};
+    if (!updateDynamicDomains(stepNumber))
+        return {false};
     return verdict;
+}
+
+bool QuantifierMonitor::updateDynamicDomains(const size_t stepNumber) {
+    const auto tracePtr{trace.lock()};
+    if (!tracePtr or stepNumber >= tracePtr->getLength())
+        return false;
+    for (const auto &[_, dom] : variableValues)
+        dom->updateDynamicDomain(tracePtr->getEvent(stepNumber).getTimeStep(), domainValues,
+                                 tracePtr->getConstantCollection());
+    // Updating a domain replaces its values, which invalidates all iterators. Several variables can share a domain, so
+    // the iterators are only set after all domains are updated.
+    resetIterators();
+    return true;
 }
 
 Verdict QuantifierMonitor::initializeStepTrue(const size_t stepNumber) const {

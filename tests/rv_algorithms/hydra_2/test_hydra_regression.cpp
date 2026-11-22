@@ -1,6 +1,7 @@
 #include "hydra_test_utils.h"
 #include "monitors/collections/domain.h"
 #include "monitors/parser/parser.h"
+#include "monitors/rewriting/hydra_rewrite_visitor.h"
 
 #include <gtest/gtest.h>
 
@@ -211,6 +212,119 @@ TEST(TestHydra2Regression, identicalFormulasWithConnectedEvaluation) {
 TEST(TestHydra2Regression, existentialQuantifierNotSwappedWithNegation) {
     expectVerdicts("G(E x in D. !x)", Utils::createTrace({"a", "b"}, {{"a"}, {"a", "b"}}, {0, 1}),
                    {{0, true}, {1, false}}, atomDomain());
+}
+
+namespace {
+
+// Evaluates the formula with a monitor which knows the domains when it is created (and thus when it is rewritten).
+void expectVerdictsWithKnownDomains(const std::string &formulaString, const std::shared_ptr<Trace> &trace,
+                                    const std::vector<Verdict> &expected,
+                                    const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+    Formula formula = Parser::parse(formulaString);
+    formula.setId("R1");
+    SCOPED_TRACE(formulaString);
+    for (const bool connected : {false, true})
+        for (const bool reordering : {false, true}) {
+            auto monitor{Hydra2({formula}, connected, reordering, false, globally, domains)};
+            const auto result{monitor.evaluate(trace, domains).at("R1")};
+            ASSERT_EQ(result.size(), expected.size());
+            for (size_t idx{0}; idx < expected.size(); ++idx)
+                EXPECT_EQ(result.at(idx).value, expected.at(idx).value) << "step " << idx;
+        }
+}
+
+// D is empty at time step 0 and {a} afterwards.
+std::vector<std::shared_ptr<DomainStorage>> initiallyEmptyDomain() {
+    auto domainFunction{
+        std::make_shared<Function<std::vector<std::any>, size_t>>(Function<std::vector<std::any>, size_t>(
+            "dynDomain", {"stepNumber"},
+            [](const size_t step) { return step == 0 ? std::vector<std::any>{} : std::vector<std::any>{"a"}; },
+            [](const std::vector<DomainValue> &args) {
+                return std::tuple<size_t>{std::any_cast<size_t>(args.at(0).getValue())};
+            }))};
+    return {std::make_shared<DomainStorage>(DomainStorage(
+        "D", domainFunction, [](const std::any &val) { return std::any_cast<const char *>(val); },
+        [](size_t, const std::any &) { return true; }))};
+}
+
+std::vector<std::shared_ptr<DomainStorage>> emptyConstantDomain() {
+    return {std::make_shared<DomainStorage>(
+        DomainStorage("D", {}, [](const std::any &val) { return std::any_cast<const char *>(val); }))};
+}
+
+} // namespace
+
+// E x in D. b was rewritten to b and A x in D. !b to !b even if D is empty at some time steps (E x in D. b is false and
+// A x in D. !b is true then).
+TEST(TestHydra2Regression, unusedVariableOfDynamicDomainNotRemoved) {
+    const auto trace{Utils::createTrace({"a", "b"}, {{"b"}, {"b"}}, {0, 1})};
+    expectVerdictsWithKnownDomains("G(E x in D. b)", trace, {{0, false}, {1, true}}, initiallyEmptyDomain());
+    expectVerdictsWithKnownDomains("G(A x in D. !b)", trace, {{0, true}, {1, false}}, initiallyEmptyDomain());
+}
+
+// The same holds if the domain is not known when the monitor is created.
+TEST(TestHydra2Regression, unusedVariableOfUnknownDomainNotRemoved) {
+    const auto trace{Utils::createTrace({"a", "b"}, {{"b"}, {"b"}}, {0, 1})};
+    expectVerdicts("G(E x in D. b)", trace, {{0, false}, {1, true}}, initiallyEmptyDomain());
+    expectVerdicts("G(A x in D. !b)", trace, {{0, true}, {1, false}}, initiallyEmptyDomain());
+}
+
+// For a constant empty domain, E x in D. φ is false and A x in D. φ is true, and unused variables of non-empty constant
+// domains are still removed.
+TEST(TestHydra2Regression, unusedVariableOfConstantDomain) {
+    const auto trace{Utils::createTrace({"a", "b"}, {{"b"}, {"b"}}, {0, 1})};
+    expectVerdictsWithKnownDomains("G(E x in D. b)", trace, {{0, false}, {1, false}}, emptyConstantDomain());
+    expectVerdictsWithKnownDomains("G(A x in D. !b)", trace, {{0, true}, {1, true}}, emptyConstantDomain());
+    Formula formula = Parser::parse("E x in D. b");
+    HydraRewriteVisitor rwv{atomDomain()};
+    rwv.rewrite(formula);
+    EXPECT_EQ(formula.getExpr()->to_string(), "b");
+    Formula formulaEmpty = Parser::parse("E x in D. b");
+    HydraRewriteVisitor rwvEmpty{emptyConstantDomain()};
+    rwvEmpty.rewrite(formulaEmpty);
+    EXPECT_EQ(formulaEmpty.getExpr()->to_string(), "false");
+}
+
+// Several variables of a quantifier shared a dynamic domain, so updating the domain for the second variable invalidated
+// the iterator of the first one (undefined behavior).
+TEST(TestHydra2Regression, severalVariablesOverDynamicDomain) {
+    // D = {} at time step 0, {a, b} at time step 1, and {a} at time step 2
+    auto domainFunction{
+        std::make_shared<Function<std::vector<std::any>, size_t>>(Function<std::vector<std::any>, size_t>(
+            "dynDomain", {"stepNumber"},
+            [](const size_t step) {
+                return step == 0   ? std::vector<std::any>{}
+                       : step == 1 ? std::vector<std::any>{"a", "b"}
+                                   : std::vector<std::any>{"a"};
+            },
+            [](const std::vector<DomainValue> &args) {
+                return std::tuple<size_t>{std::any_cast<size_t>(args.at(0).getValue())};
+            }))};
+    const std::vector domains{std::make_shared<DomainStorage>(DomainStorage(
+        "D", domainFunction, [](const std::any &val) { return std::any_cast<const char *>(val); },
+        [](size_t, const std::any &) { return true; }))};
+    const auto trace{Utils::createTrace({"a", "b"}, {{"a"}, {"a", "b"}, {"b"}}, {0, 1, 2})};
+    expectVerdictsWithKnownDomains("G(A u, v in D. (u | v))", trace, {{0, true}, {1, true}, {2, false}}, domains);
+    expectVerdictsWithKnownDomains("G(E u, v in D. (u & v))", trace, {{0, false}, {1, true}, {2, false}}, domains);
+}
+
+// A quantifier over an empty dynamic domain and a non-empty constant one iterated over the constant domain with an
+// invalid iterator of the empty one (undefined behavior); there is no combination if one domain is empty.
+TEST(TestHydra2Regression, quantifierOverEmptyDynamicAndConstantDomain) {
+    auto domains{initiallyEmptyDomain()};
+    domains.push_back(std::make_shared<DomainStorage>(
+        DomainStorage("N", {"a", "b"}, [](const std::any &val) { return std::any_cast<const char *>(val); })));
+    // D is empty at time step 0 and {a} afterwards; N is {a, b}
+    const auto trace{Utils::createTrace({"a", "b"}, {{"a", "b"}, {"a", "b"}, {"b"}}, {0, 1, 2})};
+    expectVerdictsWithKnownDomains("G(A u in D, x in N. (x | u))", trace, {{0, true}, {1, true}, {2, false}}, domains);
+    expectVerdictsWithKnownDomains("G(E u in D, x in N. (x | u))", trace, {{0, false}, {1, true}, {2, true}}, domains);
+}
+
+// The combinations of three variables skipped some combinations, e.g., (a, b, a) for D = {a, b}.
+TEST(TestHydra2Regression, quantifierOverThreeVariables) {
+    const auto trace{Utils::createTrace({"a", "b"}, {{"a"}}, {0})};
+    expectVerdicts("G(E u, v, w in D. (u & !v & w))", trace, {{0, true}}, atomDomain());
+    expectVerdicts("G(A u, v, w in D. (u | !v | w))", trace, {{0, false}}, atomDomain());
 }
 
 // C=1 x. !φ was rewritten to !C=1 x. φ and C=1 x. F φ to F C=1 x. φ.

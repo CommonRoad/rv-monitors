@@ -30,6 +30,7 @@
 #include "monitors/expression_tree/unary/unary.h"
 #include "monitors/rewriting/rewrite_visitor_utils.h"
 #include "monitors/trace/event.h"
+#include <algorithm>
 #include <iostream>
 
 namespace {
@@ -47,6 +48,27 @@ bool startsAtZero(const std::shared_ptr<Interval> &interval) {
     return !interval or interval->isEmpty() or interval->getStart() == 0;
 }
 } // namespace
+
+HydraRewriteVisitor::HydraRewriteVisitor(std::vector<std::shared_ptr<DomainStorage>> domains)
+    : domains(std::move(domains)) {}
+
+const DomainStorage *HydraRewriteVisitor::findConstantDomain(const Variable &var) const {
+    const auto domain{var.getDomain()};
+    if (domain.isFunctionDomain())
+        return nullptr;
+    const auto storage{std::find_if(domains.begin(), domains.end(), [&domain](const auto &dom) {
+        return dom != nullptr and dom->getName() == domain.getName();
+    })};
+    if (storage == domains.end() or not(*storage)->isConstDomain())
+        return nullptr;
+    return storage->get();
+}
+
+bool HydraRewriteVisitor::hasConstantDomains(const FirstOrderOperator &oper) const {
+    const auto variables{oper.getVariables()};
+    return std::all_of(variables.begin(), variables.end(),
+                       [this](const Variable &var) { return findConstantDomain(var) != nullptr; });
+}
 
 void HydraRewriteVisitor::rewrite(Formula &formula) {
     event_map_t map;
@@ -646,6 +668,11 @@ HydraRewriteVisitor::swapQuantifierAndTempUnary(const std::shared_ptr<FirstOrder
     // the universal, counting, and quote quantifiers.
     if (!std::dynamic_pointer_cast<ExistentialQuantifier>(oper))
         return nullptr;
+    // Moreover, the domain is evaluated at the time step of the quantifier, so the swap is only sound if it does not
+    // depend on the time step (E x in D. O(phi) would otherwise range over the domain of the current time step, but
+    // O(E x in D. phi) over the domain of the earlier time step).
+    if (!hasConstantDomains(*oper))
+        return nullptr;
     if (auto firstOrder = std::dynamic_pointer_cast<Unary>(oper)) {
         if (std::dynamic_pointer_cast<Future>(firstOrder->getLeft()) or
             std::dynamic_pointer_cast<Once>(firstOrder->getLeft()))
@@ -665,8 +692,23 @@ std::shared_ptr<Expression> HydraRewriteVisitor::removeUnusedVariables(const std
             std::string varName = var.getName();
             if (keepLastVariable and oper->getVariables().size() == 1)
                 break;
-            if (not hasUsedQuantifiedVariable(*unary->getLeft(), varName))
+            if (hasUsedQuantifiedVariable(*unary->getLeft(), varName))
+                continue;
+            // An unused variable only changes the result if its domain is empty at the time step of the quantifier.
+            // It can only be removed if the domain is constant and non-empty. If it is dynamic or unknown, it might
+            // be empty at some time step, e.g., E x in D. b is false and A x in D. !b is true then.
+            const auto *domain{findConstantDomain(var)};
+            if (domain == nullptr)
+                continue;
+            if (not domain->empty()) {
                 oper->removeVariable(varName);
+                continue;
+            }
+            // constant empty domain
+            if (std::dynamic_pointer_cast<ExistentialQuantifier>(oper))
+                return std::make_shared<Constant>(false);
+            if (std::dynamic_pointer_cast<UniversalQuantifier>(oper))
+                return std::make_shared<Constant>(true);
         }
         if (oper->getVariables().empty())
             return unary->getLeft();

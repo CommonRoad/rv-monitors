@@ -92,6 +92,15 @@ class QuantifierMonitor : public Hydra2Monitor {
     void resetIterators();
 
     /**
+     * Updates the dynamic domains of all quantified variables for the time step of a step number and resets the
+     * iterators.
+     *
+     * @param stepNumber Step number.
+     * @return False if the trace is not set or the step number is out of range.
+     */
+    bool updateDynamicDomains(size_t stepNumber);
+
+    /**
      * Computes the number of combinations depending on the domains of the used variables.
      *
      * @return Number of combinations.

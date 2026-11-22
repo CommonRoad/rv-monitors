@@ -1,5 +1,6 @@
 #pragma once
 
+#include "monitors/collections/domain.h"
 #include "monitors/expression_tree/first_order_operator.h"
 #include "monitors/formula/formula.h"
 
@@ -8,6 +9,16 @@
  */
 class HydraRewriteVisitor : public ExpressionVisitor {
   public:
+    HydraRewriteVisitor() = default;
+
+    /**
+     * Constructor.
+     *
+     * @param domains Domains known when the formula is rewritten. Quantifiers over domains which are not contained
+     * here, or which are dynamic or time-dependent, are never swapped with temporal operators.
+     */
+    explicit HydraRewriteVisitor(std::vector<std::shared_ptr<DomainStorage>> domains);
+
     void rewrite(Formula &formula);
 
     // void visitExpression(Expression &expr, const std::shared_ptr<Trace> &trace, size_t index);
@@ -88,6 +99,26 @@ class HydraRewriteVisitor : public ExpressionVisitor {
     visitCountingQuantifier(CountingQuantifier &opr, const std::shared_ptr<Trace> &trace, size_t index) override;
 
   private:
+    std::vector<std::shared_ptr<DomainStorage>> domains; //**< Domains known at rewriting time. */
+
+    /**
+     * Returns the domain of a variable if it is a constant domain known at rewriting time.
+     *
+     * @param var Variable.
+     * @return Domain, or nullptr if the domain is unknown, dynamic, or a function domain.
+     */
+    [[nodiscard]] const DomainStorage *findConstantDomain(const Variable &var) const;
+
+    /**
+     * Checks whether all variables of a quantifier range over constant domains known at rewriting time. Domains which
+     * are unknown, dynamic (DomainStorage::isConstDomain() is false), or function domains with parameters depending on
+     * other variables are not constant.
+     *
+     * @param oper First-order quantifier.
+     * @return Boolean indicating whether all domains are constant.
+     */
+    [[nodiscard]] bool hasConstantDomains(const FirstOrderOperator &oper) const;
+
     /**
      * Swaps a first-order quantifier and a following unary temporal operator. If the child expression of the
      * first-order quantifier is not an unary temporal operator, a nullptr will be returned.
@@ -108,8 +139,8 @@ class HydraRewriteVisitor : public ExpressionVisitor {
      * @param keepLastVariable Boolean indicating whether at least one variable should be kept.
      * @return Expression with removed shadowed quantified variables.
      */
-    static std::shared_ptr<Expression> removeUnusedVariables(const std::shared_ptr<FirstOrderOperator> &oper,
-                                                             bool keepLastVariable = false);
+    std::shared_ptr<Expression> removeUnusedVariables(const std::shared_ptr<FirstOrderOperator> &oper,
+                                                      bool keepLastVariable = false);
 
     /**
      * Searches an expression to check if a certain quantified variable is used.

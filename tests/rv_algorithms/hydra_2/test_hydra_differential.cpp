@@ -41,6 +41,11 @@ namespace {
 constexpr std::array<const char *, 3> kAtoms{"p", "q", "r"};
 // Values of the numeric domain "N" used as predicate arguments.
 constexpr std::array<size_t, 3> kNumbers{0, 1, 2};
+// The dynamic atom domain "T" contains, at time stamp ts, the atoms with index a for which atomInDynamicDomain(ts, a)
+// holds. It is empty at every fourth time stamp and differs between the others. All its values are always valid.
+constexpr bool atomInDynamicDomain(const size_t timeStamp, const size_t atomIdx) {
+    return timeStamp % 4 != 0 and (timeStamp + atomIdx) % 3 != 0;
+}
 // Constants usable as predicate arguments: 'k0' = 0 and 'k1' = 1.
 constexpr std::array<const char *, 2> kConstants{"k0", "k1"};
 // Variables over N (used in predicates) and over D (used as propositions).
@@ -122,6 +127,7 @@ struct Node {
     Interval iv;                   // temporal operators
     std::vector<std::string> vars; // quantified variables
     bool numDomain{true};          // quantifier over N (true) or D (false)
+    bool dynDomain{false};         // atom quantifier over the time-dependent domain T instead of D
     std::string countOp;           // "<=", "=", ">="
     size_t countNum{0};
     size_t quoteLo{0}; // quote bounds in tenths
@@ -142,7 +148,7 @@ std::string toString(const NodePtr &n) {
         std::string s;
         for (size_t i{0}; i < n->vars.size(); ++i)
             s += (i == 0 ? "" : ", ") + n->vars[i];
-        return s + " in " + (n->numDomain ? "N" : "D");
+        return s + " in " + (n->numDomain ? "N" : n->dynDomain ? "T" : "D");
     };
     switch (n->op) {
     case Op::True:
@@ -264,6 +270,9 @@ class Generator {
     struct Scope {
         std::vector<std::string> numVars;
         std::vector<std::string> atomVars;
+        // Quantifiers over the dynamic domain are not nested: all quantifiers over a domain share its storage, so a
+        // nested one would update the values while the outer one iterates over them.
+        bool inDynamicDomain{false};
     };
 
     std::mt19937_64 rng;
@@ -441,13 +450,22 @@ class Generator {
             n->quoteHi = b;
         }
 
+        // Time-dependent domains: only for the existential and universal quantifier since the others are undefined for
+        // an empty domain (quote) or not interesting. The variables are not always used in the body, so that rewrite
+        // rules for unused variables are checked as well.
+        const bool useDynamic{!n->numDomain and !scope.inDynamicDomain and
+                              (n->op == Op::Exists or n->op == Op::Forall) and chance(0.5)};
+        n->dynDomain = useDynamic;
         for (const auto &v : n->vars)
             boundVars.push_back(v);
+        scope.inDynamicDomain = scope.inDynamicDomain or useDynamic;
         NodePtr body{gen(depth - 1, scope)};
+        if (useDynamic)
+            scope.inDynamicDomain = false;
         // Make sure that every quantified variable is used in the body; the counting and quote quantifiers
         // depend on the number of variable combinations.
         for (const auto &v : n->vars) {
-            if (mentions(body, v))
+            if (mentions(body, v) or (useDynamic and chance(0.5)))
                 continue;
             auto combined{std::make_shared<Node>()};
             combined->op = chance(0.5) ? Op::And : Op::Or;
@@ -559,10 +577,25 @@ std::vector<std::shared_ptr<DomainStorage>> makeDomains() {
     std::vector<std::any> atoms;
     for (const char *a : kAtoms)
         atoms.emplace_back(a);
+    const auto domainFunction{
+        std::make_shared<Function<std::vector<std::any>, size_t>>(Function<std::vector<std::any>, size_t>(
+            "dynamicAtoms", {"stepNumber"},
+            [](const size_t timeStamp) {
+                std::vector<std::any> values;
+                for (size_t a{0}; a < kAtoms.size(); ++a)
+                    if (atomInDynamicDomain(timeStamp, a))
+                        values.emplace_back(kAtoms.at(a));
+                return values;
+            },
+            hydraTestUtils::createDomain3Arguments))};
+    const auto dynamicDomain{std::make_shared<DomainStorage>(
+        "T", domainFunction, [](const std::any &val) { return std::string(std::any_cast<const char *>(val)); },
+        [](const size_t, const std::any &) { return true; })};
     return {std::make_shared<DomainStorage>(
                 "N", numbers, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }),
             std::make_shared<DomainStorage>(
-                "D", atoms, [](const std::any &val) { return std::string(std::any_cast<const char *>(val)); })};
+                "D", atoms, [](const std::any &val) { return std::string(std::any_cast<const char *>(val)); }),
+            dynamicDomain};
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -604,10 +637,13 @@ class Reference {
             return evalEnv(n->ch.at(0), i, env) ? 1 : 0;
         }
         const size_t domainSize{n->numDomain ? kNumbers.size() : kAtoms.size()};
+        const size_t timeStamp{t.timeStamps.at(i)};
         const std::string &var{n->vars.at(varIdx)};
         const auto saved{env.find(var) != env.end() ? std::optional<size_t>(env.at(var)) : std::nullopt};
         size_t count{0};
         for (size_t v{0}; v < domainSize; ++v) {
+            if (n->dynDomain and !atomInDynamicDomain(timeStamp, v))
+                continue;
             env[var] = n->numDomain ? kNumbers.at(v) : v;
             count += countSatisfying(n, i, env, varIdx + 1, total);
         }
