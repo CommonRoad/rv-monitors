@@ -377,20 +377,24 @@ TEST(TestHydra2Regression, existentialQuantifierSwappedWithTemporalOperatorForCo
 TEST(TestHydra2Regression, shadowedVariable) {
     auto domainFunction{
         std::make_shared<Function<std::vector<std::any>, size_t>>(Function<std::vector<std::any>, size_t>(
-            "dynDomain", {"stepNumber"}, [](const size_t) { return std::vector<std::any>{"a"}; },
+            "dynDomain", {"stepNumber"}, [](const size_t) { return std::vector<std::any>{std::string("a")}; },
             [](const std::vector<DomainValue> &args) {
                 return std::tuple<size_t>{std::any_cast<size_t>(args.at(0).getValue())};
             }))};
     const std::vector domains{
         std::make_shared<DomainStorage>(DomainStorage(
-            "D0", domainFunction, [](const std::any &val) { return std::any_cast<const char *>(val); },
+            "D0", domainFunction, [](const std::any &val) { return std::any_cast<std::string>(val); },
             [](size_t, const std::any &) { return true; })),
-        std::make_shared<DomainStorage>(
-            DomainStorage("D1", {"c"}, [](const std::any &val) { return std::any_cast<const char *>(val); }))};
-    const auto trace{Utils::createTrace({"a", "c"}, {{"c"}, {"c"}}, {0, 1})};
+        std::make_shared<DomainStorage>(DomainStorage(
+            "D1", {std::string("c")}, [](const std::any &val) { return std::any_cast<std::string>(val); }))};
+    // p holds for "c" only
+    const auto trace{hydraTestUtils::createTraceWithVariable(
+        2, {std::make_shared<Function<bool, size_t, std::string>>(Function<bool, size_t, std::string>(
+               "p", {"timeStep", "val"}, [](size_t, const std::string &val) { return val == "c"; },
+               hydraTestUtils::sizeTStringArgs))})};
     // dynamic D0 known at creation, and D0 known only at evaluation
-    expectVerdictsWithKnownDomains("G(A x in D0. E x in D1. x)", trace, {{0, true}, {1, true}}, domains);
-    expectVerdicts("G(A x in D0. E x in D1. x)", trace, {{0, true}, {1, true}}, domains);
+    expectVerdictsWithKnownDomains("G(A x in D0. E x in D1. p(x))", trace, {{0, true}, {1, true}}, domains);
+    expectVerdicts("G(A x in D0. E x in D1. p(x))", trace, {{0, true}, {1, true}}, domains);
 }
 
 // C=1 x. !φ was rewritten to !C=1 x. φ and C=1 x. F φ to F C=1 x. φ.

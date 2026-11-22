@@ -143,9 +143,10 @@ TEST(TestUniversalMonitor, testUniversalMonitorVariableScope) {
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues1{{"x", std::make_shared<DomainStorage>(dom1)}};
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues2{{"x", std::make_shared<DomainStorage>(dom2)}};
 
-    auto mon1{std::make_shared<UniversalMonitor>(formulaUniversal, mon2, 2, variableValues1, false)};
+    // the outer quantifier ranges over D0 and the inner one over D1, which shadows the outer variable
+    auto mon1{std::make_shared<UniversalMonitor>(formulaUniversal, mon2, 2, variableValues2, false)};
     mon1->registerParent(1);
-    auto mon{UniversalMonitor(formula, mon1, 1, variableValues2, false)};
+    auto mon{UniversalMonitor(formula, mon1, 1, variableValues1, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.step(0, 0).value, true);
@@ -240,9 +241,10 @@ TEST(TestUniversalMonitor, testUniversalMonitorVariableScopeDynamicDomain) {
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues1{{"x", std::make_shared<DomainStorage>(dom1)}};
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues2{{"x", std::make_shared<DomainStorage>(dom2)}};
 
-    auto mon1{std::make_shared<UniversalMonitor>(formulaUniversal, mon2, 2, variableValues1, false)};
+    // the outer quantifier ranges over D0 and the inner one over D1, which shadows the outer variable
+    auto mon1{std::make_shared<UniversalMonitor>(formulaUniversal, mon2, 2, variableValues2, false)};
     mon1->registerParent(1);
-    auto mon{UniversalMonitor(formula, mon1, 1, variableValues2, false)};
+    auto mon{UniversalMonitor(formula, mon1, 1, variableValues1, false)};
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.step(0, 0).value, true);
