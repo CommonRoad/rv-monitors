@@ -1,5 +1,4 @@
 #include "monitors/rewriting/hydra_rewrite_visitor.h"
-#include <algorithm>
 #include "monitors/expression_tree/atomic/atomic.h"
 #include "monitors/expression_tree/atomic/constant.h"
 #include "monitors/expression_tree/atomic/predicate.h"
@@ -31,6 +30,7 @@
 #include "monitors/expression_tree/unary/unary.h"
 #include "monitors/rewriting/rewrite_visitor_utils.h"
 #include "monitors/trace/event.h"
+#include <algorithm>
 #include <iostream>
 
 namespace {
