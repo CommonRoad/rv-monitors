@@ -64,6 +64,7 @@ TEST(TestUniversalMonitor, testUniversalMonitorStandard) {
     std::map<std::string, std::shared_ptr<DomainStorage>> variableValues{{"x", std::make_shared<DomainStorage>(dom1)},
                                                                          {"y", std::make_shared<DomainStorage>(dom2)}};
     auto mon{UniversalMonitor(formula, mon1, 1, variableValues, false)};
+    mon.setStoreVariableResults(true);
     mon.registerParent(0);
     mon.setTrace(trace);
     EXPECT_EQ(mon.step(0, 0).value, true);

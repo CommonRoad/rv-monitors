@@ -333,10 +333,6 @@ std::shared_ptr<Hydra2Monitor> HydraCreationVisitor2::visitUniversalQuantifier(U
                                                        top.getLeft()->accept(*this, idx, connectedEval), idx,
                                                        findDomain(top.getVariables()), shortCircuiting)};
 
-    // Only top-level universal monitors store their violating domain values (Hydra2 enables this for the root
-    // monitors), so that short-circuiting stays disabled only for them. Nested universal monitors short-circuit.
-    newMonitor->setStoreVariableResults(false);
-
     baseline.insert(std::make_pair<std::string, std::shared_ptr<Hydra2Monitor>>(top.to_string(), newMonitor));
     newMonitor->registerParent(parentId);
     return newMonitor;

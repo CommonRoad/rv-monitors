@@ -633,3 +633,21 @@ TEST(TestHydra2, testNestedUniversalQuantifierShortCircuits) {
     // nested quantifier: one instead of three evaluations of rel per value of x
     EXPECT_LT(shortCircuit.getNumEvaluations(), noShortCircuit.getNumEvaluations());
 }
+
+// A direct chain of universal quantifiers is one top-level quantifier over both variables: all violating
+// combinations are recorded.
+TEST(TestHydra2, testUniversalQuantifierChainRecordsViolations) {
+    constexpr size_t traceLength{4};
+    const std::shared_ptr<Trace> trace = hydraTestUtils::createTraceWithVariable(
+        traceLength, {std::make_shared<Function<bool, size_t, size_t, size_t>>(Function<bool, size_t, size_t, size_t>(
+                         "rel", {"timeStep", "x", "y"}, alwaysFalseRelation, hydraTestUtils::threeSizeTArgs))});
+    const std::vector<std::shared_ptr<DomainStorage>> domains{std::make_shared<DomainStorage>(DomainStorage(
+        "D", {0ul, 1ul, 2ul}, [](const std::any &val) { return std::to_string(std::any_cast<size_t>(val)); }))};
+    auto monitor{Hydra2({Parser::parse("A x in D. A y in D. rel(x, y)", "R1")}, true, false, true, globally, domains)};
+    const auto result{monitor.evaluate(trace)};
+    const auto violations{monitor.getViolatingDomainValues().at("R1")};
+    for (size_t i{0}; i < traceLength; ++i) {
+        EXPECT_FALSE(result.at("R1").at(i).value);
+        EXPECT_EQ(violations.at(i).size(), 9U);
+    }
+}

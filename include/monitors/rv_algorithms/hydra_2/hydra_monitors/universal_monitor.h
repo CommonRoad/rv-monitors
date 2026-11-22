@@ -48,14 +48,14 @@ class UniversalMonitor final : public QuantifierMonitor {
 
     /**
      * Sets whether the violating domain values should be stored. Storing them disables short-circuiting. Hydra2 enables
-     * it only for top-level (root) universal monitors; nested universal monitors are created with it disabled.
+     * it only for top-level (root) universal monitors; nested universal monitors keep the default (disabled).
      *
      * @param store Boolean indicating whether variables should be stored.
      */
     void setStoreVariableResults(bool store) override;
 
   private:
-    bool storeVariableResults{true}; //**< Boolean indicating whether results should be stored. */
+    bool storeVariableResults{false}; //**< Boolean indicating whether results should be stored. */
 
     /**
      * Computes satisfaction probability over provided monitor.
