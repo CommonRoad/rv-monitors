@@ -125,7 +125,8 @@ class Hydra2Monitor {
      */
     virtual ~Hydra2Monitor() = default;
 
-    /** Disables violation collection for early-termination mode. No-op by default. */
+    /** Enables/disables violation collection (and thereby disables/enables short-circuiting) of top-level universal
+     * monitors. No-op by default. */
     virtual void setStoreVariableResults(bool /*store*/) {}
 
     /**
