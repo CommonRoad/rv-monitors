@@ -9,11 +9,12 @@
 
 std::map<std::string, std::vector<Verdict>>
 RVMonitor::verify(const std::shared_ptr<Trace> &trace, const std::vector<std::shared_ptr<DomainStorage>> &domains,
-                  const std::vector<std::string> &formulaIDs) {
+                  const std::vector<std::string> &formulaIDs, const size_t startTimeStep) {
     std::chrono::high_resolution_clock::time_point startTime;
     if (configuration.performanceMeasurement)
         startTime = ExecutionStatistic::start();
 
+    monitor->setEvaluationStartTimeStep(startTimeStep);
     auto verdict{monitor->evaluate(trace, domains, formulaIDs)};
 
     if (configuration.performanceMeasurement and trace->getLength() > 0)

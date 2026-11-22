@@ -30,6 +30,12 @@ MonitorInterface::MonitorInterface(std::vector<Formula> formulas, const Algorith
                 throw std::logic_error("Formula is not supported by monitor: " + formula.to_string());
 }
 
+void MonitorInterface::setEvaluationStartTimeStep(const size_t startTimeStep) {
+    evaluationStartTimeStep = startTimeStep;
+}
+
+size_t MonitorInterface::getEvaluationStartTimeStep() const { return evaluationStartTimeStep; }
+
 const std::vector<Formula> &MonitorInterface::getFormulas() const { return formulas; }
 
 std::vector<std::shared_ptr<DomainStorage>> &MonitorInterface::getDomains() { return domains; }

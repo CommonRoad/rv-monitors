@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- `MonitorInterface::setEvaluationStartTimeStep` / `RVMonitor::verify(..., startTimeStep)` (Python: `set_evaluation_start_time_step`):
+  `Hydra2` only evaluates, reports, and terminates early on events from this time step on. Earlier events (e.g., the
+  history of a vehicle) stay in the trace as context for past operators. This also applies to `initial_step`, which now
+  evaluates the first event at or after the start time step.
+
 ## [1.0.0]
 
 First public release.
