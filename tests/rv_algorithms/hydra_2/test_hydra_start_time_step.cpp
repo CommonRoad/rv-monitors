@@ -162,3 +162,11 @@ TEST(TestHydra2StartTimeStep, throughRVMonitor) {
     EXPECT_FALSE(verdicts.at(0).value);
     EXPECT_EQ(verdicts.at(0).timeStamp.value(), 4U);
 }
+
+TEST(TestHydra2StartTimeStep, otherAlgorithmsRejectStartTimeStep) {
+    auto formula{Parser::parse("G(a)")};
+    formula.setId("R1");
+    RVMonitor monitor({formula}, MonitorConfiguration(AlgorithmType::dynamic_programming_ltl, false));
+    EXPECT_THROW(monitor.verify(historyTrace(), {}, {}, 3), std::invalid_argument);
+    EXPECT_NO_THROW(monitor.verify(historyTrace(), {}, {}, 0));
+}

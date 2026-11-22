@@ -95,7 +95,8 @@ class RVMonitor {
      * @param domains List of domains.
      * @param formulas List of formulas which should be evaluated.
      * @param startTimeStep First time step which is evaluated (see MonitorInterface::setEvaluationStartTimeStep).
-     * Earlier events only serve as context for past operators.
+     * Earlier events only serve as context for past operators. A start time step > 0 is only supported by Hydra2;
+     * otherwise std::invalid_argument is thrown.
      * @return Verdict for each evaluated time step of trace.
      */
     std::map<std::string, std::vector<Verdict>> verify(const std::shared_ptr<Trace> &trace,

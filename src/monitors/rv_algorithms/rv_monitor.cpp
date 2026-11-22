@@ -14,6 +14,8 @@ RVMonitor::verify(const std::shared_ptr<Trace> &trace, const std::vector<std::sh
     if (configuration.performanceMeasurement)
         startTime = ExecutionStatistic::start();
 
+    if (startTimeStep > 0 and configuration.algorithm != hydra_2_mtl)
+        throw std::invalid_argument("RVMonitor::verify: A start time step is only supported by Hydra2.");
     monitor->setEvaluationStartTimeStep(startTimeStep);
     auto verdict{monitor->evaluate(trace, domains, formulaIDs)};
 
