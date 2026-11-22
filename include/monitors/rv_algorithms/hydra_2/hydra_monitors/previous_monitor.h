@@ -86,4 +86,5 @@ class PreviousMonitor final : public Hydra2Monitor {
     std::shared_ptr<Hydra2Monitor> subMonitor; //**< Child monitor. */
     IntervalTemporalOperator interval;         //**< Interval of operator. */
     std::vector<size_t> timeStepsTrace;        //**< Time steps of trace. */
+    std::vector<DomainValue> domainValueArguments; //**< Domain values. */
 };

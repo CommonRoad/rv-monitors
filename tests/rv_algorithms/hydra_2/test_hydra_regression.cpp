@@ -74,6 +74,28 @@ TEST(TestHydra2Regression, nextUnboundedIntervalWithEqualTimeStamps) {
     expectVerdicts("G(X[1, inf](a))", Utils::createTrace({"a"}, {{}, {"a"}}, {4, 4}), {{4, false}, {4, false}});
 }
 
+// P did not check whether the domain value exists at the previous step, so P(!p(x)) held for a value x which was not yet
+// in the domain there (as for X, U, and S).
+TEST(TestHydra2Regression, previousChecksValidityOfDomainValueAtPreviousStep) {
+    const auto trace{hydraTestUtils::createTraceWithVariable(
+        3, {std::make_shared<Function<bool, size_t, std::string>>(Function<bool, size_t, std::string>(
+               "p", {"timeStep", "val"}, [](size_t, const std::string &) { return false; },
+               hydraTestUtils::sizeTStringArgs))})};
+    // value "b" is part of the domain from time step 1 on
+    auto domainFunction{std::make_shared<Function<std::vector<std::any>, size_t>>(
+        Function<std::vector<std::any>, size_t>(
+            "dynDomain", {"stepNumber"},
+            [](size_t) { return std::vector<std::any>{std::string("a"), std::string("b")}; },
+            hydraTestUtils::createDomain3Arguments))};
+    const std::vector domains{std::make_shared<DomainStorage>(DomainStorage(
+        "D", domainFunction, [](const std::any &val) { return std::any_cast<std::string>(val); },
+        [](const size_t timeStep, const std::any &val) {
+            return std::any_cast<std::string>(val) != "b" or timeStep >= 1;
+        }))};
+    // At step 1, x = b does not exist at step 0, so the universally quantified P(!p(x)) is violated.
+    expectVerdicts("A x in D. P(!p(x))", trace, {{0, false}, {1, false}, {2, true}}, domains);
+}
+
 // Short-circuiting skipped steps of the temporal monitors, which left their head positions in a wrong state.
 TEST(TestHydra2Regression, previousAfterSkippedSteps) {
     expectVerdicts("G(q -> P[0, 3](G(r)))", Utils::createTrace({"q", "r"}, {{}, {"q"}, {"q", "r"}}, {1, 2, 3}),

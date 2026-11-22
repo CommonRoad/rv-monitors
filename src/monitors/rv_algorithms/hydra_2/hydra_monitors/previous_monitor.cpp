@@ -4,7 +4,8 @@ Verdict PreviousMonitor::concreteStep(size_t /*parentId*/, const size_t stepNumb
     if (stepNumber >= timeStepsTrace.size())
         return {false};
     const size_t timeStamp{timeStepsTrace.at(stepNumber)};
-    if (stepNumber == 0 or !interval.contains(timeStamp - timeStepsTrace.at(stepNumber - 1)))
+    if (stepNumber == 0 or !validAt(domainValueArguments, timeStepsTrace.at(stepNumber - 1)) or
+        !interval.contains(timeStamp - timeStepsTrace.at(stepNumber - 1)))
         return {timeStamp, false};
     return {timeStamp, subMonitor->step(monitorId, stepNumber - 1).value};
 }
@@ -45,7 +46,10 @@ std::string PreviousMonitor::to_string() {
     return std::string{"P"} + itv + "(" + subMonitor->to_string() + ")";
 }
 
-void PreviousMonitor::addDomainValues(const std::vector<DomainValue> &vals) { subMonitor->addDomainValues(vals); }
+void PreviousMonitor::addDomainValues(const std::vector<DomainValue> &vals) {
+    domainValueArguments = vals;
+    subMonitor->addDomainValues(vals);
+}
 
 void PreviousMonitor::to_tree(std::map<size_t, std::tuple<std::string, std::vector<size_t>>> &tree) {
     if (tree.find(monitorId) != tree.end())
