@@ -134,7 +134,8 @@ TEST(TestHydra2StartTimeStep, startAfterTraceEnd) {
 
 // Evaluating from a start time step gives the same verdicts as evaluating everything and dropping the history.
 TEST(TestHydra2StartTimeStep, consistentWithFullEvaluation) {
-    for (const std::string formula : {"G(a -> O[0, 2](b))", "G(b S a)", "G(P(a) | b)", "G(a U[0, 2] b)", "G(H[0, 1](a))"}) {
+    for (const std::string formula :
+         {"G(a -> O[0, 2](b))", "G(b S a)", "G(P(a) | b)", "G(a U[0, 2] b)", "G(H[0, 1](a))"}) {
         for (size_t idx{0}; idx < 8; ++idx) {
             auto full{allConfigs(formula, FormulaEvaluationMode::globally).at(idx)};
             auto partial{allConfigs(formula, FormulaEvaluationMode::globally).at(idx)};
