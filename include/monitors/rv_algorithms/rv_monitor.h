@@ -94,11 +94,14 @@ class RVMonitor {
      * @param trace Trace of predicates/atomic prepositions.
      * @param domains List of domains.
      * @param formulas List of formulas which should be evaluated.
-     * @return Verdict for each time step of trace.
+     * @param startTimeStep First time step which is evaluated (see MonitorInterface::setEvaluationStartTimeStep).
+     * Earlier events only serve as context for past operators.
+     * @return Verdict for each evaluated time step of trace.
      */
     std::map<std::string, std::vector<Verdict>> verify(const std::shared_ptr<Trace> &trace,
                                                        const std::vector<std::shared_ptr<DomainStorage>> &domains = {},
-                                                       const std::vector<std::string> &formulas = {});
+                                                       const std::vector<std::string> &formulas = {},
+                                                       size_t startTimeStep = 0);
 
     /**
      * Getter for execution statistics.

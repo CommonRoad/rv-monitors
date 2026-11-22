@@ -29,6 +29,11 @@ void init_monitors(nb::module_ &m) {
 
     nb::class_<MonitorInterface>(m, "MonitorInterface")
         .def("__str__", &MonitorInterface::to_string)
+        .def("set_evaluation_start_time_step", &MonitorInterface::setEvaluationStartTimeStep,
+             nb::arg("start_time_step"),
+             "Only evaluate (and report) time steps >= start_time_step; earlier events remain context for past "
+             "operators (Hydra2 only).")
+        .def_prop_ro("evaluation_start_time_step", &MonitorInterface::getEvaluationStartTimeStep)
         .def("evaluate", &MonitorInterface::evaluate, nb::arg("trace"),
              nb::arg("domains") = std::vector<std::shared_ptr<DomainStorage>>{},
              nb::arg("formulaIDs") = std::vector<std::string>{});
