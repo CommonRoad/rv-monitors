@@ -74,18 +74,21 @@ TEST(TestHydra2Regression, nextUnboundedIntervalWithEqualTimeStamps) {
     expectVerdicts("G(X[1, inf](a))", Utils::createTrace({"a"}, {{}, {"a"}}, {4, 4}), {{4, false}, {4, false}});
 }
 
-// P did not check whether the domain value exists at the previous step, so P(!p(x)) held for a value x which was not yet
-// in the domain there (as for X, U, and S).
+// P did not check whether the domain value exists at the previous step, so P(!p(x)) held for a value x which was not
+// yet in the domain there (as for X, U, and S).
 TEST(TestHydra2Regression, previousChecksValidityOfDomainValueAtPreviousStep) {
     const auto trace{hydraTestUtils::createTraceWithVariable(
         3, {std::make_shared<Function<bool, size_t, std::string>>(Function<bool, size_t, std::string>(
                "p", {"timeStep", "val"}, [](size_t, const std::string &) { return false; },
                hydraTestUtils::sizeTStringArgs))})};
-    // value "b" is part of the domain from time step 1 on
-    auto domainFunction{std::make_shared<Function<std::vector<std::any>, size_t>>(
-        Function<std::vector<std::any>, size_t>(
+    // D = {a} at time step 0 and {a, b} afterwards
+    auto domainFunction{
+        std::make_shared<Function<std::vector<std::any>, size_t>>(Function<std::vector<std::any>, size_t>(
             "dynDomain", {"stepNumber"},
-            [](size_t) { return std::vector<std::any>{std::string("a"), std::string("b")}; },
+            [](const size_t step) {
+                return step == 0 ? std::vector<std::any>{std::string("a")}
+                                 : std::vector<std::any>{std::string("a"), std::string("b")};
+            },
             hydraTestUtils::createDomain3Arguments))};
     const std::vector domains{std::make_shared<DomainStorage>(DomainStorage(
         "D", domainFunction, [](const std::any &val) { return std::any_cast<std::string>(val); },
