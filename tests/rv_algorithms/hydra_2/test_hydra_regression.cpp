@@ -1,6 +1,7 @@
 #include "hydra_test_utils.h"
 #include "monitors/collections/domain.h"
 #include "monitors/parser/parser.h"
+#include "monitors/rewriting/hydra_rewrite_visitor.h"
 
 #include <gtest/gtest.h>
 
@@ -211,6 +212,72 @@ TEST(TestHydra2Regression, identicalFormulasWithConnectedEvaluation) {
 TEST(TestHydra2Regression, existentialQuantifierNotSwappedWithNegation) {
     expectVerdicts("G(E x in D. !x)", Utils::createTrace({"a", "b"}, {{"a"}, {"a", "b"}}, {0, 1}),
                    {{0, true}, {1, false}}, atomDomain());
+}
+
+namespace {
+
+// D = {a} at time step 0 and {b} afterwards
+std::vector<std::shared_ptr<DomainStorage>> dynamicDomain() {
+    auto domainFunction{
+        std::make_shared<Function<std::vector<std::any>, size_t>>(Function<std::vector<std::any>, size_t>(
+            "dynDomain", {"stepNumber"},
+            [](const size_t step) { return step == 0 ? std::vector<std::any>{"a"} : std::vector<std::any>{"b"}; },
+            [](const std::vector<DomainValue> &args) {
+                return std::tuple<size_t>{std::any_cast<size_t>(args.at(0).getValue())};
+            }))};
+    return {std::make_shared<DomainStorage>(DomainStorage(
+        "D", domainFunction, [](const std::any &val) { return std::any_cast<const char *>(val); },
+        [](size_t, const std::any &) { return true; }))};
+}
+
+// Evaluates the formula with a monitor which knows the domains when it is created (and thus when it is rewritten).
+void expectVerdictsWithKnownDomains(const std::string &formulaString, const std::shared_ptr<Trace> &trace,
+                                    const std::vector<Verdict> &expected,
+                                    const std::vector<std::shared_ptr<DomainStorage>> &domains) {
+    Formula formula = Parser::parse(formulaString);
+    formula.setId("R1");
+    SCOPED_TRACE(formulaString);
+    for (const bool connected : {false, true})
+        for (const bool reordering : {false, true}) {
+            auto monitor{Hydra2({formula}, connected, reordering, false, globally, domains)};
+            const auto result{monitor.evaluate(trace, domains).at("R1")};
+            ASSERT_EQ(result.size(), expected.size());
+            for (size_t idx{0}; idx < expected.size(); ++idx)
+                EXPECT_EQ(result.at(idx).value, expected.at(idx).value) << "step " << idx;
+        }
+}
+
+} // namespace
+
+// E x in D. O(φ) and E x in D. F(φ) were rewritten to O(E x in D. φ) and F(E x in D. φ) even if D depends on the time
+// step. Then D is evaluated at another time step (preliminaries: the domain of a quantifier is the one at the time step
+// where it is evaluated).
+TEST(TestHydra2Regression, existentialQuantifierNotSwappedWithTemporalOperatorForDynamicDomain) {
+    // At step 1, x ranges over D(1) = {b}, and b never held, so the formula is violated.
+    expectVerdictsWithKnownDomains("G(E x in D. O(x))", Utils::createTrace({"a", "b"}, {{"a"}, {}}, {0, 1}),
+                                   {{0, true}, {1, false}}, dynamicDomain());
+    // At step 0, x ranges over D(0) = {a}, and a holds at step 1 only; at step 1, x ranges over {b}.
+    expectVerdictsWithKnownDomains("G(E x in D. F(x))", Utils::createTrace({"a", "b"}, {{}, {"a"}}, {0, 1}),
+                                   {{0, true}, {1, false}}, dynamicDomain());
+}
+
+// E x in D. O(φ) is still swapped for constant domains known at creation, and the verdicts do not depend on whether
+// the domain is known at creation.
+TEST(TestHydra2Regression, existentialQuantifierSwappedWithTemporalOperatorForConstantDomain) {
+    Formula formula = Parser::parse("E x in D. O(x)");
+    HydraRewriteVisitor rwv{atomDomain()};
+    rwv.rewrite(formula);
+    EXPECT_EQ(formula.getExpr()->to_string(), "(true S E x in D. x)");
+    Formula formula2 = Parser::parse("E x in D. O(x)");
+    HydraRewriteVisitor rwvUnknown;
+    rwvUnknown.rewrite(formula2);
+    EXPECT_EQ(formula2.getExpr()->to_string(), "E x in D. (true S x)");
+
+    const auto trace{Utils::createTrace({"a", "b"}, {{"a"}, {}, {"b"}}, {0, 1, 2})};
+    expectVerdictsWithKnownDomains("G(E x in D. O(x))", trace, {{0, true}, {1, true}, {2, true}}, atomDomain());
+    expectVerdictsWithKnownDomains("G(E x in D. F(x))", trace, {{0, true}, {1, true}, {2, true}}, atomDomain());
+    expectVerdicts("G(E x in D. O(x))", trace, {{0, true}, {1, true}, {2, true}}, atomDomain());
+    expectVerdicts("G(E x in D. F(x))", trace, {{0, true}, {1, true}, {2, true}}, atomDomain());
 }
 
 // C=1 x. !φ was rewritten to !C=1 x. φ and C=1 x. F φ to F C=1 x. φ.

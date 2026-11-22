@@ -122,7 +122,7 @@ void Hydra2::createMonitor(const std::vector<Formula> &formulas, const bool conn
                 formulaCopy = Formula(globally->getLeft());
             }
         }
-        HydraRewriteVisitor rwv;
+        HydraRewriteVisitor rwv{domains};
         rwv.rewrite(formulaCopy);
         formulaCopy.setId(form.getId());
 
